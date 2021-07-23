@@ -20,7 +20,7 @@ subinfo.subage = str2double(get(h.hEdt2,'String'));
 subinfo.subear = get(h.hEdt3,'Value');
 subcode = subinfo.subcode;
 [protocol, Subdata] = load_subject_info(subcode);
-if protocol == 9999
+if protocol ==9999
     disp('Data collection is done for this subject.');
     return;
 end
