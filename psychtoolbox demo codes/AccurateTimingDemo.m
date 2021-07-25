@@ -64,7 +64,7 @@ waitframes = 1;
 %
 % vbl + 0.5 * ifi
 %
-% As here waitframes is set to 1 (i.e. (1 - 0.5) == 0.5)
+% As here waitframes is set to 1 (i.e. (1 5- 0.5) == 0.5)
 %
 % For discussion see PTB forum thread 20178 for discussion.
 %

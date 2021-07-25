@@ -39,16 +39,17 @@ black = BlackIndex(screenNumber);
 % For help see: Screen BlendFunction?
 % Also see: Chapter 6 of the OpenGL programming guide
 Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+% sca;
 
 % We can define a center for the dot coordinates to be relaitive to. Here
 % we set the centre to be the centre of the screen
 dotCenter = [xCenter yCenter];
 
-length=200;
-[x,y]  = DrawSquare(length); % Create the route
-Size   = 15 .* ones(1,length);
-Color  = ones(3,length);
-x      = flip(x + length); % Add an offset for center the arc
+steplength=200;
+[x,y]  = DrawSquare(steplength); % Create the route
+Thickness   = 15 .* ones(1,length(x)); % thickness of the route
+Color  = ones(3,length(x));
+x      = flip(x + steplength); % Add an offset for center the arc
 y      = abs(y-max(y)); % Reverse the arc
 y      = y + (yCenter - max(y) + (max(y) - min(y))/2); % Offset the middle of the arc to be center on the middle of the screen
 Pos    = [x; y];
@@ -57,25 +58,24 @@ Pos    = [x; y];
 % Make a base Rect of 50 by 50 pixels
 baseRect = [0 0 50 50];
 
-% Set the color of the rect to red
+% Set the default color of the rect cue to red
 rectColor = [1 0 0];
 
-time = 0;
-
-% Sync us and get a time stamp
-vbl = Screen('Flip', windowPtr);
+% Numer of frames to wait when specifying good timing. Note: the use of
+% wait frames is to show a generalisable coding. For example, by using
+% waitframes = 2 one would flip on every other frame. See the PTB
+% documentation for details. In what follows we flip every frame.
 waitframes = 1;
-
 
 % Retreive the maximum priority number
 topPriorityLevel = MaxPriority(windowPtr);
-
+% set Priority once at the start of a script after setting up onscreen window.
 Priority(topPriorityLevel);
 
 % Measure the vertical refresh rate of the monitor
 ifi = Screen('GetFlipInterval', windowPtr);
-sca
 
+% Setting default mouse position
 SetMouse(Pos(1,1),Pos(2,1), screenNumber);
 
 n = 1;
@@ -85,13 +85,15 @@ blue = [0 0 1];
 % Loop the animation until a key is pressed
 HideCursor
 
-NumInside=[] % To keep a record of the percentage of time inside the square
+% get a timestamp at the end of Flip’s execution
+vbl = Screen('Flip', windowPtr);
 
-while n<length(Pos)%~KbCheck
-    
-    [xM, yM, buttons] = GetMouse(windowPtr);
-    
-    centeredRect = CenterRectOnPointd(baseRect, Pos(1,n), Pos(2,n));
+NumInside=[]; % To keep a record of the percentage of time inside the square
+xy=[]; % to keep track of mouse trace
+
+while n< length(Pos) %~KbCheck
+    % Draw the route
+    Screen('DrawDots', windowPtr, Pos, Thickness, Color, [0 0], 2);
     
     % Display for the photosensor
     PhotosensorSize=30;
@@ -103,14 +105,18 @@ while n<length(Pos)%~KbCheck
         % Draw a white dot on the right-bottom corner of the screen for the photosensor
         RightBottom = [screenXpixels-PhotosensorSize screenYpixels-PhotosensorSize]; % position of the right-bottom to draw the dot
         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
-    end  
+    end
     
     
+    
+    % Locate the center of the moving
+    centeredRect = CenterRectOnPointd(baseRect, Pos(1,n), Pos(2,n));
     % Draw the rect to the screen
     Screen('FillRect', windowPtr, rectColor, centeredRect);
-    Screen('DrawDots', windowPtr, Pos,Size, Color, [0 0], 2);
+
     
     % See if the mouse cursor is inside the square
+    [xM, yM, buttons] = GetMouse(windowPtr);
     inside = IsInRect(xM, yM, centeredRect);
     
     % Set the color of the square to be red if the mouse is inside it or
@@ -121,26 +127,24 @@ while n<length(Pos)%~KbCheck
         rectColor = blue;
     end
     
-   
+    % Display the cursor as a dot
     Screen('DrawDots', windowPtr, [xM yM], 16, [0.5 0.5 0.5], [], 2);
     
     
     % Flip to the screen
-    vbl  = Screen('Flip', windowPtr, vbl + waitframes * ifi);
+    vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
     
+    % Keep track of the nummers of flames when dot is inside the rect
     NumInside(n)=inside;    
     
-    
-      
-    
-    y(n,1) = xM;
+    % Keep track of the mouse trace
+    xy(n,1) = xM;
     xy(n,2) = yM;
     n = n+1;
     
 end
 
-% the percentage of time in the square 
-PercentIn=sum(NumInside)/length(Pos); 
+Priority(0);
 
 
 Screen('Flip', windowPtr);
@@ -154,3 +158,11 @@ KbStrokeWait;
 % workspace so you can have a look at them if you want.
 % For help see: help sca
 sca;
+
+%%
+
+% the percentage of time in the square 
+PercentIn=sum(NumInside)/length(Pos); 
+
+% plot the mouse trace
+plot(xy(:,1),xy(:,2));
