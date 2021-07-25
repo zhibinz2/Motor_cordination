@@ -63,17 +63,15 @@ rectColor = [1 0 0];
 time = 0;
 
 % Sync us and get a time stamp
-vbl = Screen('Flip', windowPtr);
+vbl = Screen('Flip', screenPtr);
+sca
 waitframes = 1;
 
 
-% Retreive the maximum priority number
-topPriorityLevel = MaxPriority(windowPtr);
-
+% Maximum priority level
+topPriorityLevel = MaxPriority(screenNumber);
 Priority(topPriorityLevel);
-
-% Measure the vertical refresh rate of the monitor
-ifi = Screen('GetFlipInterval', windowPtr);
+ifi = Screen('GetFlipInterval', screenNumber);
 sca
 
 SetMouse(Pos(1,1),Pos(2,1), screenNumber);
@@ -81,7 +79,6 @@ SetMouse(Pos(1,1),Pos(2,1), screenNumber);
 n = 1;
 red = [1 0 0];
 blue = [0 0 1];
-
 % Loop the animation until a key is pressed
 HideCursor
 
