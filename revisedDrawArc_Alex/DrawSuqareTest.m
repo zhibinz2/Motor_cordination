@@ -1,4 +1,3 @@
-
 sca;
 close all;
 clearvars;
@@ -45,15 +44,23 @@ Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 % we set the centre to be the centre of the screen
 dotCenter = [xCenter yCenter];
 
-steplength=200;
+steplength=400; 
 [x,y]  = DrawSquare(steplength); % Create the route
 Thickness   = 15 .* ones(1,length(x)); % thickness of the route
 Color  = ones(3,length(x));
-x      = flip(x + steplength); % Add an offset for center the arc
-y      = abs(y-max(y)); % Reverse the arc
-y      = y + (yCenter - max(y) + (max(y) - min(y))/2); % Offset the middle of the arc to be center on the middle of the screen
-Pos    = [x; y];
+% Add an offset for center the arc
+x      = flip(x + steplength); 
+% Reverse the route
+% y      = abs(y-max(y)); 
+% Offset the middle of the arc to be center on the middle of the screen
+y      = y + (yCenter - max(y) + (max(y) - min(y))/2); 
 
+Pos    = [x; y];
+% postion of connecting points
+Pos0   = Pos(:,1);
+Pos1   = Pos(:,steplength);
+Pos2   = Pos(:,steplength*2-1);
+Pos3   = Pos(:,steplength*3-2);
 
 % Make a base Rect of 50 by 50 pixels
 baseRect = [0 0 50 50];
@@ -95,15 +102,25 @@ while n< length(Pos) %~KbCheck
     % Draw the route
     Screen('DrawDots', windowPtr, Pos, Thickness, Color, [0 0], 2);
     
+    % Draw the connecting points
+    ConnectDotSize=30;
+    Screen('DrawDots', windowPtr, Pos0, ConnectDotSize, [1,1,1], [0 0], 2);
+    Screen('DrawDots', windowPtr, Pos1, ConnectDotSize, [1,1,1], [0 0], 2);
+    Screen('DrawDots', windowPtr, Pos2, ConnectDotSize, [1,1,1], [0 0], 2);
+    Screen('DrawDots', windowPtr, Pos3, ConnectDotSize, [1,1,1], [0 0], 2);
+    
     % Display for the photosensor
     PhotosensorSize=30;
+    % position of the right-bottom to draw the dot
+    RightBottom = [screenXpixels-PhotosensorSize screenYpixels-PhotosensorSize]; 
     if n == 1
         % Draw a white dot on the right-bottom corner of the screen for the photosensor
-        RightBottom = [screenXpixels-PhotosensorSize screenYpixels-PhotosensorSize]; % position of the right-bottom to draw the dot
+        Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
+    elseif n == length(steplength)-1
+        Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
+    elseif n == 2*length(steplength)-1
         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
     elseif n == length(Pos)-1
-        % Draw a white dot on the right-bottom corner of the screen for the photosensor
-        RightBottom = [screenXpixels-PhotosensorSize screenYpixels-PhotosensorSize]; % position of the right-bottom to draw the dot
         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
     end
     
@@ -166,3 +183,4 @@ PercentIn=sum(NumInside)/length(Pos);
 
 % plot the mouse trace
 plot(xy(:,1),xy(:,2));
+set(gca, 'YDir', 'reverse');
