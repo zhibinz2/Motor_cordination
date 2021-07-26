@@ -18,7 +18,7 @@ screenNumber = max(screens);
 
 % Define black and white (white will be 1 and black 0). This is because
 % luminace values are (in general) defined between 0 and 1.
-% For help see`: help WhiteIndex and help BlackIndex
+% For help see`: help WhiteIndex and help BlackIndex 
 white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
 
