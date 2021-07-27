@@ -113,16 +113,16 @@ while n< length(Pos) %~KbCheck
     PhotosensorSize=30;
     % position of the right-bottom to draw the dot
     RightBottom = [screenXpixels-PhotosensorSize screenYpixels-PhotosensorSize]; 
-    if n == 1
-        % Draw a white dot on the right-bottom corner of the screen for the photosensor
+%     if n == 1
+%         % Draw a white dot on the right-bottom corner of the screen for the photosensor
+%         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
+%     elseif n == length(steplength)-1
+%         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
+%     elseif n == 2*length(steplength)-1
+%         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
+%     elseif n == length(Pos)-1
         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
-    elseif n == length(steplength)-1
-        Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
-    elseif n == 2*length(steplength)-1
-        Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
-    elseif n == length(Pos)-1
-        Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
-    end
+%     end 
     
     
     
