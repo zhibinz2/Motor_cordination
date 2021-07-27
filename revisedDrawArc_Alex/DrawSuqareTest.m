@@ -54,7 +54,7 @@ x      = flip(x + steplength);
 % y      = abs(y-max(y)); 
 % Offset the middle of the arc to be center on the middle of the screen
 y      = y + (yCenter - max(y) + (max(y) - min(y))/2); 
-
+% the route
 Pos    = [x; y];
 % postion of connecting points
 Pos0   = Pos(:,1);
@@ -66,7 +66,7 @@ Pos3   = Pos(:,steplength*3-2);
 baseRect = [0 0 50 50];
 
 % Set the default color of the rect cue to red
-rectColor = [1 0 0];
+% rectColor = [1 0 0];
 
 % Numer of frames to wait when specifying good timing. Note: the use of
 % wait frames is to show a generalisable coding. For example, by using
@@ -86,8 +86,20 @@ ifi = Screen('GetFlipInterval', windowPtr);
 SetMouse(Pos(1,1),Pos(2,1), screenNumber);
 
 n = 1;
-red = [1 0 0];
-blue = [0 0 1];
+red   = [1 0 0];
+blue  = [0 0 1];
+green = [0 1 0];
+white = [1 1 1];
+grey  = [0.5 0.5 0.5];
+
+% Set default connecting dot size
+ConnectDotSize=60; 
+% Set default connecting dot color to blue
+ConnectDotColor0 = blue;
+ConnectDotColor1 = blue;
+ConnectDotColor2 = blue;
+ConnectDotColor3 = blue;
+
 
 % Loop the animation until a key is pressed
 HideCursor
@@ -95,19 +107,17 @@ HideCursor
 % get a timestamp at the end of Flip’s execution
 vbl = Screen('Flip', windowPtr);
 
-NumInside=[]; % To keep a record of the percentage of time inside the square
+% NumInside=[]; % To keep a record of the percentage of time inside the square
 xy=[]; % to keep track of mouse trace
 
 while n< length(Pos) %~KbCheck
     % Draw the route
     Screen('DrawDots', windowPtr, Pos, Thickness, Color, [0 0], 2);
-    
     % Draw the connecting points
-    ConnectDotSize=30;
-    Screen('DrawDots', windowPtr, Pos0, ConnectDotSize, [1,1,1], [0 0], 2);
-    Screen('DrawDots', windowPtr, Pos1, ConnectDotSize, [1,1,1], [0 0], 2);
-    Screen('DrawDots', windowPtr, Pos2, ConnectDotSize, [1,1,1], [0 0], 2);
-    Screen('DrawDots', windowPtr, Pos3, ConnectDotSize, [1,1,1], [0 0], 2);
+    Screen('DrawDots', windowPtr, Pos0, ConnectDotSize, ConnectDotColor0, [0 0], 2);
+    Screen('DrawDots', windowPtr, Pos1, ConnectDotSize, ConnectDotColor1, [0 0], 2);
+    Screen('DrawDots', windowPtr, Pos2, ConnectDotSize, ConnectDotColor2, [0 0], 2);
+    Screen('DrawDots', windowPtr, Pos3, ConnectDotSize, ConnectDotColor3, [0 0], 2);
     
     % Display for the photosensor
     PhotosensorSize=30;
@@ -126,33 +136,48 @@ while n< length(Pos) %~KbCheck
     
     
     
-    % Locate the center of the moving
-    centeredRect = CenterRectOnPointd(baseRect, Pos(1,n), Pos(2,n));
-    % Draw the rect to the screen
-    Screen('FillRect', windowPtr, rectColor, centeredRect);
+%     % Locate the moving rectangle
+%     centeredRect = CenterRectOnPointd(baseRect, Pos(1,n), Pos(2,n));
+%     % Draw the rect to the screen
+%     Screen('FillRect', windowPtr, rectColor, centeredRect);
 
-    
-    % See if the mouse cursor is inside the square
+    % Get mouse location
     [xM, yM, buttons] = GetMouse(windowPtr);
-    inside = IsInRect(xM, yM, centeredRect);
-    
-    % Set the color of the square to be red if the mouse is inside it or
-    % blue if the mouse is outside it
-    if inside == 1
-        rectColor = red;
-    elseif inside == 0
-        rectColor = blue;
+
+    % See if the mouse cursor is inside the connecting dots
+    inside0 = IsInDot(xM, yM, Pos0, ConnectDotSize);
+    if inside0 == 1
+        ConnectDotColor0 = red;
+    elseif inside0 == 0
+        ConnectDotColor0 = blue;
+    end
+    inside1 = IsInDot(xM, yM, Pos1, ConnectDotSize);
+    if inside1 == 1
+        ConnectDotColor1 = red;
+    elseif inside1 == 0
+        ConnectDotColor1 = blue;
+    end
+    inside2 = IsInDot(xM, yM, Pos2, ConnectDotSize);
+    if inside2 == 1
+        ConnectDotColor2 = red;
+    elseif inside2 == 0
+        ConnectDotColor2 = blue;
+    end
+    inside3 = IsInDot(xM, yM, Pos3, ConnectDotSize);
+    if inside3 == 1
+        ConnectDotColor3 = red;
+    elseif inside3 == 0
+        ConnectDotColor3 = blue;
     end
     
     % Display the cursor as a dot
-    Screen('DrawDots', windowPtr, [xM yM], 16, [0.5 0.5 0.5], [], 2);
-    
+    Screen('DrawDots', windowPtr, [xM yM], 16, grey, [], 2);
     
     % Flip to the screen
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
     
     % Keep track of the nummers of flames when dot is inside the rect
-    NumInside(n)=inside;    
+%     NumInside(n)=inside;    
     
     % Keep track of the mouse trace
     xy(n,1) = xM;
@@ -179,8 +204,10 @@ sca;
 %%
 
 % the percentage of time in the square 
-PercentIn=sum(NumInside)/length(Pos); 
+% PercentIn=sum(NumInside)/length(Pos); 
 
 % plot the mouse trace
-plot(xy(:,1),xy(:,2));
+plot(xy(:,1),xy(:,2),'-b');
 set(gca, 'YDir', 'reverse');
+hold on;
+plot(Pos(1,:),Pos(2,:),'-r');
