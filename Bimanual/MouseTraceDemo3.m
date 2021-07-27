@@ -1,4 +1,4 @@
-% MouseTraceDemo3
+ % MouseTraceDemo3
 %
 % Allow multiple people to draw simultaneously by use of multiple
 % mice or other pointing devices, utilizing Multi-Pointer-X on Linux.

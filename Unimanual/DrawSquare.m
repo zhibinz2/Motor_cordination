@@ -3,6 +3,8 @@ x = [ones(1,steplength) [2:steplength-1] repmat(steplength,1,steplength)];
 y = [[steplength:-1:1] ones(1,steplength-1) [(1+1):steplength]];
 end
 
-
-% plot(x,y);
+%% test
+% steplength=200;
+% [x,y] = DrawSquare(steplength)
+% plot(x,y,'ro');
 % set(gca, 'YDir', 'reverse');
