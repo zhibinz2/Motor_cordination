@@ -110,7 +110,7 @@ vbl = Screen('Flip', windowPtr);
 % NumInside=[]; % To keep a record of the percentage of time inside the square
 xy=[]; % to keep track of mouse trace
 
-% Control time: how many frames
+% Control time: how many frames 
 while n <  300 %~KbCheck
     % Draw the route
     Screen('DrawDots', windowPtr, Pos, Thickness, Color, [0 0], 2);
@@ -212,3 +212,4 @@ plot(xy(:,1),xy(:,2),'-b');
 set(gca, 'YDir', 'reverse');
 hold on;
 plot(Pos(1,:),Pos(2,:),'-r'); 
+xlim([0 screenXpixels]);ylim([0 screenYpixels]);
