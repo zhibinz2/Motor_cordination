@@ -123,7 +123,7 @@ while n <  300 %~KbCheck
     % Display for the photosensor
     PhotosensorSize=30;
     % position of the right-bottom to draw the dot
-    RightBottom = [screenXpixels-PhotosensorSize screenYpixels-PhotosensorSize]; 
+%     RightBottom = [screenXpixels-PhotosensorSize screenYpixels-PhotosensorSize]; 
 %     if n == 1
 %         % Draw a white dot on the right-bottom corner of the screen for the photosensor
 %         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
@@ -132,10 +132,14 @@ while n <  300 %~KbCheck
 %     elseif n == 2*length(steplength)-1
 %         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
 %     elseif n == length(Pos)-1
-        Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
+%         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
 %     end 
-    
-    
+%   
+    % Position the right-bottom to draw a square
+    if (~isempty(find([1:5:300]==n))) % every five frames
+    RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels]
+    Screen('FillRect', windowPtr, white, RightBottomSquare);
+    end
     
 %     % Locate the moving rectangle
 %     centeredRect = CenterRectOnPointd(baseRect, Pos(1,n), Pos(2,n));
