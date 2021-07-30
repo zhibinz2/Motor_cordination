@@ -100,6 +100,13 @@ ConnectDotColor1 = blue;
 ConnectDotColor2 = blue;
 ConnectDotColor3 = blue;
 
+% Set size of the squares for photosenors 
+PhotosensorSize=30;
+% Positions of the four corners
+RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels]
+RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2]
+LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels]
+LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2]
 
 % Loop the animation until a key is pressed
 HideCursor
@@ -111,7 +118,7 @@ vbl = Screen('Flip', windowPtr);
 xy=[]; % to keep track of mouse trace
 
 % Control time: how many frames 
-while n <  300 %~KbCheck
+while n <  1800 %~KbCheck
     % Draw the route
     Screen('DrawDots', windowPtr, Pos, Thickness, Color, [0 0], 2);
     % Draw the connecting points
@@ -120,8 +127,6 @@ while n <  300 %~KbCheck
     Screen('DrawDots', windowPtr, Pos2, ConnectDotSize, ConnectDotColor2, [0 0], 2);
     Screen('DrawDots', windowPtr, Pos3, ConnectDotSize, ConnectDotColor3, [0 0], 2);
     
-    % Display for the photosensor
-    PhotosensorSize=30;
     % position of the right-bottom to draw the dot
 %     RightBottom = [screenXpixels-PhotosensorSize screenYpixels-PhotosensorSize]; 
 %     if n == 1
@@ -136,9 +141,11 @@ while n <  300 %~KbCheck
 %     end 
 %   
     % Position the right-bottom to draw a square
-    if (~isempty(find([1:5:300]==n))) % every five frames
-    RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels]
+    if (~isempty(find([1:5:1800]==n))) % every five frames
     Screen('FillRect', windowPtr, white, RightBottomSquare);
+    Screen('FillRect', windowPtr, white, RightUpperSquare);
+    Screen('FillRect', windowPtr, white, LeftBottomSquare);
+    Screen('FillRect', windowPtr, white, LeftUpperSquare);
     end
     
 %     % Locate the moving rectangle
