@@ -1,10 +1,11 @@
 sca;
 close all;
+clear all;
 clearvars;
 
 % Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
-Screen('Preference', 'SkipSyncTests', 1   );
+Screen('Preference', 'SkipSyncTests', 1);
   
 % Get the screen numbers. This gives us a number for each of the screens
 % attached to our computer. For help see: Screen Screens?
@@ -104,10 +105,10 @@ ConnectDotColor3 = blue;
 % Set size of the squares for photosenors 
 PhotosensorSize=30;
 % Positions of the four corners
-RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels]
-RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2]
-LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels]
-LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2]
+RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels];
+RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2];
+LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels];
+LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
 
 % Loop the animation until a key is pressed
 HideCursor
@@ -136,7 +137,7 @@ end
 
 
 % Control time: how many frames 
-NumFrames=300;
+NumFrames=120;
 while n <  NumFrames %~KbCheck
     % Draw the route
     Screen('DrawDots', windowPtr, Pos, Thickness, Color, [0 0], 2);
