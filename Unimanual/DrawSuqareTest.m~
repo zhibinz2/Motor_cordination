@@ -4,8 +4,8 @@ clearvars;
 
 % Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
-Screen('Preference', 'SkipSyncTests', 1   );
-  
+Screen('Preference', 'SkipSyncTests', 1);
+
 % Get the screen numbers. This gives us a number for each of the screens
 % attached to our computer. For help see: Screen Screens?
 screens = Screen('Screens');    
@@ -136,8 +136,7 @@ end
 
 
 % Control time: how many frames 
-NumFrames=300;
-while n <  NumFrames %~KbCheck
+while n <  1800 %~KbCheck
     % Draw the route
     Screen('DrawDots', windowPtr, Pos, Thickness, Color, [0 0], 2);
     % Draw the connecting points
@@ -160,7 +159,7 @@ while n <  NumFrames %~KbCheck
 %     end 
 %   
     % Position the right-bottom to draw a square
-    if (~isempty(find([1:5:NumFrames]==n))) % every five frames
+    if (~isempty(find([1:5:1800]==n))) % every five frames
     Screen('FillRect', windowPtr, white, RightBottomSquare);
     Screen('FillRect', windowPtr, white, RightUpperSquare);
     Screen('FillRect', windowPtr, white, LeftBottomSquare);
