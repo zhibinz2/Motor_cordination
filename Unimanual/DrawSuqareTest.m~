@@ -1,19 +1,22 @@
 sca;
 close all;
+clear all;
 clearvars;
 
 % Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
 Screen('Preference', 'SkipSyncTests', 1);
 
+  
 % Get the screen numbers. This gives us a number for each of the screens
 % attached to our computer. For help see: Screen Screens?
 screens = Screen('Screens');    
+% sca;
 
 % Draw we select the maximum of these numbers. So in a situation where we
 % have two screens attached to our monitor we will draw to the external
 % screen. When only one screen is attached to the monitor we will draw to
-% this. For help see: help max
+% this. For help see: help max       
 screenNumber = max(screens);
 
 % Define black and white (white will be 1 and black 0). This is because
@@ -38,7 +41,7 @@ black = BlackIndex(screenNumber);
 % For help see: Screen BlendFunction?
 % Also see: Chapter 6 of the OpenGL programming guide
 Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-% sca;
+% sca; 
 
 % We can define a center for the dot coordinates to be relaitive to. Here
 % we set the centre to be the centre of the screen
@@ -75,7 +78,7 @@ baseRect = [0 0 50 50];
 waitframes = 1;
 
 % Retreive the maximum priority number
-topPriorityLevel = MaxPriority(windowPtr);
+topPriorityLevel = MaxPriority(windowPtr); 
 % set Priority once at the start of a script after setting up onscreen window.
 Priority(topPriorityLevel);
 
@@ -85,6 +88,7 @@ ifi = Screen('GetFlipInterval', windowPtr);
 % Setting default mouse position
 SetMouse(Pos(1,1),Pos(2,1), screenNumber);
 
+% Initialize some values
 n = 1;
 red   = [1 0 0];
 blue  = [0 0 1];
@@ -104,127 +108,80 @@ ConnectDotColor3 = blue;
 % Set size of the squares for photosenors 
 PhotosensorSize=30;
 % Positions of the four corners
-RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels]
-RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2]
-LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels]
-LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2]
+RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels];
+RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2];
+LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels];
+LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
 
 % Loop the animation until a key is pressed
 HideCursor
 
-% get a timestamp at the end of Flip’s execution
-vbl = Screen('Flip', windowPtr);
 
 % NumInside=[]; % To keep a record of the percentage of time inside the square
 xy=[]; % to keep track of mouse trace
-
+data=[];
 
 %*******************************************************************************************
 %Loads a window and waits for input to start recording - just for getting set up and ready
-instructions = 'Press the space bar to begin recording';
+instructions = 'Press the space bar to begin';
 Screen('DrawText', windowPtr, instructions, screenXpixels/3, screenYpixels/2, white); 
 Screen(windowPtr, 'Flip');
-%*******************************************************************************************
+
 
 KbName('UnifyKeyNames');
 spaceKeyID = KbName('space'); 
-%Waits for space bar      
+%Waits for space bar       
 [keyIsDown, secs, keyCode] = KbCheck;
 while keyCode(spaceKeyID)~=1
     [keyIsDown, secs, keyCode] = KbCheck;
 end
+%*******************************************************************************************
+% Length of time and number of frames we will use for each drawing trial
+numSecs = 3;
+numFrames = round(numSecs / ifi);
 
+% how many trials
 
-% Control time: how many frames 
-while n <  1800 %~KbCheck
-    % Draw the route
-    Screen('DrawDots', windowPtr, Pos, Thickness, Color, [0 0], 2);
-    % Draw the connecting points
-    Screen('DrawDots', windowPtr, Pos0, ConnectDotSize, ConnectDotColor0, [0 0], 2);
-    Screen('DrawDots', windowPtr, Pos1, ConnectDotSize, ConnectDotColor1, [0 0], 2);
-    Screen('DrawDots', windowPtr, Pos2, ConnectDotSize, ConnectDotColor2, [0 0], 2);
-    Screen('DrawDots', windowPtr, Pos3, ConnectDotSize, ConnectDotColor3, [0 0], 2);
+for t=1:3
     
-    % position of the right-bottom to draw the dot
-%     RightBottom = [screenXpixels-PhotosensorSize screenYpixels-PhotosensorSize]; 
-%     if n == 1
-%         % Draw a white dot on the right-bottom corner of the screen for the photosensor
-%         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
-%     elseif n == length(steplength)-1
-%         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
-%     elseif n == 2*length(steplength)-1
-%         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
-%     elseif n == length(Pos)-1
-%         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
-%     end 
-%   
-    % Position the right-bottom to draw a square
-    if (~isempty(find([1:5:1800]==n))) % every five frames
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('FillRect', windowPtr, white, RightUpperSquare);
-    Screen('FillRect', windowPtr, white, LeftBottomSquare);
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
+    % Breakout
+    [keyIsDown, keysecs, keyCode] = KbCheck;
+    if keyCode(KbName('escape'))
+    Screen('CloseAll');
+    break;
     end
+      
+     
+    % get a timestamp at the end of Flip’s execution
+    vbl = Screen('Flip', windowPtr);
     
-%     % Locate the moving rectangle
-%     centeredRect = CenterRectOnPointd(baseRect, Pos(1,n), Pos(2,n));
-%     % Draw the rect to the screen
-%     Screen('FillRect', windowPtr, rectColor, centeredRect);
-
-    % Get mouse location
-    [xM, yM, buttons] = GetMouse(windowPtr);
-
-    % See if the mouse cursor is inside the connecting dots
-    inside0 = IsInDot(xM, yM, Pos0, ConnectDotSize);
-    if inside0 == 1
-        ConnectDotColor0 = red;
-    elseif inside0 == 0
-        ConnectDotColor0 = blue;
-    end
-    inside1 = IsInDot(xM, yM, Pos1, ConnectDotSize);
-    if inside1 == 1
-        ConnectDotColor1 = red;
-    elseif inside1 == 0
-        ConnectDotColor1 = blue;
-    end
-    inside2 = IsInDot(xM, yM, Pos2, ConnectDotSize);
-    if inside2 == 1
-        ConnectDotColor2 = red;
-    elseif inside2 == 0
-        ConnectDotColor2 = blue;
-    end
-    inside3 = IsInDot(xM, yM, Pos3, ConnectDotSize);
-    if inside3 == 1
-        ConnectDotColor3 = red;
-    elseif inside3 == 0
-        ConnectDotColor3 = blue;
-    end
-    
-    % Display the cursor as a dot
-    Screen('DrawDots', windowPtr, [xM yM], 16, grey, [], 2);
-    
-    % Flip to the screen
+    % Show trial number
+    for frames=1:30
+    Screen('DrawText', windowPtr, ['trial ' num2str(t)], screenXpixels/3, screenYpixels/2, white); 
+    % Flip to the screen   
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+    end      
+%     %Waits for space bar      
+%     [keyIsDown, secs, keyCode] = KbCheck;
+%     while keyCode(spaceKeyID)~=1 
+%         [keyIsDown, secs, keyCode] = KbCheck;
+%     end 
     
-    % Keep track of the nummers of flames when dot is inside the rect
-%     NumInside(n)=inside;    
-    
-    % Keep track of the mouse trace
-    xy(n,1) = xM;
-    xy(n,2) = yM;
-    n = n+1;
-    
+    % Run one trial 
+    run OneTrial.m
+      
+    % Store xy
+    data(t).xy=xy; 
+     
 end
 
-Priority(0);
-
-
-Screen('Flip', windowPtr);
-
+ 
+Priority(0);   
+   
 % Now we have drawn to the screen we wait for a keyboard button press (any
 % key) to terminate the demo. For help see: help KbStrokeWait
-KbStrokeWait;
-
+% KbStrokeWait;                                 
+ 
 % Clear the screen. "sca" is short hand for "Screen CloseAll". This clears
 % all features related to PTB. Note: we leave the variables in the
 % workspace so you can have a look at them if you want.
@@ -237,8 +194,8 @@ sca;
 % PercentIn=sum(NumInside)/length(Pos); 
 
 % plot the mouse trace
-plot(xy(:,1),xy(:,2),'-b');
-set(gca, 'YDir', 'reverse');
-hold on;
-plot(Pos(1,:),Pos(2,:),'-r'); 
-xlim([0 screenXpixels]);ylim([0 screenYpixels]);
+% plot(xy(:,1),xy(:,2),'-b');
+% set(gca, 'YDir', 'reverse');
+% hold on;
+% plot(Pos(1,:),Pos(2,:),'-r'); 
+% xlim([0 screenXpixels]);ylim([0 screenYpixels]);
