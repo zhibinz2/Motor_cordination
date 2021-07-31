@@ -85,8 +85,6 @@ Priority(topPriorityLevel);
 % Measure the vertical refresh rate of the monitor
 ifi = Screen('GetFlipInterval', windowPtr);
 
-% Setting default mouse position
-SetMouse(Pos(1,1),Pos(2,1), screenNumber);
 
 % Initialize some values
 n = 1;
@@ -166,6 +164,9 @@ for t=1:3
 %     while keyCode(spaceKeyID)~=1 
 %         [keyIsDown, secs, keyCode] = KbCheck;
 %     end 
+
+    % Setting default mouse position
+    SetMouse(Pos(1,1),Pos(2,1), screenNumber);
     
     % Run one trial 
     run OneTrial.m
@@ -188,14 +189,3 @@ Priority(0);
 % For help see: help sca
 sca;
 
-%%
-
-% the percentage of time in the square 
-% PercentIn=sum(NumInside)/length(Pos); 
-
-% plot the mouse trace
-% plot(xy(:,1),xy(:,2),'-b');
-% set(gca, 'YDir', 'reverse');
-% hold on;
-% plot(Pos(1,:),Pos(2,:),'-r'); 
-% xlim([0 screenXpixels]);ylim([0 screenYpixels]);

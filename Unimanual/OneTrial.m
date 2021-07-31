@@ -87,3 +87,4 @@ while n <  numFrames %~KbCheck
 %     Screen('Flip', windowPtr); 
 end
 
+n=1;
