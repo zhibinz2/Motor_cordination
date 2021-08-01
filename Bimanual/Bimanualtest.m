@@ -40,11 +40,11 @@ steplength=400;
 
 [xL,yL]  = DrawSquare(steplength); % Create  the route
 [xR,yR]  = DrawSquare(steplength); % Create  the route
-[PosL,PosL0,PosL1,PosL2,PosL3] = DrawPosL(xL,yL);
-[PosR,PosR0,PosR1,PosR2,PosR3] = DrawPosR(xR,yR,screenXpixels);
+[PosL,PosL0,PosL1,PosL2,PosL3,ThicknessL,colorL] = DrawPosL(xL,yL);
+[PosR,PosR0,PosR1,PosR2,PosR3,ThicknessR,colorR] = DrawPosR(xR,yR,screenXpixels);
 
 % Make a base Rect of 50 by 50 pixels
-baseRect = [0 0 50 50];
+% baseRect = [0 0 50 50];
 
 % Set the default color of the rect cue to red
 % rectColor = [1 0 0];
@@ -63,7 +63,6 @@ Priority(topPriorityLevel);
 % Measure the vertical refresh rate of the monitor
 ifi = Screen('GetFlipInterval', windowPtr);
 
-
 % Initialize some values
 n = 1;
 red   = [1 0 0];
@@ -76,10 +75,13 @@ grey  = [0.5 0.5 0.5];
 % Set default connecting dot size
 ConnectDotSize=60; 
 % Set default connecting dot color to blue
-ConnectDotColor0 = blue;
-ConnectDotColor1 = blue;
-ConnectDotColor2 = blue;
-ConnectDotColor3 = blue;
+% ConnectDotColorR0 = blue;
+% ConnectDotColorR1 = blue;
+% ConnectDotColorR2 = blue;
+% ConnectDotColorR3 = blue;
+[ConnectDotColorL0, ConnectDotColorL1, ConnectDotColorL2, ConnectDotColorL3] = deal(white);
+[ConnectDotColorR0, ConnectDotColorR1, ConnectDotColorR2, ConnectDotColorR3] = deal(white);
+
 
 % Set size of the squares for photosenors 
 PhotosensorSize=30;
@@ -92,10 +94,9 @@ LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
 % Loop the animation until a key is pressed
 HideCursor
 
-
 % NumInside=[]; % To keep a record of the percentage of time inside the square
-xLyL=[]; % to keep track of mouse trace
-data=[];
+xLyL=[]; xRyR=[]; % to keep track of mouse trace
+dataR=[];dataL=[];
 
 %*******************************************************************************************
 %Loads a window and waits for input to start recording - just for getting set up and ready
@@ -112,6 +113,16 @@ while keyCode(spaceKeyID)~=1
     [keyIsDown, secs, keyCode] = KbCheck;
 end
 %*******************************************************************************************
+% get a timestamp at the start of trials
+vbl = Screen('Flip', windowPtr);
+% Flash once to mart the start of the trial planing
+Screen('FillRect', windowPtr, white, RightBottomSquare);
+Screen('FillRect', windowPtr, white, RightUpperSquare);
+Screen('FillRect', windowPtr, white, LeftBottomSquare);
+Screen('FillRect', windowPtr, white, LeftUpperSquare);
+% Flash to mark the start of the trial planning   
+vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);   
+%*******************************************************************************************
 % Length of time and number of frames we will use for each drawing trial
 numSecs = 3;
 numFrames = round(numSecs / ifi);
@@ -126,17 +137,13 @@ for t=1:3
     Screen('CloseAll');
     break;
     end
-      
-     
-    % get a timestamp at the end of Flip’s execution
-    vbl = Screen('Flip', windowPtr);
     
-    % Show trial number
-    for frames=1:30
-    Screen('DrawText', windowPtr, ['trial ' num2str(t)], screenXpixels/3, screenYpixels/2, white); 
-    % Flip to the screen   
-    vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-    end      
+%     % Show trial number
+%     for frames=1:30 % planing phase
+%     Screen('DrawText', windowPtr, ['trial ' num2str(t)], screenXpixels/3, screenYpixels/2, white); 
+%     % Flip to the screen   
+%     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+%     end      
 %     %Waits for space bar      
 %     [keyIsDown, secs, keyCode] = KbCheck;
 %     while keyCode(spaceKeyID)~=1 
@@ -148,9 +155,12 @@ for t=1:3
     
     % Run one trial 
     run OneTrial.m
-      
+    % reset n
+    n=1;
+    
     % Store xLyL
-    data(t).xLyL=xLyL; 
+    dataL(t).xLyL=xLyL; 
+    dataR(t).xRYR=xRyR;
      
 end
 

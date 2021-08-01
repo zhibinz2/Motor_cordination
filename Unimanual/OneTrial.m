@@ -15,7 +15,7 @@ while n <  numFrames %~KbCheck
     Screen('DrawDots', windowPtr, Pos1, ConnectDotSize, ConnectDotColor1, [0 0], 2);
     Screen('DrawDots', windowPtr, Pos2, ConnectDotSize, ConnectDotColor2, [0 0], 2);
     Screen('DrawDots', windowPtr, Pos3, ConnectDotSize, ConnectDotColor3, [0 0], 2);
-    
+   
     % position of the right-bottom to draw the dot
 %     RightBottom = [screenXpixels-PhotosensorSize screenYpixels-PhotosensorSize]; 
 %     if n == 1
@@ -29,12 +29,17 @@ while n <  numFrames %~KbCheck
 %         Screen('DrawDots', windowPtr, RightBottom, PhotosensorSize, ones(3,1), [0 0], 2);
 %     end 
 %   
-    % Position the right-bottom to draw a square 
+    % Flash the four corners
     if (~isempty(find([1:5:numFrames]==n))) % every five frames
     Screen('FillRect', windowPtr, white, RightBottomSquare);
     Screen('FillRect', windowPtr, white, RightUpperSquare);
     Screen('FillRect', windowPtr, white, LeftBottomSquare);
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
+    end
+    
+    % Planning phase
+    if n<60
+        Screen('DrawText', windowPtr, ['You have 3 sec to draw, start now!'], screenXpixels/3, screenYpixels/2, white); 
     end
     
 %     % Locate the moving rectangle
@@ -50,25 +55,25 @@ while n <  numFrames %~KbCheck
     if inside0 == 1
         ConnectDotColor0 = red;
     elseif inside0 == 0
-        ConnectDotColor0 = blue;
+        ConnectDotColor0 = white;
     end
     inside1 = IsInDot(xM, yM, Pos1, ConnectDotSize);
     if inside1 == 1
         ConnectDotColor1 = red;
     elseif inside1 == 0
-        ConnectDotColor1 = blue;
+        ConnectDotColor1 = white;
     end
     inside2 = IsInDot(xM, yM, Pos2, ConnectDotSize);
     if inside2 == 1
         ConnectDotColor2 = red;
     elseif inside2 == 0
-        ConnectDotColor2 = blue;
+        ConnectDotColor2 = white;
     end
     inside3 = IsInDot(xM, yM, Pos3, ConnectDotSize);
     if inside3 == 1
         ConnectDotColor3 = red;
     elseif inside3 == 0
-        ConnectDotColor3 = blue;
+        ConnectDotColor3 = white;
     end
     
     % Display the cursor as a dot

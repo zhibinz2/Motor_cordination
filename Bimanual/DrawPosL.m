@@ -1,4 +1,4 @@
-function [Pos,Pos0,Pos1,Pos2,Pos3] = DrawPosL(x,y)
+function [Pos,Pos0,Pos1,Pos2,Pos3,Thickness,Color] = DrawPosL(x,y)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 

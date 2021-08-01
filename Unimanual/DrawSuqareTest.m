@@ -1,4 +1,4 @@
-sca;
+ sca;
 close all;
 clear all;
 clearvars;
@@ -98,10 +98,10 @@ grey  = [0.5 0.5 0.5];
 % Set default connecting dot size
 ConnectDotSize=60; 
 % Set default connecting dot color to blue
-ConnectDotColor0 = blue;
-ConnectDotColor1 = blue;
-ConnectDotColor2 = blue;
-ConnectDotColor3 = blue;
+ConnectDotColor0 = white;
+ConnectDotColor1 = white;
+ConnectDotColor2 = white;
+ConnectDotColor3 = white; 
 
 % Set size of the squares for photosenors 
 PhotosensorSize=30;
@@ -133,7 +133,20 @@ while keyCode(spaceKeyID)~=1
     [keyIsDown, secs, keyCode] = KbCheck;
 end
 %*******************************************************************************************
-% Length of time and number of frames we will use for each drawing trial
+
+% get a timestamp at the start of trials
+vbl = Screen('Flip', windowPtr);
+% Flash once to mart the start of the trial planing
+Screen('FillRect', windowPtr, white, RightBottomSquare);
+Screen('FillRect', windowPtr, white, RightUpperSquare);
+Screen('FillRect', windowPtr, white, LeftBottomSquare);
+Screen('FillRect', windowPtr, white, LeftUpperSquare);
+% Flash to mark the start of the trial planning   
+vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);   
+
+%*******************************************************************************************
+
+% Length of time and number of frames we will use for each drawing trial 
 numSecs = 3;
 numFrames = round(numSecs / ifi);
 
@@ -146,10 +159,7 @@ for t=1:3
     Screen('CloseAll');
     break;
     end
-      
-     
-    % get a timestamp at the end of Flip’s execution
-    vbl = Screen('Flip', windowPtr);
+    
     
     % Show trial number
     for frames=1:30
@@ -170,7 +180,7 @@ for t=1:3
     run OneTrial.m
       
     % Store xy
-    data(t).xy=xy; 
+    dataUni(t).xy=xy; 
      
 end
 

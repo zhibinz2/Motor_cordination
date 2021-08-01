@@ -1,4 +1,4 @@
-function [Pos,Pos0,Pos1,Pos2,Pos3] = DrawPosR(x,y,screenXpixels)
+function [Pos,Pos0,Pos1,Pos2,Pos3,Thickness,Color] = DrawPosR(x,y,screenXpixels)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
