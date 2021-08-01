@@ -44,7 +44,7 @@ while n <  numFrames %~KbCheck
     
     % Planning phase
     if n<60
-        Screen('DrawText', windowPtr, ['You have 3 sec to draw, start now!'], screenXpixels/3, screenYpixels/2, white); 
+        Screen('DrawText', windowPtr, ['You have 3 sec to draw, start now!'], screenXpixels/3, screenYpixels/6, white); 
     end
     
 %     % Locate the moving rectangle
@@ -52,10 +52,7 @@ while n <  numFrames %~KbCheck
 %     % Draw the rect to the screen
 %     Screen('FillRect', windowPtr, rectColor, centeredRect);
 
-    % Setting default mouse Position
-    SetMouse(PosL(1,1),PosL(2,1), window, mice(2));
-    SetMouse(PosR(1,1),PosR(2,1), window, mice(1));
-    
+
     % Get mouse location
     [xML, yML] = GetMouse(windowPtr,mice(2));
     [xMR, yMR] = GetMouse(windowPtr,mice(1));

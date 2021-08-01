@@ -39,7 +39,7 @@ while n <  numFrames %~KbCheck
     
     % Planning phase
     if n<60
-        Screen('DrawText', windowPtr, ['You have 3 sec to draw, start now!'], screenXpixels/3, screenYpixels/2, white); 
+        Screen('DrawText', windowPtr, ['You have 3 sec to draw, start now!'], screenXpixels/3, screenYpixels/6, white); 
     end
     
 %     % Locate the moving rectangle

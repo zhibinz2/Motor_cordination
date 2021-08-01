@@ -1,4 +1,4 @@
-   sca;
+    sca;
 close all;
 clear all;
 clearvars;
@@ -121,7 +121,7 @@ data=[];
 %*******************************************************************************************
 %Loads a window and waits for input to start recording - just for getting set up and ready
 instructions = 'Press the space bar to begin';
-Screen('DrawText', windowPtr, instructions, screenXpixels/3, screenYpixels/2, white); 
+Screen('DrawText', windowPtr, instructions, screenXpixels/3, screenYpixels/6, white); 
 Screen(windowPtr, 'Flip');
 
 
@@ -163,7 +163,7 @@ for t=1:3
     
     % Show trial number
     for frames=1:30
-    Screen('DrawText', windowPtr, ['trial ' num2str(t)], screenXpixels/3, screenYpixels/2, white); 
+    Screen('DrawText', windowPtr, ['trial ' num2str(t)], screenXpixels/3, screenYpixels/6 , white); 
     % Flip to the screen   
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
     end      

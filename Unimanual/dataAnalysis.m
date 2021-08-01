@@ -3,7 +3,7 @@
 
 % plot the mouse trace
 for t=1:3
-    xyt=data(t).xy;
+    xyt=dataUni(t).xy;
     figure;
     plot(xyt(:,1),xyt(:,2),'-b');
     set(gca, 'YDir', 'reverse');
