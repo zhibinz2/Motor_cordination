@@ -1,8 +1,10 @@
-    sca;
+sca;
 close all;
 clear all;
 clearvars;
 
+try
+    
 % Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
 Screen('Preference', 'SkipSyncTests', 1);
@@ -176,7 +178,7 @@ for t=1:3
     % Setting default mouse position
     SetMouse(Pos(1,1),Pos(2,1), screenNumber);
     
-    % Run one trial 
+    % Run one trial  
     run OneTrial.m
       
     % Store xy
@@ -197,3 +199,7 @@ Priority(0);
 % For help see: help sca
 sca;
 
+catch
+  sca
+  psychrethrow(psychlasterror);
+end 

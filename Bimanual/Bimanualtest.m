@@ -53,15 +53,15 @@ steplength=400;
 [PosR,PosR0,PosR1,PosR2,PosR3,ThicknessR,ColorR] = DrawPosR(xR,yR,steplength,yCenter,screenXpixels);
 
 % Make a base Rect of 50 by 50 pixels
-% baseRect = [0 0 50 50];
+% baseRect = [0 0 50 50]; 
 
-% Set the default color of the rect cue to red
+% Set the default color of the rect cue to red  
 % rectColor = [1 0 0];
 
 % Numer of frames to wait when specifying good timing. Note: the use of
 % wait frames is to show a generalisable coding. For example, by using
 % waitframes = 2 one would flip on every other frame. See the PTB
-% documentation for details. In what follows we flip every frame.
+% documentation for details. In what follows we flip every frame.  
 waitframes = 1;
 
 % Retreive the maximum priority number
@@ -87,7 +87,7 @@ ConnectDotSize=60;
 % ConnectDotColorR0 = blue;
 % ConnectDotColorR1 = blue;
 % ConnectDotColorR2 = blue;
-% ConnectDotColorR3 = blue;
+% ConnectDotColorR3 = blue; 
 [ConnectDotColorL0, ConnectDotColorL1, ConnectDotColorL2, ConnectDotColorL3] = deal(white);
 [ConnectDotColorR0, ConnectDotColorR1, ConnectDotColorR2, ConnectDotColorR3] = deal(white);
 
@@ -147,13 +147,13 @@ vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
 
 %*******************************************************************************************
 % Length of time and number of frames we will use for each drawing trial
-numSecs = 3;
+numSecs = 5 ;
 numFrames = round(numSecs / ifi);
  
 % how many trials
 
-for t=1:3
-    
+for t=1:3 
+     
     % Breakout
     [keyIsDown, keysecs, keyCode] = KbCheck;
     if keyCode(KbName('escape'))

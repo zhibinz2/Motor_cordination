@@ -63,87 +63,87 @@ while n <  numFrames %~KbCheck
     
     % See if the mouse cursor is inside the connecting dots
     % Left side
-    insideL0 = IsInDot(xML, yML, PosL0, ConnectDotSize);
+    insideL0 = IsInDot(xML, yML, PosL0, ConnectDotSize)&(~IsInDot(xMR, yMR, PosR0, ConnectDotSize));
     if insideL0 == 1
         ConnectDotColorL0 = red;
-    elseif insideL0 == 0
+    else insideL0 == 0
         ConnectDotColorL0 = white;
     end
-    insideL1 = IsInDot(xML, yML, PosL1, ConnectDotSize);
+    insideL1 = IsInDot(xML, yML, PosL1, ConnectDotSize)&(~IsInDot(xMR, yMR, PosR1, ConnectDotSize));
     if insideL1 == 1
         ConnectDotColorL1 = red;
-    elseif insideL1 == 0
+    else insideL1 == 0
         ConnectDotColorL1 = white;
     end
-    inside2L = IsInDot(xML, yML, PosL2, ConnectDotSize);
+    inside2L = IsInDot(xML, yML, PosL2, ConnectDotSize)&(~IsInDot(xMR, yMR, PosR2, ConnectDotSize));
     if inside2L == 1
         ConnectDotColorL2 = red;
-    elseif inside2L == 0
+    else inside2L == 0
         ConnectDotColorL2 = white;
     end
-    inside3L = IsInDot(xML, yML, PosL3, ConnectDotSize);
+    inside3L = IsInDot(xML, yML, PosL3, ConnectDotSize)&(~IsInDot(xMR, yMR, PosR3, ConnectDotSize));
     if inside3L == 1
         ConnectDotColorL3 = red;
-    elseif inside3L == 0
+    else inside3L == 0
         ConnectDotColorL3 = white;
     end
     % Right side
-    insideR0 = IsInDot(xMR, yMR, PosR0, ConnectDotSize);
+    insideR0 = IsInDot(xMR, yMR, PosR0, ConnectDotSize)&(~IsInDot(xML, yML, PosL0, ConnectDotSize));
     if insideR0 == 1
         ConnectDotColorR0 = blue;
     elseif insideR0 == 0
         ConnectDotColorR0 = white;
     end
-    insideR1 = IsInDot(xMR, yMR, PosR1, ConnectDotSize);
+    insideR1 = IsInDot(xMR, yMR, PosR1, ConnectDotSize)&(~IsInDot(xML, yML, PosL1, ConnectDotSize));
     if insideR1 == 1
         ConnectDotColorR1 = blue;
-    elseif insideR1 == 0
+    else insideR1 == 0
         ConnectDotColorR1 = white;
     end
-    inside2R = IsInDot(xMR, yMR, PosR2, ConnectDotSize);
+    inside2R = IsInDot(xMR, yMR, PosR2, ConnectDotSize)&(~IsInDot(xML, yML, PosL2, ConnectDotSize));
     if inside2R == 1
         ConnectDotColorR2 = blue;
-    elseif inside2R == 0
+    else inside2R == 0
         ConnectDotColorR2 = white;
     end
-    inside3R = IsInDot(xMR, yMR, PosR3, ConnectDotSize);
+    inside3R = IsInDot(xMR, yMR, PosR3, ConnectDotSize)&(~IsInDot(xML, yML, PosL3, ConnectDotSize));
     if inside3R == 1
         ConnectDotColorR3 = blue;
-    elseif inside3R == 0
+    else inside3R == 0
         ConnectDotColor3R = white;
     end
-    % Both side
+%     Both side
     insideBi0 = IsInDot(xML, yML, PosL0, ConnectDotSize) & IsInDot(xMR, yMR, PosR0, ConnectDotSize);
     if insideBi0 == 1
         ConnectDotColorL0 = green;
         ConnectDotColorR0 = green;
-    elseif insideBi0 == 0
-        ConnectDotColorL0 = white;
-        ConnectDotColorR0 = white;
+%     else insideBi0 == 0
+%         ConnectDotColorL0 = white;
+%         ConnectDotColorR0 = white;
     end
     insideBi1 = IsInDot(xML, yML, PosL1, ConnectDotSize) & IsInDot(xMR, yMR, PosR1, ConnectDotSize);
     if insideBi1 == 1
         ConnectDotColorL1 = green;
         ConnectDotColorR1 = green;
-    elseif insideBi1 == 0
-        ConnectDotColorL1 = white;
-        ConnectDotColorR1 = white;
+%     else insideBi1 == 0
+%         ConnectDotColorL1 = white;
+%         ConnectDotColorR1 = white;
     end
     inside2R = IsInDot(xML, yML, PosL2, ConnectDotSize) & IsInDot(xMR, yMR, PosR2, ConnectDotSize);
     if inside2R == 1
         ConnectDotColorL2 = green;
         ConnectDotColorR2 = green;
-    elseif inside2R == 0
-        ConnectDotColorL2 = white;
-        ConnectDotColorR2 = white;
+%     else inside2R == 0
+%         ConnectDotColorL2 = white;
+%         ConnectDotColorR2 = white;
     end
     inside3R = IsInDot(xML, yML, PosL3, ConnectDotSize) & IsInDot(xMR, yMR, PosR3, ConnectDotSize);
     if inside3R == 1
         ConnectDotColor3L = green;
         ConnectDotColor3R = green;
-    elseif inside3R == 0
-        ConnectDotColor3L = white;
-        ConnectDotColor3R = white;
+%     else inside3R == 0
+%         ConnectDotColor3L = white;
+%         ConnectDotColor3R = white;
     end
     
     
