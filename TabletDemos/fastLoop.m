@@ -20,7 +20,7 @@ function fastLoop
 %           penStatus           = pkt(7), signals various events (eg penOutOfRange)
 %           penChange           = pkt(8), flags what has changed since the last sample
 %
-%pkt(1:6) are straightforward, pkt(7:8) need some work on figuring out what it all means
+% pkt(1:6) are straightforward, pkt(7:8) need some work on figuring out what it all means
 %
 %Andrew D. Wilson, 2009 (adwkiwi@gmail.com)
 

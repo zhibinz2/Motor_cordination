@@ -180,7 +180,7 @@ for t=1:3
     
     % Run one trial  
     run OneTrial.m
-      
+       
     % Store xy
     dataUni(t).xy=xy; 
      
