@@ -53,10 +53,11 @@ while n <  numFrames %~KbCheck
 %     Screen('FillRect', windowPtr, rectColor, centeredRect);
 
     % Get mouse location
-    [xML, yML, buttons] = GetMouse(windowPtr,mice(1));
-    [xMR, yMR, buttons] = GetMouse(windowPtr,mice(2));
+    [xML, yML, buttons] = GetMouse(windowPtr,mice(2));
+    [xMR, yMR, buttons] = GetMouse(windowPtr,mice(1));
     
     % See if the mouse cursor is inside the connecting dots
+    % Left side
     insideL0 = IsInDot(xML, yML, PosL0, ConnectDotSize);
     if insideL0 == 1
         ConnectDotColorL0 = red;
@@ -103,6 +104,35 @@ while n <  numFrames %~KbCheck
     inside3R = IsInDot(xMR, yMR, PosR3, ConnectDotSize);
     if inside3R == 1
         ConnectDotColor3R = blue;
+    elseif inside3R == 0
+        ConnectDotColor3R = white;
+    end
+    % Both side
+    insideBi0 = IsInDot(xML, yML, PosL0, ConnectDotSize) & IsInDot(xMR, yMR, PosR0, ConnectDotSize);
+    if insideBi0 == 1
+        ConnectDotColorL0 = green;
+        ConnectDotColorR0 = green;
+    elseif insideBi0 == 0
+        ConnectDotColorR0 = white;
+    end
+    insideBi1 = IsInDot(xML, yML, PosL1, ConnectDotSize) & IsInDot(xMR, yMR, PosR1, ConnectDotSize);
+    if insideBi1 == 1
+        ConnectDotColorR1 = green;
+        ConnectDotColorR1 = green;
+    elseif insideBi1 == 0
+        ConnectDotColorR1 = white;
+    end
+    inside2R = IsInDot(xML, yML, PosL2, ConnectDotSize) & IsInDot(xMR, yMR, PosR2, ConnectDotSize);
+    if inside2R == 1
+        ConnectDotColorR2 = green;
+        ConnectDotColorR2 = green;
+    elseif inside2R == 0
+        ConnectDotColorR2 = white;
+    end
+    inside3R = IsInDot(xML, yML, PosL3, ConnectDotSize) & IsInDot(xMR, yMR, PosR3, ConnectDotSize);
+    if inside3R == 1
+        ConnectDotColor3R = green;
+        ConnectDotColor3R = green;
     elseif inside3R == 0
         ConnectDotColor3R = white;
     end

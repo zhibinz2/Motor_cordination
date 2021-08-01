@@ -1,8 +1,8 @@
-function [Pos,Pos0,Pos1,Pos2,Pos3,Thickness,Color] = DrawPosL(x,y)
+function [Pos,Pos0,Pos1,Pos2,Pos3,Thickness,Color] = DrawPosL(x,y,steplength,yCenter)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-Thickness   = 15 .* ones(1,length(xL)); % thickness of the route
+Thickness   = 15 .* ones(1,length(x)); % thickness of the route
 Color  = ones(3,length(x));
 % Add an offset for center the arc
 x      = flip(x + steplength); 

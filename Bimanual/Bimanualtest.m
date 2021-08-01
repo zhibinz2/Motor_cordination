@@ -2,7 +2,7 @@
 close all;
 clear all;
 clearvars;
-% Here we call some default settings for setting up Psychtoolbox
+% Here we call some default settings for setting up Psychtoolbox 
 PsychDefaultSetup(2);
 Screen('Preference', 'SkipSyncTests', 1);
 % Get the screen numbers. This gives us a number for each of the screens
@@ -14,7 +14,7 @@ screens = Screen('Screens');
 % screen. When only one screen is attached to the monitor we will draw to
 % this. For help see: help max
 screenNumber = max(screens);
-% Define black and white (white will be 1 and black 0). This is because
+% Define black and white (white will be 1 and black 0). This is because 
 % luminace values are (in general) defined between 0 and 1.
 % For help see`: help WhiteIndex and help BlackIndex
 white = WhiteIndex(screenNumber);
@@ -32,7 +32,7 @@ black = BlackIndex(screenNumber);
 % For help see: Screen BlendFunction?
 % Also see: Chapter 6 of the OpenGL programming guide
 Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-% sca;
+%  sca;
 % We can define a center for the dot coordinates to be relaitive to. Here
 % we set the centre to be the centre of the screen
 dotCenter = [xCenter yCenter];
@@ -40,8 +40,8 @@ steplength=400;
 
 [xL,yL]  = DrawSquare(steplength); % Create  the route
 [xR,yR]  = DrawSquare(steplength); % Create  the route
-[PosL,PosL0,PosL1,PosL2,PosL3,ThicknessL,colorL] = DrawPosL(xL,yL);
-[PosR,PosR0,PosR1,PosR2,PosR3,ThicknessR,colorR] = DrawPosR(xR,yR,screenXpixels);
+[PosL,PosL0,PosL1,PosL2,PosL3,ThicknessL,ColorL] = DrawPosL(xL,yL,steplength,yCenter);
+[PosR,PosR0,PosR1,PosR2,PosR3,ThicknessR,ColorR] = DrawPosR(xR,yR,steplength,yCenter,screenXpixels);
 
 % Make a base Rect of 50 by 50 pixels
 % baseRect = [0 0 50 50];
@@ -94,6 +94,11 @@ LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
 % Loop the animation until a key is pressed
 HideCursor
 
+% DuoMice:
+% Get handles for all virtual pointing devices, aka cursors:
+typeOnly='masterPointer'; 
+mice = GetMouseIndices(typeOnly); 
+ 
 % NumInside=[]; % To keep a record of the percentage of time inside the square
 xLyL=[]; xRyR=[]; % to keep track of mouse trace
 dataR=[];dataL=[];
@@ -151,20 +156,21 @@ for t=1:3
 %     end 
 
     % Setting default mouse Position
-    SetMouse(PosL(1,1),PosL(2,1), screenNumber);
-    
+    SetMouse(PosL(1,1),PosL(2,1), window, mice(2));
+    SetMouse(PosR(1,1),PosR(2,1), window, mice(1));
+
     % Run one trial 
-    run OneTrial.m
+    run BiOneTrial.m 
     % reset n
     n=1;
     
     % Store xLyL
     dataL(t).xLyL=xLyL; 
-    dataR(t).xRYR=xRyR;
-     
+    dataR(t).xRyR=xRyR;
+      
 end
 
- 
+
 Priority(0);   
    
 % Now we have drawn to the screen we wait for a keyboard button press (any

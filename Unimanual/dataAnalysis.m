@@ -11,5 +11,5 @@ for t=1:3
     plot(Pos(1,:),Pos(2,:),'-r'); 
     xlim([0 screenXpixels]);ylim([0 screenYpixels]);
     title(['trial' num2str(t)]);
-    close all;
+
 end

@@ -27,6 +27,11 @@ MultiTouchMinimalDemo(TouchDevID,screenId);
 
 
 %% https://wiki.archlinux.org/title/Multi-pointer_X
+% xinput list
+% xinput create-master L
+% xinput list
+% xinput reattach [slave device name or id] [master device name or id]
+
 
 % zhibin@hnlstim1-ss-uci-edu:~$ xinput list
 % ⎡ Virtual core pointer                    	id=2	[master pointer  (3)]
