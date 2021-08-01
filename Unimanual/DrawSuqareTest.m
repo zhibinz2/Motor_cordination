@@ -1,4 +1,4 @@
- sca;
+   sca;
 close all;
 clear all;
 clearvars;
@@ -15,7 +15,7 @@ screens = Screen('Screens');
 
 % Draw we select the maximum of these numbers. So in a situation where we
 % have two screens attached to our monitor we will draw to the external
-% screen. When only one screen is attached to the monitor we will draw to
+% screen. When only one screen is attached to the monitor we will draw to 
 % this. For help see: help max       
 screenNumber = max(screens);
 

@@ -52,9 +52,17 @@ while n <  numFrames %~KbCheck
 %     % Draw the rect to the screen
 %     Screen('FillRect', windowPtr, rectColor, centeredRect);
 
+    % Setting default mouse Position
+    SetMouse(PosL(1,1),PosL(2,1), window, mice(2));
+    SetMouse(PosR(1,1),PosR(2,1), window, mice(1));
+    
     % Get mouse location
-    [xML, yML, buttons] = GetMouse(windowPtr,mice(2));
-    [xMR, yMR, buttons] = GetMouse(windowPtr,mice(1));
+    [xML, yML] = GetMouse(windowPtr,mice(2));
+    [xMR, yMR] = GetMouse(windowPtr,mice(1));
+    
+    % Display the cursor as a dot
+    Screen('DrawDots', windowPtr, [xML yML], 16, red, [], 2);
+    Screen('DrawDots', windowPtr, [xMR yMR], 16, blue, [], 2);
     
     % See if the mouse cursor is inside the connecting dots
     % Left side
@@ -78,9 +86,9 @@ while n <  numFrames %~KbCheck
     end
     inside3L = IsInDot(xML, yML, PosL3, ConnectDotSize);
     if inside3L == 1
-        ConnectDotColor3L = red;
+        ConnectDotColorL3 = red;
     elseif inside3L == 0
-        ConnectDotColor3L = white;
+        ConnectDotColorL3 = white;
     end
     % Right side
     insideR0 = IsInDot(xMR, yMR, PosR0, ConnectDotSize);
@@ -103,7 +111,7 @@ while n <  numFrames %~KbCheck
     end
     inside3R = IsInDot(xMR, yMR, PosR3, ConnectDotSize);
     if inside3R == 1
-        ConnectDotColor3R = blue;
+        ConnectDotColorR3 = blue;
     elseif inside3R == 0
         ConnectDotColor3R = white;
     end
@@ -113,33 +121,34 @@ while n <  numFrames %~KbCheck
         ConnectDotColorL0 = green;
         ConnectDotColorR0 = green;
     elseif insideBi0 == 0
+        ConnectDotColorL0 = white;
         ConnectDotColorR0 = white;
     end
     insideBi1 = IsInDot(xML, yML, PosL1, ConnectDotSize) & IsInDot(xMR, yMR, PosR1, ConnectDotSize);
     if insideBi1 == 1
-        ConnectDotColorR1 = green;
+        ConnectDotColorL1 = green;
         ConnectDotColorR1 = green;
     elseif insideBi1 == 0
+        ConnectDotColorL1 = white;
         ConnectDotColorR1 = white;
     end
     inside2R = IsInDot(xML, yML, PosL2, ConnectDotSize) & IsInDot(xMR, yMR, PosR2, ConnectDotSize);
     if inside2R == 1
-        ConnectDotColorR2 = green;
+        ConnectDotColorL2 = green;
         ConnectDotColorR2 = green;
     elseif inside2R == 0
+        ConnectDotColorL2 = white;
         ConnectDotColorR2 = white;
     end
     inside3R = IsInDot(xML, yML, PosL3, ConnectDotSize) & IsInDot(xMR, yMR, PosR3, ConnectDotSize);
     if inside3R == 1
-        ConnectDotColor3R = green;
+        ConnectDotColor3L = green;
         ConnectDotColor3R = green;
     elseif inside3R == 0
+        ConnectDotColor3L = white;
         ConnectDotColor3R = white;
     end
     
-    % Display the cursor as a dot
-    Screen('DrawDots', windowPtr, [xML yML], 16, red, [], 2);
-    Screen('DrawDots', windowPtr, [xMR yMR], 16, blue, [], 2);
     
     % Flip to the screen
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);

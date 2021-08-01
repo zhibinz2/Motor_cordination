@@ -1,7 +1,16 @@
- sca;
+sca;
 close all;
 clear all;
 clearvars;
+
+AssertOpenGL;
+ 
+if ~IsLinux
+  error('Sorry, this demo currently only works ona Linux.');
+end
+
+try
+    
 % Here we call some default settings for setting up Psychtoolbox 
 PsychDefaultSetup(2);
 Screen('Preference', 'SkipSyncTests', 1);
@@ -21,7 +30,7 @@ white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
 % Open an on screen window and color it black
 % For help see: Screen Openwindow?
-[windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black);
+[windowPtr, windowRect] = PsychImaging('Openw indow', screenNumber, black);
 % Get the size of the on screen windowPtr in pixels
 % For help see: Screen windowSize?
 [screenXpixels, screenYpixels] = Screen('windowSize', screenNumber);
@@ -91,14 +100,22 @@ RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSi
 LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels];
 LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
 
-% Loop the animation until a key is pressed
-HideCursor
+
 
 % DuoMice:
 % Get handles for all virtual pointing devices, aka cursors:
 typeOnly='masterPointer'; 
-mice = GetMouseIndices(typeOnly); 
- 
+mice = GetMouseIndices(typeOnly);  
+
+% DuoMice:
+% Hide the system-generated cursors. We do this, because only the
+% first mouse cursor is hardware-accelerated, ie., a GPU created
+% hardware cursor. All other cursors are software-cursors, created
+% by the Windowing system. These tend to flicker badly in our use
+% case. Therefore we disable all system cursor images and draw our
+% cursors ourselves for a more beautiful look:
+HideCursor;
+
 % NumInside=[]; % To keep a record of the percentage of time inside the square
 xLyL=[]; xRyR=[]; % to keep track of mouse trace
 dataR=[];dataL=[];
@@ -107,7 +124,7 @@ dataR=[];dataL=[];
 %Loads a window and waits for input to start recording - just for getting set up and ready
 instructions = 'Press the space bar to begin';
 Screen('DrawText', windowPtr, instructions, screenXpixels/3, screenYpixels/2, white); 
-Screen(windowPtr, 'Flip');
+Screen(windowPtr, 'Flip');  
 
 
 KbName('UnifyKeyNames');
@@ -127,11 +144,12 @@ Screen('FillRect', windowPtr, white, LeftBottomSquare);
 Screen('FillRect', windowPtr, white, LeftUpperSquare);
 % Flash to mark the start of the trial planning   
 vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);   
+
 %*******************************************************************************************
 % Length of time and number of frames we will use for each drawing trial
 numSecs = 3;
 numFrames = round(numSecs / ifi);
-
+ 
 % how many trials
 
 for t=1:3
@@ -164,6 +182,12 @@ for t=1:3
     % reset n
     n=1;
     
+    % DuoMice:
+    % Show master cursors again:
+    for mouse = mice
+    ShowCursor('Arrow', [], mouse);
+    end
+    
     % Store xLyL
     dataL(t).xLyL=xLyL; 
     dataR(t).xRyR=xRyR;
@@ -183,3 +207,7 @@ Priority(0);
 % For help see: help sca
 sca;
 
+catch
+  sca
+  psychrethrow(psychlasterror);
+end
