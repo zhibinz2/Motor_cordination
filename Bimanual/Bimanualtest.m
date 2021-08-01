@@ -1,69 +1,47 @@
-sca;
+ sca;
 close all;
 clear all;
 clearvars;
-
 % Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
 Screen('Preference', 'SkipSyncTests', 1);
-
-  
 % Get the screen numbers. This gives us a number for each of the screens
 % attached to our computer. For help see: Screen Screens?
-screens = Screen('Screens');    
+screens = Screen('Screens');
 % sca;
-
 % Draw we select the maximum of these numbers. So in a situation where we
 % have two screens attached to our monitor we will draw to the external
 % screen. When only one screen is attached to the monitor we will draw to
-% this. For help see: help max       
+% this. For help see: help max
 screenNumber = max(screens);
-
 % Define black and white (white will be 1 and black 0). This is because
 % luminace values are (in general) defined between 0 and 1.
-% For help see`: help WhiteIndex and help BlackIndex 
+% For help see`: help WhiteIndex and help BlackIndex
 white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
-
 % Open an on screen window and color it black
 % For help see: Screen Openwindow?
 [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black);
-
 % Get the size of the on screen windowPtr in pixels
 % For help see: Screen windowSize?
 [screenXpixels, screenYpixels] = Screen('windowSize', screenNumber);
-
 % Get the centre coordinate of the window in pixels
 % For help see: help RectCenter
 [xCenter, yCenter] = RectCenter(windowRect);
-
 % Enable alpha blending for anti-aliasing
 % For help see: Screen BlendFunction?
 % Also see: Chapter 6 of the OpenGL programming guide
 Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-% sca; 
-
+% sca;
 % We can define a center for the dot coordinates to be relaitive to. Here
 % we set the centre to be the centre of the screen
 dotCenter = [xCenter yCenter];
+steplength=400;
 
-steplength=400; 
-[x,y]  = DrawSquare(steplength); % Create the route
-Thickness   = 15 .* ones(1,length(x)); % thickness of the route
-Color  = ones(3,length(x));
-% Add an offset for center the arc
-x      = flip(x + steplength); 
-% Reverse the route
-% y      = abs(y-max(y)); 
-% Offset the middle of the arc to be center on the middle of the screen
-y      = y + (yCenter - max(y) + (max(y) - min(y))/2); 
-% the route
-Pos    = [x; y];
-% postion of connecting points
-Pos0   = Pos(:,1);
-Pos1   = Pos(:,steplength);
-Pos2   = Pos(:,steplength*2-1);
-Pos3   = Pos(:,steplength*3-2);
+[xL,yL]  = DrawSquare(steplength); % Create  the route
+[xR,yR]  = DrawSquare(steplength); % Create  the route
+[PosL,PosL0,PosL1,PosL2,PosL3] = DrawPosL(xL,yL);
+[PosR,PosR0,PosR1,PosR2,PosR3] = DrawPosR(xR,yR,screenXpixels);
 
 % Make a base Rect of 50 by 50 pixels
 baseRect = [0 0 50 50];
@@ -85,8 +63,6 @@ Priority(topPriorityLevel);
 % Measure the vertical refresh rate of the monitor
 ifi = Screen('GetFlipInterval', windowPtr);
 
-% Setting default mouse position
-SetMouse(Pos(1,1),Pos(2,1), screenNumber);
 
 % Initialize some values
 n = 1;
@@ -118,7 +94,7 @@ HideCursor
 
 
 % NumInside=[]; % To keep a record of the percentage of time inside the square
-xy=[]; % to keep track of mouse trace
+xLyL=[]; % to keep track of mouse trace
 data=[];
 
 %*******************************************************************************************
@@ -166,12 +142,15 @@ for t=1:3
 %     while keyCode(spaceKeyID)~=1 
 %         [keyIsDown, secs, keyCode] = KbCheck;
 %     end 
+
+    % Setting default mouse Position
+    SetMouse(PosL(1,1),PosL(2,1), screenNumber);
     
     % Run one trial 
     run OneTrial.m
       
-    % Store xy
-    data(t).xy=xy; 
+    % Store xLyL
+    data(t).xLyL=xLyL; 
      
 end
 
@@ -188,14 +167,3 @@ Priority(0);
 % For help see: help sca
 sca;
 
-%%
-
-% the percentage of time in the square 
-% PercentIn=sum(NumInside)/length(Pos); 
-
-% plot the mouse trace
-% plot(xy(:,1),xy(:,2),'-b');
-% set(gca, 'YDir', 'reverse');
-% hold on;
-% plot(Pos(1,:),Pos(2,:),'-r'); 
-% xlim([0 screenXpixels]);ylim([0 screenYpixels]);

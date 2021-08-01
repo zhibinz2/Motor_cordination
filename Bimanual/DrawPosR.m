@@ -1,0 +1,21 @@
+function [Pos,Pos0,Pos1,Pos2,Pos3] = DrawPosR(x,y,screenXpixels)
+%UNTITLED Summary of this function goes here
+%   Detailed explanation goes here
+
+Thickness   = 15 .* ones(1,length(xL)); % thickness of the route
+Color  = ones(3,length(x));
+% Add an offset 
+x      = flip(x + screenXpixels - steplength); 
+% Reverse the route
+% y      = abs(y-max(y)); 
+% Offset the middle of the arc to be center on the middle of the screen
+y      = y + (yCenter - max(y) + (max(y) - min(y))/2); 
+% the route
+Pos    = [x; y];
+% Postion of connecting points
+Pos0   = Pos(:,1);
+Pos1   = Pos(:,steplength);
+Pos2   = Pos(:,steplength*2-1);
+Pos3   = Pos(:,steplength*3-2);
+end
+

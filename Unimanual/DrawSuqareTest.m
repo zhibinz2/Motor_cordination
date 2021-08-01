@@ -114,7 +114,6 @@ LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
 % Loop the animation until a key is pressed
 HideCursor
 
-
 % NumInside=[]; % To keep a record of the percentage of time inside the square
 xy=[]; % to keep track of mouse trace
 data=[];
@@ -139,9 +138,8 @@ numSecs = 3;
 numFrames = round(numSecs / ifi);
 
 % how many trials
-
 for t=1:3
-    
+     
     % Breakout
     [keyIsDown, keysecs, keyCode] = KbCheck;
     if keyCode(KbName('escape'))
