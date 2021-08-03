@@ -1,14 +1,15 @@
-sca;
+ 
+ sca;
 close all;
 clear all;
 clearvars;
-
+ 
 try
     
 % Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
-Screen('Preference', 'SkipSyncTests', 1);
-
+Screen('Preference', 'SkipSyncTests', 1); 
+% Screen('Preference', 'ConserveVRAM', 64);
   
 % Get the screen numbers. This gives us a number for each of the screens
 % attached to our computer. For help see: Screen Screens?
