@@ -30,7 +30,7 @@ while n <  numFrames %~KbCheck
 %     end 
 %   
     % Flash the four corners
-    if (~isempty(find([1:5:numFrames]==n))) % every five frames
+    if (~isempty(find([1:2:numFrames]==n))) % every other frame
     Screen('FillRect', windowPtr, white, RightBottomSquare);
     Screen('FillRect', windowPtr, white, RightUpperSquare);
     Screen('FillRect', windowPtr, white, LeftBottomSquare);

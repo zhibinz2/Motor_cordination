@@ -2,7 +2,7 @@
 % PercentIn=sum(NumInside)/length(Pos); 
 
 % plot the mouse trace
-for t=1:3
+for t=1:5
     xyt=dataUni(t).xy;
     figure;
     plot(xyt(:,1),xyt(:,2),'-b');

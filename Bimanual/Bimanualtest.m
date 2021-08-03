@@ -1,4 +1,4 @@
-sca;
+   sca;
 close all;
 clear all; 
 clearvars;
@@ -152,7 +152,7 @@ numFrames = round(numSecs / ifi);
  
 % how many trials
 
-for t=1:3 
+for t=1:5
      
     % Breakout
     [keyIsDown, keysecs, keyCode] = KbCheck;

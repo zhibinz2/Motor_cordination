@@ -8,8 +8,18 @@ try
     
 % Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
+<<<<<<< Updated upstream
 Screen('Preference', 'SkipSyncTests', 1); 
 % Screen('Preference', 'ConserveVRAM', 64);
+=======
+<<<<<<< HEAD
+Screen('Preference', 'SkipSyncTests', 1);
+ 
+=======
+Screen('Preference', 'SkipSyncTests', 1); 
+% Screen('Preference', 'ConserveVRAM', 64);
+>>>>>>> 4843499d533a5754cd1b18204feb40911634cceb
+>>>>>>> Stashed changes
   
 % Get the screen numbers. This gives us a number for each of the screens
 % attached to our computer. For help see: Screen Screens?
@@ -154,7 +164,7 @@ numSecs = 3;
 numFrames = round(numSecs / ifi);
 
 % how many trials
-for t=1:3
+for t=1:5     
      
     % Breakout
     [keyIsDown, keysecs, keyCode] = KbCheck;
@@ -175,7 +185,7 @@ for t=1:3
 %     while keyCode(spaceKeyID)~=1 
 %         [keyIsDown, secs, keyCode] = KbCheck;
 %     end 
-
+ 
     % Setting default mouse position
     SetMouse(Pos(1,1),Pos(2,1), screenNumber);
     

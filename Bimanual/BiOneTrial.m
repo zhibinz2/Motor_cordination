@@ -110,7 +110,7 @@ while n <  numFrames %~KbCheck
     if inside3R == 1
         ConnectDotColorR3 = blue;
     else inside3R == 0
-        ConnectDotColor3R = white;
+        ConnectDotColorR3 = white;
     end
 %     Both side
     insideBi0 = IsInDot(xML, yML, PosL0, ConnectDotSize) & IsInDot(xMR, yMR, PosR0, ConnectDotSize);
