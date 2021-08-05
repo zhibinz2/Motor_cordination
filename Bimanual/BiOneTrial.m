@@ -139,8 +139,8 @@ while n <  numFrames %~KbCheck
     end
     inside3R = IsInDot(xML, yML, PosL3, ConnectDotSize) & IsInDot(xMR, yMR, PosR3, ConnectDotSize);
     if inside3R == 1
-        ConnectDotColor3L = green;
-        ConnectDotColor3R = green;
+        ConnectDotColorL3 = green;
+        ConnectDotColorR3 = green;
 %     else inside3R == 0
 %         ConnectDotColor3L = white;
 %         ConnectDotColor3R = white;

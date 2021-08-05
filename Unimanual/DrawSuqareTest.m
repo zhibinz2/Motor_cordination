@@ -1,4 +1,4 @@
- 
+  
  sca;
 close all;
 clear all;
@@ -8,19 +8,12 @@ try
     
 % Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
-<<<<<<< Updated upstream
+
 Screen('Preference', 'SkipSyncTests', 1); 
 % Screen('Preference', 'ConserveVRAM', 64);
-=======
-<<<<<<< HEAD
+
 Screen('Preference', 'SkipSyncTests', 1);
- 
-=======
-Screen('Preference', 'SkipSyncTests', 1); 
-% Screen('Preference', 'ConserveVRAM', 64);
->>>>>>> 4843499d533a5754cd1b18204feb40911634cceb
->>>>>>> Stashed changes
-  
+   
 % Get the screen numbers. This gives us a number for each of the screens
 % attached to our computer. For help see: Screen Screens?
 screens = Screen('Screens');    

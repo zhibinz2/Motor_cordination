@@ -1,7 +1,7 @@
-   sca;
+sca;
 close all;
 clear all; 
-clearvars;
+clearvars;  
 
 AssertOpenGL;
  
@@ -9,7 +9,7 @@ if ~IsLinux
   error('Sorry, this demo currently only works on a Linux.');
 end
 
-try
+try      
     
 % Here we call some default settings for setting up Psychtoolbox 
 PsychDefaultSetup(2);
@@ -24,7 +24,7 @@ screens = Screen('Screens');
 % this. For help see: help max
 screenNumber = max(screens);
 % Define black and white (white will be 1 and black 0). This is because 
-% luminace values are (in general) defined between 0 and 1.
+% luminace values are (in general) defined between 0 and 1.0
 % For help see`: help WhiteIndex and help BlackIndex
 white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
