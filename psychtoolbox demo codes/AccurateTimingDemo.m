@@ -4,7 +4,9 @@ close all;
 clearvars;
 
 % Here we call some default settings for setting up Psychtoolbox
-PsychDefaultSetup(2);
+PsychDefaultSetup(2); 
+% Start with black screen
+Screen('Preference', 'VisualDebugLevel', 1); 
 
 % Get the screen numbers. This gives us a number for each of the screens
 % attached to our computer.
