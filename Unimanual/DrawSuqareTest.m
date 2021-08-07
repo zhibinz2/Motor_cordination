@@ -3,6 +3,12 @@
 close all;
 clear all;
 clearvars;
+
+% Open a marker sender outlet in Lab Streaming Layer
+lib = lsl_loadlib();
+info = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','myuniquesourceid23443');
+outlet = lsl_outlet(info);
+
  
 try
     
@@ -104,7 +110,7 @@ black = [black black black];
 grey  = [0.5 0.5 0.5];
 
 % Set default connecting dot size
-ConnectDotSize=60; 
+ConnectDotSize=20; 
 % Set default connecting dot color to blue
 ConnectDotColor0 = white;
 ConnectDotColor1 = white;
@@ -183,6 +189,9 @@ for t=1:5
  
     % Setting default mouse position
     SetMouse(Pos(1,1),Pos(2,1), screenNumber);
+    
+    % Send a marker to LSL
+    outlet.push_sample({'trialstart'});
     
     % Run one trial  
     run OneTrial.m
