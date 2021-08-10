@@ -57,7 +57,7 @@ grey  = [0.5 0.5 0.5];
 [screenXpixels, screenYpixels] = Screen('windowSize', screenNumber);
 % Get the centre coordinate of the window in pixels
 % For help see: help RectCenter
-[ , yCenter] = RectCenter(windowRect);
+[xCenter, yCenter] = RectCenter(windowRect); 
 % Enable alpha blending for anti-aliasing
 % For help see: Screen BlendFunction?
 % Also see: Chapter 6 of the OpenGL programming guide
@@ -183,6 +183,9 @@ for t=1:16
     % Length of time and number of frames we will use for each drawing trial
     moveSecs = 3; % 3 s to move
     numFramesMove = round(moveSecs / ifi);
+    
+    % total number of frames
+    numFrames=numFramesPlan+numFramesMove; 
     
     % Run one trial 
     run run_trial.m 
