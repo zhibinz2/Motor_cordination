@@ -1,4 +1,4 @@
-sca;
+ sca;
 close all;
 clc;
 clear;
@@ -115,95 +115,106 @@ mice = GetMouseIndices(typeOnly);
 % cursors ourselves for a more beautiful look:
 HideCursor;
 
-% Initialize some values
-n = 1;
-% NumInside=[]; % To keep a record of the percentage of time inside the square
-xLyL=[]; xRyR=[]; % to keep track of mouse trace
-dataR=[];dataL=[];
+% Set number of blocks
+numBlock=25;
 
-%*******************************************************************************************
-%Loads a window and waits for input to start recording - just for getting set up and ready
-instructions = 'Press the space bar to begin';
-Screen('DrawText', windowPtr, instructions, screenXpixels/3, screenYpixels/6, white); 
-Screen(windowPtr, 'Flip');  
+for block=1:numBlock
+    
+    
+    % Initialize some values
+    n = 1;
+    % NumInside=[]; % To keep a record of the percentage of time inside the square
+    xLyL=[]; xRyR=[]; % to keep track of mouse trace
+    dataR=[];dataL=[];
+
+    %*******************************************************************************************
+    %Loads a window and waits for input to start recording - just for getting set up and ready
+    instructionStart = 'Press the space bar to begin when you are ready. It will start automatically in 5 minutes.';
+    Screen('DrawText', windowPtr, instructionStart, screenXpixels/3, screenYpixels/6, white); 
+    Screen(windowPtr, 'Flip');  
 
 
-KbName('UnifyKeyNames');
-spaceKeyID = KbName('space'); 
-%Waits for space bar       
-[keyIsDown, secs, keyCode] = KbCheck;
-while keyCode(spaceKeyID)~=1
+    KbName('UnifyKeyNames');
+    spaceKeyID = KbName('space'); 
+    %Waits for space bar       
     [keyIsDown, secs, keyCode] = KbCheck;
+    while keyCode(spaceKeyID)~=1
+        [keyIsDown, secs, keyCode] = KbCheck;
+    end
+    %*******************************************************************************************
+
+    % get a timestamp at the start of block
+    vbl = Screen('Flip', windowPtr);
+
+    %*******************************************************************************************
+
+
+    % how many trials 
+    for t=1:16 
+        % Breakout
+        [keyIsDown, keysecs, keyCode] = KbCheck;  
+        if keyCode(KbName('escape'))
+        Screen('CloseAll');
+        break;
+        end
+
+        % Show trial number and rest
+        restSecs =1; % rest 1 s to look at trial number
+        numFramesRest = round (restSecs/ifi);
+        for Restframes=1:numFramesRest 
+        Screen('DrawText', windowPtr, ['trial ' num2str(t)], screenXpixels/3, screenYpixels/6, white); 
+        % Flip to the screen   
+        vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+        end      
+
+        % the set of conditions
+        conditionfuctions = {@A1_A2, @A1_A1, @A1_U2, @A1_U1, ...
+        @A2_A1, @A2_A2, @A2_U1, @A2_U2, ...
+        @U1_U2, @U1_U1, @U1_A2, @U1_A1, ...
+        @U2_U1, @U2_U2, @U2_A1, @U2_A2 };
+        % randomize the conditions and pick a condition
+        conditionPermutations = randperm(16); 
+        for cP = conditionPermutations
+            [xL,yL,PosL,PosL0,PosL1,PosL2,PosL3,ThicknessL,ColorL,...
+                xR,yR,PosR,PosR0,PosR1,PosR2,PosR3,ThicknessR,ColorR] ...
+                = conditionfuctions{cP}(steplength,yCenter,screenXpixels);
+        end
+
+
+
+        % Setting default mouse Position for some time
+        planSecs =1 ; % rest 1 s to look at trial number
+        numFramesPlan = round (planSecs/ifi);
+
+        % Length of time and number of frames we will use for each drawing trial
+        moveSecs = 3; % 3 s to move
+        numFramesMove = round(moveSecs / ifi);
+
+        % total number of frames
+        numFrames=numFramesPlan+numFramesMove; 
+
+        % Run one trial 
+        run run_trial.m 
+
+        % reset n
+        n=1;
+
+        % DuoMice:
+        % Show master cursors again:
+        for mouse = mice
+        ShowCursor('Arrow', [], mouse);
+        end
+
+        % Store xLyL
+        dataL(t).xLyL=xLyL; 
+        dataR(t).xRyR=xRyR;
+
+    end
+    
+
+
 end
-%*******************************************************************************************
 
-% get a timestamp at the start of block
-vbl = Screen('Flip', windowPtr);
-
-%*******************************************************************************************
-
- 
-% how many trials 
-for t=1:16 
-    % Breakout
-    [keyIsDown, keysecs, keyCode] = KbCheck;  
-    if keyCode(KbName('escape'))
-    Screen('CloseAll');
-    break;
-    end
-    
-    % Show trial number and rest
-    restSecs =1; % rest 1 s to look at trial number
-    numFramesRest = round (restSecs/ifi);
-    for Restframes=1:numFramesRest 
-    Screen('DrawText', windowPtr, ['trial ' num2str(t)], screenXpixels/3, screenYpixels/6, white); 
-    % Flip to the screen   
-    vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-    end      
-    
-    % the set of conditions
-    conditionfuctions = {@A1_A2, @A1_A1, @A1_U2, @A1_U1, ...
-    @A2_A1, @A2_A2, @A2_U1, @A2_U2, ...
-    @U1_U2, @U1_U1, @U1_A2, @U1_A1, ...
-    @U2_U1, @U2_U2, @U2_A1, @U2_A2 };
-    % randomize the conditions and pick a condition
-    conditionPermutations = randperm(16); 
-    for cP = conditionPermutations
-        [xL,yL,PosL,PosL0,PosL1,PosL2,PosL3,ThicknessL,ColorL,...
-            xR,yR,PosR,PosR0,PosR1,PosR2,PosR3,ThicknessR,ColorR] ...
-            = conditionfuctions{cP}(steplength,yCenter,screenXpixels);
-    end
-    
-        
-
-    % Setting default mouse Position for some time
-    planSecs =1; % rest 1 s to look at trial number
-    numFramesPlan = round (planSecs/ifi);
-
-    % Length of time and number of frames we will use for each drawing trial
-    moveSecs = 3; % 3 s to move
-    numFramesMove = round(moveSecs / ifi);
-    
-    % total number of frames
-    numFrames=numFramesPlan+numFramesMove; 
-    
-    % Run one trial 
-    run run_trial.m 
-    
-    % reset n
-    n=1;
-    
-    % DuoMice:
-    % Show master cursors again:
-    for mouse = mice
-    ShowCursor('Arrow', [], mouse);
-    end
-    
-    % Store xLyL
-    dataL(t).xLyL=xLyL; 
-    dataR(t).xRyR=xRyR;
-      
-end
 
 
 Priority(0);   
