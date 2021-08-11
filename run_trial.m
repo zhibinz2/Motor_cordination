@@ -23,7 +23,9 @@ while n <  numFrames %~KbCheck
     if n< numFramesPlan 
         SetMouse(PosL(1,1),PosL(2,1), windowPtr, mice(2));
         SetMouse(PosR(1,1),PosR(2,1), windowPtr, mice(1)); 
-        Screen('DrawText', windowPtr, ['You have 3 sec to draw! Start drawing in 1 sec!'], xCenter-steplength, yCenter-steplength, white);
+        %Screen('DrawText', windowPtr, ['Place mice at starting point and start drawing!'], xCenter-steplength, yCenter-steplength, white);
+        DrawFormattedText2(['Place mice at starting point and start drawing!'],'win',windowPtr,...
+        'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
     end
 
 
