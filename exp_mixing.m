@@ -13,7 +13,7 @@ rng('shuffle');
 AssertOpenGL;
  
 if ~IsLinux
-  error('Sorry, this demo currently only works on a Linux.');
+  error('Sorry, this demo currently only works on a Linux.');    
 end
 
 try      
@@ -129,8 +129,8 @@ for block=1:numBlock
 
     %*******************************************************************************************
     %Loads a window and waits for input to start recording - just for getting set up and ready
-    instructions = 'Press the space bar to begin';
-    Screen('DrawText', windowPtr, instructions, screenXpixels/3, screenYpixels/6, white); 
+    instructionStart = 'Press the space bar to begin when you are ready. It will start automatically in 5 minutes.';
+    Screen('DrawText', windowPtr, instructionStart, screenXpixels/3, screenYpixels/6, white); 
     Screen(windowPtr, 'Flip');  
 
 
@@ -210,8 +210,7 @@ for block=1:numBlock
         dataR(t).xRyR=xRyR;
 
     end
-
-
+    
 
 
 end

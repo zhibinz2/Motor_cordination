@@ -1,4 +1,4 @@
-sca;
+ sca;
 close all;
 clear all; 
 clearvars;  
