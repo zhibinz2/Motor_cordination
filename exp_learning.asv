@@ -199,9 +199,9 @@ for block=1:numBlock
         restSecs =0.5; % rest 1 s to rest and look at trial number
         numFramesRest = round (restSecs/ifi);
         for Restframes=1:numFramesRest 
-        Screen('DrawText', windowPtr, ['trial ' num2str(t) ' / ' num2str(numTrials)], screenXpixels/2.3, screenYpixels/6, white); 
+        Screen('DrawText', windowPtr, ['trial ' num2str(t) ' / ' num2str(numTrials)], screenXpixels/3, screenYpixels/6, white); 
         %DrawFormattedText2(['trial ' num2str(t) ' / ' num2str(numTrials)],'win',windowPtr,...
-        %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+        'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
         % Flip to the screen   
         vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
         end      
