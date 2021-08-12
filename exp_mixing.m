@@ -149,6 +149,8 @@ for block=1:numBlock
     %xLyL=[]; xRyR=[]; % to keep track of mouse trace
     data.dataBlock.dataTrialL.xLyL=[];
     data.dataBlock.dataTrialR.xRyR=[];
+    %save block number info
+    data.dataBlock(block).blockNumber=block;
     
 
     %************************************ show test and rest
@@ -157,7 +159,7 @@ for block=1:numBlock
 %     Screen('DrawText', windowPtr, instructionStart, screenXpixels/3, screenYpixels/6, white); 
 %     Screen(windowPtr, 'Flip');  
     
-    instructionStart = 'Rest or hit a key to begin now';
+    instructionStart = ['Rest or hit a key to begin block ' num2str(numBlock)];
     DrawFormattedText2(instructionStart,'win',windowPtr,...
         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
     Screen('Flip',windowPtr);
@@ -190,7 +192,7 @@ for block=1:numBlock
         end
 
         %************ Show trial number and rest
-        restSecs =1; % rest 1 s to rest and look at trial number
+        restSecs =0.5; % rest 1 s to rest and look at trial number
         numFramesRest = round (restSecs/ifi);
         for Restframes=1:numFramesRest 
         %Screen('DrawText', windowPtr, ['trial ' num2str(t)], screenXpixels/3, screenYpixels/6, white); 
@@ -238,6 +240,10 @@ for block=1:numBlock
         %dataR(t).xRyR=xRyR;
         data.dataBlock(block).dataTrialL(t).xLyL=xLyL;
         data.dataBlock(block).dataTrialR(t).xRyR=xRyR;
+        
+        %save trial condition
+        data.dataBlock(block).dataTrialL(t).condition=conditionSelected;
+        data.dataBlock(block).dataTrialR(t).condition=conditionSelected;
 
     end
     
