@@ -5,7 +5,7 @@ function [Pos,Pos0,Pos1,Pos2,Pos3,Thickness,Color] = DrawPosL(x,y,steplength,yCe
 Thickness   = 15 .* ones(1,length(x)); % thickness of the route
 Color  = ones(3,length(x));
 % Add an offset for center the arc
-x      = flip(x + steplength); 
+x      = x + steplength; 
 % Reverse the route
 % y      = abs(y-max(y)); 
 % Offset the middle of the arc to be center on the middle of the screen
