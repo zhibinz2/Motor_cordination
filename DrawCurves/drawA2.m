@@ -1,4 +1,4 @@
-function [x,y] = drawA1(radius)
+function [x,y] = drawA2(radius)
 % Bimanual type A1
 % radius, or steplenth
 % N = how many pixiels
@@ -12,20 +12,13 @@ r_angl = linspace(0.75*pi,2.25*pi,N);
 xy_r   = circr(radius,r_angl);
 x      = xy_r(1,:);
 x      = x-min(x)+1; % shift into the corner of the screen
-% x      = flip(x);
+x      = flip(x);
 y      = xy_r(2,:);
 y      = y-min(y)+1; % shift into the corner of the screen
 end
 
-% function [x,y] = drawA1(steplength)
-% % Bimanual type A1
-% %   Detailed explanation goes here
-% x = [ones(1,steplength) [2:1:steplength-1] steplength*ones(1,steplength)];
-% y = [[steplength:-1:1] ones(1,steplength-2) [1:1:steplength]];
-% end
-
 %% test
 % steplength=200; %radius=200
-% [x,y] = drawA1(steplength);
+% [x,y] = drawA2(steplength);
 % plot(x,y,'ro');
 % set(gca, 'YDir', 'reverse');

@@ -7,6 +7,7 @@ clearvars;
 
 addpath Bimanual
 addpath DrawSquares
+addpath DrawCurves
 
 AssertOpenGL;
  
@@ -96,7 +97,7 @@ Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 dotCenter = [xCenter yCenter];
 
 % set the side length of square
-steplength=400;
+steplength=screenXpixels/6;
 
 % Numer of frames to wait when specifying good timing. Note: the use of
 % wait frames is to show a generalisable coding. For example, by using
