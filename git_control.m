@@ -19,6 +19,6 @@ CommitName=char(datetime('now'));
 !git stash pop
 
 %% Update the URL of origin remote using SSH instead of HTTPS so that it will not ask for password when push
-!git remote set-url origin git@github.com:zhibinz2/Motor_cordination.git
+!git remote set-url origin https://github.com/zhibinz2/Motor_cordination.git
 
 !git push
