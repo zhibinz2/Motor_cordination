@@ -3,7 +3,7 @@
 CommitName=char(datetime('now'));
 !git commit -a -m "CommitName"
 
-!git push
+% !git push
 %%
 % undo all current changes
 !git restore .
@@ -18,7 +18,12 @@ CommitName=char(datetime('now'));
 % to restore the stash
 !git stash pop
 
-%% Update the URL of origin remote using SSH instead of HTTPS so that it will not ask for password when push
-!git remote set-url origin https://github.com/zhibinz2/Motor_cordination.git
-
-!git push
+%% Make Git store the username and password and it will never ask for them.
+% !git config --global credential.helper store
+% 
+% % Save the username and password for a session (cache it);
+% !git config --global credential.helper cache
+% % set a timeout for the above setting
+% !git config --global credential.helper 'cache --timeout=600'
+% 
+% !git push
