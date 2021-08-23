@@ -117,14 +117,21 @@ ConnectDotColor3 = white;
 % Set size of the squares for photosenors 
 PhotosensorSize=30;
 % Positions of the four corners
-RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels];
-RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2];
-LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels];
-LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
+% RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels];
+% RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2];
+% LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels];
+% LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
+RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+230-PhotosensorSize screenXpixels screenYpixels/2+230+PhotosensorSize];
+RightUpperSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+110-PhotosensorSize screenXpixels screenYpixels/2+110+PhotosensorSize];
+LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 screenYpixels/2+230+PhotosensorSize];
+LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
+
+
 
 % Loop the animation until a key is pressed
 HideCursor
 
+  
 % NumInside=[]; % To keep a record of the percentage of time inside the square
 xy=[]; % to keep track of mouse trace
 data=[];
@@ -185,7 +192,7 @@ for t=1:5
 %     end 
  
     % Setting default mouse position
-    SetMouse(Pos(1,1),Pos(2,1), screenNumber);
+    SetMouse(Pos(1,1),Pos(2,1), screenNumber); 
     
     % Send a marker to LSL
     % outlet.push_sample({'trialstart'});
