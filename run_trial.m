@@ -51,28 +51,24 @@ while n <  numFrames %~KbCheck
     insideL0 = IsInDot(xML, yML, PosL0, ConnectDotSize)&(~IsInDot(xMR, yMR, PosR0, ConnectDotSize));
     if insideL0 == 1
         ConnectDotColorL0 = red;
-        Scores=Scores+1;
     else insideL0 == 0
         ConnectDotColorL0 = white;
     end
     insideL1 = IsInDot(xML, yML, PosL1, ConnectDotSize)&(~IsInDot(xMR, yMR, PosR1, ConnectDotSize));
     if insideL1 == 1
         ConnectDotColorL1 = red;
-        Scores=Scores+1;
     else insideL1 == 0
         ConnectDotColorL1 = white;
     end
     inside2L = IsInDot(xML, yML, PosL2, ConnectDotSize)&(~IsInDot(xMR, yMR, PosR2, ConnectDotSize));
     if inside2L == 1
         ConnectDotColorL2 = red;
-        Scores=Scores+1;
     else inside2L == 0
         ConnectDotColorL2 = white;
     end
     inside3L = IsInDot(xML, yML, PosL3, ConnectDotSize)&(~IsInDot(xMR, yMR, PosR3, ConnectDotSize));
     if inside3L == 1
         ConnectDotColorL3 = red;
-        Scores=Scores+1;
     else inside3L == 0
         ConnectDotColorL3 = white;
     end
@@ -80,28 +76,24 @@ while n <  numFrames %~KbCheck
     insideR0 = IsInDot(xMR, yMR, PosR0, ConnectDotSize)&(~IsInDot(xML, yML, PosL0, ConnectDotSize));
     if insideR0 == 1
         ConnectDotColorR0 = blue;
-        Scores=Scores+1;
     elseif insideR0 == 0
         ConnectDotColorR0 = white;
     end
     insideR1 = IsInDot(xMR, yMR, PosR1, ConnectDotSize)&(~IsInDot(xML, yML, PosL1, ConnectDotSize));
     if insideR1 == 1
         ConnectDotColorR1 = blue;
-        Scores=Scores+1;
     else insideR1 == 0
         ConnectDotColorR1 = white;
     end
     inside2R = IsInDot(xMR, yMR, PosR2, ConnectDotSize)&(~IsInDot(xML, yML, PosL2, ConnectDotSize));
     if inside2R == 1
         ConnectDotColorR2 = blue;
-        Scores=Scores+1;
     else inside2R == 0
         ConnectDotColorR2 = white;
     end
     inside3R = IsInDot(xMR, yMR, PosR3, ConnectDotSize)&(~IsInDot(xML, yML, PosL3, ConnectDotSize));
     if inside3R == 1
         ConnectDotColorR3 = blue;
-        Scores=Scores+1;
     else inside3R == 0
         ConnectDotColorR3 = white;
     end
@@ -110,7 +102,6 @@ while n <  numFrames %~KbCheck
     if insideBi0 == 1
         ConnectDotColorL0 = green;
         ConnectDotColorR0 = green;
-        Scores=Scores+2;
 %     else insideBi0 == 0
 %         ConnectDotColorL0 = white;
 %         ConnectDotColorR0 = white;
@@ -119,7 +110,6 @@ while n <  numFrames %~KbCheck
     if insideBi1 == 1
         ConnectDotColorL1 = green;
         ConnectDotColorR1 = green;
-        Scores=Scores+2;
 %     else insideBi1 == 0
 %         ConnectDotColorL1 = white;
 %         ConnectDotColorR1 = white;
@@ -128,7 +118,6 @@ while n <  numFrames %~KbCheck
     if inside2R == 1
         ConnectDotColorL2 = green;
         ConnectDotColorR2 = green;
-        Scores=Scores+2;
 %     else inside2R == 0
 %         ConnectDotColorL2 = white;
 %         ConnectDotColorR2 = white;
@@ -137,7 +126,6 @@ while n <  numFrames %~KbCheck
     if inside3R == 1
         ConnectDotColorL3 = green;
         ConnectDotColorR3 = green;
-        Scores=Scores+2;
 %     else inside3R == 0
 %         ConnectDotColor3L = white;
 %         ConnectDotColor3R = white;

@@ -47,7 +47,7 @@ for b=1:numBlock
 end
 %*******************************************
 % keep a record of the scores
-Scores=[];
+Scores=0;
 
 try      
     
