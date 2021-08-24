@@ -51,6 +51,7 @@ while n <  numFrames %~KbCheck
     insideL0 = IsInDot(xML, yML, PosL0, ConnectDotSize)&(~IsInDot(xMR, yMR, PosR0, ConnectDotSize));
     if insideL0 == 1
         ConnectDotColorL0 = red;
+        Scores=Scores+
     else insideL0 == 0
         ConnectDotColorL0 = white;
     end

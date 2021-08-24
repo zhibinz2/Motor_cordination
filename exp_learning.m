@@ -46,7 +46,8 @@ for b=1:numBlock
     allPerm=[allPerm allPermSequence(b)*ones(1,numTrials)];
 end
 %*******************************************
-
+% keep a record of the scores
+Scores=[];
 
 try      
     
