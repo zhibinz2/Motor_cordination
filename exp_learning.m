@@ -175,7 +175,7 @@ for block=1:numBlock
 %     Screen('DrawText', windowPtr, instructionStart, screenXpixels/3, screenYpixels/6, white); 
 %     Screen(windowPtr, 'Flip');  
     
-    instructionStart = ['Rest or hit a key to begin block ' num2str(block)];
+    instructionStart = ['Current Score: ' num2str(Scores) '. Hit a key to begin block ' num2str(block) ' when ready'];
     DrawFormattedText2(instructionStart,'win',windowPtr,...
         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
     Screen('Flip',windowPtr);
@@ -211,7 +211,7 @@ for block=1:numBlock
         restSecs =0.5; % rest 1 s to rest and look at trial number
         numFramesRest = round (restSecs/ifi);
         for Restframes=1:numFramesRest 
-        Screen('DrawText', windowPtr, ['trial ' num2str(t) ' / ' num2str(numTrials)], screenXpixels/2.3, screenYpixels/6, white); 
+        Screen('DrawText', windowPtr, ['Current Score: ' num2str(Scores) '. Trial ' num2str(t) ' / ' num2str(numTrials)], screenXpixels/2.3, screenYpixels/6, white); 
         %DrawFormattedText2(['trial ' num2str(t) ' / ' num2str(numTrials)],'win',windowPtr,...
         %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
         % Flip to the screen   
