@@ -48,6 +48,10 @@ end
 %*******************************************
 % keep a record of the scores
 Scores=0;
+ScoreL1=0; ScoreL2=0; ScoreL3=0;
+ScoreR1=0; ScoreR2=0; ScoreR3=0;
+ScoreB1=0; ScoreB2=0; ScoreB3=0;
+
 
 try      
     
@@ -260,10 +264,19 @@ for block=1:numBlock
         %save trial condition
         data.dataBlock(block).dataTrialL(t).condition=conditionSelected;
         data.dataBlock(block).dataTrialR(t).condition=conditionSelected;
+        
+        % update the scores
+        Scores=Scores+ScoreL1+ScoreL2+ScoreL3+ScoreR1+ScoreR2+ScoreR3+ScoreB1+ScoreB2+ScoreB3;
+        ScoreL1=0; ScoreL2=0; ScoreL3=0;
+        ScoreR1=0; ScoreR2=0; ScoreR3=0;
+        ScoreB1=0; ScoreB2=0; ScoreB3=0;
+
+%         ScoreL1=1; ScoreL2=1; ScoreL3=1;    
+%         ScoreR1=1; ScoreR2=1; ScoreR3=1;    
+%         ScoreB1=2; ScoreB2=2; ScoreB3=2;
 
     end
     
-
 
 end
 
