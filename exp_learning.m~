@@ -241,7 +241,7 @@ for block=1:numBlock
         numFramesPlan = round (planSecs/ifi);
 
         % Length of time and number of frames we will use for each drawing trial
-        moveSecs = 8; %4; % 4 s to move
+        moveSecs = 4; % 4 s to move
         numFramesMove = round(moveSecs / ifi);
 
         % total number of frames
