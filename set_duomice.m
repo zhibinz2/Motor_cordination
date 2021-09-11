@@ -7,4 +7,4 @@
 % BenQ
 !xinput reattach 12 14
 !xinput  list
-!xinput remove-master L
+!xinput remove-master 15

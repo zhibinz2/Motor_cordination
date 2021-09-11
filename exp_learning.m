@@ -125,9 +125,9 @@ Priority(topPriorityLevel);
 ifi = Screen('GetFlipInterval', windowPtr);
 
 % Check if ifi=0.0167
-% if round(1/ifi)~=60
-%   error('Error: Screen flash frequency is not set at 60Hz.');    
-% end
+if round(1/ifi)~=60
+  error('Error: Screen flash frequency is not set at 60Hz.');    
+end
 
 % Set default connecting dot size
 ConnectDotSize=60; 
