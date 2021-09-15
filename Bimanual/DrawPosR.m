@@ -6,7 +6,7 @@ Thickness   = 15 .* ones(1,length(x)); % thickness of the route
 Color  = ones(3,length(x));
 % Add an offset 
 x      = x + screenXpixels/2 + steplength/6; 
-Centroidx =steplength + steplength/2; % offset circle center
+Centroidx =steplength + screenXpixels/2 + steplength/6; ; % offset circle center
 
 % Reverse the route
 % y      = abs(y-max(y)); 

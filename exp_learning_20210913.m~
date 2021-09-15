@@ -53,7 +53,7 @@ for b=1:numBlock
 end
 %*******************************************
 % keep a record of the scores
-Scores=0;ScoreLR=[];TrialScore
+Scores=0;ScoreLR=[];TrialScore=[];
 % ScoreL1=0; ScoreL2=0; ScoreL3=0;
 % ScoreR1=0; ScoreR2=0; ScoreR3=0;
 % ScoreB1=0; ScoreB2=0; ScoreB3=0;
@@ -136,7 +136,7 @@ ConnectDotSize=60;
 % Set default connecting dot color to white
 [ConnectDotColorL0, ConnectDotColorL1, ConnectDotColorL2, ConnectDotColorL3] = deal(white);
 [ConnectDotColorR0, ConnectDotColorR1, ConnectDotColorR2, ConnectDotColorR3] = deal(white);
-
+MLcolor
 % Set size of the squares for photocell 
 PhotosensorSize=30;
 % Positions of the four corners
@@ -250,7 +250,7 @@ for block=1:numBlock
         numFrames=numFramesPlan+numFramesMove; 
 
         % Run one trial 
-        run run_trial.m 
+        run run_trial_20210913.m 
 
         % reset n
         n=1;
@@ -273,7 +273,7 @@ for block=1:numBlock
         
         % update the scores
         Scores=Scores+ScoreLR;
-        TrialScore=[ScoreLR]
+        TrialScore=[TrialScore ScoreLR];
         ScoreLR=[]
 
 

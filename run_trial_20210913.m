@@ -22,7 +22,7 @@ while n <  numFrames %~KbCheck
 %     Screen('DrawDots', windowPtr, PosR3, ConnectDotSize, ConnectDotColorR3, [0 0], 2);
 
     % fash the upper left corner once at the start of planing phase (and bottom right)
-    if n=1
+    if n == 1
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
     Screen('FillRect', windowPtr, white, RightBottomSquare);
     end
@@ -37,7 +37,7 @@ while n <  numFrames %~KbCheck
     end
     
     %flash the upper right corner once at the end of planning phase (and bottom right)
-    if n = numFramesPlan 
+    if n == numFramesPlan 
     Screen('FillRect', windowPtr, white, RightUpperSquare);
     Screen('FillRect', windowPtr, white, RightBottomSquare);
     end
@@ -48,7 +48,7 @@ while n <  numFrames %~KbCheck
     end
     
     % fash the upper left corner once at the end of the trial (and bottom right)
-    if n=numFrames
+    if n==numFrames
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
     Screen('FillRect', windowPtr, white, RightBottomSquare);
     end
@@ -59,8 +59,8 @@ while n <  numFrames %~KbCheck
     [xMR, yMR] = GetMouse(windowPtr,mice(1));
     
     % Display the cursor as a dot
-    Screen('DrawDots', windowPtr, [xML yML], 16, MLcolor, [], 2);
-    Screen('DrawDots', windowPtr, [xMR yMR], 16, MRcolor, [], 2);
+    Screen('DrawDots', windowPtr, [xML yML], 30, MLcolor, [], 2);
+    Screen('DrawDots', windowPtr, [xMR yMR], 30, MRcolor, [], 2);
     
     % ********************************
     % See if the mouse cursor is inside the connecting dots (cancelled)
@@ -155,14 +155,14 @@ while n <  numFrames %~KbCheck
 %     end %******************************************
 
     % When both hands falls within each other near the curve, both cursors turn green
-    insideLR = IsInDot(xML, yML, (xMR, yMR), ConnectDotSize) ...
-        & sqrt(sumsqr([xML-CentroidL(1) yML-CentroidL(2)])) < steplength+ConnectDotSize
-        & sqrt(sumsqr([xMR-CentroidR(1) yMR-CentroidR(2)]))> steplength-ConnectDotSize
+    insideLR = IsInDot(xML, yML, ([xMR;yMR]), ConnectDotSize) ...
+        & (sqrt(sumsqr([xML-CentroidL(1) yML-CentroidL(2)])) < (steplength+ConnectDotSize)) ...
+        & (sqrt(sumsqr([xMR-CentroidR(1) yMR-CentroidR(2)])) > (steplength-ConnectDotSize));
     if insideLR == 1
         MLcolor = green;
         MRcolor = green;
         ScoreLR=ScoreLR+round(1/numFrames,3);
-    else inside3R == 0
+    else insideLR == 0
         MLcolor = red;
         MRcolor = blue;
     end
