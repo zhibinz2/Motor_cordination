@@ -60,13 +60,14 @@ while n <  numFrames %~KbCheck
     
     % When both hands falls within each other near the curve, both cursors turn green
     % for anti-phase
-    if conditionSelected == 2 | 4;
+    if conditionSelected == 2 | conditionSelected == 4;
         insideLR = IsInDot((xML + 0.5*screenXpixels), yML, ([xMR;yMR]), ConnectDotSize) ...
             & (sqrt((xML-CentroidL(1)).^2+(yML-CentroidL(2)).^2) < (steplength+ConnectDotSize)) ...
             & (sqrt((xMR-CentroidR(1)).^2+(yMR-CentroidR(2)).^2) > (steplength-ConnectDotSize));
     end
+    
     % for in-phase
-    if conditionSelected == 1 | 3;
+    if conditionSelected == 1 | conditionSelected == 3;
         insideLR = IsInDot((screenXpixels - xML), yML, ([xMR;yMR]), ConnectDotSize) ...
             & (sqrt((xML-CentroidL(1)).^2+(yML-CentroidL(2)).^2) < (steplength+ConnectDotSize)) ...
             & (sqrt((xMR-CentroidR(1)).^2+(yMR-CentroidR(2)).^2) > (steplength-ConnectDotSize));
@@ -78,12 +79,12 @@ while n <  numFrames %~KbCheck
         DrawFormattedText2(textMove,'win',windowPtr,...
             'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
         %Screen('DrawText', windowPtr, ['Move now!'], xCenter, yCenter, white);
-        if insideLR == 1;
+        if insideLR == 1
             MLcolor = green;MRcolor = green;
             if ((xML~=xMLbefore)|(yML~=yMLbefore)|(xMR~=xMRbefore)|(yMR~=yMRbefore))==1 % at least one coortinate moved
                 ScoreLR=ScoreLR+round(fullBonusPerTrial/numFrames,4);
             end
-        else %insideLR == 0;
+        else % insideLR == 0
             MLcolor=red;MRcolor=blue;
         end
     end

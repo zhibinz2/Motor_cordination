@@ -55,9 +55,6 @@ end
 % keep a record of the scores
 Scores=0;ScoreLR=0;TrialScore=[];
 fullBonusPerTrial=0.20;% $0.20 per trial if perfectly perfomed 
-% ScoreL1=0; ScoreL2=0; ScoreL3=0;
-% ScoreR1=0; ScoreR2=0; ScoreR3=0;
-% ScoreB1=0; ScoreB2=0; ScoreB3=0;
 
 
 try      
@@ -135,8 +132,8 @@ end
 % Set default connecting dot size
 ConnectDotSize=60; 
 % Set default connecting dot color to white
-[ConnectDotColorL0, ConnectDotColorL1, ConnectDotColorL2, ConnectDotColorL3] = deal(white);
-[ConnectDotColorR0, ConnectDotColorR1, ConnectDotColorR2, ConnectDotColorR3] = deal(white);
+% [ConnectDotColorL0, ConnectDotColorL1, ConnectDotColorL2, ConnectDotColorL3] = deal(white);
+% [ConnectDotColorR0, ConnectDotColorR1, ConnectDotColorR2, ConnectDotColorR3] = deal(white);
 MLcolor=green;MRcolor=green;
 
 % Set size of the squares for photocell 
@@ -296,8 +293,16 @@ for block=1:numBlock
 
 end
 
+% Show The End
+instructionStart = ['The end. \n\n\n Thank you! \n\n\n Bonus Earned $ ' num2str(Scores)];
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+Screen('Flip',windowPtr);
+% hit a key to continue
+KbStrokeWait;
 
 
+%*************************************88
 Priority(0);   
    
 % Now we have drawn to the screen we wait for a keyboard button press (any
