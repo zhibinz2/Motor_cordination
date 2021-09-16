@@ -48,7 +48,7 @@ while n <  numFrames %~KbCheck
     end
     
     % fash the upper left corner once at the end of the trial (and bottom right)
-    if n==numFrames
+    if n == (numFrames-1)
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
     Screen('FillRect', windowPtr, white, RightBottomSquare);
     end
@@ -155,13 +155,13 @@ while n <  numFrames %~KbCheck
 %     end %******************************************
 
     % When both hands falls within each other near the curve, both cursors turn green
-    insideLR = IsInDot(xML, yML, ([xMR;yMR]), ConnectDotSize) ...
-        & (sqrt(sumsqr([xML-CentroidL(1) yML-CentroidL(2)])) < (steplength+ConnectDotSize)) ...
-        & (sqrt(sumsqr([xMR-CentroidR(1) yMR-CentroidR(2)])) > (steplength-ConnectDotSize));
+    insideLR = IsInDot((xML- steplength/2 + screenXpixels/2 + steplength/6), yML, ([xMR;yMR]), ConnectDotSize) ...
+        & (sqrt((xML-CentroidL(1)).^2+(yML-CentroidL(2)).^2) < (steplength+ConnectDotSize)) ...
+        & (sqrt((xMR-CentroidR(1)).^2+(yMR-CentroidR(2)).^2) > (steplength-ConnectDotSize));
     if insideLR == 1
         MLcolor = green;
         MRcolor = green;
-        ScoreLR=ScoreLR+round(1/numFrames,3);
+        ScoreLR=ScoreLR+round(1/numFrames);
     else insideLR == 0
         MLcolor = red;
         MRcolor = blue;

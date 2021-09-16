@@ -11,8 +11,8 @@ Centroidx =steplength + screenXpixels/2 + steplength/6; ; % offset circle center
 % Reverse the route
 % y      = abs(y-max(y)); 
 % Offset the middle of the arc to be center on the middle of the screen
-y      = y + (yCenter - max(y) + (max(y) - min(y))/2); 
-Centroidy =steplength  + (yCenter - max(y) + (max(y) - min(y))/2); % offset circle center
+y      = y  + yCenter - steplength/2;% + (yCenter - max(y) + (max(y) - min(y))/2); 
+Centroidy =steplength  + yCenter - steplength/2; % + (yCenter - max(y) + (max(y) - min(y))/2); % offset circle center
 
 % the route
 Pos    = [x; y];

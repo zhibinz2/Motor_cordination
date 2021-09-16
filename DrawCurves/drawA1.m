@@ -18,7 +18,7 @@ end
 
 
 %% test
-% steplength=200; %radius=200
+% steplength=200; %radius=320
 % [x,y] = drawA1(steplength);
 % plot(x,y,'ro');
 % hold on; plot(steplength,steplength,'go');
