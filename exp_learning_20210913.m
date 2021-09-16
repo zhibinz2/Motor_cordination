@@ -53,7 +53,7 @@ for b=1:numBlock
 end
 %*******************************************
 % keep a record of the scores
-Scores=0;ScoreLR=[];TrialScore=[];
+Scores=0;ScoreLR=0;TrialScore=[];
 % ScoreL1=0; ScoreL2=0; ScoreL3=0;
 % ScoreR1=0; ScoreR2=0; ScoreR3=0;
 % ScoreB1=0; ScoreB2=0; ScoreB3=0;
@@ -275,7 +275,7 @@ for block=1:numBlock
         % update the scores
         Scores=Scores+ScoreLR;
         TrialScore=[TrialScore ScoreLR];
-        ScoreLR=[]
+        ScoreLR=0;
 
 
     end

@@ -158,16 +158,16 @@ while n <  numFrames %~KbCheck
     insideLR = IsInDot((xML- steplength/2 + screenXpixels/2 + steplength/6), yML, ([xMR;yMR]), ConnectDotSize) ...
         & (sqrt((xML-CentroidL(1)).^2+(yML-CentroidL(2)).^2) < (steplength+ConnectDotSize)) ...
         & (sqrt((xMR-CentroidR(1)).^2+(yMR-CentroidR(2)).^2) > (steplength-ConnectDotSize));
-    insideLRbefore=1;
-    if insideLR & insideLRbefore 
+    insideLRbefore=0;
+    if (insideLR \ insideLRbefore) == 1
         MLcolor = green;
         MRcolor = green;
-        insideLRbefore=0;
+        insideLRbefore=1;
         ScoreLR=ScoreLR+round(1/numFrames,3);
-    else 
+    else % insideLR == 0
         MLcolor = red;
         MRcolor = blue;
-        insideLRbefore=1;
+        insideLRbefore=0;
     end
         
     % Flip to the screen
