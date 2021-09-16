@@ -22,7 +22,7 @@ while n <  numFrames %~KbCheck
     if n< numFramesPlan 
         SetMouse(PosL(1,1),PosL(2,1), windowPtr, mice(2));
         SetMouse(PosR(1,1),PosR(2,1), windowPtr, mice(1)); 
-        Screen('DrawText', windowPtr, ['Place mice at starting point and start drawing in 1 second!'], xCenter-steplength/1.5, yCenter-steplength, white);
+        Screen('DrawText', windowPtr, ['Place mice at the starting points'], xCenter-steplength/1.5, yCenter-steplength, white);
         %DrawFormattedText2(['Place mice at starting point and start drawing in 1 second!'],'win',windowPtr,...
         %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
         
@@ -49,12 +49,6 @@ while n <  numFrames %~KbCheck
     % Get mouse location
     [xML, yML] = GetMouse(windowPtr,mice(2));
     [xMR, yMR] = GetMouse(windowPtr,mice(1));
-    % keep a record of the mouse position to be use as previous position in
-    % the next loop
-    xMLbefore=xML;
-    yMLbefore=yML;
-    xMRbefore=xMR;
-    yMRbefore=yMR;
 
     % Display the cursor as a dot
     Screen('DrawDots', windowPtr, [xML yML], 30, MLcolor, [], 2);
@@ -69,22 +63,29 @@ while n <  numFrames %~KbCheck
 
     if n > numFramesPlan % start counting scores after planning phase
         MLcolor=red;MRcolor=blue;
+        Screen('DrawText', windowPtr, ['Move now!'], xCenter-steplength/1.5, yCenter-steplength, white);
         if insideLR == 1
             MLcolor = green;MRcolor = green;
-            if ((xML==xMLbefore)|(yML==yMLbefore)|(xMR==xMRbefore)|(yMR==yMRbefore))==0 % at least all four coortinates moved
-                ScoreLR=ScoreLR+round(1/numFrames,3);
+            if ((xML~=xMLbefore)|(yML~=yMLbefore)|(xMR~=xMRbefore)|(yMR~=yMRbefore))==1 % at least one coortinate moved
+                ScoreLR=ScoreLR+round(fullBonusPerTrial/numFrames,4);
             end
         else %insideLR == 0
             MLcolor=red;MRcolor=blue;
         end
     end
-
-        
+     
     % Flip to the screen
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
     
     % Keep track of the nummers of flames when dot is inside the rect
-%     NumInside(n)=inside;    
+    % NumInside(n)=inside;    
+        
+    % keep a record of the mouse position to be use as previous position in
+    % the next loop
+    xMLbefore=xML;
+    yMLbefore=yML;
+    xMRbefore=xMR;
+    yMRbefore=yMR;
     
     % Keep track of the mouse trace
     xLyL(n,1) = xML;

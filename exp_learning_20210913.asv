@@ -187,10 +187,10 @@ for block=1:numBlock
 %     Screen('DrawText', windowPtr, instructionStart, screenXpixels/3, screenYpixels/6, white); 
 %     Screen(windowPtr, 'Flip');  
     instructionStart=['Movement of each hand start from the green dot on one end of the curve']
-    DrawFormattedText2(instructionStart,'win',windowPtr,...
-        'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
     Screen('Flip',windowPtr);
-    % hit a key to continue
+    KbStrokeWait;
+    instructionStart=['Movement of each hand start from the green dot on one end of the curve']
+    Screen('Flip',windowPtr);
     KbStrokeWait;
     
     instructionStart = ['Bonus $ ' num2str(Scores) '. Hit a key to begin block ' num2str(block)];
