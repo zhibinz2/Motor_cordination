@@ -136,7 +136,7 @@ ConnectDotSize=60;
 % Set default connecting dot color to white
 [ConnectDotColorL0, ConnectDotColorL1, ConnectDotColorL2, ConnectDotColorL3] = deal(white);
 [ConnectDotColorR0, ConnectDotColorR1, ConnectDotColorR2, ConnectDotColorR3] = deal(white);
-MLcolor=red;MRcolor=blue;
+MLcolor=green;MRcolor=green;
 
 % Set size of the squares for photocell 
 PhotosensorSize=30;
