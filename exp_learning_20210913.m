@@ -151,6 +151,16 @@ RightUpperSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+110-Photosens
 LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 screenYpixels/2+230+PhotosensorSize];
 LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
 
+% Setting default mouse Position for some time
+planSecs =1 ; % rest 1 s to look at trial number
+numFramesPlan = round (planSecs/ifi);
+
+% Length of time and number of frames we will use for each drawing trial
+moveSecs = 6; %4; % 4 s to move
+numFramesMove = round(moveSecs / ifi);
+
+% total number of frames per trial
+numFrames=numFramesPlan+numFramesMove; 
 
 
 % DuoMice:
@@ -166,6 +176,23 @@ mice = GetMouseIndices(typeOnly);
 % case. Therefore we disable all system cursor images and draw our
 % cursors ourselves for a more beautiful look:
 HideCursor;
+
+% Starting introduction
+instructionStart=['Movement of each hand starts from the green dot at one end of each curve.'...
+        '\n\n\n Trace the curve to the other end then go back to the starting point.'...
+        '\n\n\n After movement starts, right hand position will be shown in a red dot'...
+        '\n\n\n left hand position will be shown in a blue dot.'...
+        '\n\n\n Synchronize the movements of your two hands.'...
+        '\n\n\n When synchronized, both dots turn green'...
+        '\n\n\n Complete within ' num2str(moveSecs) ' seconds.'...
+        '\n\n\n Earn Bonus money up to $ ' num2str(fullBonusPerTrial*numtotal) ' if well performed.'...
+        '\n\n\n Questions? If none, press any key to start']
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+Screen('Flip',windowPtr);
+% hit a key to continue
+KbStrokeWait;
+
 
 
 %*******************************Loop through block
@@ -186,14 +213,9 @@ for block=1:numBlock
 %     instructionStart = 'Press the space bar to begin when you are ready. It will start automatically in 5 minutes.';
 %     Screen('DrawText', windowPtr, instructionStart, screenXpixels/3, screenYpixels/6, white); 
 %     Screen(windowPtr, 'Flip');  
-    instructionStart=['Movement of each hand start from the green dot on one end of the curve']
-    DrawFormattedText2(instructionStart,'win',windowPtr,...
-        'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-    Screen('Flip',windowPtr);
-    % hit a key to continue
-    KbStrokeWait;
     
-    instructionStart = ['Bonus $ ' num2str(Scores) '. Hit a key to begin block ' num2str(block)];
+    
+    instructionStart = ['Bonus Earned $ ' num2str(Scores) '.\n\n\n Hit a key to begin block ' num2str(block)];
     DrawFormattedText2(instructionStart,'win',windowPtr,...
         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
     Screen('Flip',windowPtr);
@@ -220,12 +242,15 @@ for block=1:numBlock
         %************ Show trial number and rest
         restSecs = 1; %0.5; % rest 1 s to rest and look at trial number
         numFramesRest = round (restSecs/ifi);
-        for Restframes=1:numFramesRest 
-        Screen('DrawText', windowPtr, ['Bonus $ ' num2str(Scores) '. Trial ' num2str(t) ' / ' num2str(numTrials)], screenXpixels/2.3, screenYpixels/6, white); 
-        %DrawFormattedText2(['trial ' num2str(t) ' / ' num2str(numTrials)],'win',windowPtr,...
-        %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-        % Flip to the screen   
-        vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+        for Restframes=1:numFramesRest
+            textTrial=['Bonus Earned $ ' num2str(Scores) '. \n\n\n Trial ' num2str(t) ' / ' num2str(numTrials)];
+            DrawFormattedText2(textTrial,'win',windowPtr,...
+            'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+            %Screen('DrawText', windowPtr, ['Bonus $ ' num2str(Scores) '. \n\nTrial ' num2str(t) ' / ' num2str(numTrials)], screenXpixels/2.3, screenYpixels/6, white); 
+            %DrawFormattedText2(['trial ' num2str(t) ' / ' num2str(numTrials)],'win',windowPtr,...
+            %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+            % Flip to the screen   
+            vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
         end      
         
         %*************************Randomized selection
@@ -237,17 +262,6 @@ for block=1:numBlock
                 = conditionfuctions{conditionSelected}(steplength,yCenter,screenXpixels);
         %***********************************************
 
-
-        % Setting default mouse Position for some time
-        planSecs =1 ; % rest 1 s to look at trial number
-        numFramesPlan = round (planSecs/ifi);
-
-        % Length of time and number of frames we will use for each drawing trial
-        moveSecs = 6; %4; % 4 s to move
-        numFramesMove = round(moveSecs / ifi);
-
-        % total number of frames
-        numFrames=numFramesPlan+numFramesMove; 
 
         % Run one trial 
         run run_trial_20210913.m 

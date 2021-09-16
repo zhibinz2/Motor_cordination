@@ -5,8 +5,8 @@ function [Centroid,Pos,Pos0,Pos1,Pos2,Pos3,Thickness,Color] = DrawPosR(x,y,stepl
 Thickness   = 15 .* ones(1,length(x)); % thickness of the route
 Color  = ones(3,length(x));
 % Add an offset 
-x      = x + screenXpixels - 2.5*steplength; 
-Centroidx =steplength + screenXpixels - 2.5*steplength; ; % offset circle center
+x      = x + screenXpixels - 3steplength; 
+Centroidx =steplength + screenXpixels - 3steplength; ; % offset circle center
 
 % Reverse the route
 % y      = abs(y-max(y)); 
