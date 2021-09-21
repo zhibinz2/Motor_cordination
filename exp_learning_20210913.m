@@ -206,11 +206,8 @@ for block=1:numBlock
 
 
     %************************************ show test and rest
-    %Loads a window and waits for input to start recording - just for getting set up and ready
-%     instructionStart = 'Press the space bar to begin when you are ready. It will start automatically in 5 minutes.';
-%     Screen('DrawText', windowPtr, instructionStart, screenXpixels/3, screenYpixels/6, white); 
-%     Screen(windowPtr, 'Flip');  
     
+    WaitSecs(3); % to separate blocks in the photocell signal
     
     instructionStart = ['Bonus Earned $ ' num2str(Scores) '.\n\n\n Hit a key to begin block ' num2str(block)];
     DrawFormattedText2(instructionStart,'win',windowPtr,...

@@ -12,6 +12,7 @@ while n <  numFrames %~KbCheck
     Screen('DrawDots', windowPtr, PosL, ThicknessL, ColorL, [0 0], 2);
     Screen('DrawDots', windowPtr, PosR, ThicknessR, ColorR, [0 0], 2);
 
+    % ******
     % fash the upper left corner once at the start of planing phase (and bottom right)
     if n == 1
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
@@ -36,13 +37,16 @@ while n <  numFrames %~KbCheck
     Screen('FillRect', windowPtr, white, RightUpperSquare);
     Screen('FillRect', windowPtr, white, RightBottomSquare);
     end
-
+    
+    
+    % ******
     % Flash the bottom left corner every other second during the whole trial
     if (~isempty(find([1:2:numFrames]==n))) % every two frames
     Screen('FillRect', windowPtr, white, LeftBottomSquare);
     end
     
-    % fash the upper left corner once at the end of the trial (and bottom right)
+    % ******
+    % Flash the upper left corner once at the end of the trial (and bottom right)
     if n == (numFrames-1)
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
     Screen('FillRect', windowPtr, white, RightBottomSquare);
