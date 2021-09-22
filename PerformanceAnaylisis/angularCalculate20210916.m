@@ -121,7 +121,7 @@ for u=1:length(UniCondi)
     
     [xL,yL,CentroidL,PosL,PosL0,PosL1,PosL2,PosL3,ThicknessL,ColorL,...
                 xR,yR,CentroidR,PosR,PosR0,PosR1,PosR2,PosR3,ThicknessR,ColorR] ...
-                = conditionfuctions{conditionSelected}(steplength,yCenter,screenXpixels);
+                = conditionfuctions{UniCondi(u)}(steplength,yCenter,screenXpixels);
     
     % find starting point
     StartPointxL=PosL(1,1);StartPointyL=PosL(2,1); 
@@ -167,6 +167,7 @@ for u=1:length(UniCondi)
     functionName=func2str(conditionfuctions{UniCondi(u)});
     functionName=strrep(functionName, '_', '-');
     title(['condition ' functionName 'realtime angles']);
+    ylim([-3.5 3.5]);
     
     hleg=legend(h(1:50:300),{'L','L mean','R','R mean','R-L', 'R-L mean'});
 
@@ -192,7 +193,7 @@ for u=1:length(UniCondi)
     
     [xL,yL,CentroidL,PosL,PosL0,PosL1,PosL2,PosL3,ThicknessL,ColorL,...
                 xR,yR,CentroidR,PosR,PosR0,PosR1,PosR2,PosR3,ThicknessR,ColorR] ...
-                = conditionfuctions{conditionSelected}(steplength,yCenter,screenXpixels);
+                = conditionfuctions{UniCondi(u)}(steplength,yCenter,screenXpixels);
     
     % find starting point
     StartPointxL=PosL(1,1);StartPointyL=PosL(2,1); 
@@ -240,7 +241,7 @@ for u=1:length(UniCondi)
     functionName=func2str(conditionfuctions{UniCondi(u)});
     functionName=strrep(functionName, '_', '-');
     title(['condition ' functionName]);
-    ylim([-1.5 1.5]);
+    ylim([-.5 .5]);yline(0);
     
     subplot(4,2,2*u);
     plot(rmseSpatialLTrend,'r');xlabel('trials');ylabel('spatial acurracy (pixels)');
