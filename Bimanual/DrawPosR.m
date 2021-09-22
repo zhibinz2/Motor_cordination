@@ -1,4 +1,4 @@
-function [Centroid,Pos,Pos0,Pos1,Pos2,Pos3,Thickness,Color] = DrawPosR(x,y,steplength,yCenter,screenXpixels)
+function [Centroid,Pos,Pos0,Pos1,Pos2,Pos3,Thickness,Color] = DrawPosR(x,y,steplength,yCenter,screenXpixels);
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -11,8 +11,8 @@ Centroidx =steplength + screenXpixels - 2.5*steplength; ; % offset circle center
 % Reverse the route
 % y      = abs(y-max(y)); 
 % Offset the middle of the arc to be center on the middle of the screen
-y      = y + steplength/3 %  + yCenter - steplength/2;% + (yCenter - max(y) + (max(y) - min(y))/2); 
-Centroidy =steplength + steplength/3 % + yCenter - steplength/2; % + (yCenter - max(y) + (max(y) - min(y))/2); % offset circle center
+y      = y + steplength/3; %  + yCenter - steplength/2;% + (yCenter - max(y) + (max(y) - min(y))/2); 
+Centroidy =steplength + steplength/3; % + yCenter - steplength/2; % + (yCenter - max(y) + (max(y) - min(y))/2); % offset circle center
 
 % the route
 Pos    = [x; y];

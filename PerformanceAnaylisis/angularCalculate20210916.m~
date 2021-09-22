@@ -221,7 +221,7 @@ for u=1:length(UniCondi)
             end
         % Temperal
         DiffLR= AngR-AngL;
-        rmseAng=mean(DiffLR); % in radiaus
+        rmseAng=sqrt(mean(DiffLR).^2); % in radiaus
         
         % Spatial
         DiffRadiL=RadiL-steplength;
