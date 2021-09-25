@@ -17,5 +17,5 @@
 !xinput  list
 % hnlb
 !xinput reattach 14 16
-!xinput reattach 29 16
+!xinput reattach 26 16
 !xinput  list
