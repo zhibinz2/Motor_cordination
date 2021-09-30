@@ -1,26 +1,30 @@
-function [x,y] = drawReach(degree, radius);
+function [x,y] = drawReach(radius,rad_ang, xCenter, yCenter);
 % Bimanual type A1
-% radius, or steplength
+% radius = maximum radius
 % N = how many pixiels
-% rand_ang = phase, or angle
-% r_rangl= range of the angle
+% rad_ang = phase, or angle in radian
+% r_radius = range of the radius
 
-circr  = @(Radius,rad_ang)  [radius*cos(rad_ang);  radius*sin(rad_ang)]; % Circle Function For Angles In Radians
-N      = 3 * radius;
-r_angl = linspace(pi,2*pi,N);
-xy_r   = circr(radius,r_angl);
+reach  = @(radius,rad_ang)  [radius*cos(rad_ang);  radius*sin(rad_ang)]; % Reach Trace Function For radius in pixels
+N      = radius;
+r_radius = linspace(0,radius,N);
+xy_r   = reach(r_radius,rad_ang);
 x      = xy_r(1,:);
-x      = x-min(x)+1; % shift into the corner of the screen
-% x      = flip(x);
 y      = xy_r(2,:);
-y      = y-min(y)+1; % shift into the corner of the screen
+
+
+x=x+xCenter;
+y=y+yCenter;
+
+y=flip(y);
+
 end
 
 
 %% test
-% steplength=200; %radius=320
-% [x,y] = drawA1(steplength);
-% plot(x,y,'ro');
-% hold on; plot(steplength,steplength,'go');
-% plot(steplength,steplength,'go');plot(x(1),y(1),'bo');
+% radius=320; rad_ang=pi/6; 
+% [x,y] = drawReach(radius, rad_ang, xCenter, yCenter);
+% plot(x,y,'go');
+% hold on; 
+% plot(x(end),y(end),'ro');
 % set(gca, 'YDir', 'reverse');

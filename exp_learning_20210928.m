@@ -1,8 +1,7 @@
 % This edition change the 3/4 circle into 1/2 circle. And remove the connecting dots
 sca;
-close all;
 clc;
-clear;
+close all;
 clear all; 
 clearvars; 
 
@@ -10,6 +9,7 @@ addpath Bimanual
 addpath DrawSquares
 addpath DrawCurves
 addpath Conditions
+addpath DrawReach
 
 AssertOpenGL;
  
@@ -19,14 +19,7 @@ end
 
 %************************************************
 % the set of conditions
-% % 16 conditions
-% conditionfuctions = {@A1_A2, @A1_A1, @A1_U2, @A1_U1, ...
-% @A2_A1, @A2_A2, @A2_U1, @A2_U2, ...
-% @U1_U2, @U1_U1, @U1_A2, @U1_A1, ...
-% @U2_U1, @U2_U2, @U2_A1, @U2_A2 };
-
-% 4 conditions
-conditionfuctions = {@A1_A2, @A1_A1, @A2_A1, @A2_A2};
+conditions = [pi/6 2*pi/6 4*pi/6 5*pi/6];
 
 %************************************** Randomization of the experiment
 % set the random number seed as the date of today in formate such as 20210809
@@ -41,7 +34,7 @@ numBlock=4; %16;
 % total trial number
 numtotal=numTrials*numBlock; % should be 200 %400
 % num of conditions in the experiment
-numconditions=4; %16;
+numconditions=length(conditions); %4; %16;
 % how many semirandom permutation set in the experiment 
 numPerm=numtotal/numconditions;
 % create the whole set of random conditions for the experiment
@@ -107,8 +100,8 @@ Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 % we set the centre to be the centre of the screen
 dotCenter = [xCenter yCenter];
 
-% set the side length of square
-steplength=screenXpixels/6;
+% set the length of the reach
+radius=screenYpixels/3;
 
 % Numer of frames to wait when specifying good timing. Note: the use of
 % wait frames is to show a generalisable coding. For example, by using
@@ -251,14 +244,13 @@ for block=1:numBlock
         % pick a condition from randomized set allPerm
         conditionSelected = allPerm(numTrials*(block-1)+t);
         % produced the position parameters
-            [xL,yL,CentroidL,PosL,PosL0,PosL1,PosL2,PosL3,ThicknessL,ColorL,...
-                xR,yR,CentroidR,PosR,PosR0,PosR1,PosR2,PosR3,ThicknessR,ColorR] ...
-                = conditionfuctions{conditionSelected}(steplength,yCenter,screenXpixels);
+            rad_ang=conditions(conditionSelected);
+            [x,y] = drawReach(radius,rad_ang);
         %***********************************************
 
 
         % Run one trial 
-        run run_trial_20210913.m 
+        run run_trial_20210928.m 
 
         % reset n
         n=1;
