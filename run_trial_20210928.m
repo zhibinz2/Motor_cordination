@@ -9,7 +9,7 @@ while n <  numFrames %~KbCheck
     end
 
     % Draw the route
-    Screen('DrawDots', windowPtr, [x;y], ThicknessL, white, [0 0], 2);
+    Screen('DrawDots', windowPtr, [x;y], Thickness, white, [0 0], 2);
 
     % ******
     % fash the upper left corner once at the start of planing phase (and bottom right)
@@ -71,9 +71,8 @@ while n <  numFrames %~KbCheck
     pt=[xJ yJ]; v1=dotCenter; v2=[x(end) y(end)];
     distance=point_to_line_distance(pt, v1, v2);
     withinRadius=norm(pt-dotCenter);
-    inside = (distance<ConnectDotSize) & (withinRadius < radius) & (yJ+ConnectDotSize)>0
-
-
+    inside = (distance<ConnectDotSize) & (withinRadius < radius) & (yJ+ConnectDotSize)>0;
+    
     if n > numFramesPlan % start counting scores after planning phase
         % MLcolor=red;MRcolor=blue;
         textMove=['Move now!'];
@@ -83,7 +82,7 @@ while n <  numFrames %~KbCheck
         if inside == 1
             Jcolor = green;
             if ((xML~=xMLbefore)|(yML~=yMLbefore)|(xMR~=xMRbefore)|(yMR~=yMRbefore))==1 % at least one coortinate moved
-                ScoreLR=ScoreLR+round(fullBonusPerTrial/numFrames,4);
+                ScoreLR=ScoreLR+round(fullBonusPerTrial/numFrames,4); % add a bonus score
             end
         else % insideLR == 0
             Jcolor = white;

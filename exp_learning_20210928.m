@@ -102,6 +102,10 @@ dotCenter = [xCenter yCenter];
 
 % set the length of the reach
 radius=screenYpixels/3;
+% Set default connecting dot size
+ConnectDotSize=60; 
+% the thickness of the line
+Thickness=ConnectDotSize/2;
 
 % Numer of frames to wait when specifying good timing. Note: the use of
 % wait frames is to show a generalisable coding. For example, by using
@@ -122,12 +126,14 @@ if round(1/ifi)~=60
   error('Error: Screen flash frequency is not set at 60Hz.');    
 end
 
-% Set default connecting dot size
-ConnectDotSize=60; 
+
 % Set default connecting dot color to white
 % [ConnectDotColorL0, ConnectDotColorL1, ConnectDotColorL2, ConnectDotColorL3] = deal(white);
 % [ConnectDotColorR0, ConnectDotColorR1, ConnectDotColorR2, ConnectDotColorR3] = deal(white);
-MLcolor=green;MRcolor=green;
+% MLcolor=green;MRcolor=green;
+
+% Set defaut joint dot color
+Jcolor=green;
 
 % Set size of the squares for photocell 
 PhotosensorSize=30;
@@ -245,7 +251,7 @@ for block=1:numBlock
         conditionSelected = allPerm(numTrials*(block-1)+t);
         % produced the position parameters
             rad_ang=conditions(conditionSelected);
-            [x,y] = drawReach(radius,rad_ang);
+            [x,y] = drawReach(radius,rad_ang, xCenter, yCenter);
         %***********************************************
 
 
