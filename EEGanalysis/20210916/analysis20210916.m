@@ -327,7 +327,7 @@ X = [chanlocs.X];
 Y = [chanlocs.Y];
 Z = [chanlocs.Z];
 
-plot3(X,Y,Z)
+plot3(X,Y,Z, 'ro')
 
 point_id={chanlocs.labels};point_id=point_id(1:128);
 scatter3(X,Y,Z, 'b*');
