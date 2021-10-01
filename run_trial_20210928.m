@@ -75,7 +75,7 @@ while n <  numFrames %~KbCheck
     pt=[xJ yJ]; v1=dotCenter; v2=[x(end) y(end)];
     distance=point_to_line_distance(pt, v1, v2);
     withinRadius=norm(pt-dotCenter);
-    inside = (distance<ConnectDotSize) & (withinRadius < radius) & (yJ+ConnectDotSize)>0;
+    inside = (distance<(ConnectDotSize/2)) & (withinRadius < radius) & (yJ+(ConnectDotSize/2))>0;
     
     if n > numFramesPlan % start counting scores after planning phase
         % MLcolor=red;MRcolor=blue;

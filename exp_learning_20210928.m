@@ -152,7 +152,7 @@ planSecs =1 ; % rest 1 s to look at trial number
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = 3; %4; % 4 s to move
+moveSecs = 2; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
