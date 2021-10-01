@@ -55,6 +55,10 @@ while n <  numFrames %~KbCheck
     % Get mouse location
     [xML, yML] = GetMouse(windowPtr,mice(2));
     [xMR, yMR] = GetMouse(windowPtr,mice(1));
+    
+    % Display the cursor as a dot
+    Screen('DrawDots', windowPtr, [xML yML], 30, red, [], 2);
+    Screen('DrawDots', windowPtr, [xMR yMR], 30, blue, [], 2);
 
     % Display the joint position as a dot
     if conditionSelected < length(conditions)/2;
