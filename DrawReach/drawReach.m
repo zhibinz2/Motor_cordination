@@ -12,11 +12,12 @@ xy_r   = reach(r_radius,rad_ang);
 x      = xy_r(1,:);
 y      = xy_r(2,:);
 
+y=flip(y);
 
 x=x+xCenter;
-y=y+yCenter;
+y=y+yCenter-max(y);
 
-y=flip(y);
+
 
 end
 
@@ -25,6 +26,8 @@ end
 % radius=320; rad_ang=pi/6; 
 % [x,y] = drawReach(radius, rad_ang, xCenter, yCenter);
 % plot(x,y,'go');
+% xlim([0 1920]);ylim([0 1080]);
 % hold on; 
+% plot(xCenter, yCenter,'ro');
 % plot(x(end),y(end),'ro');
 % set(gca, 'YDir', 'reverse');
