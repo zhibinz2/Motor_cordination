@@ -61,7 +61,7 @@ while n <  numFrames %~KbCheck
     Screen('DrawDots', windowPtr, [xMR yMR], 30, blue, [], 2);
 
     % Display the joint position as a dot
-    if conditionSelected < length(conditions)/2;
+    if (conditionSelected < length(conditions)/2) | (conditionSelected == 2);
         xJ=xMR; yJ=yCenter-(xCenter-xML);
         Screen('DrawDots', windowPtr, [xJ yJ], 30, Jcolor, [], 2);
     end
