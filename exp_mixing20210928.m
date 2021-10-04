@@ -230,48 +230,35 @@ for block=1:numBlock
         end
 
         %************ Show trial number and rest
-        restSecs =0.5; % rest 1 s to rest and look at trial number
+        restSecs = 1; %0.5; % rest 1 s to rest and look at trial number
         numFramesRest = round (restSecs/ifi);
-        for Restframes=1:numFramesRest 
-        %Screen('DrawText', windowPtr, ['trial ' num2str(t)], screenXpixels/3, screenYpixels/6, white); 
-        DrawFormattedText2(['trial ' num2str(t) ' / ' num2str(numTrials)],'win',windowPtr,...
-        'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-        % Flip to the screen   
-        vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-        end      
+        for Restframes=1:numFramesRest
+            textTrial=['Bonus Earned $ ' num2str(Scores) '. \n\n\n Trial ' num2str(t) ' / ' num2str(numTrials)];
+            DrawFormattedText2(textTrial,'win',windowPtr,...
+            'sx','center','sy',yCenter+screenYpixels/10,'xalign','center','yalign','center','baseColor',white);
+            % Flip to the screen   
+            vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+        end          
         
         %*************************Randomized selection
         % pick a condition from randomized set allPerm
         conditionSelected = allPerm(numTrials*(block-1)+t);
         % produced the position parameters
-            [xL,yL,PosL,PosL0,PosL1,PosL2,PosL3,ThicknessL,ColorL,...
-                xR,yR,PosR,PosR0,PosR1,PosR2,PosR3,ThicknessR,ColorR] ...
-                = conditionfuctions{conditionSelected}(steplength,yCenter,screenXpixels);
+            rad_ang=conditions(conditionSelected);
+            [x,y] = drawReach(radius,rad_ang, xCenter, yCenter);
         %***********************************************
 
-
-        % Setting default mouse Position for some time
-        planSecs =1 ; % rest 1 s to look at trial number
-        numFramesPlan = round (planSecs/ifi);
-
-        % Length of time and number of frames we will use for each drawing trial
-        moveSecs = 4; % 4 s to move
-        numFramesMove = round(moveSecs / ifi);
-
-        % total number of frames
-        numFrames=numFramesPlan+numFramesMove; 
-
         % Run one trial 
-        run run_trial.m 
+        run run_trial_20210928.m 
 
         % reset n
         n=1;
 
         % DuoMice:
         % Show master cursors again:
-        for mouse = mice
-        ShowCursor('Arrow', [], mouse);
-        end
+%         for mouse = mice
+%         ShowCursor('Arrow', [], mouse);
+%         end
 
         % Store xLyL
         %dataL(t).xLyL=xLyL; 
@@ -282,6 +269,12 @@ for block=1:numBlock
         %save trial condition
         data.dataBlock(block).dataTrialL(t).condition=conditionSelected;
         data.dataBlock(block).dataTrialR(t).condition=conditionSelected;
+        
+        % update the scores
+        Scores=Scores+ScoreLR;
+        TrialScore=[TrialScore ScoreLR];
+        ScoreLR=0;
+
 
     end
     
@@ -289,6 +282,17 @@ for block=1:numBlock
 
 end
 
+
+% Show The End
+instructionStart = ['The end. \n\n\n Thank you! \n\n\n Bonus Earned $ ' num2str(Scores)];
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+Screen('Flip',windowPtr);
+% hit a key to continue
+KbStrokeWait;
+
+
+%*************************************
 
 
 Priority(0);   

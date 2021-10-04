@@ -240,10 +240,7 @@ for block=1:numBlock
         for Restframes=1:numFramesRest
             textTrial=['Bonus Earned $ ' num2str(Scores) '. \n\n\n Trial ' num2str(t) ' / ' num2str(numTrials)];
             DrawFormattedText2(textTrial,'win',windowPtr,...
-            'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-            %Screen('DrawText', windowPtr, ['Bonus $ ' num2str(Scores) '. \n\nTrial ' num2str(t) ' / ' num2str(numTrials)], screenXpixels/2.3, screenYpixels/6, white); 
-            %DrawFormattedText2(['trial ' num2str(t) ' / ' num2str(numTrials)],'win',windowPtr,...
-            %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+            'sx','center','sy', 'center','xalign','center','yalign','center','baseColor',white);
             % Flip to the screen   
             vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
         end      
@@ -265,9 +262,9 @@ for block=1:numBlock
 
         % DuoMice:
         % Show master cursors again:
-        for mouse = mice
-        ShowCursor('Arrow', [], mouse);
-        end
+%         for mouse = mice
+%         ShowCursor('Arrow', [], mouse);
+%         end
 
         % Store xLyL
         %dataL(t).xLyL=xLyL; 
@@ -299,7 +296,9 @@ Screen('Flip',windowPtr);
 KbStrokeWait;
 
 
-%*************************************88
+%*************************************
+
+
 Priority(0);   
    
 % Now we have drawn to the screen we wait for a keyboard button press (any

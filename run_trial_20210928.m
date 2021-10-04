@@ -44,7 +44,7 @@ while n <  numFrames %~KbCheck
         SetMouse(x(1),y(1), windowPtr, mice(1)); 
         textPlan=['Place mice at the starting points'];
         DrawFormattedText2(textPlan,'win',windowPtr,...
-            'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','center','baseColor',white);
         %Screen('DrawText', windowPtr, ['Place mice at the starting points'], xCenter-steplength/1.5, yCenter, white);
         %DrawFormattedText2(['Place mice at starting point and start drawing in 1 second!'],'win',windowPtr,...
         %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
@@ -77,19 +77,23 @@ while n <  numFrames %~KbCheck
     [xMR, yMR] = GetMouse(windowPtr,mice(1));
     
     % Hide the cursor
-    HideCursor(windowPtr,mice(2));
-    HideCursor(windowPtr,mice(1));
+%     HideCursor(windowPtr,mice(2));
+%     HideCursor(windowPtr,mice(1));
     
     % Display the cursor as a dot
-%     Screen('DrawDots', windowPtr, [xML yML], 30, red, [], 2);
-%     Screen('DrawDots', windowPtr, [xMR yMR], 30, blue, [], 2);
+    Screen('DrawDots', windowPtr, [xML yML], 30, red, [], 2);
+    Screen('DrawDots', windowPtr, [xMR yMR], 30, blue, [], 2);
 
     % Display the joint position as a dot
-    if (conditionSelected < length(conditions)/2) | (conditionSelected == 2);
+    if conditionSelected < median(1:length(conditions));
         xJ=xMR; yJ=yCenter-(xCenter-xML);
         Screen('DrawDots', windowPtr, [xJ yJ], 30, Jcolor, [], 2);
     end
-    if conditionSelected > length(conditions)/2;
+    if conditionSelected == median(1:length(conditions));
+        xJ=xCenter+(xMR-xCenter)-(xCenter-xML); yJ=yCenter-sqrt((xMR-xCenter).^2+(xCenter-xML).^2);
+        Screen('DrawDots', windowPtr, [xJ yJ], 30, Jcolor, [], 2);
+    end
+    if conditionSelected > median(1:length(conditions));
         xJ=xML; yJ=yCenter-(xMR-xCenter);
         Screen('DrawDots', windowPtr, [xJ yJ], 30, Jcolor, [], 2);
     end
@@ -105,7 +109,7 @@ while n <  numFrames %~KbCheck
         % MLcolor=red;MRcolor=blue;
         textMove=['Move now!'];
         DrawFormattedText2(textMove,'win',windowPtr,...
-            'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','center','baseColor',white);
         %Screen('DrawText', windowPtr, ['Move now!'], xCenter, yCenter, white);
         if inside == 1
             Jcolor = green;

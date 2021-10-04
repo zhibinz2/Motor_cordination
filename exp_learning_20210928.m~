@@ -31,9 +31,9 @@ rng(seed);
 % number of trials
 numTrials=40; %25;
 % number of blocks
-numBlock=11; %16;
+numBlock=length(conditions); %16;
 % total trial number
-numtotal=numTrials*numBlock; % should be 200 %400
+numtotal=numTrials*numBlock;
 % num of conditions in the experiment
 numconditions=length(conditions); %4; %16;
 % how many semirandom permutation set in the experiment 
@@ -46,9 +46,11 @@ for b=1:numBlock
     allPerm=[allPerm allPermSequence(b)*ones(1,numTrials)];
 end
 %*******************************************
+
 % keep a record of the scores
 Scores=0;ScoreLR=0;TrialScore=[];
-fullBonusPerTrial=0.20;% $0.20 per trial if perfectly perfomed 
+fullBonusPerTrial=0.10;% $0.10 per trial if perfectly perfomed 
+fullBonus=fullBonusPerTrial*numtotal;
 
 
 try      
@@ -127,12 +129,6 @@ if round(1/ifi)~=60
   error('Error: Screen flash frequency is not set at 60Hz.');    
 end
 
-
-% Set default connecting dot color to white
-% [ConnectDotColorL0, ConnectDotColorL1, ConnectDotColorL2, ConnectDotColorL3] = deal(white);
-% [ConnectDotColorR0, ConnectDotColorR1, ConnectDotColorR2, ConnectDotColorR3] = deal(white);
-% MLcolor=green;MRcolor=green;
-
 % Set defaut joint dot color
 Jcolor=green;
 
@@ -148,6 +144,7 @@ RightUpperSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+110-Photosens
 LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 screenYpixels/2+230+PhotosensorSize];
 LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
 
+% *************************************************************************
 % Setting default mouse Position for some time
 planSecs =1 ; % rest 1 s to look at trial number
 numFramesPlan = round (planSecs/ifi);
@@ -159,6 +156,7 @@ numFramesMove = round(moveSecs / ifi);
 % total number of frames per trial
 numFrames=numFramesPlan+numFramesMove; 
 
+% *************************************************************************
 
 % DuoMice:
 % Get handles for all virtual pointing devices, aka cursors:
@@ -172,7 +170,10 @@ mice = GetMouseIndices(typeOnly);
 % by the Windowing system. These tend to flicker badly in our use
 % case. Therefore we disable all system cursor images and draw our
 % cursors ourselves for a more beautiful look:
-HideCursor;
+% Hide the cursor
+HideCursor(windowPtr,mice(2));
+HideCursor(windowPtr,mice(1));
+
 
 % Starting introduction
 instructionStart=['Movement of each hand starts from the green dot at the center.'...
@@ -182,7 +183,7 @@ instructionStart=['Movement of each hand starts from the green dot at the center
         '\n\n\n Try to trace close to line as much as possible to the end of the line.'...
         '\n\n\n Each trial start with 1 second hold'...
         '\n\n\n Then complete within ' num2str(moveSecs) ' seconds.'...
-        '\n\n\n Earn Bonus money up to $ ' num2str(fullBonusPerTrial*numtotal) ' if well performed.'...
+        '\n\n\n Earn Bonus money up to $ ' num2str(fullBonus) ' if well performed.'...
         '\n\n\n Questions? If none, press any key to start']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
@@ -239,10 +240,7 @@ for block=1:numBlock
         for Restframes=1:numFramesRest
             textTrial=['Bonus Earned $ ' num2str(Scores) '. \n\n\n Trial ' num2str(t) ' / ' num2str(numTrials)];
             DrawFormattedText2(textTrial,'win',windowPtr,...
-            'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-            %Screen('DrawText', windowPtr, ['Bonus $ ' num2str(Scores) '. \n\nTrial ' num2str(t) ' / ' num2str(numTrials)], screenXpixels/2.3, screenYpixels/6, white); 
-            %DrawFormattedText2(['trial ' num2str(t) ' / ' num2str(numTrials)],'win',windowPtr,...
-            %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+            'sx','center','sy',yCenter+screenYpixels/10,'xalign','center','yalign','center','baseColor',white);
             % Flip to the screen   
             vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
         end      
@@ -264,9 +262,9 @@ for block=1:numBlock
 
         % DuoMice:
         % Show master cursors again:
-        for mouse = mice
-        ShowCursor('Arrow', [], mouse);
-        end
+%         for mouse = mice
+%         ShowCursor('Arrow', [], mouse);
+%         end
 
         % Store xLyL
         %dataL(t).xLyL=xLyL; 
@@ -298,7 +296,8 @@ Screen('Flip',windowPtr);
 KbStrokeWait;
 
 
-%*************************************88
+%*************************************
+
 Priority(0);   
    
 % Now we have drawn to the screen we wait for a keyboard button press (any
