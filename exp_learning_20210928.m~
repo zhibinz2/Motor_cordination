@@ -31,9 +31,9 @@ rng(seed);
 % number of trials
 numTrials=40; %25;
 % number of blocks
-numBlock=length(conditions); %16;
+numBlock=11; %16;
 % total trial number
-numtotal=numTrials*numBlock;
+numtotal=numTrials*numBlock; % should be 200 %400
 % num of conditions in the experiment
 numconditions=length(conditions); %4; %16;
 % how many semirandom permutation set in the experiment 
@@ -46,11 +46,9 @@ for b=1:numBlock
     allPerm=[allPerm allPermSequence(b)*ones(1,numTrials)];
 end
 %*******************************************
-
 % keep a record of the scores
 Scores=0;ScoreLR=0;TrialScore=[];
-fullBonusPerTrial=0.10;% $0.10 per trial if perfectly perfomed 
-fullBonus=fullBonusPerTrial*numtotal;
+fullBonusPerTrial=0.20;% $0.20 per trial if perfectly perfomed 
 
 
 try      
@@ -129,6 +127,12 @@ if round(1/ifi)~=60
   error('Error: Screen flash frequency is not set at 60Hz.');    
 end
 
+
+% Set default connecting dot color to white
+% [ConnectDotColorL0, ConnectDotColorL1, ConnectDotColorL2, ConnectDotColorL3] = deal(white);
+% [ConnectDotColorR0, ConnectDotColorR1, ConnectDotColorR2, ConnectDotColorR3] = deal(white);
+% MLcolor=green;MRcolor=green;
+
 % Set defaut joint dot color
 Jcolor=green;
 
@@ -144,7 +148,6 @@ RightUpperSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+110-Photosens
 LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 screenYpixels/2+230+PhotosensorSize];
 LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
 
-% *************************************************************************
 % Setting default mouse Position for some time
 planSecs =1 ; % rest 1 s to look at trial number
 numFramesPlan = round (planSecs/ifi);
@@ -156,7 +159,6 @@ numFramesMove = round(moveSecs / ifi);
 % total number of frames per trial
 numFrames=numFramesPlan+numFramesMove; 
 
-% *************************************************************************
 
 % DuoMice:
 % Get handles for all virtual pointing devices, aka cursors:
@@ -170,10 +172,7 @@ mice = GetMouseIndices(typeOnly);
 % by the Windowing system. These tend to flicker badly in our use
 % case. Therefore we disable all system cursor images and draw our
 % cursors ourselves for a more beautiful look:
-% Hide the cursor
-HideCursor(windowPtr,mice(2));
-HideCursor(windowPtr,mice(1));
-
+HideCursor;
 
 % Starting introduction
 instructionStart=['Movement of each hand starts from the green dot at the center.'...
@@ -183,7 +182,7 @@ instructionStart=['Movement of each hand starts from the green dot at the center
         '\n\n\n Try to trace close to line as much as possible to the end of the line.'...
         '\n\n\n Each trial start with 1 second hold'...
         '\n\n\n Then complete within ' num2str(moveSecs) ' seconds.'...
-        '\n\n\n Earn Bonus money up to $ ' num2str(fullBonus) ' if well performed.'...
+        '\n\n\n Earn Bonus money up to $ ' num2str(fullBonusPerTrial*numtotal) ' if well performed.'...
         '\n\n\n Questions? If none, press any key to start']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);

@@ -19,9 +19,8 @@ end
 
 %************************************************
 % the set of conditions
-conditions = [pi/6 2*pi/6 4*pi/6 5*pi/6]; % four conditions
-conditions = [1:1:11]*(pi/12); % 11 conditions
-
+conditions = [1:1:11]*(pi/12);
+    
 %************************************** Randomization of the experiment
 % set the random number seed as the date of today in formate such as 20210809
 seed=input('enter the date in format YYYYMMDD:');
@@ -29,21 +28,19 @@ data.subjectnumber=seed;
 rng(seed);
 
 % number of trials
-numTrials=40; %25;
+numTrials=40;
 % number of blocks
-numBlock=length(conditions); %16;
+numBlock=length(conditions);
 % total trial number
-numtotal=numTrials*numBlock;
+numtotal=numTrials*numBlock; 
 % num of conditions in the experiment
-numconditions=length(conditions); %4; %16;
+numconditions=length(conditions);
 % how many semirandom permutation set in the experiment 
 numPerm=numtotal/numconditions;
 % create the whole set of random conditions for the experiment
 allPerm=[];
-%
-allPermSequence=randperm(numconditions);
-for b=1:numBlock
-    allPerm=[allPerm allPermSequence(b)*ones(1,numTrials)];
+for p=1:numPerm
+    allPerm=[allPerm randperm(numconditions)];
 end
 %*******************************************
 
@@ -51,7 +48,6 @@ end
 Scores=0;ScoreLR=0;TrialScore=[];
 fullBonusPerTrial=0.10;% $0.10 per trial if perfectly perfomed 
 fullBonus=fullBonusPerTrial*numtotal;
-
 
 try      
     
@@ -165,7 +161,7 @@ mice = GetMouseIndices(typeOnly);
 
 % DuoMice:
 % Hide the system-generated cursors. We do this, because only the
-% first mouse cursor is hardware-accelerated, HideCursorie., a GPU created
+% first mouse cursor is hardware-accelerated, ie., a GPU created
 % hardware cursor. All other cursors are software-cursors, created
 % by the Windowing system. These tend to flicker badly in our use
 % case. Therefore we disable all system cursor images and draw our
@@ -173,7 +169,6 @@ mice = GetMouseIndices(typeOnly);
 % Hide the cursor
 HideCursor(windowPtr,mice(2));
 HideCursor(windowPtr,mice(1));
-
 
 % Starting introduction
 instructionStart=['Movement of each hand starts from the green dot at the center.'...
@@ -200,11 +195,11 @@ for block=1:numBlock
     n = 1;
     % NumInside=[]; % To keep a record of the percentage of time inside the square
     %xLyL=[]; xRyR=[]; % to keep track of mouse trace
-    data.dataBlock(block).dataTrialL.xLyL=[];
-    data.dataBlock(block).dataTrialR.xRyR=[];
+    data.dataBlock.dataTrialL.xLyL=[];
+    data.dataBlock.dataTrialR.xRyR=[];
     %save block number info
     data.dataBlock(block).blockNumber=block;
-
+    
 
     %************************************ show test and rest
     
@@ -235,30 +230,39 @@ for block=1:numBlock
         end
 
         %************ Show trial number and rest
-        restSecs = 1; %0.5; % rest 1 s to rest and look at trial number
+        restSecs =0.5; % rest 1 s to rest and look at trial number
         numFramesRest = round (restSecs/ifi);
-        for Restframes=1:numFramesRest
-            textTrial=['Bonus Earned $ ' num2str(Scores) '. \n\n\n Trial ' num2str(t) ' / ' num2str(numTrials)];
-            DrawFormattedText2(textTrial,'win',windowPtr,...
-            'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-            %Screen('DrawText', windowPtr, ['Bonus $ ' num2str(Scores) '. \n\nTrial ' num2str(t) ' / ' num2str(numTrials)], screenXpixels/2.3, screenYpixels/6, white); 
-            %DrawFormattedText2(['trial ' num2str(t) ' / ' num2str(numTrials)],'win',windowPtr,...
-            %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-            % Flip to the screen   
-            vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+        for Restframes=1:numFramesRest 
+        %Screen('DrawText', windowPtr, ['trial ' num2str(t)], screenXpixels/3, screenYpixels/6, white); 
+        DrawFormattedText2(['trial ' num2str(t) ' / ' num2str(numTrials)],'win',windowPtr,...
+        'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+        % Flip to the screen   
+        vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
         end      
         
         %*************************Randomized selection
         % pick a condition from randomized set allPerm
         conditionSelected = allPerm(numTrials*(block-1)+t);
         % produced the position parameters
-            rad_ang=conditions(conditionSelected);
-            [x,y] = drawReach(radius,rad_ang, xCenter, yCenter);
+            [xL,yL,PosL,PosL0,PosL1,PosL2,PosL3,ThicknessL,ColorL,...
+                xR,yR,PosR,PosR0,PosR1,PosR2,PosR3,ThicknessR,ColorR] ...
+                = conditionfuctions{conditionSelected}(steplength,yCenter,screenXpixels);
         %***********************************************
 
 
+        % Setting default mouse Position for some time
+        planSecs =1 ; % rest 1 s to look at trial number
+        numFramesPlan = round (planSecs/ifi);
+
+        % Length of time and number of frames we will use for each drawing trial
+        moveSecs = 4; % 4 s to move
+        numFramesMove = round(moveSecs / ifi);
+
+        % total number of frames
+        numFrames=numFramesPlan+numFramesMove; 
+
         % Run one trial 
-        run run_trial_20210928.m 
+        run run_trial.m 
 
         % reset n
         n=1;
@@ -278,28 +282,15 @@ for block=1:numBlock
         %save trial condition
         data.dataBlock(block).dataTrialL(t).condition=conditionSelected;
         data.dataBlock(block).dataTrialR(t).condition=conditionSelected;
-        
-        % update the scores
-        Scores=Scores+ScoreLR;
-        TrialScore=[TrialScore ScoreLR];
-        ScoreLR=0;
-
 
     end
     
 
+
 end
 
-% Show The End
-instructionStart = ['The end. \n\n\n Thank you! \n\n\n Bonus Earned $ ' num2str(Scores)];
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-Screen('Flip',windowPtr);
-% hit a key to continue
-KbStrokeWait;
 
 
-%*************************************88
 Priority(0);   
    
 % Now we have drawn to the screen we wait for a keyboard button press (any
