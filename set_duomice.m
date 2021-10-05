@@ -9,11 +9,11 @@
 
 %% BenQ
 
-!xinput reattach 13 14
+!xinput reattach 9 16
 !xinput reattach 13 2
 !xinput reattach 11 14
 !xinput  list
-!xinput remove-master 15
+!xinput remove-master 20
 
 !xinput  list
 !xinput create-master L
@@ -24,4 +24,5 @@
 !xinput reattach 29 16
 !xinput reattach 19 14
 !xinput reattach 9 16
+!xinput reattach 12 9
 !xinput  list

@@ -57,7 +57,7 @@ try
     
 % Here we call some default settings for setting up Psychtoolbox 
 PsychDefaultSetup(2);
-% Start with black screen
+% % % % Start with black screen
 Screen('Preference', 'VisualDebugLevel', 1); 
 Screen('Preference', 'SkipSyncTests', 1);
 

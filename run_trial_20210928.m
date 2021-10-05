@@ -76,26 +76,29 @@ while n <  numFrames %~KbCheck
     [xML, yML] = GetMouse(windowPtr,mice(2));
     [xMR, yMR] = GetMouse(windowPtr,mice(1));
     
+    %********************************************************************
     % Hide the cursor
-%     HideCursor(windowPtr,mice(2));
-%     HideCursor(windowPtr,mice(1));
+    HideCursor(windowPtr,mice(2));
+    HideCursor(windowPtr,mice(1));
     
     % Display the cursor as a dot
-    Screen('DrawDots', windowPtr, [xML yML], 30, red, [], 2);
-    Screen('DrawDots', windowPtr, [xMR yMR], 30, blue, [], 2);
-
+%     Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
+%     Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
+     
+    %********************************************************************
+    
     % Display the joint position as a dot
     if conditionSelected < median(1:length(conditions));
         xJ=xMR; yJ=yCenter-(xCenter-xML);
-        Screen('DrawDots', windowPtr, [xJ yJ], 30, Jcolor, [], 2);
+        Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
     if conditionSelected == median(1:length(conditions));
         xJ=xCenter+(xMR-xCenter)-(xCenter-xML); yJ=yCenter-sqrt((xMR-xCenter).^2+(xCenter-xML).^2);
-        Screen('DrawDots', windowPtr, [xJ yJ], 30, Jcolor, [], 2);
+        Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
     if conditionSelected > median(1:length(conditions));
         xJ=xML; yJ=yCenter-(xMR-xCenter);
-        Screen('DrawDots', windowPtr, [xJ yJ], 30, Jcolor, [], 2);
+        Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
     
     % When both hands falls within each other near the curve, both cursors turn green

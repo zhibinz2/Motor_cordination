@@ -142,11 +142,11 @@ LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screen
 
 % *************************************************************************
 % Setting default mouse Position for some time
-planSecs =1 ; % rest 1 s to look at trial number
+planSecs =0 ; % rest 1 s to look at trial number
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = 2; %4; % 4 s to move
+moveSecs = 3; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
@@ -167,8 +167,8 @@ mice = GetMouseIndices(typeOnly);
 % case. Therefore we disable all system cursor images and draw our
 % cursors ourselves for a more beautiful look:
 % Hide the cursor
-HideCursor(windowPtr,mice(2));
-HideCursor(windowPtr,mice(1));
+% HideCursor(windowPtr,mice(2));
+% HideCursor(windowPtr,mice(1));
 
 % Starting introduction
 instructionStart=['Movement of each hand starts from the green dot at the center.'...
@@ -176,7 +176,7 @@ instructionStart=['Movement of each hand starts from the green dot at the center
         '\n\n\n Move in horizontal direction to control the movement of the white dot'...
         '\n\n\n The dot turns green when it is near the line.'...
         '\n\n\n Try to trace close to line as much as possible to the end of the line.'...
-        '\n\n\n Each trial start with 1 second hold'...
+        '\n\n\n Each trial start when you had placed both mice at the green starting point'...
         '\n\n\n Then complete within ' num2str(moveSecs) ' seconds.'...
         '\n\n\n Earn Bonus money up to $ ' num2str(fullBonus) ' if well performed.'...
         '\n\n\n Questions? If none, press any key to start']
@@ -215,8 +215,7 @@ for block=1:numBlock
     %*******************************************************
 
     % get a timestamp at the start of block
-    vbl = Screen('Flip', windowPtr);
-    
+      vbl = Screen('Flip', windowPtr);
     
 
     %******************** Within block loop
@@ -230,7 +229,7 @@ for block=1:numBlock
         end
 
         %************ Show trial number and rest
-        restSecs = 1; %0.5; % rest 1 s to rest and look at trial number
+        restSecs = 1; % rest 1 s to rest and look at trial number
         numFramesRest = round (restSecs/ifi);
         for Restframes=1:numFramesRest
             textTrial=['Bonus Earned $ ' num2str(Scores) '. \n\n\n Trial ' num2str(t) ' / ' num2str(numTrials)];
@@ -247,9 +246,50 @@ for block=1:numBlock
             rad_ang=conditions(conditionSelected);
             [x,y] = drawReach(radius,rad_ang, xCenter, yCenter);
         %***********************************************
+        
+        % Trial start only when both mice placed at the starting point
+        Insidestart = 0;
+        while Insidestart == 0
+            % If esc is press, break out of the while loop and close the screen
+            [keyIsDown, keysecs, keyCode] = KbCheck;
+            if keyCode(KbName('escape'))
+                Screen('CloseAll');
+                break;
+            end
+            
+            % Draw the route
+            Screen('DrawDots', windowPtr, [x;y], Thickness, white, [0 0], 2);
 
+            % Display the starting point 
+            Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, green, [], 2);
+            
+            [xML, yML] = GetMouse(windowPtr,mice(2));
+            [xMR, yMR] = GetMouse(windowPtr,mice(1));
+            % Display the cursor as a dot
+            Screen('DrawDots', windowPtr, [xML yML], 30, red, [], 2);
+            Screen('DrawDots', windowPtr, [xMR yMR], 30, blue, [], 2);
+            
+            % initial the before values
+            xMLbefore=xML;
+            yMLbefore=yML;
+            xMRbefore=xMR;
+            yMRbefore=yMR;
+            
+            % flip to screen
+            vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+            
+            % update the while loop
+            Insidestart = (sqrt((xML-xCenter).^2+(yML-yCenter).^2) < ConnectDotSize) & ...
+                (sqrt((xMR-xCenter).^2+(yMR-yCenter).^2)<ConnectDotSize);
+
+        end
+        %*********************************************
+
+        % get a timestamp at the start of the trial
+        vbl = Screen('Flip', windowPtr);
         % Run one trial 
         run run_trial_20210928.m 
+
 
         % reset n
         n=1;
