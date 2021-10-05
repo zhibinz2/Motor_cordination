@@ -4,7 +4,7 @@
 
 %% dell
 !xinput reattach 19 20
-
+!xinput reattach 9 20
 !xinput  list
 
 %% BenQ
