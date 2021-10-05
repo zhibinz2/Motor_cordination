@@ -11,7 +11,7 @@
 
 !xinput reattach 9 16
 !xinput reattach 13 2
-!xinput reattach 11 14
+!xinput reattach 15 9
 !xinput  list
 !xinput remove-master 20
 

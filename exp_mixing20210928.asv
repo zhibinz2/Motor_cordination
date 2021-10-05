@@ -279,8 +279,8 @@ for block=1:numBlock
             vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
             
             % update the while loop
-            Insidestart = (sqrt((xML-xCenter).^2+(yML-yCenter).^2) < Thickness/2) & ...
-                (sqrt((xMR-xCenter).^2+(yMR-yCenter).^2)<Thickness/2);
+            Insidestart = (sqrt((xML-xCenter).^2+(yML-yCenter).^2) < ConnectDotSize) & ...
+                (sqrt((xMR-xCenter).^2+(yMR-yCenter).^2)<ConnectDotSize);
 
         end
         %*********************************************
