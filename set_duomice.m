@@ -26,3 +26,17 @@
 !xinput reattach 9 16
 !xinput reattach 12 9
 !xinput  list
+
+%% set mouse speed
+% make this trackball's speed twice as slow
+!xinput --set-prop "Logitech USB Trackball" "Device Accel Constant Deceleration" 2
+
+
+% make this trackball's speed twice as fast
+!xinput --set-prop "Logitech USB Trackball" "Device Accel Constant Deceleration" 0.5
+
+
+!xinput list-props 10
+!xinput list-props 9
+!xinput --set-prop 10 "libinput Accel Speed" 1
+

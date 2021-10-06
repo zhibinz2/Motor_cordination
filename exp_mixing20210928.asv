@@ -167,8 +167,8 @@ mice = GetMouseIndices(typeOnly);
 % case. Therefore we disable all system cursor images and draw our
 % cursors ourselves for a more beautiful look:
 % Hide the cursor
-% HideCursor(windowPtr,mice(2));
-% HideCursor(windowPtr,mice(1));
+HideCursor(windowPtr,mice(2));
+HideCursor(windowPtr,mice(1));
 
 % Starting introduction
 instructionStart=['Movement of each hand starts from the green dot at the center.'...
@@ -261,7 +261,12 @@ for block=1:numBlock
             % Screen('DrawDots', windowPtr, [x;y], Thickness, white, [0 0], 2);
 
             % Display the starting point 
-            Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, green, [], 2);
+            Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, white, [], 2);
+            
+            % Display instruction
+            textPlan=['Place mice at the starting points'];
+            DrawFormattedText2(textPlan,'win',windowPtr,...
+                'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','center','baseColor',white);
             
             [xML, yML] = GetMouse(windowPtr,mice(2));
             [xMR, yMR] = GetMouse(windowPtr,mice(1));
@@ -279,9 +284,22 @@ for block=1:numBlock
             vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
             
             % update the while loop
-            Insidestart = (sqrt((xML-xCenter).^2+(yML-yCenter).^2) < ConnectDotSize) & ...
-                (sqrt((xMR-xCenter).^2+(yMR-yCenter).^2)<ConnectDotSize);
-
+            Insidestart = (sqrt((xML-xCenter).^2+(yML-yCenter).^2) < Thickness/2) & ...
+                (sqrt((xMR-xCenter).^2+(yMR-yCenter).^2)<Thickness/2);
+            
+            if Insidestart == 1
+                Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, green, [], 2);
+                % flip to screen
+                vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+            end
+        end
+        
+        % pause 0.25s with green dot to indicate start
+        while n<
+        % Display the starting point 
+            Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, green, [], 2);
+        % flip to screen
+        vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
         end
         %*********************************************
 

@@ -167,8 +167,8 @@ mice = GetMouseIndices(typeOnly);
 % case. Therefore we disable all system cursor images and draw our
 % cursors ourselves for a more beautiful look:
 % Hide the cursor
-% HideCursor(windowPtr,mice(2));
-% HideCursor(windowPtr,mice(1));
+HideCursor(windowPtr,mice(2));
+HideCursor(windowPtr,mice(1));
 
 % Starting introduction
 instructionStart=['Movement of each hand starts from the green dot at the center.'...
@@ -176,7 +176,7 @@ instructionStart=['Movement of each hand starts from the green dot at the center
         '\n\n\n Move in horizontal direction to control the movement of the white dot'...
         '\n\n\n The dot turns green when it is near the line.'...
         '\n\n\n Try to trace close to line as much as possible to the end of the line.'...
-        '\n\n\n Each trial start when you had placed both mice at the green starting point'...
+        '\n\n\n Each trial start when you had placed both mice at the center starting point'...
         '\n\n\n Then complete within ' num2str(moveSecs) ' seconds.'...
         '\n\n\n Earn Bonus money up to $ ' num2str(fullBonus) ' if well performed.'...
         '\n\n\n Questions? If none, press any key to start']
@@ -261,7 +261,12 @@ for block=1:numBlock
             % Screen('DrawDots', windowPtr, [x;y], Thickness, white, [0 0], 2);
 
             % Display the starting point 
-            Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, green, [], 2);
+            Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, white, [], 2);
+            
+            % Display instruction
+            textPlan=['Place mice at the starting points'];
+            DrawFormattedText2(textPlan,'win',windowPtr,...
+                'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','center','baseColor',white);
             
             [xML, yML] = GetMouse(windowPtr,mice(2));
             [xMR, yMR] = GetMouse(windowPtr,mice(1));
@@ -281,9 +286,17 @@ for block=1:numBlock
             % update the while loop
             Insidestart = (sqrt((xML-xCenter).^2+(yML-yCenter).^2) < Thickness/2) & ...
                 (sqrt((xMR-xCenter).^2+(yMR-yCenter).^2)<Thickness/2);
-
+            
+            if Insidestart == 1
+                Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, green, [], 2);
+                % flip to screen
+                vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+                % pause 1 second
+                WaitSecs(1)
+            end
+            
         end
-        %*********************************************
+        
 
         % get a timestamp at the start of the trial
         vbl = Screen('Flip', windowPtr);
