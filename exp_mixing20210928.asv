@@ -28,7 +28,7 @@ data.subjectnumber=seed;
 rng(seed);
 
 % number of trials
-numTrials=40;
+numTrials=20;
 % number of blocks
 numBlock=length(conditions);
 % total trial number
@@ -146,12 +146,21 @@ planSecs =1 ; % rest 1 s to look at trial number
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = 8; %4; % 4 s to move
+moveSecs = 6; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
 numFrames=numFramesPlan+numFramesMove; 
 
+% *************************************************************************
+% time pause to show bonus and trial number
+Tintertrial=2;
+
+% time pause to smooth transition at the start of each trial
+Tpause
+
+% time break between block
+Tinterblock=3; 
 % *************************************************************************
 
 % DuoMice:
@@ -215,8 +224,6 @@ for block=1:numBlock
         'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
     Screen('Flip',windowPtr);
 
-    % time break between block
-    Tinterblock=3; 
     WaitSecs(Tinterblock); % to separate blocks in the photocell signal
     % hit a key to continue
     KbStrokeWait;
@@ -305,7 +312,7 @@ for block=1:numBlock
                 Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, green, [], 2);
                 % flip to screen
                 vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-                % pause 1 second
+                % pause 1 second to have smooth transition
                 WaitSecs(1)
             end
             

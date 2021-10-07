@@ -27,6 +27,7 @@ seed=input('enter the date in format YYYYMMDD:');
 data.subjectnumber=seed;
 rng(seed);
 
+% *************************************************************************
 % number of trials
 numTrials=20;
 % number of blocks
@@ -42,7 +43,7 @@ allPerm=[];
 for p=1:numPerm
     allPerm=[allPerm randperm(numconditions)];
 end
-%*******************************************
+% *************************************************************************
 
 % keep a record of the scores
 Scores=0;ScoreLR=0;TrialScore=[];
@@ -153,6 +154,17 @@ numFramesMove = round(moveSecs / ifi);
 numFrames=numFramesPlan+numFramesMove; 
 
 % *************************************************************************
+% time duration to show bonus and trial number, and take rest before trial
+Tintertrial=2;
+numFramesRest = round (Tintertrial/ifi);
+
+% time pause to smooth transition at the start of each trial
+Tpause=1;
+
+% *************************************************************************
+% time break between block
+Tinterblock=3; 
+% *************************************************************************
 
 % DuoMice:
 % Get handles for all virtual pointing devices, aka cursors:
@@ -215,8 +227,6 @@ for block=1:numBlock
         'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
     Screen('Flip',windowPtr);
 
-    % time break between block
-    Tinterblock=3; 
     WaitSecs(Tinterblock); % to separate blocks in the photocell signal
     % hit a key to continue
     KbStrokeWait;
@@ -237,9 +247,7 @@ for block=1:numBlock
         break;
         end
 
-        %************ Show trial number and rest
-        restSecs = 2; % rest 1 s to rest and look at trial number
-        numFramesRest = round (restSecs/ifi);
+        %************ Show bonus and trial number and take rest before trials
         for Restframes=1:numFramesRest
             Showbonus=['Bonus Earned $ ' num2str(Scores)];
             DrawFormattedText2(Showbonus,'win',windowPtr,...
@@ -305,8 +313,8 @@ for block=1:numBlock
                 Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, green, [], 2);
                 % flip to screen
                 vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-                % pause 1 second to have smooth transition
-                WaitSecs(1)
+                % pause to smooth transition
+                WaitSecs(Tpause);
             end
             
         end
