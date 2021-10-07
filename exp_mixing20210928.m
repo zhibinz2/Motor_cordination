@@ -28,8 +28,8 @@ data.subjectnumber=seed;
 rng(seed);
 
 % *************************************************************************
-% number of trials
-numTrials=20;
+% number of trials per block
+numTrials=10;
 % number of blocks
 numBlock=length(conditions);
 % total trial number
@@ -43,12 +43,18 @@ allPerm=[];
 for p=1:numPerm
     allPerm=[allPerm randperm(numconditions)];
 end
-% *************************************************************************
 
+% *************************************************************************
 % keep a record of the scores
-Scores=0;ScoreLR=0;TrialScore=[];
+TotalScore=0;% total score so far
+ScoreLR=0;% initiate the score in each trial
+TrialScores=[];% keep of a record of all trial scores
+% set monetary reward
 fullBonusPerTrial=0.10;% $0.10 per trial if perfectly perfomed 
 fullBonus=fullBonusPerTrial*numtotal;
+
+% *************************************************************************
+
 
 try      
     
@@ -142,6 +148,7 @@ LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 scree
 LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
 
 % *************************************************************************
+% Time management here
 % Setting default mouse Position for some time
 planSecs =1 ; % rest 1 s to look at trial number
 numFramesPlan = round (planSecs/ifi);
@@ -155,10 +162,11 @@ numFrames=numFramesPlan+numFramesMove;
 
 % *************************************************************************
 % time duration to show bonus and trial number, and take rest before trial
-Tintertrial=2;
+Tintertrial=5;
 numFramesRest = round (Tintertrial/ifi);
 
 % time pause to smooth transition at the start of each trial
+% Keep in mind: it takes about an additional 3 seconds to place the mice
 Tpause=1;
 
 % *************************************************************************
@@ -217,11 +225,13 @@ for block=1:numBlock
     data.dataBlock(block).blockNumber=block;
     
 
-    %************************************ show test and rest
+    %************************************ show bonus before block and rest
+    if block ~= 1
+        Showbonus = ['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
+        DrawFormattedText2(Showbonus,'win',windowPtr,...
+            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+    end
     
-    Showbonus = ['Bonus Earned $ ' num2str(Scores)];
-    DrawFormattedText2(Showbonus,'win',windowPtr,...
-        'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
     Showblock = ['Hit a key to begin block ' num2str(block) ' after ' num2str(Tinterblock) ' seconds']
     DrawFormattedText2(Showblock,'win',windowPtr,...
         'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
@@ -249,9 +259,14 @@ for block=1:numBlock
 
         %************ Show bonus and trial number and take rest before trials
         for Restframes=1:numFramesRest
-            Showbonus=['Bonus Earned $ ' num2str(Scores)];
-            DrawFormattedText2(Showbonus,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+            if t ~= 1
+                Showbonus=['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
+                DrawFormattedText2(Showbonus,'win',windowPtr,...
+                'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white); 
+                % reset the trial score to zero
+                % ScoreLR=0; % it will be updated, no need to reset
+            end
+            
             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials)];
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
@@ -346,10 +361,8 @@ for block=1:numBlock
         data.dataBlock(block).dataTrialR(t).condition=conditionSelected;
         
         % update the scores
-        Scores=Scores+ScoreLR;
-        TrialScore=[TrialScore ScoreLR];
-        ScoreLR=0;
-
+        TotalScore=TotalScore+ScoreLR;
+        TrialScores=[TrialScores ScoreLR];
 
     end
     
@@ -359,7 +372,7 @@ end
 
 
 % Show The End
-Showbonus = ['Bonus Earned $ ' num2str(Scores)];
+Showbonus = ['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
 DrawFormattedText2(Showbonus,'win',windowPtr,...
     'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
 TheEnd = ['The End'];
