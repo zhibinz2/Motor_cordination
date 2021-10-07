@@ -44,7 +44,7 @@ while n <  numFrames %~KbCheck
         SetMouse(x(1),y(1), windowPtr, mice(1)); 
         textPlan=['Place mice at the starting points'];
         DrawFormattedText2(textPlan,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','center','baseColor',white);
+            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
         %Screen('DrawText', windowPtr, ['Place mice at the starting points'], xCenter-steplength/1.5, yCenter, white);
         %DrawFormattedText2(['Place mice at starting point and start drawing in 1 second!'],'win',windowPtr,...
         %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
@@ -119,8 +119,8 @@ while n <  numFrames %~KbCheck
         % MLcolor=red;MRcolor=blue;
         textMove=['Move now!'];
         DrawFormattedText2(textMove,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','center','baseColor',white);
-        %Screen('DrawText', windowPtr, ['Move now!'], xCenter, yCenter, white);
+            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+        
         if inside == 1
             Jcolor = green;
             if ((xML~=xMLbefore)|(yML~=yMLbefore)|(xMR~=xMRbefore)|(yMR~=yMRbefore))==1 % at least one coortinate moved

@@ -142,11 +142,11 @@ LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screen
 
 % *************************************************************************
 % Setting default mouse Position for some time
-planSecs =0 ; % rest 1 s to look at trial number
+planSecs =1 ; % rest 1 s to look at trial number
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = ; %4; % 4 s to move
+moveSecs = 8; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
@@ -171,18 +171,22 @@ HideCursor(windowPtr,mice(2));
 HideCursor(windowPtr,mice(1));
 
 % Starting introduction
-instructionStart=['Movement of each hand starts from the green dot at the center.'...
-        '\n\n\n Right hand goes to the right, left hand goes to the left.'...
-        '\n\n\n Move in horizontal direction to control the movement of the white dot'...
-        '\n\n\n The dot turns green when it is near the line.'...
-        '\n\n\n Try to trace close to line as much as possible to the end of the line.'...
-        '\n\n\n Each trial start when you had placed both mice at the center starting point'...
-        '\n\n\n Then complete within ' num2str(moveSecs) ' seconds.'...
-        '\n\n\n Earn Bonus money up to $ ' num2str(fullBonus) ' if well performed.'...
-        '\n\n\n Questions? If none, press any key to start']
+instructionStart=['You will be controlling two mice to do the task.'...
+        '\n\n\n Each trial start when you have placed both mice at the center starting point.'...
+        '\n\n\n Left mouse will be shown in a red dot. Right shown in blue. Starting point in white.'...
+        '\n\n\n Starting point will turn green, when you had placed both mice on it. Then the trial will start.'...
+        '\n\n\n Movement of your left hand goes to the left, right hand goes to the right.'...
+        '\n\n\n Move in horizontal direction to control the position of the dot.'...
+        '\n\n\n You will not be able to see your mice in red and blue dots during the trials.'...
+        '\n\n\n But the dot will turn green when comes close to a trajectory line shown on the screen.'...
+        '\n\n\n Try to coordinate the moving speed of your hands so as the dot can get close to line as much as possible'...
+        '\n\n\n Move the dot along the trajectory to the end of the line. Complete the movement within ' num2str(moveSecs) ' seconds.'...
+        '\n\n\n You will earn Bonus money up to $ ' num2str(fullBonus) ' if performed quickly and closely to the trajectory.'...
+        '\n\n\n Questions? If none, press any key to continue after ' num2str(Tinterblock) ' seconds.']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
+WaitSecs(Tinterblock);
 % hit a key to continue
 KbStrokeWait;
 
@@ -203,12 +207,17 @@ for block=1:numBlock
 
     %************************************ show test and rest
     
-    WaitSecs(3); % to separate blocks in the photocell signal
-    
-    instructionStart = ['Bonus Earned $ ' num2str(Scores) '.\n\n\n Hit a key to begin block ' num2str(block)];
-    DrawFormattedText2(instructionStart,'win',windowPtr,...
-        'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+    Showbonus = ['Bonus Earned $ ' num2str(Scores)];
+    DrawFormattedText2(Showbonus,'win',windowPtr,...
+        'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+    Showblock = ['Hit a key to begin block ' num2str(block) ' after ' num2str(Tinterblock) ' seconds']
+    DrawFormattedText2(Showblock,'win',windowPtr,...
+        'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
     Screen('Flip',windowPtr);
+
+    % time break between block
+    Tinterblock=3; 
+    WaitSecs(Tinterblock); % to separate blocks in the photocell signal
     % hit a key to continue
     KbStrokeWait;
 
@@ -229,15 +238,20 @@ for block=1:numBlock
         end
 
         %************ Show trial number and rest
-        restSecs = 1; % rest 1 s to rest and look at trial number
+        restSecs = 2; % rest 1 s to rest and look at trial number
         numFramesRest = round (restSecs/ifi);
         for Restframes=1:numFramesRest
-            textTrial=['Bonus Earned $ ' num2str(Scores) '. \n\n\n Trial ' num2str(t) ' / ' num2str(numTrials)];
-            DrawFormattedText2(textTrial,'win',windowPtr,...
-            'sx','center','sy',yCenter+screenYpixels/10,'xalign','center','yalign','center','baseColor',white);
+            Showbonus=['Bonus Earned $ ' num2str(Scores)];
+            DrawFormattedText2(Showbonus,'win',windowPtr,...
+            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials)];
+            DrawFormattedText2(Showtrial,'win',windowPtr,...
+            'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
             % Flip to the screen   
             vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
         end          
+        
+        
         
         %*************************Randomized selection
         % pick a condition from randomized set allPerm
@@ -266,7 +280,7 @@ for block=1:numBlock
             % Display instruction
             textPlan=['Place mice at the starting points'];
             DrawFormattedText2(textPlan,'win',windowPtr,...
-                'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','center','baseColor',white);
+                'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
             
             [xML, yML] = GetMouse(windowPtr,mice(2));
             [xMR, yMR] = GetMouse(windowPtr,mice(1));
@@ -337,10 +351,14 @@ end
 
 
 % Show The End
-instructionStart = ['The end. \n\n\n Thank you! \n\n\n Bonus Earned $ ' num2str(Scores)];
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+Showbonus = ['Bonus Earned $ ' num2str(Scores)];
+DrawFormattedText2(Showbonus,'win',windowPtr,...
+    'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+TheEnd = ['The End'];
+DrawFormattedText2(TheEnd,'win',windowPtr,...
+    'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
 Screen('Flip',windowPtr);
+WaitSecs(3)
 % hit a key to continue
 KbStrokeWait;
 
