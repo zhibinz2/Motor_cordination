@@ -86,23 +86,30 @@ while n <  numFrames %~KbCheck
 %     Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
      
     %********************************************************************
+    % Enlarge the scale of movement by es times
+    es=screenXpixels/screenYpixels; % it has a limit of 0 ~ (screenXpixels/screenYpixels)
     
     % Display the joint position as a dot
     if conditionSelected < median(1:length(conditions));
-        xJ=xMR; yJ=yCenter-(xCenter-xML);
+        xJ=xCenter+(xMR-xCenter)/es; yJ=yCenter-(xCenter-xML)/es;
         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
     if conditionSelected == median(1:length(conditions));
-        xJ=xCenter+(xMR-xCenter)-(xCenter-xML); yJ=yCenter-sqrt((xMR-xCenter).^2+(xCenter-xML).^2);
+        xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
     if conditionSelected > median(1:length(conditions));
-        xJ=xML; yJ=yCenter-(xMR-xCenter);
+        xJ=xCenter-(xCenter-xML)/es; yJ=yCenter-(xMR-xCenter)/es;
         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
-    
+
+    % alternative calculation (imperfection: at 45 and 135 degree, one hand don't have to move at all)
+%     xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
+%     Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
+
+
     % When both hands falls within each other near the curve, both cursors turn green
-    % When Joint dot near the line
+    % When Joint dot near the line 
     pt=[xJ yJ]; v1=dotCenter; v2=[x(end) y(end)];
     distance=point_to_line_distance(pt, v1, v2);
     withinRadius=norm(pt-dotCenter);

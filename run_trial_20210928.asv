@@ -9,7 +9,27 @@ while n <  numFrames %~KbCheck
     end
 
     % Draw the route
-    Screen('DrawDots', windowPtr, [x;y], ThicknessL, white, [0 0], 2);
+    Screen('DrawDots', windowPtr, [x;y], Thickness, white, [0 0], 2);
+    
+    % Draw guiding arrows
+    % create a line and a triangle on the left
+    Screen('DrawLine', windowPtr, white, xCenter-screenXpixels/6, yCenter, xCenter-screenXpixels/4, yCenter, 1);
+    head   = [ xCenter-screenXpixels/4, yCenter ]; % coordinates of head
+    width  = 10;           % width of arrow head
+    points = [ head-[0, width]         % left corner
+               head+[0, width]         % right corner
+               head-[width, 0] ];      % vertex
+    Screen('FillPoly', windowPtr, white , points);
+    % create a line and a triangle on the right
+    Screen('DrawLine', windowPtr, white, xCenter+screenXpixels/6, yCenter, xCenter+screenXpixels/4, yCenter, 1);
+    head   = [ xCenter+screenXpixels/4, yCenter ]; % coordinates of head
+    width  = 10;           % width of arrow head
+    points = [ head-[0, width]         % left corner
+               head+[0, width]         % right corner
+               head+[width, 0] ];      % vertex
+    Screen('FillPoly', windowPtr, white , points);
+    
+    
 
     % ******
     % fash the upper left corner once at the start of planing phase (and bottom right)
@@ -24,7 +44,7 @@ while n <  numFrames %~KbCheck
         SetMouse(x(1),y(1), windowPtr, mice(1)); 
         textPlan=['Place mice at the starting points'];
         DrawFormattedText2(textPlan,'win',windowPtr,...
-            'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','center','baseColor',white);
         %Screen('DrawText', windowPtr, ['Place mice at the starting points'], xCenter-steplength/1.5, yCenter, white);
         %DrawFormattedText2(['Place mice at starting point and start drawing in 1 second!'],'win',windowPtr,...
         %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
@@ -55,52 +75,59 @@ while n <  numFrames %~KbCheck
     % Get mouse location
     [xML, yML] = GetMouse(windowPtr,mice(2));
     [xMR, yMR] = GetMouse(windowPtr,mice(1));
-
+    
+    %********************************************************************
+    % Hide the cursor
+    HideCursor(windowPtr,mice(2));
+    HideCursor(windowPtr,mice(1));
+    
+    % Display the cursor as a dot
+%     Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
+%     Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
+     
+    %********************************************************************
+    % Enlarge the scale of movement by es times
+    es=screenXpixels/screenYpixels; % it has a limit of 0 ~ (screenXpixels/screenYpixels)
+    
     % Display the joint position as a dot
-    if conditionSelected < length(conditions)/2;
-        xJ=xMR; yJ=yCenter-(xCenter-xML);
-        Screen('DrawDots', windowPtr, [xJ yJ], 30, Jcolor, [], 2);
+    if conditionSelected < median(1:length(conditions));
+        xJ=xCenter+(xMR-xCenter)/es; yJ=yCenter-(xCenter-xML)/es;
+        Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
-    if conditionSelected > length(conditions)/2;
-        xJ=xML; yJ=yCenter-(xMR-xCenter);
-        Screen('DrawDots', windowPtr, [xJ yJ], 30, Jcolor, [], 2);
+    if conditionSelected == median(1:length(conditions));
+        xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
+        Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
-    
+    if conditionSelected > median(1:length(conditions));
+        xJ=xCenter-(xCenter-xML)/es; yJ=yCenter-(xMR-xCenter)/es;
+        Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
+    end
+
+    % alternative calculation (imperfection: at 45 and 135 degree, one hand don't have to move at all)
+%     xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
+%     Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
+
+
     % When both hands falls within each other near the curve, both cursors turn green
-    % for anti-phase
-    if conditionSelected == 2 | conditionSelected == 4;
-        insideLR = IsInDot((xML + 0.5*screenXpixels), yML, ([xMR;yMR]), ConnectDotSize) ...
-            & (sqrt((xML-CentroidL(1)).^2+(yML-CentroidL(2)).^2) < (steplength+ConnectDotSize)) ...
-            & (sqrt((xMR-CentroidR(1)).^2+(yMR-CentroidR(2)).^2) > (steplength-ConnectDotSize));
-    end
-    
-    % for in-phase
-    if conditionSelected == 1 | conditionSelected == 3;
-        insideLR = IsInDot((screenXpixels - xML), yML, ([xMR;yMR]), ConnectDotSize) ...
-            & (sqrt((xML-CentroidL(1)).^2+(yML-CentroidL(2)).^2) < (steplength+ConnectDotSize)) ...
-            & (sqrt((xMR-CentroidR(1)).^2+(yMR-CentroidR(2)).^2) > (steplength-ConnectDotSize));
-    end
-    
-    % When Joint dot near the line
+    % When Joint dot near the line 
     pt=[xJ yJ]; v1=dotCenter; v2=[x(end) y(end)];
     distance=point_to_line_distance(pt, v1, v2);
     withinRadius=norm(pt-dotCenter);
-    inside = (distance<ConnectDotSize) & (withinRadius < radius) & (yJ+ConnectDotSize)>0
-
-
+    inside = (distance<(ConnectDotSize/2)) & (withinRadius < radius) & (yJ+(ConnectDotSize/2))>0;
+    
     if n > numFramesPlan % start counting scores after planning phase
         % MLcolor=red;MRcolor=blue;
         textMove=['Move now!'];
         DrawFormattedText2(textMove,'win',windowPtr,...
-            'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','center','baseColor',white);
         %Screen('DrawText', windowPtr, ['Move now!'], xCenter, yCenter, white);
-        if insideLR == 1
-            MLcolor = green;MRcolor = green;
+        if inside == 1
+            Jcolor = green;
             if ((xML~=xMLbefore)|(yML~=yMLbefore)|(xMR~=xMRbefore)|(yMR~=yMRbefore))==1 % at least one coortinate moved
-                ScoreLR=ScoreLR+round(fullBonusPerTrial/numFrames,4);
+                ScoreLR=ScoreLR+round(fullBonusPerTrial/numFrames,4); % add a bonus score
             end
         else % insideLR == 0
-            MLcolor=red;MRcolor=blue;
+            Jcolor = white;
         end
     end
      
@@ -129,4 +156,4 @@ while n <  numFrames %~KbCheck
 end
 
     % Reset
-    MLcolor = green;MRcolor = green;
+    Jcolor = green;

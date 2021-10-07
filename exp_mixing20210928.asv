@@ -146,7 +146,7 @@ planSecs =0 ; % rest 1 s to look at trial number
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = 3; %4; % 4 s to move
+moveSecs = ; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
@@ -176,7 +176,7 @@ instructionStart=['Movement of each hand starts from the green dot at the center
         '\n\n\n Move in horizontal direction to control the movement of the white dot'...
         '\n\n\n The dot turns green when it is near the line.'...
         '\n\n\n Try to trace close to line as much as possible to the end of the line.'...
-        '\n\n\n Each trial start when you had placed both mice at the green starting point'...
+        '\n\n\n Each trial start when you had placed both mice at the center starting point'...
         '\n\n\n Then complete within ' num2str(moveSecs) ' seconds.'...
         '\n\n\n Earn Bonus money up to $ ' num2str(fullBonus) ' if well performed.'...
         '\n\n\n Questions? If none, press any key to start']
@@ -291,17 +291,12 @@ for block=1:numBlock
                 Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, green, [], 2);
                 % flip to screen
                 vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+                % pause 1 second
+                WaitSecs(1)
             end
+            
         end
         
-        % pause 0.25s with green dot to indicate start
-        while n<
-        % Display the starting point 
-            Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, green, [], 2);
-        % flip to screen
-        vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-        end
-        %*********************************************
 
         % get a timestamp at the start of the trial
         vbl = Screen('Flip', windowPtr);
