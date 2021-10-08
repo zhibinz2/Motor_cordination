@@ -24,7 +24,7 @@ conditions = [1:1:11]*(pi/12);
 %************************************** Randomization of the experiment
 % set the random number seed as the date of today in formate such as 20210809
 seed=input('enter the date in format YYYYMMDD:');
-data.subjectnumber=seed;
+behaviraldata.subjectnumber=seed;
 rng(seed);
 
 % *************************************************************************
@@ -154,7 +154,7 @@ planSecs =1 ; % rest 1 s to look at trial number
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = 6; %4; % 4 s to move
+moveSecs = 5; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
@@ -217,12 +217,13 @@ for block=1:numBlock
     
     % Initialize some values
     n = 1;
+    
     % NumInside=[]; % To keep a record of the percentage of time inside the square
     %xLyL=[]; xRyR=[]; % to keep track of mouse trace
-    data.dataBlock.dataTrialL.xLyL=[];
-    data.dataBlock.dataTrialR.xRyR=[];
+    behaviraldata.dataBlock(block).dataTrialL.xLyL=[];
+    behaviraldata.dataBlock(block).dataTrialR.xRyR=[];
     %save block number info
-    data.dataBlock(block).blockNumber=block;
+    behaviraldata.dataBlock(block).blockNumber=block;
     
 
     %************************************ show bonus before block and rest
@@ -263,8 +264,6 @@ for block=1:numBlock
                 Showbonus=['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
                 DrawFormattedText2(Showbonus,'win',windowPtr,...
                 'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white); 
-                % reset the trial score to zero
-                % ScoreLR=0; % it will be updated, no need to reset
             end
             
             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials)];
@@ -334,6 +333,8 @@ for block=1:numBlock
             
         end
         
+        % reset the trial score to zero
+        ScoreLR=0;
 
         % get a timestamp at the start of the trial
         vbl = Screen('Flip', windowPtr);
@@ -350,15 +351,13 @@ for block=1:numBlock
 %         ShowCursor('Arrow', [], mouse);
 %         end
 
-        % Store xLyL
-        %dataL(t).xLyL=xLyL; 
-        %dataR(t).xRyR=xRyR;
-        data.dataBlock(block).dataTrialL(t).xLyL=xLyL;
-        data.dataBlock(block).dataTrialR(t).xRyR=xRyR;
+        % Store behaviral data
+        behaviraldata.dataBlock(block).dataTrialL(t).xLyL=xLyL;
+        behaviraldata.dataBlock(block).dataTrialR(t).xRyR=xRyR;
         
         %save trial condition
-        data.dataBlock(block).dataTrialL(t).condition=conditionSelected;
-        data.dataBlock(block).dataTrialR(t).condition=conditionSelected;
+        behaviraldata.dataBlock(block).dataTrialL(t).condition=conditionSelected;
+        behaviraldata.dataBlock(block).dataTrialR(t).condition=conditionSelected;
         
         % update the scores
         TotalScore=TotalScore+ScoreLR;
