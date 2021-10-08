@@ -82,8 +82,6 @@ while n <  numFrames %~KbCheck
         xML=xMLbefore; yML=yMLbefore;
     end
     if xMR < xMRbefore | yMR < yMRbefore
-        xMR=xMRbefore; yMR=yMRbefore;
-    end
     
     %********************************************************************
     % Hide the cursor
