@@ -156,7 +156,7 @@ while n <  numFrames %~KbCheck
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
     
     % Keep track of the nummers of flames when dot is inside the rect
-    % NumInside(n)=inside;    
+    NumInside(n)=inside;    
         
     % keep a record of the mouse position to be use as previous position in
     % the next loop
@@ -172,6 +172,8 @@ while n <  numFrames %~KbCheck
     xLyL(n,2) = yML;
     xRyR(n,1) = xMR;
     xRyR(n,2) = yMR;
+    xJyJ(n,1)=xJ;
+    xJyJ(n,2)=yJ;
     % update n
     n = n+1;
 

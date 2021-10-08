@@ -218,10 +218,12 @@ for block=1:numBlock
     % Initialize some values
     n = 1;
     
-    % NumInside=[]; % To keep a record of the percentage of time inside the square
+    % To keep a record of the percentage of time inside the square
+    behaviraldata.dataBlock(block).dataTrialNumInside=[];
     %xLyL=[]; xRyR=[]; % to keep track of mouse trace
     behaviraldata.dataBlock(block).dataTrialL.xLyL=[];
     behaviraldata.dataBlock(block).dataTrialR.xRyR=[];
+    behaviraldata.dataBlock(block).dataTrialJ.xJyJ=[];
     %save block number info
     behaviraldata.dataBlock(block).blockNumber=block;
     
@@ -353,13 +355,20 @@ for block=1:numBlock
 %         ShowCursor('Arrow', [], mouse);
 %         end
 
+
+        % To keep a record of the percentage of time inside the square
+        behaviraldata.dataBlock(block).dataTrialNumInside(t).NumInside=NumInside;
+        
         % Store behaviral data
         behaviraldata.dataBlock(block).dataTrialL(t).xLyL=xLyL;
         behaviraldata.dataBlock(block).dataTrialR(t).xRyR=xRyR;
+        behaviraldata.dataBlock(block).dataTrialJ(t).xJyJ=xJyJ;
         
         %save trial condition
+        behaviraldata.dataBlock(block).dataTrialNumInside(t).condition=conditionSelected;
         behaviraldata.dataBlock(block).dataTrialL(t).condition=conditionSelected;
         behaviraldata.dataBlock(block).dataTrialR(t).condition=conditionSelected;
+        behaviraldata.dataBlock(block).dataTrialJ(t).condition=conditionSelected;
         
         % update the scores
         TotalScore=TotalScore+ScoreLR;

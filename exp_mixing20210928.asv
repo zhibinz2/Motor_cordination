@@ -154,7 +154,7 @@ planSecs =1 ; % rest 1 s to look at trial number
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = 6; %4; % 4 s to move
+moveSecs = 5; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
@@ -217,10 +217,13 @@ for block=1:numBlock
     
     % Initialize some values
     n = 1;
-    % NumInside=[]; % To keep a record of the percentage of time inside the square
+    
+    % To keep a record of the percentage of time inside the square
+    behaviraldata.dataBlock(block).dataTrialNumInside=[];
     %xLyL=[]; xRyR=[]; % to keep track of mouse trace
     behaviraldata.dataBlock(block).dataTrialL.xLyL=[];
     behaviraldata.dataBlock(block).dataTrialR.xRyR=[];
+    behaviraldata.dataBlock(block).dataTrialJ.xJyJ=[];
     %save block number info
     behaviraldata.dataBlock(block).blockNumber=block;
     
@@ -263,8 +266,6 @@ for block=1:numBlock
                 Showbonus=['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
                 DrawFormattedText2(Showbonus,'win',windowPtr,...
                 'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white); 
-                % reset the trial score to zero
-                % ScoreLR=0; % it will be updated, no need to reset
             end
             
             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials)];
@@ -317,6 +318,8 @@ for block=1:numBlock
             xMRbefore=xMR;
             yMRbefore=yMR;
             
+            xJbefore=[]; yJbefore=[];% initialize the joint before value
+            
             % flip to screen
             vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
             
@@ -334,6 +337,8 @@ for block=1:numBlock
             
         end
         
+        % reset the trial score to zero
+        ScoreLR=0;
 
         % get a timestamp at the start of the trial
         vbl = Screen('Flip', windowPtr);
@@ -350,13 +355,20 @@ for block=1:numBlock
 %         ShowCursor('Arrow', [], mouse);
 %         end
 
+
+        % To keep a record of the percentage of time inside the square
+        behaviraldata.dataBlock(block).dataTrialNumInside(t).NumInside=NumInside;
+        
         % Store behaviral data
         behaviraldata.dataBlock(block).dataTrialL(t).xLyL=xLyL;
         behaviraldata.dataBlock(block).dataTrialR(t).xRyR=xRyR;
+        behaviraldata.dataBlock(block).dataTrialJ(t).xJyJ=xJyJ;
         
         %save trial condition
+        behaviraldata.dataBlock(block).dataTrialNumInside(t).condition=conditionSelected;
         behaviraldata.dataBlock(block).dataTrialL(t).condition=conditionSelected;
         behaviraldata.dataBlock(block).dataTrialR(t).condition=conditionSelected;
+        behaviraldata.dataBlock(block).dataTrialJ(t).condition=conditionSelected;
         
         % update the scores
         TotalScore=TotalScore+ScoreLR;
