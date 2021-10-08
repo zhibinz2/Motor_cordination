@@ -91,8 +91,8 @@ while n <  numFrames %~KbCheck
     HideCursor(windowPtr,mice(1));
     
     % Display the cursor as a dot
-    Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
-    Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
+%     Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
+%     Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
      
     %********************************************************************
     % Enlarge the scale of movement by es times
