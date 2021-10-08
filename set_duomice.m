@@ -22,7 +22,7 @@
 %% hnlb
 !xinput reattach 14 16
 !xinput reattach 29 16
-!xinput reattach 19 14
+!xinput reattach 12 14
 !xinput reattach 9 16
 !xinput reattach 12 9
 !xinput  list
