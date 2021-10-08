@@ -78,12 +78,12 @@ while n <  numFrames %~KbCheck
     
     %********************************************************************
     % limit the mice movement only going outward, cannot return
-    if xML > xMLbefore | yML < yMLbefore
-        xML=xMLbefore; yML=yMLbefore;
-    end
-    if xMR < xMRbefore | yMR < yMRbefore
-        xMR=xMRbefore; yMR=yMRbefore;
-    end
+%     if xML > xMLbefore
+%         xML=xMLbefore; 
+%     end
+%     if xMR < xMRbefore
+%         xMR=xMRbefore; 
+%     end
     
     %********************************************************************
     % Hide the cursor
@@ -91,8 +91,8 @@ while n <  numFrames %~KbCheck
     HideCursor(windowPtr,mice(1));
     
     % Display the cursor as a dot
-%     Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
-%     Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
+    Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
+    Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
      
     %********************************************************************
     % Enlarge the scale of movement by es times
@@ -101,16 +101,26 @@ while n <  numFrames %~KbCheck
     % Display the joint position as a dot
     if conditionSelected < median(1:length(conditions));
         xJ=xCenter+(xMR-xCenter)/es; yJ=yCenter-(xCenter-xML)/es;
+%         if abs(xJ) < abs(xJbefore) | abs(yJ) < abs(yJbefore)
+%             xJ=xJbefore; yJ=yJbefore;
+%         end % not moving at all
         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
     if conditionSelected == median(1:length(conditions));
         xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
+%         if abs(xJ) < abs(xJbefore) | abs(yJ) < abs(yJbefore)
+%             xJ=xJbefore; yJ=yJbefore;
+%         end % not moving at all
         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
     if conditionSelected > median(1:length(conditions));
         xJ=xCenter-(xCenter-xML)/es; yJ=yCenter-(xMR-xCenter)/es;
+%         if abs(xJ) < abs(xJbefore) | abs(yJ) < abs(yJbefore)
+%             xJ=xJbefore; yJ=yJbefore;
+%         end % not moving at all
         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
+
 
     % alternative calculation (imperfection: at 45 and 135 degree, one hand don't have to move at all)
 %     xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
@@ -123,6 +133,8 @@ while n <  numFrames %~KbCheck
     distance=point_to_line_distance(pt, v1, v2);
     withinRadius=norm(pt-dotCenter);
     inside = (distance<Thickness) & (withinRadius < radius+Thickness) & (yJ+Thickness)>0;
+%     inside = (distance<Thickness) & (withinRadius < radius+Thickness) & (yJ+Thickness)>0 & ...
+%     (xML < xMLbefore) & (xMR > xMRbefore);
     
     if n > numFramesPlan % start counting scores after planning phase
         % MLcolor=red;MRcolor=blue;
@@ -152,6 +164,8 @@ while n <  numFrames %~KbCheck
     yMLbefore=yML;
     xMRbefore=xMR;
     yMRbefore=yMR;
+    xJbefore=xJ;
+    yJbefore=yJ;
     
     % Keep track of the mouse trace
     xLyL(n,1) = xML;

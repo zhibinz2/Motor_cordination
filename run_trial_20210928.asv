@@ -44,7 +44,7 @@ while n <  numFrames %~KbCheck
         SetMouse(x(1),y(1), windowPtr, mice(1)); 
         textPlan=['Place mice at the starting points'];
         DrawFormattedText2(textPlan,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','center','baseColor',white);
+            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
         %Screen('DrawText', windowPtr, ['Place mice at the starting points'], xCenter-steplength/1.5, yCenter, white);
         %DrawFormattedText2(['Place mice at starting point and start drawing in 1 second!'],'win',windowPtr,...
         %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
@@ -77,13 +77,23 @@ while n <  numFrames %~KbCheck
     [xMR, yMR] = GetMouse(windowPtr,mice(1));
     
     %********************************************************************
+    % limit the mice movement only going outward, cannot return
+%     if xML > xMLbefore | yML < yMLbefore
+%         xML=xMLbefore; yML=yMLbefore;
+%     end
+%     if xMR < xMRbefore | yMR < yMRbefore
+%         xMR=xMRbefore; yMR=yMRbefore;
+%     end
+    % this will make the movement uncontinous, not good
+    
+    %********************************************************************
     % Hide the cursor
     HideCursor(windowPtr,mice(2));
     HideCursor(windowPtr,mice(1));
     
     % Display the cursor as a dot
-%     Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
-%     Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
+    Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
+    Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
      
     %********************************************************************
     % Enlarge the scale of movement by es times
@@ -92,17 +102,36 @@ while n <  numFrames %~KbCheck
     % Display the joint position as a dot
     if conditionSelected < median(1:length(conditions));
         xJ=xCenter+(xMR-xCenter)/es; yJ=yCenter-(xCenter-xML)/es;
+        if abs(xJ) < abs(xJbefore) | abs(yJ) < abs(yJbefore)
+            xJ=xJbefore; yJ=yJbefore;
+        end
         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
     if conditionSelected == median(1:length(conditions));
         xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
+        if abs(xJ) > abs(xJbefore) | abs(yJ) < abs(yJbefore)
+            xJ=xJbefore; yJ=yJbefore;
+        end
         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
     if conditionSelected > median(1:length(conditions));
         xJ=xCenter-(xCenter-xML)/es; yJ=yCenter-(xMR-xCenter)/es;
+        if abs(xJ) > abs(xJbefore) | abs(yJ) < abs(yJbefore)
+            xJ=xJbefore; yJ=yJbefore;
+        end
         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
 
+    %********************************************************************
+    % limit the joint movement only going outward, cannot return
+    
+%     if xJ > xJbefore | yJ < yJbefore
+%         xJ=xJbefore; yJ=yJbefore;
+%     end
+    %********************************************************************
+
+    
+    
     % alternative calculation (imperfection: at 45 and 135 degree, one hand don't have to move at all)
 %     xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
 %     Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
@@ -113,14 +142,14 @@ while n <  numFrames %~KbCheck
     pt=[xJ yJ]; v1=dotCenter; v2=[x(end) y(end)];
     distance=point_to_line_distance(pt, v1, v2);
     withinRadius=norm(pt-dotCenter);
-    inside = (distance<(ConnectDotSize/2)) & (withinRadius < radius) & (yJ+(ConnectDotSize/2))>0;
+    inside = (distance<Thickness) & (withinRadius < radius+Thickness) & (yJ+Thickness)>0;
     
     if n > numFramesPlan % start counting scores after planning phase
         % MLcolor=red;MRcolor=blue;
         textMove=['Move now!'];
         DrawFormattedText2(textMove,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','center','baseColor',white);
-        %Screen('DrawText', windowPtr, ['Move now!'], xCenter, yCenter, white);
+            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+        
         if inside == 1
             Jcolor = green;
             if ((xML~=xMLbefore)|(yML~=yMLbefore)|(xMR~=xMRbefore)|(yMR~=yMRbefore))==1 % at least one coortinate moved
@@ -143,6 +172,8 @@ while n <  numFrames %~KbCheck
     yMLbefore=yML;
     xMRbefore=xMR;
     yMRbefore=yMR;
+    xJbefore=xJ;
+    yJbefore=yJ;
     
     % Keep track of the mouse trace
     xLyL(n,1) = xML;

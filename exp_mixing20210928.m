@@ -316,6 +316,8 @@ for block=1:numBlock
             xMRbefore=xMR;
             yMRbefore=yMR;
             
+            xJbefore=[]; yJbefore=[];% initialize the joint before value
+            
             % flip to screen
             vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
             
