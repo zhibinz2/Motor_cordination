@@ -1,15 +1,23 @@
 
 %% load behaviral data
 clear;
-cd('/home/zhibin/Documents/Acquisition/zhibin20211008')
 cd('/home/zhibin/Documents/GitHub/Motor_cordination/data')
 load('matlab2021100802.mat');
 %% Reorgainize behavioral data into BehavData and condition
 subjectnumber=behaviraldata.subjectnumber;
 dataBlock=behaviraldata.dataBlock;
-dataTrialL=dataBlock.dataTrialL;
-dataTrialR=dataBlock.dataTrialR;  xRyR=dataTrialR.xRyR; plot(xJyJ(:,1),xJyJ(:,2));
-dataTrialJ=dataBlock.dataTrialJ;  xJyJ=dataTrialJ.xJyJ; plot(xJyJ(:,1),xJyJ(:,2));
+
+% Just to try out with one trial and plot
+% dataTrialL=dataBlock.dataTrialL;  
+% dataTrialR=dataBlock.dataTrialR;  
+% dataTrialJ=dataBlock.dataTrialJ;
+
+% xLyL=dataTrialL.xLyL; plot(xLyL(:,1),xLyL(:,2),'r'); hold on;
+% xRyR=dataTrialR.xRyR; plot(xRyR(:,1),xRyR(:,2),'b');
+% xJyJ=dataTrialJ.xJyJ; plot(xJyJ(:,1),xJyJ(:,2),'g'); hold off;
+% set(gca, 'YDir', 'reverse');xlim([0,screenXpixels]);ylim([0,screenYpixels]);
+
+
 blockNumber=dataBlock.blockNumber;
 xLyL=dataTrialL.xLyL;
 condition=dataTrialL.condition;
@@ -22,10 +30,11 @@ for b=1:numBlock
     for t=1:length(behaviraldata.dataBlock(b).dataTrialL)
         dataxLyLtemp=behaviraldata.dataBlock(b).dataTrialL(t).xLyL;
         dataxRyRtemp=behaviraldata.dataBlock(b).dataTrialR(t).xRyR;
-        dataxLyLxRyRtemp=[dataxLyLtemp dataxRyRtemp];
+        dataxJyJtemp=behaviraldata.dataBlock(b).dataTrialJ(t).xJyJ;
+        dataxLyLxRyRxJyJtemp=[dataxLyLtemp dataxRyRtemp dataxJyJtemp];
         dataConditiontemp=behaviraldata.dataBlock(b).dataTrialL(t).condition;
-        BehavData=[BehavData; {dataxLyLxRyRtemp}];
-        CondiData=[CondiData; dataConditiontemp];
+        BehavData=[BehavData; {dataxLyLxRyRxJyJtemp}];
+        CondiData=[CondiData; dataConditiontemp];% same as allPerm
     end
 end
 
@@ -36,38 +45,40 @@ NumTrialsRecorded=length(CondiData);
 
 %% Check EEG on 20210916
 % load EEG all as one
-EEG=loadcurry([pwd '/bimanual_halfcir_zhibin_sr1k_20210916.cdt']);
+cd('/home/zhibin/Documents/Acquisition/zhibin20211008')
+EEG=loadcurry([pwd '/Bimanual_Reach_zhibin_20211008.cdt']);
 dataEEG=EEG.data;
 datatimes=EEG.times;
 Fs=EEG.srate;
 % plot(datatimes,dataEEG);
 
-%% photocell processing to find trial start and end 
+%% photocell processing to find trial start and end index
 % plot photocell analog signal
 analog1=133; 
 analog1data=dataEEG(analog1,:);
-% plot(datatimes,analog1data);
-% might need to mannually cut off the start and end of block
+% plot(datatimes,analog1data,'b'); % might need to mannually cut off the start and end of block
 
+% hold on;
 % analog2=134; 
 % analog2data=dataEEG(analog2,:);
-% plot(datatimes,analog2data);
-% % weird start and end of block signal
+% plot(datatimes,analog2data,'r'); % weird start and end of block signal
+% hold off;
 
 % close all
 Halfhigh1=1/2*(max(analog1data)-min(analog1data));
 % Halfhigh2=1/2*(max(analog2data)-min(analog2data));
 
+%***************************** Use the analog1data 
 % locate the trial sessions % pks=value of the peak % locs=time of the peak
 [pks,locs] = findpeaks(analog1data,datatimes,'MinPeakProminence',Halfhigh1,'Annotate','extents');
 
 locsDiff=diff(locs);% time distances between peaks
 % plot(locsDiff,'ro');% look at distribution of these distances
 ind_locsDiff=find([locsDiff, inf]>5*mean(locsDiff)); % pks distance indices at the end of each trial 
-trialLength=diff([0 ind_locsDiff]); %number of peaks in each trial
-% plot(trialLength,'ro') % look at trial length
-ind_trial_end=cumsum(trialLength); % ending peak of each trial (index in locs)
-ind_trial_start=ind_trial_end-trialLength+1;
+trialLength=diff([0 ind_locsDiff]); % number of peaks in each trial
+% plot(trialLength,'ro'); % look at trial length
+ind_trial_end=cumsum(trialLength); % index of the last peak in each trial (index in locs)
+ind_trial_start=ind_trial_end-trialLength+1; % index of the first peak in each trial (index in locs)
 
 % % checking starting peak of the trials (index in locs)
 % plot(ind_trial_start,zeros(length(ind_trial_start)),'go'); 
@@ -75,41 +86,52 @@ ind_trial_start=ind_trial_end-trialLength+1;
 % plot(ind_trial_end,ones(length(ind_trial_end)),'ro');
 % ylim([-20 20]);
 
-%*****************************
+%***************************** Use the analog2data 
+% % locate the trial sessions % pks=value of the peak % locs=time of the peak
+% [pks,locs] = findpeaks(analog2data,datatimes,'MinPeakProminence',Halfhigh2,'Annotate','extents');
+% 
+% locsDiff=diff(locs);% time distances between peaks
+% % plot(locsDiff,'ro'); % look at distribution of these distances
+% ind_locsDiff=find([locsDiff, inf]>(mean(locsDiff)+mean(locsDiff)/5)); % indices of pks distances at the end of each trial 
+% trialLength=diff([0 ind_locsDiff]); % number of peaks in each trial
+% % plot(trialLength,'ro'); % look at trial length 
+% ind_trial_end=cumsum(trialLength); % index of the last peak in each trial (index in locs)
+% ind_trial_start=ind_trial_end-trialLength+1; % index of the first peak in each trial (index in locs)
+
 %% detrend the data
 
 addpath(genpath('/home/zhibin/Documents/GitHub'));
 % data=dataEEG(1:128,2000000:2002000);
-data=dataEEG(1:128,:);
+EEGdata=dataEEG(1:128,:);
 
 % tranpose the data so that time is the first dimension, channel is 2nd dimension, and trial is the 3rd dimension
-transpose_data=permute(data,[2,1]);
+transpose_data=permute(EEGdata,[2,1]);
 % plotx(mean(transpose_data,3));
 % plotx(transpose_data);
 
 % detrend the data
 detrend_data=ndetrend(transpose_data,1); 
-% plotx(mean(detrend_data,3));
-% plotx(detrend_data);
+% plotx(mean(detrend_data,2)); xlim([5000 10000]);
+% plotx(detrend_data); xlim([5000 10000]);
 
 %% Broadband filter
 % apply high pass filter to filter out frequencies lower than 1;
 % load eeglab toolbox to avoid filtered_data becoming NaN
 eeglab;
 close all;
-Hd = makefilter(2000,1,0.5,3,20,0); % Astop 6 or 20;
+Hd = makefilter(Fs,1,0.5,3,20,0); % Astop 6 or 20;
 filtered_data=filtfilthd(Hd,double(detrend_data));
 
 % remove channel 91 44
 % filtered_data(:,91)=[];filtered_data(:,44)=[];
-%  plotx(filtered_data);
+%  plotx(filtered_data); xlim([5000 10000]);
 
 % apply low pass filter to filter out frequencies higher than 50;
-Hd = makefilter(2000,50,55,3,20,0);
+Hd = makefilter(Fs,50,55,3,20,0);
 filtered_data=filtfilthd(Hd,filtered_data);
 
-% plotx(mean(filtered_data,3));
-% plotx(filtered_data);
+% plotx(mean(filtered_data,2));  
+% plotx(filtered_data);xlim([5000 10000]);
 
 %% fiter5bands 
 run filter5bands.m
@@ -128,16 +150,16 @@ run filter5bands.m
 NumTrialsRecorded=length(ind_trial_start);
 NumTrialtimepoints=round(max(trialLength)*2*ifi*Fs);%number of samples in a trial,ideally
 NumEEGChannels=size(filtered_data,2);
-NumAllChannels=NumEEGChannels+4;
+NumAllChannels=NumEEGChannels+6; % +4;
 
-% zeros at the end of the trial session if trials shorter than is should
-% be, ideally
-% Reality is, sometimes this trial length do not cover the length of some
-% trial
+% Initialize the data_trials matrix
+% Zeros at the end of the trial session if trials shorter than is should be, ideally
+% Reality is, sometimes this trial length do not cover the length of some trial
 data_trials=zeros(NumTrialtimepoints,NumAllChannels,NumTrialsRecorded);
-% CondiData
 
+% Initialize the indices for trial start and end time point
 trialstart=zeros(1,NumTrialsRecorded);trialend=zeros(1,NumTrialsRecorded);
+
 % timing (trial length) might mess up
 for ntr=1:NumTrialsRecorded % take too much memory, matlab might quit
     trialstart(ntr)=find(datatimes==locs(ind_trial_start(ntr)));
@@ -159,19 +181,19 @@ RSBehavData={};
 % block=1;
 % for ntr=NumTrialsRecorded*(block-1)+1:NumTrialsRecorded*(block-1)+NumTrialsRecorded
 for ntr=1:NumTrialsRecorded
-    xLyLxRyRtemp=BehavData{ntr};
-    shift=xLyLxRyRtemp(1,:); % shift to the origin (start from zero to minimized edge artifact)
-    xLyLxRyRtempshift=xLyLxRyRtemp-shift.*ones(size(xLyLxRyRtemp,1),1);
+    xLyLxRyRxJyJtemp=BehavData{ntr};
+    shift=xLyLxRyRxJyJtemp(1,:); % shift to the origin (start from zero to minimized edge artifact)
+    xLyLxRyRxJyJtempshift=xLyLxRyRxJyJtemp-shift.*ones(size(xLyLxRyRxJyJtemp,1),1);
     
-    padstart=xLyLxRyRtempshift(1,:).*ones(size(xLyLxRyRtempshift,1),1); % padding before the start of trial
-    padtend=xLyLxRyRtempshift(end,:).*ones(size(xLyLxRyRtempshift,1),1); % padding after
-    xLyLxRyRtempshiftpad=[padstart;xLyLxRyRtempshift;padtend]; % concatenate
-    RSxLyLxRyRtempshiftpad=resample(xLyLxRyRtempshiftpad,size(data_trials,1),length(xLyLxRyRtemp)); % resample
-    RSxLyLxRyRtempshift=RSxLyLxRyRtempshiftpad(size(data_trials,1)+1:2*size(data_trials,1),:);% remove the padding
-    RSxLyLxRyRtemp=RSxLyLxRyRtempshift+shift.*ones(size(RSxLyLxRyRtempshift,1),1); % shift back to the original position
+    padstart=xLyLxRyRxJyJtempshift(1,:).*ones(size(xLyLxRyRxJyJtempshift,1),1); % padding before the start of trial
+    padtend=xLyLxRyRxJyJtempshift(end,:).*ones(size(xLyLxRyRxJyJtempshift,1),1); % padding after
+    xLyLxRyRxJyJtempshiftpad=[padstart;xLyLxRyRxJyJtempshift;padtend]; % concatenate
+    RSxLyLxRyRxJyJtempshiftpad=resample(xLyLxRyRxJyJtempshiftpad,size(data_trials,1),length(xLyLxRyRxJyJtemp)); % resample
+    RSxLyLxRyRxJyJtempshift=RSxLyLxRyRxJyJtempshiftpad(size(data_trials,1)+1:2*size(data_trials,1),:);% remove the padding
+    RSxLyLxRyRxJyJtemp=RSxLyLxRyRxJyJtempshift+shift.*ones(size(RSxLyLxRyRxJyJtempshift,1),1); % shift back to the original position
     
-    RSxLyLxRyRtemp=RSxLyLxRyRtemp'; % transpose to fit into trial EEG matrix
-    RSBehavData{ntr}={RSxLyLxRyRtemp};
+    RSxLyLxRyRxJyJtemp=RSxLyLxRyRxJyJtemp'; % transpose to fit into trial EEG matrix
+    RSBehavData{ntr}={RSxLyLxRyRxJyJtemp};
 end
 
 % % examine RSBehavData
@@ -183,17 +205,19 @@ end
 
 % for ntr=NumTrialsRecorded*(block-1)+1:NumTrialsRecorded*(block-1)+NumTrialsRecorded
 for ntr=1:NumTrialsRecorded
-    data_trials(:,NumEEGChannels+1:NumEEGChannels+4,ntr)=[cell2mat(RSBehavData{ntr})]'; % replace the last four channels
+    data_trials(:,NumEEGChannels+1:NumEEGChannels+6,ntr)=[cell2mat(RSBehavData{ntr})]'; % replace the last four channels
 end
 
 % % Just to check out
 CondiData;
-figure;plot(CondiData);yticks([1 2 3 4]);
-yticklabels({'A1&A2','A1&A1','A2&A1','A2&A2'});title('task sequence'); xlabel('trial');
+figure;plot(CondiData);
+% yticks([1 2 3 4]);
+% yticklabels({'A1&A2','A1&A1','A2&A1','A2&A2'});title('task sequence'); xlabel('trial');
 % unique(CondiData)
 % allPerm;
 % conditionfuctions;
-conditionNames={'A1&A2','A1&A1','A2&A1','A2&A2'};
+% conditionNames={'A1&A2','A1&A1','A2&A1','A2&A2'};
+conditionNames=conditions;
 % conditionNames{1};
 
 %% draw condition trace
@@ -205,34 +229,34 @@ for u=1:length(UniCondi)% u=2
     
     indtemp=find(CondiData==UniCondi(u));
     
-    [xL,yL,PosL,PosL0,PosL1,PosL2,PosL3,ThicknessL,ColorL,...
-    xR,yR,PosR,PosR0,PosR1,PosR2,PosR3,ThicknessR,ColorR] ...
-    = conditionfuctions{UniCondi(u)}(steplength,yCenter,screenXpixels);
-
-    [xL,yL,CentroidL,PosL,PosL0,PosL1,PosL2,PosL3,ThicknessL,ColorL,...
-                xR,yR,CentroidR,PosR,PosR0,PosR1,PosR2,PosR3,ThicknessR,ColorR] ...
-                = conditionfuctions{UniCondi(u)}(steplength,yCenter,screenXpixels);
+    % pick a condition from randomized set allPerm
+    conditionSelected = UniCondi(u);
+    % produced the position parameters
+        rad_ang=conditions(conditionSelected);
+        [x,y] = drawReach(radius,rad_ang, xCenter, yCenter);
+            
     
     subplot(1,length(UniCondi),u);
     
-    plot(PosL(1,:),PosL(2,:),'-g', 'LineWidth',10);
+    plot(x,y,'-', 'color', grey, 'LineWidth',10);
     hold on;
-    plot(PosR(1,:),PosR(2,:),'-g','LineWidth',10); 
-    hold on;
-    
+
     for indt=1:length(indtemp)
     TracexL=squeeze(data_trials(:,NumEEGChannels+1,indtemp(indt)));
     TraceyL=squeeze(data_trials(:,NumEEGChannels+2,indtemp(indt)));
     TracexR=squeeze(data_trials(:,NumEEGChannels+3,indtemp(indt)));
     TraceyR=squeeze(data_trials(:,NumEEGChannels+4,indtemp(indt)));
-    plot(TracexL,TraceyL,'-r',TracexR,TraceyR,'-b');
+    TracexJ=squeeze(data_trials(:,NumEEGChannels+5,indtemp(indt)));
+    TraceyJ=squeeze(data_trials(:,NumEEGChannels+6,indtemp(indt)));
+    plot(TracexL,TraceyL,'-r',TracexR,TraceyR,'-b',TracexJ,TraceyJ,'-g');
     end
     
     set(gca, 'YDir', 'reverse');
     hold off;
     
     xlim([0 screenXpixels]);ylim([0 screenYpixels]);
-    title(['condition' conditionNames{UniCondi(u)}]);
+    %title(['condition' conditionNames{UniCondi(u)}]);
+    title(['condition: ' num2str(conditionNames(UniCondi(u))) ' (radian)']);
   
 end
 

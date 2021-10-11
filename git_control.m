@@ -20,10 +20,10 @@ CommitName=char(datetime('now'));
 
 %% Make Git store the username and password and it will never ask for them.
 % !git config --global credential.helper store
-% 
+ 
 % % Save the username and password for a session (cache it);
 % !git config --global credential.helper cache
 % % set a timeout for the above setting
 % !git config --global credential.helper 'cache --timeout=600'
-% 
+ 
 % !git push
