@@ -296,7 +296,7 @@ trialdatamax = squeeze(max(abs(filtered_data),[],1));
 % imagesc(trialdatamax);colorbar;ylabel('chan');xlabel('trial');
 
 % create a bad channel list containing the last 4 channels to be removed
-badchans = [129 130 131 132]; 
+badchans = [129 130 131 132 133 134]; 
 
 % initiate a good channel list by removing the badchans
 goodchans = setdiff(1:nChans,badchans); 
@@ -339,6 +339,7 @@ artifact.zerochans = zerochans;
 [reRef_data] = reRef(filtered_data,goodchans);
 % erpdata = mean(reRef_data(:,:,goodepochs),3); % This includes only good epochs
 % plotx(erpdata(:,goodchans));% plot only the good channels
+% xlabel(['time (ms)']);ylabel(['amplitude']);title(['ERP'])
 
 %% power spetra and coorelation
 % fs=2000; maxfreq=50;
