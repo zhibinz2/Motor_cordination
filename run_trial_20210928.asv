@@ -42,7 +42,7 @@ while n <  numFrames %~KbCheck
     if n< numFramesPlan 
         SetMouse(x(1),y(1), windowPtr, mice(2));
         SetMouse(x(1),y(1), windowPtr, mice(1)); 
-        textPlan=['Place mice at the starting points'];
+        textPlan=['Wait...'];
         DrawFormattedText2(textPlan,'win',windowPtr,...
             'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
         %Screen('DrawText', windowPtr, ['Place mice at the starting points'], xCenter-steplength/1.5, yCenter, white);
@@ -99,34 +99,36 @@ while n <  numFrames %~KbCheck
     % Enlarge the scale of movement by es times
 %     es=screenXpixels/screenYpixels; % it has a limit of 0 ~ (screenXpixels/screenYpixels)
     es=1;
-    
-    % Display the joint position as a dot
-    if conditionSelected < median(1:length(conditions));
-        xJ=xCenter+(xMR-xCenter)/es; yJ=yCenter-(xCenter-xML)/es;
-%         if abs(xJ) < abs(xJbefore) | abs(yJ) < abs(yJbefore)
-%             xJ=xJbefore; yJ=yJbefore;
-%         end % not moving at all
-        Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
-    end
-    if conditionSelected == median(1:length(conditions));
-        xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
-%         if abs(xJ) < abs(xJbefore) | abs(yJ) < abs(yJbefore)
-%             xJ=xJbefore; yJ=yJbefore;
-%         end % not moving at all
-        Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
-    end
-    if conditionSelected > median(1:length(conditions));
-        xJ=xCenter-(xCenter-xML)/es; yJ=yCenter-(xMR-xCenter)/es;
-%         if abs(xJ) < abs(xJbefore) | abs(yJ) < abs(yJbefore)
-%             xJ=xJbefore; yJ=yJbefore;
-%         end % not moving at all
-        Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
-    end
+    %********************************************************************
+%     % Display the joint position as a dot
+%     if conditionSelected < median(1:length(conditions));
+%         xJ=xCenter+(xMR-xCenter)/es; yJ=yCenter-(xCenter-xML)/es;
+% %         if abs(xJ) < abs(xJbefore) | abs(yJ) < abs(yJbefore)
+% %             xJ=xJbefore; yJ=yJbefore;
+% %         end % not moving at all
+%         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
+%     end
+%     if conditionSelected == median(1:length(conditions));
+%         xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
+% %         if abs(xJ) < abs(xJbefore) | abs(yJ) < abs(yJbefore)
+% %             xJ=xJbefore; yJ=yJbefore;
+% %         end % not moving at all
+%         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
+%     end
+%     if conditionSelected > median(1:length(conditions));
+%         xJ=xCenter-(xCenter-xML)/es; yJ=yCenter-(xMR-xCenter)/es;
+% %         if abs(xJ) < abs(xJbefore) | abs(yJ) < abs(yJbefore)
+% %             xJ=xJbefore; yJ=yJbefore;
+% %         end % not moving at all
+%         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
+%     end
 
 
+    %********************************************************************
     % alternative calculation (imperfection: at 45 and 135 degree, one hand don't have to move at all)
-%     xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
-%     Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
+    xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
+    Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
+    %********************************************************************
 
 
     % When both hands falls within each other near the curve, both cursors turn green
@@ -140,9 +142,9 @@ while n <  numFrames %~KbCheck
     
     if n > numFramesPlan % start counting scores after planning phase
         % MLcolor=red;MRcolor=blue;
-        textMove=['Move now!'];
+        textMove=['Go!'];
         DrawFormattedText2(textMove,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',green);
         
         if inside == 1
             Jcolor = green;

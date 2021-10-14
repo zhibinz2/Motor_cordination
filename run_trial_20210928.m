@@ -42,9 +42,9 @@ while n <  numFrames %~KbCheck
     if n< numFramesPlan 
         SetMouse(x(1),y(1), windowPtr, mice(2));
         SetMouse(x(1),y(1), windowPtr, mice(1)); 
-        textPlan=['Place mice at the starting points'];
+        textPlan=['Wait...'];
         DrawFormattedText2(textPlan,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+            'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
         %Screen('DrawText', windowPtr, ['Place mice at the starting points'], xCenter-steplength/1.5, yCenter, white);
         %DrawFormattedText2(['Place mice at starting point and start drawing in 1 second!'],'win',windowPtr,...
         %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
@@ -88,12 +88,12 @@ while n <  numFrames %~KbCheck
     
     %********************************************************************
     % Hide the cursor
-%     HideCursor(windowPtr,mice(2));
-%     HideCursor(windowPtr,mice(1));
+    HideCursor(windowPtr,mice(2));
+    HideCursor(windowPtr,mice(1));
     
     % Display the cursor as a dot
-    Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
-    Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
+%     Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
+%     Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
      
     %********************************************************************
     % Enlarge the scale of movement by es times
@@ -142,9 +142,9 @@ while n <  numFrames %~KbCheck
     
     if n > numFramesPlan % start counting scores after planning phase
         % MLcolor=red;MRcolor=blue;
-        textMove=['Move now!'];
+        textMove=['Go!'];
         DrawFormattedText2(textMove,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+            'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',green);
         
         if inside == 1
             Jcolor = green;

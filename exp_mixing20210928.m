@@ -153,11 +153,11 @@ LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screen
 % *************************************************************************
 % Time management here
 % Setting default mouse Position for some time
-planSecs =1 ; % rest 1 s to look at trial number
+planSecs =0.5 ; % rest 1 s to look at trial number, visual evoked potential
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = 5; %4; % 4 s to move
+moveSecs = 2; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
@@ -209,7 +209,7 @@ instructionStart=['You will be controlling two mice to do the task.'...
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
-WaitSecs(Tinterblock);
+% WaitSecs(Tinterblock);
 % hit a key to continue
 KbStrokeWait;
 
@@ -235,10 +235,10 @@ for block=1:numBlock
     if block ~= 1
         Showbonus = ['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
         DrawFormattedText2(Showbonus,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+            'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
     end
     
-    Showblock = ['Hit a key to begin block ' num2str(block) ' after ' num2str(Tinterblock) ' seconds']
+    Showblock = ['Hit a key to begin block ' num2str(block) ' / ' num2str(numBlock) ' after ' num2str(Tinterblock) ' seconds']
     DrawFormattedText2(Showblock,'win',windowPtr,...
         'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
     Screen('Flip',windowPtr);
@@ -268,10 +268,10 @@ for block=1:numBlock
             if t ~= 1
                 Showbonus=['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
                 DrawFormattedText2(Showbonus,'win',windowPtr,...
-                'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white); 
+                'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white); 
             end
             
-            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials)];
+            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
             % Flip to the screen   
@@ -307,7 +307,7 @@ for block=1:numBlock
             % Display instruction
             textPlan=['Place mice at the starting points'];
             DrawFormattedText2(textPlan,'win',windowPtr,...
-                'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+                'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
             
             [xML, yML] = GetMouse(windowPtr,mice(2));
             [xMR, yMR] = GetMouse(windowPtr,mice(1));
@@ -327,8 +327,8 @@ for block=1:numBlock
             vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
             
             % update the while loop
-            Insidestart = (sqrt((xML-xCenter).^2+(yML-yCenter).^2) < Thickness/2) & ...
-                (sqrt((xMR-xCenter).^2+(yMR-yCenter).^2)<Thickness/2);
+            Insidestart = (sqrt((xML-xCenter).^2+(yML-yCenter).^2) < Thickness/2/5) & ...
+                (sqrt((xMR-xCenter).^2+(yMR-yCenter).^2)<Thickness/2/5);
             
             if Insidestart == 1
                 Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, green, [], 2);
@@ -387,7 +387,7 @@ end
 % Show The End
 Showbonus = ['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
 DrawFormattedText2(Showbonus,'win',windowPtr,...
-    'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+    'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
 TheEnd = ['The End'];
 DrawFormattedText2(TheEnd,'win',windowPtr,...
     'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
