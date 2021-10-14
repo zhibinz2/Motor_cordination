@@ -44,7 +44,7 @@ while n <  numFrames %~KbCheck
         SetMouse(x(1),y(1), windowPtr, mice(1)); 
         textPlan=['Wait...'];
         DrawFormattedText2(textPlan,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+            'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
         %Screen('DrawText', windowPtr, ['Place mice at the starting points'], xCenter-steplength/1.5, yCenter, white);
         %DrawFormattedText2(['Place mice at starting point and start drawing in 1 second!'],'win',windowPtr,...
         %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
@@ -90,7 +90,7 @@ while n <  numFrames %~KbCheck
     % Hide the cursor
 %     HideCursor(windowPtr,mice(2));
 %     HideCursor(windowPtr,mice(1));
-    
+     
     % Display the cursor as a dot
     Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
     Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
@@ -123,13 +123,22 @@ while n <  numFrames %~KbCheck
 %         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
 %     end
 
-
     %********************************************************************
     % alternative calculation (imperfection: at 45 and 135 degree, one hand don't have to move at all)
-    xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
-    Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
-    %********************************************************************
+%     xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
+%     Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
 
+    %********************************************************************
+    % another alternative calculation (tangent calculation)
+    XL=xCenter-xML; XR=xMR-xCenter;
+    distance=sqrt(XL.^2+XR.^2); %travel distance
+    theta=2*atan(-XL/XR)
+    XJ=distance*cos(theta);
+    YJ=distance*sin(theta);
+    xJ=xCenter+XJ/es; yJ=yCenter+YJ/es;
+    Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
+    
+    %********************************************************************
 
     % When both hands falls within each other near the curve, both cursors turn green
     % When Joint dot near the line 
@@ -144,7 +153,7 @@ while n <  numFrames %~KbCheck
         % MLcolor=red;MRcolor=blue;
         textMove=['Go!'];
         DrawFormattedText2(textMove,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',green);
+            'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',green);
         
         if inside == 1
             Jcolor = green;

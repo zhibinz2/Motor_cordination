@@ -21,4 +21,4 @@ d=sqrt(XL.^2+XR.^2)
 theta=2*atan(-XL/XR)
 XJ=d*cos(theta);
 YJ=d*sin(theta);
-plot(XJ,YJ,'go',XL,0,'ro',XR,0,'bo');xlim([-2000 2000]);ylim([-2000 2000]);
+plot(XJ,YJ,'go',XL,0,'ro',XR,0,'bo');xlim([-2100 2100]);ylim([-2100 2100]);

@@ -19,49 +19,45 @@ end
 
 %************************************************
 % the set of conditions
-% conditions = [1:1:11]*(pi/12);% 11 conditions from (0-180) degrees
-conditions = [0:1:10]*(pi/2/10);% 11 conditions from [0-180] degrees
-    
+conditions = [pi/6 2*pi/6 4*pi/6 5*pi/6]; % four conditions
+conditions = [1:1:11]*(pi/12); % 11 conditions
+
 %************************************** Randomization of the experiment
 % set the random number seed as the date of today in formate such as 20210809
 seed=input('enter the date in format YYYYMMDD:');
-behaviraldata.subjectnumber=seed;
+data.subjectnumber=seed;
 rng(seed);
 
-% *************************************************************************
-% number of trials per block
-numTrials=10;
+% number of trials
+numTrials=40; %25;
 % number of blocks
-numBlock=length(conditions);
+numBlock=length(conditions); %16;
 % total trial number
-numtotal=numTrials*numBlock; 
+numtotal=numTrials*numBlock;
 % num of conditions in the experiment
-numconditions=length(conditions);
+numconditions=length(conditions); %4; %16;
 % how many semirandom permutation set in the experiment 
 numPerm=numtotal/numconditions;
 % create the whole set of random conditions for the experiment
 allPerm=[];
-for p=1:numPerm
-    allPerm=[allPerm randperm(numconditions)];
+%
+allPermSequence=randperm(numconditions);
+for b=1:numBlock
+    allPerm=[allPerm allPermSequence(b)*ones(1,numTrials)];
 end
+%*******************************************
 
-% *************************************************************************
 % keep a record of the scores
-TotalScore=0;% total score so far
-ScoreLR=0;% initiate the score in each trial
-TrialScores=[];% keep of a record of all trial scores
-% set monetary reward
+Scores=0;ScoreLR=0;TrialScore=[];
 fullBonusPerTrial=0.10;% $0.10 per trial if perfectly perfomed 
 fullBonus=fullBonusPerTrial*numtotal;
-
-% *************************************************************************
 
 
 try      
     
 % Here we call some default settings for setting up Psychtoolbox 
 PsychDefaultSetup(2);
-% Start with black screen
+% % % % Start with black screen
 Screen('Preference', 'VisualDebugLevel', 1); 
 Screen('Preference', 'SkipSyncTests', 1);
 
@@ -149,30 +145,17 @@ LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 scree
 LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
 
 % *************************************************************************
-% Time management here
 % Setting default mouse Position for some time
 planSecs =1 ; % rest 1 s to look at trial number
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = 5; %4; % 4 s to move
+moveSecs = 3; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
 numFrames=numFramesPlan+numFramesMove; 
 
-% *************************************************************************
-% time duration to show bonus and trial number, and take rest before trial
-Tintertrial=5;
-numFramesRest = round (Tintertrial/ifi);
-
-% time pause to smooth transition at the start of each trial
-% Keep in mind: it takes about an additional 3 seconds to place the mice
-Tpause=1;
-
-% *************************************************************************
-% time break between block
-Tinterblock=3; 
 % *************************************************************************
 
 % DuoMice:
@@ -182,7 +165,7 @@ mice = GetMouseIndices(typeOnly);
 
 % DuoMice:
 % Hide the system-generated cursors. We do this, because only the
-% first mouse cursor is hardware-accelerated, ie., a GPU created
+% first mouse cursor is hardware-accelerated, HideCursorie., a GPU created
 % hardware cursor. All other cursors are software-cursors, created
 % by the Windowing system. These tend to flicker badly in our use
 % case. Therefore we disable all system cursor images and draw our
@@ -191,23 +174,20 @@ mice = GetMouseIndices(typeOnly);
 HideCursor(windowPtr,mice(2));
 HideCursor(windowPtr,mice(1));
 
+
 % Starting introduction
-instructionStart=['You will be controlling two mice to do the task.'...
-        '\n\n\n Each trial start when you have placed both mice at the center starting point.'...
-        '\n\n\n Left mouse will be shown in a red dot. Right shown in blue. Starting point in white.'...
-        '\n\n\n Starting point will turn green, when you had placed both mice on it. Then the trial will start.'...
-        '\n\n\n Movement of your left hand goes to the left, right hand goes to the right.'...
-        '\n\n\n Move in horizontal direction to control the position of the dot.'...
-        '\n\n\n You will not be able to see your mice in red and blue dots during the trials.'...
-        '\n\n\n But the dot will turn green when comes close to a trajectory line shown on the screen.'...
-        '\n\n\n Try to coordinate the moving speed of your hands so as the dot can get close to line as much as possible'...
-        '\n\n\n Move the dot along the trajectory to the end of the line. Complete the movement within ' num2str(moveSecs) ' seconds.'...
-        '\n\n\n You will earn Bonus money up to $ ' num2str(fullBonus) ' if performed quickly and closely to the trajectory.'...
-        '\n\n\n Questions? If none, press any key to continue after ' num2str(Tinterblock) ' seconds.']
+instructionStart=['Movement of each hand starts from the green dot at the center.'...
+        '\n\n\n Right hand goes to the right, left hand goes to the left.'...
+        '\n\n\n Move in horizontal direction to control the movement of the white dot'...
+        '\n\n\n The dot turns green when it is near the line.'...
+        '\n\n\n Try to trace close to line as much as possible to the end of the line.'...
+        '\n\n\n Each trial start with 1 second hold'...
+        '\n\n\n Then complete within ' num2str(moveSecs) ' seconds.'...
+        '\n\n\n Earn Bonus money up to $ ' num2str(fullBonus) ' if well performed.'...
+        '\n\n\n Questions? If none, press any key to start']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
-WaitSecs(Tinterblock);
 % hit a key to continue
 KbStrokeWait;
 
@@ -218,37 +198,30 @@ for block=1:numBlock
     
     % Initialize some values
     n = 1;
-    
-    % To keep a record of the percentage of time inside the square
-    behaviraldata.dataBlock(block).dataTrialNumInside=[];
+    % NumInside=[]; % To keep a record of the percentage of time inside the square
     %xLyL=[]; xRyR=[]; % to keep track of mouse trace
-    behaviraldata.dataBlock(block).dataTrialL.xLyL=[];
-    behaviraldata.dataBlock(block).dataTrialR.xRyR=[];
-    behaviraldata.dataBlock(block).dataTrialJ.xJyJ=[];
+    data.dataBlock(block).dataTrialL.xLyL=[];
+    data.dataBlock(block).dataTrialR.xRyR=[];
     %save block number info
-    behaviraldata.dataBlock(block).blockNumber=block;
-    
+    data.dataBlock(block).blockNumber=block;
 
-    %************************************ show bonus before block and rest
-    if block ~= 1
-        Showbonus = ['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
-        DrawFormattedText2(Showbonus,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
-    end
+
+    %************************************ show test and rest
     
-    Showblock = ['Hit a key to begin block ' num2str(block) ' after ' num2str(Tinterblock) ' seconds']
-    DrawFormattedText2(Showblock,'win',windowPtr,...
-        'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
+    WaitSecs(3); % to separate blocks in the photocell signal
+    
+    instructionStart = ['Bonus Earned $ ' num2str(Scores) '.\n\n\n Hit a key to begin block ' num2str(block)];
+    DrawFormattedText2(instructionStart,'win',windowPtr,...
+        'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
     Screen('Flip',windowPtr);
-
-    WaitSecs(Tinterblock); % to separate blocks in the photocell signal
     % hit a key to continue
     KbStrokeWait;
 
     %*******************************************************
 
     % get a timestamp at the start of block
-      vbl = Screen('Flip', windowPtr);
+    vbl = Screen('Flip', windowPtr);
+    
     
 
     %******************** Within block loop
@@ -261,22 +234,16 @@ for block=1:numBlock
         break;
         end
 
-        %************ Show bonus and trial number and take rest before trials
+        %************ Show trial number and rest
+        restSecs = 1; %0.5; % rest 1 s to rest and look at trial number
+        numFramesRest = round (restSecs/ifi);
         for Restframes=1:numFramesRest
-            if t ~= 1
-                Showbonus=['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
-                DrawFormattedText2(Showbonus,'win',windowPtr,...
-                'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white); 
-            end
-            
-            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials)];
-            DrawFormattedText2(Showtrial,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
+            textTrial=['Bonus Earned $ ' num2str(Scores) '. \n\n\n Trial ' num2str(t) ' / ' num2str(numTrials)];
+            DrawFormattedText2(textTrial,'win',windowPtr,...
+            'sx','center','sy', 'center','xalign','center','yalign','center','baseColor',white);
             % Flip to the screen   
             vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-        end          
-        
-        
+        end      
         
         %*************************Randomized selection
         % pick a condition from randomized set allPerm
@@ -285,67 +252,10 @@ for block=1:numBlock
             rad_ang=conditions(conditionSelected);
             [x,y] = drawReach(radius,rad_ang, xCenter, yCenter);
         %***********************************************
-        
-        % Trial start only when both mice placed at the starting point
-        Insidestart = 0;
-        while Insidestart == 0
-            % If esc is press, break out of the while loop and close the screen
-            [keyIsDown, keysecs, keyCode] = KbCheck;
-            if keyCode(KbName('escape'))
-                Screen('CloseAll');
-                break;
-            end
-            
-            % Draw the route
-            % Screen('DrawDots', windowPtr, [x;y], Thickness, white, [0 0], 2);
 
-            % Display the starting point 
-            Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, white, [], 2);
-            
-            % Display instruction
-            textPlan=['Place mice at the starting points'];
-            DrawFormattedText2(textPlan,'win',windowPtr,...
-                'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
-            
-            [xML, yML] = GetMouse(windowPtr,mice(2));
-            [xMR, yMR] = GetMouse(windowPtr,mice(1));
-            % Display the cursor as a dot
-            Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
-            Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
-            
-            % initial the before values
-            xMLbefore=xML;
-            yMLbefore=yML;
-            xMRbefore=xMR;
-            yMRbefore=yMR;
-            
-            xJbefore=[]; yJbefore=[];% initialize the joint before value
-            
-            % flip to screen
-            vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-            
-            % update the while loop
-            Insidestart = (sqrt((xML-xCenter).^2+(yML-yCenter).^2) < Thickness/2) & ...
-                (sqrt((xMR-xCenter).^2+(yMR-yCenter).^2)<Thickness/2);
-            
-            if Insidestart == 1
-                Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, green, [], 2);
-                % flip to screen
-                vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-                % pause to smooth transition
-                WaitSecs(Tpause);
-            end
-            
-        end
-        
-        % reset the trial score to zero
-        ScoreLR=0;
 
-        % get a timestamp at the start of the trial
-        vbl = Screen('Flip', windowPtr);
         % Run one trial 
         run run_trial_20210928.m 
-
 
         % reset n
         n=1;
@@ -356,41 +266,32 @@ for block=1:numBlock
 %         ShowCursor('Arrow', [], mouse);
 %         end
 
-
-        % To keep a record of the percentage of time inside the square
-        behaviraldata.dataBlock(block).dataTrialNumInside(t).NumInside=NumInside;
-        
-        % Store behaviral data
-        behaviraldata.dataBlock(block).dataTrialL(t).xLyL=xLyL;
-        behaviraldata.dataBlock(block).dataTrialR(t).xRyR=xRyR;
-        behaviraldata.dataBlock(block).dataTrialJ(t).xJyJ=xJyJ;
+        % Store xLyL
+        %dataL(t).xLyL=xLyL; 
+        %dataR(t).xRyR=xRyR;
+        data.dataBlock(block).dataTrialL(t).xLyL=xLyL;
+        data.dataBlock(block).dataTrialR(t).xRyR=xRyR;
         
         %save trial condition
-        behaviraldata.dataBlock(block).dataTrialNumInside(t).condition=conditionSelected;
-        behaviraldata.dataBlock(block).dataTrialL(t).condition=conditionSelected;
-        behaviraldata.dataBlock(block).dataTrialR(t).condition=conditionSelected;
-        behaviraldata.dataBlock(block).dataTrialJ(t).condition=conditionSelected;
+        data.dataBlock(block).dataTrialL(t).condition=conditionSelected;
+        data.dataBlock(block).dataTrialR(t).condition=conditionSelected;
         
         % update the scores
-        TotalScore=TotalScore+ScoreLR;
-        TrialScores=[TrialScores ScoreLR];
+        Scores=Scores+ScoreLR;
+        TrialScore=[TrialScore ScoreLR];
+        ScoreLR=0;
+
 
     end
     
 
-
 end
 
-
 % Show The End
-Showbonus = ['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
-DrawFormattedText2(Showbonus,'win',windowPtr,...
-    'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
-TheEnd = ['The End'];
-DrawFormattedText2(TheEnd,'win',windowPtr,...
-    'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
+instructionStart = ['The end. \n\n\n Thank you! \n\n\n Bonus Earned $ ' num2str(Scores)];
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
-WaitSecs(3)
 % hit a key to continue
 KbStrokeWait;
 
