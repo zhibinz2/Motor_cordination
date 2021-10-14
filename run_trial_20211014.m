@@ -74,8 +74,14 @@ while n <  numFrames %~KbCheck
     
     % *******************************************************************
     % Get mouse location
-    [xML, yML] = GetMouse(windowPtr,mice(2));
-    [xMR, yMR] = GetMouse(windowPtr,mice(1));
+    [xML0, yML0] = GetMouse(windowPtr,mice(2));
+    [xMR0, yMR0] = GetMouse(windowPtr,mice(1));
+    
+    % Shift the mouse location to map the tablets
+    xML=xML0/2; % the upper left quatrand of the scrren
+    yML=yML0/2; % the upper left quatrand of the scrren
+    xMR=xCenter+xMR0/2; % the upper right quatrand of the screen
+    yMR=yMR0/2;% the upper right quatrand of the screen
     
     %********************************************************************
     % limit the mice movement only going outward, cannot return
@@ -98,7 +104,8 @@ while n <  numFrames %~KbCheck
     %********************************************************************
     % Enlarge the scale of movement by es times
 %     es=screenXpixels/screenYpixels; % it has a limit of 0 ~ (screenXpixels/screenYpixels)
-    es=1;
+    es=2.5;
+    
     %********************************************************************
 %     % Display the joint position as a dot
 %     if conditionSelected < median(1:length(conditions));
@@ -135,7 +142,7 @@ while n <  numFrames %~KbCheck
     theta=2*atan(-XL/XR)
     XJ=distance*cos(theta);
     YJ=distance*sin(theta);
-    xJ=xCenter+XJ/es; yJ=yCenter+YJ/es;
+    xJ=xCenter+XJ/es; yJ=yCenter-(-YJ)/es;
     Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     
     %********************************************************************

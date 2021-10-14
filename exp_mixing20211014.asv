@@ -317,8 +317,9 @@ for block=1:numBlock
             % Shift the mouse location to map the tablets
             xML=xML0/2; % the upper left quatrand of the scrren
             yML=yML0/2; % the upper left quatrand of the scrren
-            xMR=xCenter+xMR0/2; % the upper right quatrand of the screen
-            yMR=yMR0/2;% the upper right quatrand of the screen
+            xMR=xCenter; % the upper right quatrand of the screen
+            xMR0/2, yMR0/2% the upper right quatrand of the screen
+            [xMR yMR]=[xCenter+xMR0/2, yMR0/2];% the upper right quatrand of the screen
     
             % Display the cursor as a dot
             Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
