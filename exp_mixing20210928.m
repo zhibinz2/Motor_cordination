@@ -19,7 +19,10 @@ end
 
 %************************************************
 % the set of conditions
-conditions = [1:1:11]*(pi/12);
+% conditions = [1:1:11]*(pi/2/6);% Eleven conditions from (0-180) degrees
+% conditions = [0:1:10]*(pi/2/10);% block 1: ELeven conditions from [0-90] degrees
+% conditions = [1:1:10]*(pi/2/10)+pi/2;% block 2: ELeven conditions from (90-180] degrees
+conditions = [0:1:10]*(pi/2/10)+pi/4;% ELeven conditions from [45-135] degrees
     
 %************************************** Randomization of the experiment
 % set the random number seed as the date of today in formate such as 20210809

@@ -99,7 +99,7 @@ while n <  numFrames %~KbCheck
     % Enlarge the scale of movement by es times
 %     es=screenXpixels/screenYpixels; % it has a limit of 0 ~ (screenXpixels/screenYpixels)
     es=1;
-    
+    %********************************************************************
 %     % Display the joint position as a dot
 %     if conditionSelected < median(1:length(conditions));
 %         xJ=xCenter+(xMR-xCenter)/es; yJ=yCenter-(xCenter-xML)/es;
@@ -124,9 +124,11 @@ while n <  numFrames %~KbCheck
 %     end
 
 
+    %********************************************************************
     % alternative calculation (imperfection: at 45 and 135 degree, one hand don't have to move at all)
     xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
     Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
+    %********************************************************************
 
 
     % When both hands falls within each other near the curve, both cursors turn green
