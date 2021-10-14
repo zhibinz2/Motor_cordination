@@ -31,7 +31,7 @@ while n <  numFrames %~KbCheck
     
     
 
-    % ******
+    % *******************************************************************
     % fash the upper left corner once at the start of planing phase (and bottom right)
     if n == 1
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
@@ -72,24 +72,24 @@ while n <  numFrames %~KbCheck
     end
     
     
+    % *******************************************************************
     % Get mouse location
     [xML, yML] = GetMouse(windowPtr,mice(2));
     [xMR, yMR] = GetMouse(windowPtr,mice(1));
     
     %********************************************************************
     % limit the mice movement only going outward, cannot return
-%     if xML > xMLbefore | yML < yMLbefore
-%         xML=xMLbefore; yML=yMLbefore;
+%     if xML > xMLbefore
+%         xML=xMLbefore; 
 %     end
-%     if xMR < xMRbefore | yMR < yMRbefore
-%         xMR=xMRbefore; yMR=yMRbefore;
+%     if xMR < xMRbefore
+%         xMR=xMRbefore; 
 %     end
-    % this will make the movement uncontinous, not good
     
     %********************************************************************
     % Hide the cursor
-    HideCursor(windowPtr,mice(2));
-    HideCursor(windowPtr,mice(1));
+%     HideCursor(windowPtr,mice(2));
+%     HideCursor(windowPtr,mice(1));
     
     % Display the cursor as a dot
     Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
@@ -97,41 +97,33 @@ while n <  numFrames %~KbCheck
      
     %********************************************************************
     % Enlarge the scale of movement by es times
-    es=screenXpixels/screenYpixels; % it has a limit of 0 ~ (screenXpixels/screenYpixels)
+%     es=screenXpixels/screenYpixels; % it has a limit of 0 ~ (screenXpixels/screenYpixels)
+    es=1;
     
     % Display the joint position as a dot
     if conditionSelected < median(1:length(conditions));
         xJ=xCenter+(xMR-xCenter)/es; yJ=yCenter-(xCenter-xML)/es;
-        if abs(xJ) < abs(xJbefore) | abs(yJ) < abs(yJbefore)
-            xJ=xJbefore; yJ=yJbefore;
-        end
+%         if abs(xJ) < abs(xJbefore) | abs(yJ) < abs(yJbefore)
+%             xJ=xJbefore; yJ=yJbefore;
+%         end % not moving at all
         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
     if conditionSelected == median(1:length(conditions));
         xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
-        if abs(xJ) > abs(xJbefore) | abs(yJ) < abs(yJbefore)
-            xJ=xJbefore; yJ=yJbefore;
-        end
+%         if abs(xJ) < abs(xJbefore) | abs(yJ) < abs(yJbefore)
+%             xJ=xJbefore; yJ=yJbefore;
+%         end % not moving at all
         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
     if conditionSelected > median(1:length(conditions));
         xJ=xCenter-(xCenter-xML)/es; yJ=yCenter-(xMR-xCenter)/es;
-        if abs(xJ) > abs(xJbefore) | abs(yJ) < abs(yJbefore)
-            xJ=xJbefore; yJ=yJbefore;
-        end
+%         if abs(xJ) < abs(xJbefore) | abs(yJ) < abs(yJbefore)
+%             xJ=xJbefore; yJ=yJbefore;
+%         end % not moving at all
         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
     end
 
-    %********************************************************************
-    % limit the joint movement only going outward, cannot return
-    
-%     if xJ > xJbefore | yJ < yJbefore
-%         xJ=xJbefore; yJ=yJbefore;
-%     end
-    %********************************************************************
 
-    
-    
     % alternative calculation (imperfection: at 45 and 135 degree, one hand don't have to move at all)
 %     xJ=xCenter+((xMR-xCenter)-(xCenter-xML))/es; yJ=yCenter-(sqrt((xMR-xCenter).^2+(xCenter-xML).^2))/es;
 %     Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
@@ -143,6 +135,8 @@ while n <  numFrames %~KbCheck
     distance=point_to_line_distance(pt, v1, v2);
     withinRadius=norm(pt-dotCenter);
     inside = (distance<Thickness) & (withinRadius < radius+Thickness) & (yJ+Thickness)>0;
+%     inside = (distance<Thickness) & (withinRadius < radius+Thickness) & (yJ+Thickness)>0 & ...
+%     (xML < xMLbefore) & (xMR > xMRbefore);
     
     if n > numFramesPlan % start counting scores after planning phase
         % MLcolor=red;MRcolor=blue;
@@ -164,7 +158,7 @@ while n <  numFrames %~KbCheck
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
     
     % Keep track of the nummers of flames when dot is inside the rect
-    % NumInside(n)=inside;    
+    NumInside(n)=inside;    
         
     % keep a record of the mouse position to be use as previous position in
     % the next loop
@@ -180,6 +174,8 @@ while n <  numFrames %~KbCheck
     xLyL(n,2) = yML;
     xRyR(n,1) = xMR;
     xRyR(n,2) = yMR;
+    xJyJ(n,1)=xJ;
+    xJyJ(n,2)=yJ;
     % update n
     n = n+1;
 
