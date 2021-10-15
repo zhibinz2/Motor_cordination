@@ -154,7 +154,7 @@ LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 scree
 LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
 
 % *************************************************************************
-% Time management here
+% Setting time variables
 % Setting default mouse Position for some time
 planSecs =0.5 ; % rest 1 s to look at trial number, visual evoked potential
 numFramesPlan = round (planSecs/ifi);
