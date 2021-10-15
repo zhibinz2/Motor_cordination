@@ -158,7 +158,7 @@ planSecs =0.5 ; % rest 1 s to look at trial number, visual evoked potential
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = 20; %4; % 4 s to move
+moveSecs = 2; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
@@ -388,7 +388,6 @@ for block=1:numBlock
 
     end
     
-
 
 end
 
