@@ -10,6 +10,7 @@ addpath DrawSquares
 addpath DrawCurves
 addpath Conditions
 addpath DrawReach
+addpath PerformanceAnaylisis
 
 AssertOpenGL;
  
@@ -33,25 +34,26 @@ rng(seed);
 
 % *************************************************************************
 % number of trials per block
-numTrials=10;
+numTrials=length(conditions);
 % number of blocks
-numBlock=length(conditions);
+numBlock=10;
 % total trial number
 numtotal=numTrials*numBlock; 
 % num of conditions in the experiment
 numconditions=length(conditions);
 % how many semirandom permutation set in the experiment 
 numPerm=numtotal/numconditions;
-% create the whole set of random conditions for the experiment
+% create the whole set conditions sequentially for the experiment
 allPerm=[];
 for p=1:numPerm
-    allPerm=[allPerm randperm(numconditions)];
+    allPerm=[allPerm [1:numconditions]];
 end
 
 % *************************************************************************
 % keep a record of the scores
 TotalScore=0;% total score so far
 ScoreLR=0;% initiate the score in each trial
+GreenPixelsCovered=[]; %initiate the green pixels covered in each trial
 TrialScores=[];% keep of a record of all trial scores
 % set monetary reward
 fullBonusPerTrial=0.10;% $0.10 per trial if perfectly perfomed 
@@ -158,7 +160,7 @@ planSecs =0.5 ; % rest 1 s to look at trial number, visual evoked potential
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = 20; %4; % 4 s to move
+moveSecs = 10; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
@@ -287,6 +289,28 @@ for block=1:numBlock
         % produced the position parameters
             rad_ang=conditions(conditionSelected);
             [x,y] = drawReach(radius,rad_ang, xCenter, yCenter);
+        % produced the polyshape area for score calculation
+            % polyTrajatory = polyshape([x(1)-3*Thickness/2 x(1)+3*Thickness/2 x(end)+3*Thickness/2 x(end)-3*Thickness/2],...
+            %   [y(1)+3*Thickness/2 y(1)-3*Thickness/2 y(end)-3*Thickness/2 y(end)+3*Thickness/2]);
+            
+            % the circle version
+            polyTrajatory=polycircle(x(1),y(1),3*Thickness/2);
+            for cir=2:length(x)
+                polyTrajatory=union(polyTrajatory,polycircle(x(cir),y(cir),3*Thickness/2));
+            end
+        
+        % initialize a small green pixel polyshap area for score calculation
+            %PolyshapGreenPixelInitial=polyshape([x(1)-Thickness/2 x(1)+Thickness/2 x(1)+Thickness/2 x(1)-Thickness/2],...
+            %   [y(1)-Thickness/2 y(1)-Thickness/2 y(1)+Thickness/2 y(1)+Thickness/2]);
+            
+             % the circle version
+            PolyshapGreenPixelInitial=polycircle(x(1),y(1),Thickness/2); 
+        
+            %figure;plot(polyTrajatory);hold on; plot(PolyshapGreenPixelInitial); hold off;
+            %ylim([0 screenYpixels]);xlim([0 screenXpixels]);set(gca, 'YDir', 'reverse');
+            PolyshapeUnion=intersect(polyTrajatory,PolyshapGreenPixelInitial);
+            %figure;plot(PolyshapeUnion);ylim([0 screenYpixels]);xlim([0 screenXpixels]);set(gca, 'YDir', 'reverse');area(PolyshapeUnion)
+            
         %***********************************************
         
         % Trial start only when both mice placed at the starting point
@@ -315,11 +339,14 @@ for block=1:numBlock
             [xMR0, yMR0] = GetMouse(windowPtr,mice(1));
 
             % Shift the mouse location to map the tablets
-            xML=xML0/2; % the upper left quatrand of the scrren
-            yML=yML0/2; % the upper left quatrand of the scrren
-            xMR=xCenter; % the upper right quatrand of the screen
-            xMR0/2, yMR0/2% the upper right quatrand of the screen
-            [xMR yMR]=[xCenter+xMR0/2, yMR0/2];% the upper right quatrand of the screen
+%             xML=xML0/2; % the upper left quatrand of the scrren
+%             yML=yML0/2; % the upper left quatrand of the scrren
+%             xMR=xCenter+xMR0/2; % the upper right quatrand of the screen
+%             yMR=yMR0/2;% the upper right quatrand of the screen
+            xML=xML0/2; % the left side of the scrren
+            yML=yML0; % the left side of the scrren
+            xMR=xCenter+xMR0/2; % the right side of the screen
+            yMR=yMR0;% the right side of the screen
     
             % Display the cursor as a dot
             Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
@@ -352,6 +379,7 @@ for block=1:numBlock
         
         % reset the trial score to zero
         ScoreLR=0;
+        GreenPixelsCovered=[];
 
         % get a timestamp at the start of the trial
         vbl = Screen('Flip', windowPtr);
@@ -383,13 +411,36 @@ for block=1:numBlock
         behaviraldata.dataBlock(block).dataTrialR(t).condition=conditionSelected;
         behaviraldata.dataBlock(block).dataTrialJ(t).condition=conditionSelected;
         
+        % calculate the score in this trial
+        % Count interset of polyshape areas
+%         GreenPixelsCovered(1,:)=[]; % remove the initial []
+%         GreenPixelsCoveredxJ=GreenPixelsCovered(:,1);GreenPixelsCoveredxJ=GreenPixelsCoveredxJ';
+%         GreenPixelsCoveredyJ=GreenPixelsCovered(:,1);GreenPixelsCoveredyJ=GreenPixelsCoveredyJ';
+%         polyGreenPixelsCovered=polyshape(GreenPixelsCoveredxJ,GreenPixelsCoveredyJ);
+        
+    
+   
+%         figure;
+%         plot(polyGreenPixelsCovered);
+%         hold on;
+%         plot(polyTrajatory);
+%         hold off;
+            
         % update the scores
+        ScoreLR=area(PolyshapeUnion)/area(polyTrajatory);
+        
         TotalScore=TotalScore+ScoreLR;
         TrialScores=[TrialScores ScoreLR];
+        
+        
+        
+        % reset trial score values
+        clear PolyshapGreenPixelInitial; 
+        clear polyTrajatory; 
+        clear PolyshapeUnion; 
 
     end
     
-
 
 end
 

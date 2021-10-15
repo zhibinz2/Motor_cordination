@@ -51,6 +51,7 @@ end
 % keep a record of the scores
 TotalScore=0;% total score so far
 ScoreLR=0;% initiate the score in each trial
+GreenPixelsCovered=[]; %initiate the green pixels covered in each trial
 TrialScores=[];% keep of a record of all trial scores
 % set monetary reward
 fullBonusPerTrial=0.10;% $0.10 per trial if perfectly perfomed 
@@ -315,11 +316,15 @@ for block=1:numBlock
             [xMR0, yMR0] = GetMouse(windowPtr,mice(1));
 
             % Shift the mouse location to map the tablets
-            xML=xML0/2; % the upper left quatrand of the scrren
-            yML=yML0/2; % the upper left quatrand of the scrren
-            xMR=xCenter+xMR0/2; % the upper right quatrand of the screen
-            yMR=yMR0/2;% the upper right quatrand of the screen
-    
+%             xML=xML0/2; % the upper left quatrand of the scrren
+%             yML=yML0/2; % the upper left quatrand of the scrren
+%             xMR=xCenter+xMR0/2; % the upper right quatrand of the screen
+%             yMR=yMR0/2;% the upper right quatrand of the screen
+            xML=xML0/2; % the left side of the scrren
+            yML=yML0; % the left side of the scrren
+            xMR=xCenter+xMR0/2; % the right side of the screen
+            yMR=yMR0;% the right side of the screen
+     
             % Display the cursor as a dot
             Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
             Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
@@ -351,6 +356,7 @@ for block=1:numBlock
         
         % reset the trial score to zero
         ScoreLR=0;
+        GreenPixelsCovered=[];
 
         % get a timestamp at the start of the trial
         vbl = Screen('Flip', windowPtr);

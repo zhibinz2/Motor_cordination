@@ -173,11 +173,6 @@ while n <  numFrames %~KbCheck
         if inside == 1
             Jcolor = green;
             
-            % Count green frames (not optimal)
-%             if ((xML~=xMLbefore)|(yML~=yMLbefore)|(xMR~=xMRbefore)|(yMR~=yMRbefore))==1 % at least one coortinate moved
-%                 ScoreLR=ScoreLR+round(fullBonusPerTrial/numFrames,4); % add a bonus score
-%             end
-
             % Count covered green pixels (not optimal)
 %             GreenPixelsCoveredstr=strcat(num2str(round(xJ)),num2str(round(xJ)));
 %             GreenPixelsCoverednum=str2num(GreenPixelsCoveredstr);
@@ -185,17 +180,20 @@ while n <  numFrames %~KbCheck
 %             ScoreRealtime=length(unique(GreenPixelsCovered)); % real time score, get updated in every frame
 %             ScoreLR=ScoreRealtime/(radius*Thickness);
 
-            % Count added union of polyshape greenpixel areas
-            %PolyshapGreenPixel=polyshape([xJ-Thickness/2 xJ+Thickness/2 xJ+Thickness/2 xJ-Thickness/2],...
-            %    [yJ-Thickness/2 yJ-Thickness/2 yJ+Thickness/2 yJ+Thickness/2]);
+
+            % Count interset of polyshape areas
+            PolyshapGreenPixel=polyshape([xJ-Thickness/2 xJ+Thickness/2 xJ+Thickness/2 xJ-Thickness/2],...
+                [yJ-Thickness/2 yJ-Thickness/2 yJ+Thickness/2 yJ+Thickness/2]);
+            plot(PolyshapGreenPixel);
+            union(intersect(polyTrajatory,PolyshapGreenPixel),PolyshapGreenPixel);
+            PolyshapGreenPixelTemp=PolyshapGreenPixel;
             
-            % the circle version
-            PolyshapGreenPixel=polycircle(xJ,yJ,Thickness/2); 
+
             
-            % hold on; plot(PolyshapGreenPixel);ylim([0 screenYpixels]);xlim([0 screenXpixels]);set(gca, 'YDir', 'reverse');
-            PolyshapeUnion=union(PolyshapeUnion,PolyshapGreenPixel);
-            % figure;plot(PolyshapeUnion);ylim([0 screenYpixels]);xlim([0 screenXpixels]);set(gca, 'YDir', 'reverse');
-            
+            % Count green frames (not optimal)
+%             if ((xML~=xMLbefore)|(yML~=yMLbefore)|(xMR~=xMRbefore)|(yMR~=yMRbefore))==1 % at least one coortinate moved
+%                 ScoreLR=ScoreLR+round(fullBonusPerTrial/numFrames,4); % add a bonus score
+%             end
         else % insideLR == 0
             Jcolor = white;
         end
