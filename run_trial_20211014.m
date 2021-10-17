@@ -159,7 +159,7 @@ while n <  numFrames %~KbCheck
     pt=[xJ yJ]; v1=dotCenter; v2=[x(end) y(end)];
     distance=point_to_line_distance(pt, v1, v2);
     withinRadius=norm(pt-dotCenter);
-    inside = (distance<Thickness) & (withinRadius < radius+Thickness) & (yJ+Thickness)>0;
+    inside = (distance<Thickness) & (withinRadius < radius+Thickness);
 %     inside = (distance<Thickness) & (withinRadius < radius+Thickness) & (yJ+Thickness)>0 & ...
 %     (xML < xMLbefore) & (xMR > xMRbefore);
     
@@ -193,7 +193,7 @@ while n <  numFrames %~KbCheck
             PolyshapGreenPixel=polycircle(xJ,yJ,Thickness/2); 
             
             % hold on; plot(PolyshapGreenPixel);ylim([0 screenYpixels]);xlim([0 screenXpixels]);set(gca, 'YDir', 'reverse');
-            PolyshapeUnion=union(PolyshapeUnion,PolyshapGreenPixel);
+            PolyshapeUnion=union(PolyshapeUnion,intersect(PolyshapGreenPixel,polyTrajatory));
             % figure;plot(PolyshapeUnion);ylim([0 screenYpixels]);xlim([0 screenXpixels]);set(gca, 'YDir', 'reverse');
             
         else % insideLR == 0

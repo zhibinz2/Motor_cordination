@@ -56,7 +56,7 @@ ScoreLR=0;% initiate the score in each trial
 GreenPixelsCovered=[]; %initiate the green pixels covered in each trial
 TrialScores=[];% keep of a record of all trial scores
 % set monetary reward
-fullBonusPerTrial=0.10;% $0.10 per trial if perfectly perfomed 
+fullBonusPerTrial=0.25;% $0.10 per trial if perfectly perfomed 
 fullBonus=fullBonusPerTrial*numtotal;
 
 % *************************************************************************
@@ -160,7 +160,7 @@ planSecs =0.5 ; % rest 1 s to look at trial number, visual evoked potential
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = 10; %4; % 4 s to move
+moveSecs = 5; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
@@ -294,9 +294,9 @@ for block=1:numBlock
             %   [y(1)+3*Thickness/2 y(1)-3*Thickness/2 y(end)-3*Thickness/2 y(end)+3*Thickness/2]);
             
             % the circle version
-            polyTrajatory=polycircle(x(1),y(1),3*Thickness/2);
+            polyTrajatory=polycircle(x(1),y(1),Thickness/2);
             for cir=2:length(x)
-                polyTrajatory=union(polyTrajatory,polycircle(x(cir),y(cir),3*Thickness/2));
+                polyTrajatory=union(polyTrajatory,polycircle(x(cir),y(cir),Thickness/2));
             end
         
         % initialize a small green pixel polyshap area for score calculation
@@ -427,7 +427,7 @@ for block=1:numBlock
 %         hold off;
             
         % update the scores
-        ScoreLR=area(PolyshapeUnion)/area(polyTrajatory);
+        ScoreLR=fullBonusPerTrial*area(PolyshapeUnion)/area(polyTrajatory);
         
         TotalScore=TotalScore+ScoreLR;
         TrialScores=[TrialScores ScoreLR];
