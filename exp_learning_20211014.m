@@ -10,6 +10,7 @@ addpath DrawSquares
 addpath DrawCurves
 addpath Conditions
 addpath DrawReach
+addpath PerformanceAnaylisis
 
 AssertOpenGL;
  
@@ -288,6 +289,28 @@ for block=1:numBlock
         % produced the position parameters
             rad_ang=conditions(conditionSelected);
             [x,y] = drawReach(radius,rad_ang, xCenter, yCenter);
+        % produced the polyshape area for score calculation
+            % polyTrajatory = polyshape([x(1)-3*Thickness/2 x(1)+3*Thickness/2 x(end)+3*Thickness/2 x(end)-3*Thickness/2],...
+            %   [y(1)+3*Thickness/2 y(1)-3*Thickness/2 y(end)-3*Thickness/2 y(end)+3*Thickness/2]);
+            
+            % the circle version
+            polyTrajatory=polycircle(x(1),y(1),Thickness/2);
+            for cir=2:length(x)
+                polyTrajatory=union(polyTrajatory,polycircle(x(cir),y(cir),Thickness/2));
+            end
+        
+        % initialize a small green pixel polyshap area for score calculation
+            %PolyshapGreenPixelInitial=polyshape([x(1)-Thickness/2 x(1)+Thickness/2 x(1)+Thickness/2 x(1)-Thickness/2],...
+            %   [y(1)-Thickness/2 y(1)-Thickness/2 y(1)+Thickness/2 y(1)+Thickness/2]);
+            
+             % the circle version
+            PolyshapGreenPixelInitial=polycircle(x(1),y(1),Thickness/2); 
+        
+            %figure;plot(polyTrajatory);hold on; plot(PolyshapGreenPixelInitial); hold off;
+            %ylim([0 screenYpixels]);xlim([0 screenXpixels]);set(gca, 'YDir', 'reverse');
+            PolyshapeUnion=intersect(polyTrajatory,PolyshapGreenPixelInitial);
+            %figure;plot(PolyshapeUnion);ylim([0 screenYpixels]);xlim([0 screenXpixels]);set(gca, 'YDir', 'reverse');area(PolyshapeUnion)
+            
         %***********************************************
 
         % Trial start only when both mice placed at the starting point
@@ -388,10 +411,34 @@ for block=1:numBlock
         behaviraldata.dataBlock(block).dataTrialR(t).condition=conditionSelected;
         behaviraldata.dataBlock(block).dataTrialJ(t).condition=conditionSelected;
         
+        % calculate the score in this trial
+        % Count interset of polyshape areas
+%         GreenPixelsCovered(1,:)=[]; % remove the initial []
+%         GreenPixelsCoveredxJ=GreenPixelsCovered(:,1);GreenPixelsCoveredxJ=GreenPixelsCoveredxJ';
+%         GreenPixelsCoveredyJ=GreenPixelsCovered(:,1);GreenPixelsCoveredyJ=GreenPixelsCoveredyJ';
+%         polyGreenPixelsCovered=polyshape(GreenPixelsCoveredxJ,GreenPixelsCoveredyJ);
+        
+    
+   
+%         figure;
+%         plot(polyGreenPixelsCovered);
+%         hold on;
+%         plot(polyTrajatory);
+%         hold off;
+            
         % update the scores
+        ScoreLR=fullBonusPerTrial*area(PolyshapeUnion)/area(polyTrajatory);
+        
         TotalScore=TotalScore+ScoreLR;
         TrialScores=[TrialScores ScoreLR];
         
+        
+        
+        % reset trial score values
+        clear PolyshapGreenPixelInitial; 
+        clear polyTrajatory; 
+        clear PolyshapeUnion; 
+
     end
     
 
