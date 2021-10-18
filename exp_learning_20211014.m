@@ -30,6 +30,7 @@ seed=input('enter the date in format YYYYMMDD:');
 data.subjectnumber=seed;
 rng(seed);
 
+% *************************************************************************
 % number of trials per block
 numTrials=10; %25;
 % number of blocks
@@ -42,11 +43,12 @@ numconditions=length(conditions); %4; %16;
 numPerm=numtotal/numconditions;
 % create the whole set of random conditions for the experiment
 allPerm=[];
-%
 allPermSequence=randperm(numconditions);
 for b=1:numBlock
     allPerm=[allPerm allPermSequence(b)*ones(1,numTrials)];
 end
+
+
 
 % *************************************************************************
 % keep a record of the scores
@@ -55,7 +57,7 @@ ScoreLR=0;% initiate the score in each trial
 GreenPixelsCovered=[]; %initiate the green pixels covered in each trial
 TrialScores=[];% keep of a record of all trial scores
 % set monetary reward
-fullBonusPerTrial=0.10;% $0.10 per trial if perfectly perfomed 
+fullBonusPerTrial=1;% $0.10 per trial if perfectly perfomed 
 fullBonus=fullBonusPerTrial*numtotal;
 
 % *************************************************************************
@@ -160,7 +162,7 @@ planSecs =0.5 ; % rest 1 s to look at trial number
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = 2; %4; % 4 s to move
+moveSecs = 1.5; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
@@ -207,7 +209,7 @@ instructionStart=['You will be controlling two mice to do the task.'...
         '\n\n\n But the dot will turn green when comes close to a trajectory line shown on the screen.'...
         '\n\n\n Try to coordinate the moving speed of your hands so as the dot can get close to line as much as possible'...
         '\n\n\n Move the dot along the trajectory to the end of the line. Complete the movement within ' num2str(moveSecs) ' seconds.'...
-        '\n\n\n You will earn Bonus money up to $ ' num2str(fullBonus) ' if performed quickly and closely to the trajectory.'...
+        '\n\n\n You could earn Bonus money up to $ ' num2str(fullBonus) ' if performed quickly and closely to the trajectory.'...
         '\n\n\n Questions? If none, press any key to continue after ' num2str(Tinterblock) ' seconds.']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
