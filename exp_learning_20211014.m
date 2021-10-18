@@ -27,7 +27,7 @@ conditions = [0:1:12]*(pi/2/6);% 13 conditions from [0-180] degrees
 %************************************** Randomization of the experiment
 % set the random number seed as the date of today in formate such as 20210809
 seed=input('enter the date in format YYYYMMDD:');
-data.subjectnumber=seed;
+behaviraldata.subjectnumber=seed;
 rng(seed);
 
 % *************************************************************************
@@ -225,7 +225,7 @@ for block=1:numBlock
     
     % Initialize some values
     n = 1;
-
+    
     % To keep a record of the percentage of time inside the square
     behaviraldata.dataBlock(block).dataTrialNumInside=[];
     %xLyL=[]; xRyR=[]; % to keep track of mouse trace
