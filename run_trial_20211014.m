@@ -113,7 +113,7 @@ while n <  numFrames %~KbCheck
     %********************************************************************
     % Enlarge the scale of movement by es times
 %     es=screenXpixels/screenYpixels; % it has a limit of 0 ~ (screenXpixels/screenYpixels)
-    es=2.5;
+    es=1; % 2.5 % for biggest movement
     
     %********************************************************************
 %     % Display the joint position as a dot

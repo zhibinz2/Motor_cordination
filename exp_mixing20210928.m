@@ -240,7 +240,7 @@ for block=1:numBlock
     
     Showblock = ['Hit a key to begin block ' num2str(block) ' / ' num2str(numBlock) ' after ' num2str(Tinterblock) ' seconds']
     DrawFormattedText2(Showblock,'win',windowPtr,...
-        'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
+        'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
     Screen('Flip',windowPtr);
 
     WaitSecs(Tinterblock); % to separate blocks in the photocell signal
@@ -271,9 +271,6 @@ for block=1:numBlock
                 'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white); 
             end
             
-            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
-            DrawFormattedText2(Showtrial,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
             % Flip to the screen   
             vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
         end          
@@ -309,6 +306,11 @@ for block=1:numBlock
             DrawFormattedText2(textPlan,'win',windowPtr,...
                 'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
             
+            % Show trial and block number
+            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
+            DrawFormattedText2(Showtrial,'win',windowPtr,...
+            'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
+        
             [xML, yML] = GetMouse(windowPtr,mice(2));
             [xMR, yMR] = GetMouse(windowPtr,mice(1));
             % Display the cursor as a dot
@@ -390,7 +392,7 @@ DrawFormattedText2(Showbonus,'win',windowPtr,...
     'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
 TheEnd = ['The End'];
 DrawFormattedText2(TheEnd,'win',windowPtr,...
-    'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
+    'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
 Screen('Flip',windowPtr);
 WaitSecs(3)
 % hit a key to continue
