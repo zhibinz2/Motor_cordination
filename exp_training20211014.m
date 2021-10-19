@@ -236,12 +236,13 @@ for block=1:numBlock
 
     %************************************ show bonus before block and rest
     if block ~= 1
-        Showbonus = ['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
+        Showbonus = ['Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
         DrawFormattedText2(Showbonus,'win',windowPtr,...
             'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
     end
     
-    Showblock = ['Hit a key to begin block ' num2str(block) ' / ' num2str(numBlock) ' after ' num2str(Tinterblock) ' seconds']
+%     Showblock = ['Hit a key to begin block ' num2str(block) ' / ' num2str(numBlock) ' after ' num2str(Tinterblock) ' seconds']
+    Showblock = ['Hit a key to begin block ' num2str(block) ' / ' num2str(numBlock)]
     DrawFormattedText2(Showblock,'win',windowPtr,...
         'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
     Screen('Flip',windowPtr);
@@ -274,9 +275,9 @@ for block=1:numBlock
                 'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white); 
             end
             
-            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
-            DrawFormattedText2(Showtrial,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
+%             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
+%             DrawFormattedText2(Showtrial,'win',windowPtr,...
+%             'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
             % Flip to the screen   
             vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
         end          
@@ -334,6 +335,11 @@ for block=1:numBlock
             DrawFormattedText2(textPlan,'win',windowPtr,...
                 'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
             
+            % Show trial and block number
+            Showtrial=['Trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
+            DrawFormattedText2(Showtrial,'win',windowPtr,...
+            'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
+           
             % Get mouse location
             [xML0, yML0] = GetMouse(windowPtr,mice(2));
             [xMR0, yMR0] = GetMouse(windowPtr,mice(1));
