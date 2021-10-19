@@ -39,14 +39,14 @@ for conditionSelected=1:length(conditions)
     theta=rad_ang/2;
     
     % left hand movement
-    Ltotal=radius*sin(theta)*es;
+    Ltotal=radius*sin(theta)*sqrt(sqrt(2))*es;
 %     Ltotal=(yCenter-y(end)/es);
 
     % right hand movement
-    Rtotal=radius*cos(theta)*es;
+    Rtotal=radius*cos(theta)*sqrt(sqrt(2))*es;
 %     Rtotal=(x(end)/es-xCenter);
 
-    subplot(1,length(conditions),conditionSelected);
+    subplot(7,13,abs(7-conditionSelected)*13+(14-conditionSelected));
     plot(x-xCenter,yCenter-y,'k');hold on;
     if conditionSelected==1:6;
         plot([-Ltotal 0],[0 0],'r');
