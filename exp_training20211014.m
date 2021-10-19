@@ -167,8 +167,8 @@ numFramesMove = round(moveSecs / ifi);
 numFrames=numFramesPlan+numFramesMove; 
 
 % *************************************************************************
-% time duration to show bonus and trial number, and take rest before trial
-Tintertrial=5;
+% time duration to show bonus 
+Tintertrial=3;
 numFramesRest = round (Tintertrial/ifi);
 
 % time pause to smooth transition at the start of each trial
@@ -266,23 +266,21 @@ for block=1:numBlock
         break;
         end
 
-        %************ Show bonus and trial number and take rest before trials
-        for Restframes=1:numFramesRest
-            if t ~= 1
+        %************ Show bonus of previous trial
+        if t ~= 1
+            for Restframes=1:numFramesRest
                 Showbonus=['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
                 DrawFormattedText2(Showbonus,'win',windowPtr,...
                 'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white); 
-            end
             
-%             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
-%             DrawFormattedText2(Showtrial,'win',windowPtr,...
-%             'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
-            % Flip to the screen   
-            vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+%                 Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
+%                 DrawFormattedText2(Showtrial,'win',windowPtr,...
+%                 'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
+                %Flip to the screen   
+                vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+            end
         end          
-        
-        
-        
+             
         %*************************Randomized selection
         % pick a condition from randomized set allPerm
         conditionSelected = allPerm(numTrials*(block-1)+t);
