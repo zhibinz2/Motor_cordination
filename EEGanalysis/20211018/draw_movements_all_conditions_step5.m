@@ -14,9 +14,10 @@ for u=1:length(UniCondi)% u=2
         [x,y] = drawReach(radius,rad_ang, xCenter, yCenter);
             
     
-    subplot(1,length(UniCondi),u);
+    %subplot(1,length(UniCondi),u);
+    subplot(7,13,abs(7-conditionSelected)*13+(14-conditionSelected));
     
-    plot(x,y,'-', 'color', grey, 'LineWidth',10);
+    plot(x,y,'-', 'color', grey, 'LineWidth',5);
     hold on;
 
     for indt=1:length(indtemp)
