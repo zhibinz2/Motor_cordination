@@ -20,8 +20,13 @@ analog1data=dataEEG(analog1,:);
 % hold off;
 
 % close all
-Halfhigh1=1/2*(max(analog1data)-min(analog1data));
+Halfhigh1=3/4*(max(analog1data)-min(analog1data));
 % Halfhigh2=1/2*(max(analog2data)-min(analog2data));
+
+% Check if need to adjust the Halfhigh cutoff
+findpeaks(analog1data,datatimes,'MinPeakProminence',Halfhigh1,'Annotate','extents');
+yline(Halfhigh1);
+
 
 %***************************** Use the analog1data 
 % locate the trial sessions % pks=value of the peak % locs=time of the peak
@@ -92,6 +97,9 @@ filtered_data=filtfilthd(Hd,filtered_data);
 
 % plotx(mean(filtered_data,2));  
 % plotx(filtered_data);xlim([5000 10000]);
+
+filtered_broadband=filtered_data;
+% filtered_data=filtered_broadband;
 
 %% fiter5bands 
 run filter5bands.m
