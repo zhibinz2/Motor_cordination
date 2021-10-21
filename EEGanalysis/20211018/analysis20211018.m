@@ -8,9 +8,9 @@ subjectnumber=behaviraldata.subjectnumber;
 dataBlock=behaviraldata.dataBlock;
 
 % Just to try out with one trial and plot
-% dataTrialL=dataBlock.dataTrialL;  
-% dataTrialR=dataBlock.dataTrialR;  
-% dataTrialJ=dataBlock.dataTrialJ;
+dataTrialL=dataBlock.dataTrialL;  
+dataTrialR=dataBlock.dataTrialR;  
+dataTrialJ=dataBlock.dataTrialJ;
 
 % xLyL=dataTrialL.xLyL; plot(xLyL(:,1),xLyL(:,2),'r'); hold on;
 % xRyR=dataTrialR.xRyR; plot(xRyR(:,1),xRyR(:,2),'b');

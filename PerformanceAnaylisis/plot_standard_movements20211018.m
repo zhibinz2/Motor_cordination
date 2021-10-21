@@ -39,11 +39,13 @@ for conditionSelected=1:length(conditions)
     theta=rad_ang/2;
     
     % left hand movement
-    Ltotal=radius*sin(theta)*sqrt(sqrt(2))*es;
+%     Ltotal=radius*sin(theta)*sqrt(sqrt(2))*es;
+    Ltotal=radius*sin(theta)*es;
 %     Ltotal=(yCenter-y(end)/es);
 
     % right hand movement
-    Rtotal=radius*cos(theta)*sqrt(sqrt(2))*es;
+%     Rtotal=radius*cos(theta)*sqrt(sqrt(2))*es;
+    Rtotal=radius*cos(theta)*es;
 %     Rtotal=(x(end)/es-xCenter);
 
     subplot(7,13,abs(7-conditionSelected)*13+(14-conditionSelected));
