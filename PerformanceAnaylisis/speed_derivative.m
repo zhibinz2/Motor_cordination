@@ -50,7 +50,7 @@ for conditionSelected=1:length(conditions)
 %     plot(x,y,'k');
 %     hold on;
 
-    ALLhL=[];ALLhR=[];
+    ALLhL=[];ALLhR=[];ALLvL=[];ALLvR=[];
     for i=1:length(indtemp) %loop through every trial
         % plot(dataxJyJtemp(:,1),dataxJyJtemp(:,2),'g');
         % dataxLRJyLRJtemp=cell2mat(RSBehavData{indtemp(i)});
@@ -75,18 +75,19 @@ for conditionSelected=1:length(conditions)
         
         % v - velocity
         vL = dhL./dt; vR = dhR./dt;
+        ALLvL=[ALLvL; vL]; ALLvR=[ALLvR; vR];
         dvL = diff(vL); dvR = diff(vR);
         % a - acceleration
         aL = dvL./dt(2:end); aR = dvR./dt(2:end);
         
         
-        subplot(7,15,abs(7-conditionSelected)*15+(15-conditionSelected-1));
-        
-        % plot the distance
-        plot(t,hL,'.r');hold on; plot(t,hR,'.b');legend({'hL','hR'});
-        xlabel('t');ylabel('distance (pixels)');
-        %---delete the legend-------------
-        s=findobj('type','legend');delete(s);
+%         subplot(7,15,abs(7-conditionSelected)*15+(15-conditionSelected-1));
+%         
+%         % plot the distance
+%         plot(t,hL,'.r');hold on; plot(t,hR,'.b');legend({'hL','hR'});
+%         xlabel('t');ylabel('distance (pixels)');
+%         %---delete the legend-------------
+%         s=findobj('type','legend');delete(s);
 
 %         % plot the velocity
 %         plot(t(2:end),vL,'-r');hold on; plot(t(2:end),vR,'-b');hold off;
@@ -113,18 +114,36 @@ for conditionSelected=1:length(conditions)
 %     hold off;
     % xlim([0 screenXpixels]);ylim([0 screenYpixels]);
     
-    subplot(7,15,abs(7-conditionSelected)*15+(15-conditionSelected));
-    
-    % plot the velocity
-    plot(t(2:end),vL,'-r');hold on; plot(t(2:end),vR,'-b');
-    legend({'vL','vR'});xlabel('t');ylabel('velocity (pixels/frame)');
+%     subplot(7,15,abs(7-conditionSelected)*15+(15-conditionSelected));
+%     
+%     % plot the velocity
+%     plot(t(2:end),vL,'-r');hold on; plot(t(2:end),vR,'-b');
+%     legend({'vL','vR'});xlabel('t');ylabel('velocity (pixels/frame)');
 
 %     plot(1:10,SpatialError,'go');hold on;
 %     tbl=table((1:10)',SpatialError');mdl = fitlm(tbl,'linear');
 %     plot(mdl);hold off;ylim([0 200]);
 %     ylabel('spatial error');xlabel('trial'); title('spatial error');
-    %---delete the legend-------------
-    s=findobj('type','legend');delete(s);
+%     %---delete the legend-------------
+%     s=findobj('type','legend');delete(s);
     end
-    hold off;
+    
+    subplot(7,15,abs(7-conditionSelected)*15+(15-conditionSelected-1));
+
+    % plot the distance
+    averagehL=mean(ALLhL,1);averagehR=mean(ALLhR,1);
+    plot(t,averagehL,'.r');hold on; plot(t,averagehR,'.b');hold off;
+    xlabel('t');ylabel('average distance (pixels)');
+
+
+    subplot(7,15,abs(7-conditionSelected)*15+(15-conditionSelected));
+    
+    % plot the velocity
+    averagevL=mean(ALLvL,1);averagevR=mean(ALLvR,1);
+    plot(t(2:end),averagevL,'-r');hold on; plot(t(2:end),averagevR,'-b');hold off;
+    xlabel('t');ylabel('average velocity (pixels/frame)');
+    %---delete the legend-------------
+
+
+%     hold off;
 end
