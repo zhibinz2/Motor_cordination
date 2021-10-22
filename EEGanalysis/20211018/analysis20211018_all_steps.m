@@ -227,7 +227,7 @@ UniCondi=unique(CondiData);
 
 for u=1:length(UniCondi)% u=2
     
-    indtemp=find(CondiData==UniCondi(u));
+    
     
     % pick a condition from randomized set allPerm
     conditionSelected = UniCondi(u);
