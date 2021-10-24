@@ -22,7 +22,8 @@ end
 % the set of conditions
 % conditions = [pi/6 2*pi/6 4*pi/6 5*pi/6]; % four conditions
 % conditions = [1:1:11]*(pi/12); % 11 conditions
-conditions = [0:1:12]*(pi/2/6);% 13 conditions from [0-180] degrees
+% conditions = [0:1:12]*(pi/2/6);% 13 conditions from [0-180] degrees
+conditions = [0:1:4]*(pi/2/2);% 5 conditions from [0-180] degrees
 
 %************************************** Randomization of the experiment
 % set the random number seed as the date of today in formate such as 20210809
@@ -176,6 +177,11 @@ numFramesRest = round (Tintertrial/ifi);
 % time pause to smooth transition at the start of each trial
 % Keep in mind: it takes about an additional 3 seconds to place the mice
 Tpause=1;
+
+% Estimate the time per trial
+TimeTrial=planSecs+moveSecs+Tintertrial+Tpause;
+% Estimate total experiment time in minuts
+TimeTotal=TimeTrial*numtotal/60;
 
 % *************************************************************************
 % time break between block
