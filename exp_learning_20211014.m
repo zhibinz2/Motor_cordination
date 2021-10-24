@@ -33,7 +33,7 @@ rng(seed);
 
 % *************************************************************************
 % number of trials per block
-numTrials=10; %25;
+numTrials=30; %25;
 % number of blocks
 numBlock=length(conditions); %16;
 % total trial number
