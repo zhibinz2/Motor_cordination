@@ -248,7 +248,7 @@ for block=1:numBlock
 
     %************************************ show bonus before block and rest
     if block ~= 1
-        Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR) ';      Average: ' sprintf('%0.2f %%', TotalScore)];
+        Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100)];
         DrawFormattedText2(Showbonus,'win',windowPtr,...
             'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
     end
@@ -281,7 +281,7 @@ for block=1:numBlock
         %************ Show bonus of previous trial
         if t ~= 1
             for Restframes=1:numFramesRest
-                Showbonus=['Score: ' sprintf('%0.2f %%', ScoreLR) ';      Average: ' sprintf('%0.2f %%', TotalScore)];
+                Showbonus=['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100)];
                 DrawFormattedText2(Showbonus,'win',windowPtr,...
                 'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white); 
 
@@ -443,16 +443,17 @@ for block=1:numBlock
         % update the scores
         % ScoreLR=fullBonusPerTrial*area(PolyshapeUnion)/area(polyTrajatory);
         ScoreLR=area(PolyshapeUnion)/area(polyTrajatory); % use percentile reward
-        
+        % Save trial scores
+        TrialScores=[TrialScores ScoreLR];
         
         % TotalScore=TotalScore+ScoreLR;
         if TotalScore==0;
             TotalScore=ScoreLR;
         else
-            TotalScore=(TotalScore+ScoreLR)/2; % show average score instead
+            TotalScore=mean(TrialScores); % show average score instead
         end
         
-        TrialScores=[TrialScores ScoreLR];
+        
         
         
         
@@ -469,7 +470,7 @@ end
 
 % Show The End
 TotalReward=fullBonus*TotalScore;
-Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR) ';      Average: ' sprintf('%0.2f %%', TotalScore) ';       Reward: $ ' num2str(TotalReward)];
+Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100) ';       Reward: $ ' num2str(TotalReward)];
 DrawFormattedText2(Showbonus,'win',windowPtr,...
     'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
 TheEnd = ['The End'];
