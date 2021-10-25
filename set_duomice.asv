@@ -28,12 +28,12 @@
 !xinput  list
 
 %%
-!xinput disable 14
-!xinput enable $ID
-% Disable:
+Disable:
+
 !xinput set-prop 15 "Device Enabled" 0
 % Enable:
-!xinput set-prop 15 "Device Enabled" 1
+
+xinput set-prop 15 "Device Enabled" 1
 
 %% set mouse speed
 % make this trackball's speed twice as slow

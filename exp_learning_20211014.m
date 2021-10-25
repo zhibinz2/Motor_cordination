@@ -238,7 +238,7 @@ for block=1:numBlock
     
     % To keep a record of the percentage of time inside the square
     behaviraldata.dataBlock(block).dataTrialNumInside=[];
-    %xLyL=[]; xRyR=[]; % to keep track of mouse trace
+    %xLyL=[]; xRyR=[]; % to0 keep track of mouse trace
     behaviraldata.dataBlock(block).dataTrialL.xLyL=[];
     behaviraldata.dataBlock(block).dataTrialR.xRyR=[];
     behaviraldata.dataBlock(block).dataTrialJ.xJyJ=[];
