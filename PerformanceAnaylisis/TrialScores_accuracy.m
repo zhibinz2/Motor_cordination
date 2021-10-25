@@ -5,7 +5,7 @@ for conditionSelected=1:length(conditions)
     subplot(4,4,conditionSelected);
     BlockScores=TrialScores(indtemp);
     
-    tbl=table((1:10)',BlockScores');mdl = fitlm(tbl,'linear');
+    tbl=table((1:30)',BlockScores');mdl = fitlm(tbl,'linear');
     plot(mdl);ylim([0 1]);
     
     xlabel('trial');ylabel('acurracy');
