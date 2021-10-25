@@ -266,7 +266,7 @@ for block=1:numBlock
         break;
         end
 
-        %************ Show bonus  of previous trial
+        %************ Show bonus of previous trial
         if t ~= 1
             for Restframes=1:numFramesRest
                 Showbonus=['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
@@ -346,9 +346,11 @@ for block=1:numBlock
 %             yML=yML0/2; % the upper left quatrand of the scrren
 %             xMR=xCenter+xMR0/2; % the upper right quatrand of the screen
 %             yMR=yMR0/2;% the upper right quatrand of the screen
-            xML=xML0/2; % the left side of the scrren
+            % xML=xML0/2; % the left side of the screen
+            xML=xML0*(11/20); % a bit more than half of the left side of the scrren
             yML=yML0; % the left side of the scrren
-            xMR=xCenter+xMR0/2; % the right side of the screen
+            % xMR=xCenter+xMR0*(11/20); % the right side of the screen
+            xMR=(xCenter-screenXpixels/20)+xMR0*(11/20);
             yMR=yMR0;% the right side of the screen
     
             % Display the cursor as a dot

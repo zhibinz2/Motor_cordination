@@ -357,9 +357,11 @@ for block=1:numBlock
 %             yML=yML0/2; % the upper left quatrand of the scrren
 %             xMR=xCenter+xMR0/2; % the upper right quatrand of the screen
 %             yMR=yMR0/2;% the upper right quatrand of the screen
-            xML=xML0/2; % the left side of the scrren
+            % xML=xML0/2; % the left side of the scrren
+            xML=xML0*(11/20); % a bit more than half of the left side of the scrren
             yML=yML0; % the left side of the scrren
-            xMR=xCenter+xMR0/2; % the right side of the screen
+            % xMR=xCenter+xMR0/2; % the right side of the screen
+            xMR=(xCenter-screenXpixels/20)+xMR0*(11/20); % a bit more than half of the right side of the scrren
             yMR=yMR0;% the right side of the screen
      
             % Display the cursor as a dot
