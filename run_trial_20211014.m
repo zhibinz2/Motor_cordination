@@ -193,7 +193,7 @@ while n <  numFrames %~KbCheck
             %    [yJ-Thickness/2 yJ-Thickness/2 yJ+Thickness/2 yJ+Thickness/2]);
             
             % the circle version
-            PolyshapGreenPixel=polycircle(xJ,yJ,Thickness/2+2); 
+            PolyshapGreenPixel=polycircle(xJ,yJ,Thickness/2+2); % add 2 pixels of freedom so that can cover 100%
             
             % hold on; plot(PolyshapGreenPixel);ylim([0 screenYpixels]);xlim([0 screenXpixels]);set(gca, 'YDir', 'reverse');
             PolyshapeUnion=union(PolyshapeUnion,intersect(PolyshapGreenPixel,polyTrajatory));
