@@ -182,7 +182,8 @@ numFramesRest = round (Tintertrial/ifi);
 Tpause=1;
 
 % Estimate the time per trial
-TimeTrial=planSecs+moveSecs+Tintertrial+Tpause;
+EstimateNavigateTime=4;
+TimeTrial=planSecs+moveSecs+Tintertrial+Tpause+EstimateNavigateTime;
 % Estimate total experiment time in minuts
 TimeTotal=TimeTrial*numtotal/60;
 
