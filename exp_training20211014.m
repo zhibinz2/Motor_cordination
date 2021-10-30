@@ -49,17 +49,23 @@ for p=1:numPerm
     allPerm=[allPerm [1:numconditions]];
 end
 
+
+
 % *************************************************************************
 % keep a record of the scores
 TotalScore=0;% total score so far
 ScoreLR=0;% initiate the score in each trial
 GreenPixelsCovered=[]; %initiate the green pixels covered in each trial
 TrialScores=[];% keep of a record of all trial scores
+
 % set monetary reward
-fullBonusPerTrial=0.25;% $0.10 per trial if perfectly perfomed 
-fullBonus=fullBonusPerTrial*numtotal;
+% fullBonusPerTrial=1;% $0.10 per trial if perfectly perfomed 
+% fullBonus=fullBonusPerTrial*numtotal;
+fullBonus=50;
+
 
 % *************************************************************************
+
 
 
 try      
@@ -160,7 +166,7 @@ planSecs =0.5 ; % rest 1 s to look at trial number, visual evoked potential
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = 5; %4; % 4 s to move
+moveSecs = 2.5; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
@@ -174,6 +180,11 @@ numFramesRest = round (Tintertrial/ifi);
 % time pause to smooth transition at the start of each trial
 % Keep in mind: it takes about an additional 3 seconds to place the mice
 Tpause=1;
+
+% Estimate the time per trial
+TimeTrial=planSecs+moveSecs+Tintertrial+Tpause;
+% Estimate total experiment time in minuts
+TimeTotal=TimeTrial*numtotal/60;
 
 % *************************************************************************
 % time break between block
@@ -195,6 +206,7 @@ mice = GetMouseIndices(typeOnly);
 % Hide the cursor
 HideCursor(windowPtr,mice(2));
 HideCursor(windowPtr,mice(1));
+
 
 % Starting introduction
 instructionStart=['You will be controlling two mice to do the task.'...
@@ -236,7 +248,7 @@ for block=1:numBlock
 
     %************************************ show bonus before block and rest
     if block ~= 1
-        Showbonus = ['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
+        Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100)];
         DrawFormattedText2(Showbonus,'win',windowPtr,...
             'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
     end
@@ -269,7 +281,7 @@ for block=1:numBlock
         %************ Show bonus of previous trial
         if t ~= 1
             for Restframes=1:numFramesRest
-                Showbonus=['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
+                Showbonus=['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100)];
                 DrawFormattedText2(Showbonus,'win',windowPtr,...
                 'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white); 
             
@@ -280,7 +292,6 @@ for block=1:numBlock
                 vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
             end
         end          
-             
         %*************************Randomized selection
         % pick a condition from randomized set allPerm
         conditionSelected = allPerm(numTrials*(block-1)+t);
@@ -333,7 +344,7 @@ for block=1:numBlock
                 'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
             
             % Show trial and block number
-            Showtrial=['Trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
+            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
            
@@ -432,10 +443,19 @@ for block=1:numBlock
 %         hold off;
             
         % update the scores
-        ScoreLR=fullBonusPerTrial*area(PolyshapeUnion)/area(polyTrajatory);
-        
-        TotalScore=TotalScore+ScoreLR;
+        % ScoreLR=fullBonusPerTrial*area(PolyshapeUnion)/area(polyTrajatory);
+        ScoreLR=area(PolyshapeUnion)/area(polyTrajatory); % use percentile reward
+        % Save trial scores
         TrialScores=[TrialScores ScoreLR];
+        
+        % TotalScore=TotalScore+ScoreLR;
+        if TotalScore==0;
+            TotalScore=ScoreLR;
+        else
+            TotalScore=mean(TrialScores); % show average score instead
+        end
+        
+        
         
         
         
@@ -451,7 +471,8 @@ end
 
 
 % Show The End
-Showbonus = ['You Just earned: $ ' num2str(ScoreLR) ';      Total: $ ' num2str(TotalScore)];
+TotalReward=fullBonus*TotalScore;
+Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100) ';       Reward: $ ' num2str(TotalReward)];
 DrawFormattedText2(Showbonus,'win',windowPtr,...
     'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
 TheEnd = ['The End'];
