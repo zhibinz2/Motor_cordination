@@ -6,17 +6,17 @@ CommitName=char(datetime('now'));
 % !git push
 %%
 % undo all current changes
-!git restore .
+% !git restore .
 
 %get rid of untracked files
-!git clean -f
+% !git clean -f
 
 %%
 % save changes temporarily
-!git stash --include-untracked
+% !git stash --include-untracked
 
 % to restore the stash
-!git stash pop
+% !git stash pop
 
 %% Make Git store the username and password and it will never ask for them.
 % !git config --global credential.helper store
