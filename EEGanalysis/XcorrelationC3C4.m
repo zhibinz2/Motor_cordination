@@ -56,10 +56,10 @@ FCC2hEEG=reRef_data(:,84,1);
 FCC4hEEG=reRef_data(:,85,1);
 FCC6hEEG=reRef_data(:,86,1);
 C5EEG=reRef_data(:,27,1);
-C3EEG=reRef_data(:,28,1);
+C3EEG=reRef_data(:,28,1); % center of left motor cortex
 C1EEG=reRef_data(:,29,1);
 C2EEG=reRef_data(:,31,1);
-C4EEG=reRef_data(:,32,1);
+C4EEG=reRef_data(:,32,1); % center of right motor cortex
 C6EEG=reRef_data(:,33,1);
 CCP5hEEG=reRef_data(:,101,1);
 CCP3hEEG=reRef_data(:,102,1);
@@ -73,5 +73,5 @@ P1EEG=reRef_data(:,49,1);
 P2EEG=reRef_data(:,51,1);
 P4EEG=reRef_data(:,52,1);
 P6EEG=reRef_data(:,53,1);
-
+%% 
 
