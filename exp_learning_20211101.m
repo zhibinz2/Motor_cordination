@@ -32,6 +32,7 @@ end
 % conditions in radian (7 condition with set movement ratio of 0:1, 1:4, 1:2, 1:1, 2:1, 4:1, 1:0)
 % conditions = [0 2*atan(1/4) 2*atan(1/2) 2*atan(1) 2*atan(2/1) 2*atan(4/1) pi];
 conditions = [2*atan(1/4) 2*atan(1/2) 2*atan(1) 2*atan(2/1) 2*atan(4/1)];
+conditionNames={'1:4' '1:2' '1:1' '2:1' '4:1'};  % conditionNames{1}
 
 %************************************** Randomization of the experiment
 % set the random number seed as the date of today in formate such as 20210809

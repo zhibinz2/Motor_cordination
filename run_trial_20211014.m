@@ -11,6 +11,11 @@ while n <  numFrames %~KbCheck
     % Draw the route
     Screen('DrawDots', windowPtr, [x;y], Thickness, white, [0 0], 2);
     
+    % Show the movement ratio
+    textRatio=conditionNames{conditionSelected};
+    DrawFormattedText2(textRatio,'win',windowPtr,...
+            'sx',x(end),'sy', y(end)+Thickness, 'xalign','center','yalign','top','baseColor',white);
+    
     % Draw guiding arrows
     % create a line and a triangle on the left
     Screen('DrawLine', windowPtr, white, xCenter-screenXpixels/6, yCenter, xCenter-screenXpixels/4, yCenter, 1);

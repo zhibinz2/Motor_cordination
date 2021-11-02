@@ -31,6 +31,7 @@ conditions = [0:1:12]*(pi/2/6);% 13 conditions from [0-180] degrees
 
 % conditions in radian (7 condition with set movement ratio of 0:1, 1:4, 1:2, 1:1, 2:1, 4:1, 1:0)
 conditions = [0 2*atan(1/4) 2*atan(1/2) 2*atan(1) 2*atan(2/1) 2*atan(4/1) pi];
+conditionNames={'0:1' '1:4' '1:2' '1:1' '2:1' '4:1' '1:0'};  % conditionNames{1}
 % conditions = [2*atan(1/4) 2*atan(1/2) 2*atan(1) 2*atan(2/1) 2*atan(4/1)];
 
 %************************************** Randomization of the experiment
