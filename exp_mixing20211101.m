@@ -68,7 +68,7 @@ TrialScores=[];% keep of a record of all trial scores
 % set monetary reward
 % fullBonusPerTrial=1;% $0.10 per trial if perfectly perfomed 
 % fullBonus=fullBonusPerTrial*numtotal;
-fullBonus=50;
+fullBonus=30;
 
 
 % *************************************************************************
