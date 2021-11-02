@@ -21,11 +21,18 @@ end
 %**************************************************************************
 % the set of conditions
 % conditions = [1:1:11]*(pi/2/6);% 11 conditions from (0-180) degrees
-conditions = [0:1:12]*(pi/2/6);% 13 conditions from [0-180] degrees
+% conditions = [0:1:12]*(pi/2/6);% 13 conditions from [0-180] degrees
 % conditions = [0:1:10]*(pi/2/10);% block 1: 11 conditions from [0-90] degrees
 % conditions = [1:1:10]*(pi/2/10)+pi/2;% block 2: 10 conditions from (90-180] degrees
 % conditions = [0:1:10]*(pi/2/10)+pi/4;% 11 conditions from [45-135] degrees
-    
+
+% conditions in degree (7 condition with set movement ratio of 0:1, 1:4, 1:2, 1:1, 2:1, 4:1, 1:0)
+% conditions = [0 2*atan(1/4)*180/pi 2*atan(1/2)*180/pi 2*atan(1)*180/pi 2*atan(2/1)*180/pi 2*atan(4/1)*180/pi 90];
+
+% conditions in radian (7 condition with set movement ratio of 0:1, 1:4, 1:2, 1:1, 2:1, 4:1, 1:0)
+conditions = [0 2*atan(1/4) 2*atan(1/2) 2*atan(1) 2*atan(2/1) 2*atan(4/1) pi];
+% conditions = [2*atan(1/4) 2*atan(1/2) 2*atan(1) 2*atan(2/1) 2*atan(4/1)];
+
 %************************************** Randomization of the experiment
 % set the random number seed as the date of today in formate such as 20210809
 seed=input('enter the date in format YYYYMMDD:');
@@ -121,7 +128,7 @@ dotCenter = [xCenter yCenter];
 % set the length of the reach
 radius=screenYpixels/3;
 % Set default connecting dot size
-ConnectDotSize=60; 
+ConnectDotSize=120; 
 % the thickness of the line
 Thickness=ConnectDotSize/2;
 
@@ -166,7 +173,7 @@ planSecs =0.5 ; % rest 1 s to look at trial number, visual evoked potential
 numFramesPlan = round (planSecs/ifi);
 
 % Length of time and number of frames we will use for each drawing trial
-moveSecs = 1.5; %4; % 4 s to move
+moveSecs = 4; %4; % 4 s to move
 numFramesMove = round(moveSecs / ifi);
 
 % total number of frames per trial
@@ -174,15 +181,16 @@ numFrames=numFramesPlan+numFramesMove;
 
 % *************************************************************************
 % time duration to show bonus 
-Tintertrial=3;
+Tintertrial=1;
 numFramesRest = round (Tintertrial/ifi);
 
 % time pause to smooth transition at the start of each trial
 % Keep in mind: it takes about an additional 3 seconds to place the mice
-Tpause=1;
+Tpause=0.5;
 
 % Estimate the time per trial
-TimeTrial=planSecs+moveSecs+Tintertrial+Tpause;
+EstimateNavigateTime=3;
+TimeTrial=planSecs+moveSecs+Tintertrial+Tpause+EstimateNavigateTime;
 % Estimate total experiment time in minuts
 TimeTotal=TimeTrial*numtotal/60;
 
@@ -454,18 +462,13 @@ for block=1:numBlock
         else
             TotalScore=mean(TrialScores); % show average score instead
         end
-        
-        
-        
-        
-        
+         
         % reset trial score values
         clear PolyshapGreenPixelInitial; 
         clear polyTrajatory; 
         clear PolyshapeUnion; 
 
     end
-    
 
 end
 
@@ -504,3 +507,6 @@ catch
   psychrethrow(psychlasterror);
 end  
 
+
+% run SaveBehaviraldata.m
+% run git_control.m

@@ -1,6 +1,7 @@
 
 trial= ;
 
+
 %%
 FP1EEG = reRef_data(:,1,trial);
 FPZEEG = reRef_data(:,2,trial);

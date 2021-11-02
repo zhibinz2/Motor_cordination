@@ -30,8 +30,8 @@ end
 % conditions = [0 2*atan(1/4)*180/pi 2*atan(1/2)*180/pi 2*atan(1)*180/pi 2*atan(2/1)*180/pi 2*atan(4/1)*180/pi 90];
 
 % conditions in radian (7 condition with set movement ratio of 0:1, 1:4, 1:2, 1:1, 2:1, 4:1, 1:0)
-conditions = [0 2*atan(1/4) 2*atan(1/2) 2*atan(1) 2*atan(2/1) 2*atan(4/1) pi];
-
+% conditions = [0 2*atan(1/4) 2*atan(1/2) 2*atan(1) 2*atan(2/1) 2*atan(4/1) pi];
+conditions = [2*atan(1/4) 2*atan(1/2) 2*atan(1) 2*atan(2/1) 2*atan(4/1)];
 
 %************************************** Randomization of the experiment
 % set the random number seed as the date of today in formate such as 20210809
@@ -41,9 +41,9 @@ rng(seed);
 
 % *************************************************************************
 % number of trials per block
-numTrials=20; %25;
+numTrials=25; %25;
 % number of blocks
-numBlock=length(conditions); %16;
+numBlock=length(conditions)*2; %length(conditions); %16;
 % total trial number
 numtotal=numTrials*numBlock;
 % num of conditions in the experiment
@@ -52,11 +52,10 @@ numconditions=length(conditions); %4; %16;
 numPerm=numtotal/numconditions;
 % create the whole set of random conditions for the experiment
 allPerm=[];
-allPermSequence=randperm(numconditions);
+allPermSequence=repmat(randperm(numconditions),1,2);
 for b=1:numBlock
     allPerm=[allPerm allPermSequence(b)*ones(1,numTrials)];
 end
-
 
 
 % *************************************************************************
@@ -182,15 +181,15 @@ numFrames=numFramesPlan+numFramesMove;
 
 % *************************************************************************
 % time duration to show bonus 
-Tintertrial=3;
+Tintertrial=1;
 numFramesRest = round (Tintertrial/ifi);
 
 % time pause to smooth transition at the start of each trial
 % Keep in mind: it takes about an additional 3 seconds to place the mice
-Tpause=1;
+Tpause=0.5;
 
 % Estimate the time per trial
-EstimateNavigateTime=4;
+EstimateNavigateTime=3;
 TimeTrial=planSecs+moveSecs+Tintertrial+Tpause+EstimateNavigateTime;
 % Estimate total experiment time in minuts
 TimeTotal=TimeTrial*numtotal/60;
@@ -464,10 +463,6 @@ for block=1:numBlock
             TotalScore=mean(TrialScores); % show average score instead
         end
         
-        
-        
-        
-        
         % reset trial score values
         clear PolyshapGreenPixelInitial; 
         clear polyTrajatory; 
@@ -475,7 +470,6 @@ for block=1:numBlock
 
     end
     
-
 end
 
 
