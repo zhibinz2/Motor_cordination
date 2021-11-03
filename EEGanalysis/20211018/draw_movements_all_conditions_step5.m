@@ -14,8 +14,8 @@ for u=1:length(UniCondi)% u=2
         [x,y] = drawReach(radius,rad_ang, xCenter, yCenter);
             
     
-    %subplot(1,length(UniCondi),u);
-    subplot(7,13,abs(7-conditionSelected)*13+(14-conditionSelected));
+    subplot(1,length(UniCondi),length(UniCondi)+1-u);
+    % subplot(7,13,abs(7-conditionSelected)*13+(14-conditionSelected));
     
     plot(x,y,'-', 'color', grey, 'LineWidth',5);
     hold on;
@@ -34,8 +34,8 @@ for u=1:length(UniCondi)% u=2
     hold off;
     
     xlim([0 screenXpixels]);ylim([0 screenYpixels]);
-    %title(['condition' conditionNames{UniCondi(u)}]);
-    title(['condition: ' num2str(conditionNames(UniCondi(u))) ' (radian)']);
+    title(['condition ' conditionNames{UniCondi(u)}]);
+    %title(['condition: ' num2str(conditionNames(UniCondi(u))) ' (radian)']);
   
 end
 

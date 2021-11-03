@@ -39,5 +39,5 @@ end
 % allPerm;
 % conditionfuctions;
 % conditionNames={'A1&A2','A1&A1','A2&A1','A2&A2'};
-conditionNames=conditions;
+% conditionNames=conditions;
 % conditionNames{1};
