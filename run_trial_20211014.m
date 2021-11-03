@@ -14,7 +14,7 @@ while n <  numFrames %~KbCheck
     % Show the movement ratio
     textRatio=conditionNames{conditionSelected};
     DrawFormattedText2(textRatio,'win',windowPtr,...
-            'sx',x(end),'sy', y(end)+Thickness, 'xalign','center','yalign','top','baseColor',white);
+            'sx',x(end),'sy', y(end)-Thickness, 'xalign','center','yalign','top','baseColor',white);
     
     % Draw guiding arrows
     % create a line and a triangle on the left
@@ -120,7 +120,7 @@ while n <  numFrames %~KbCheck
     %********************************************************************
     % Enlarge the scale of movement by es times
 %     es=screenXpixels/screenYpixels; % it has a limit of 0 ~ (screenXpixels/screenYpixels)
-    es=2.45; % 2.5 % for biggest movement
+    es=2.25; % 2.5 % for biggest movement
     
     %********************************************************************
 %     % Display the joint position as a dot
