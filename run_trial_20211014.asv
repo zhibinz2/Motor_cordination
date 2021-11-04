@@ -13,12 +13,10 @@ while n <  numFrames %~KbCheck
     
     % Show the movement ratio
     textRatio=conditionNames{conditionSelected};
-    % show it at the end of the trajectory
+    % DrawFormattedText2(textRatio,'win',windowPtr,...
+            'sx',x(end),'sy', y(end)-Thickness, 'xalign','center','yalign','top','baseColor',white);
     DrawFormattedText2(textRatio,'win',windowPtr,...
             'sx',x(end),'sy', y(end)-Thickness, 'xalign','center','yalign','top','baseColor',white);
-%     % show it below the starting point
-%     DrawFormattedText2(textRatio,'win',windowPtr,...
-%             'sx','center','sy', yCenter+screenYpixels/10, 'xalign','center','yalign','top','baseColor',white);
         
     % Draw guiding arrows
     % create a line and a triangle on the left
