@@ -6,7 +6,7 @@
 % plotx(EEG_trial1);
 
 %% clean artifact
-filtered_data=data_trials(:,1:128,:);
+data_trials_EEG=data_trials(:,1:128,:);
 
 threshold=60; % set a amplitude threshold as criteria to remove bad channels and epochs later
 
@@ -18,17 +18,17 @@ prctchan = 70; % percentage of channels that should be good
 cirtepoch =  1-prctepoch/100; % the percentage of bad epochs allowed
 critchan = 1-prctchan/100; % the percentage of bad channels allowed
 
-nSamps = size(filtered_data,1);
-nChans = size(filtered_data,2);
-nEpochs = size(filtered_data,3);
+nSamps = size(data_trials_EEG,1);
+nChans = size(data_trials_EEG,2);
+nEpochs = size(data_trials_EEG,3);
 
  % find the the empty channels
-sumovertime=sum(filtered_data,1);
+sumovertime=sum(data_trials_EEG,1);
 sumovertrials=sum(sumovertime,3);
 zerochans = find(sumovertrials== 0);
 
 % design a matrix with highest value for each channel on each trial(each single channel in each epoch). 
-trialdatamax = squeeze(max(abs(filtered_data),[],1));  
+trialdatamax = squeeze(max(abs(data_trials_EEG),[],1));  
 % examine the maximal abs trial matrix
 % imagesc(trialdatamax);colorbar;ylabel('chan');xlabel('trial');
 
@@ -73,7 +73,7 @@ artifact.zerochans = zerochans;
 
 %% Re reference
 % This function pass filtered_data and get back average referenced data.
-[reRef_data] = reRef(filtered_data,goodchans);
+[reRef_data] = reRef(data_trials_EEG,goodchans);
 % erpdata = mean(reRef_data(:,:,goodepochs),3); % This includes only good epochs
 % plotx(erpdata(:,goodchans));% plot only the good channels
 % xlabel(['time (ms)']);ylabel(['amplitude']);title(['ERP'])

@@ -11,7 +11,7 @@ NumAllChannels=NumEEGChannels+6; % +4;
 data_trials=zeros(NumTrialtimepoints,NumAllChannels,NumTrialsRecorded);
 
 % Initialize the indices for trial start and end time point
-%trialstart=zeros(1,NumTrialsRecorded);
+% trialstart=zeros(1,NumTrialsRecorded);
 trialend=zeros(1,NumTrialsRecorded);
 
 % timing (trial length) might mess up
@@ -29,4 +29,4 @@ end
 % plot(trialend-trialstart,'ro');ylabel('trial length');xlabel('trial');
 % plot(trialstart,ones(1,length(trialstart)),'go');hold on;plot(trialend,ones(1,length(trialend)),'ro'); % check 1 second inter-trial interval
 % plot(data_trials(:,1:128,5));
-% plot(datatimes)
+% plot(datatimes);

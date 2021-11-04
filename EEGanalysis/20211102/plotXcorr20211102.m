@@ -35,7 +35,7 @@ filtered_data=filtered_data(:, goodchans)*mat;
 run integrate_EEG_into_data_trials_step3.m
 
 % re-reference with the good chans
-reRef_data*mat
+[reRef_data] = reRef(data_trials(:,1:NumEEGChannels,:),goodchans);
 
 
 %%
@@ -69,7 +69,7 @@ for u=1:length(UniCondi)% u=2
     
     rAllmean=mean(rAll,2);
     %rPositiveMax=max(rAll,[],1);rNegativeMin=min(rAll,[],1);
-    plot(lags,rAllmean);xlabel('time [ms]');ylabel('xcorr'); xlim([-100 100]); ylim([-12000 12000]);% ylim([-1*1e4 1*1e4]);
+    plot(lags,rAllmean);xlabel('time [ms]');ylabel('xcorr'); xlim([-100 100]); %ylim([-12000 12000]);% ylim([-1*1e4 1*1e4]);
     xline(0,'r');
     title(['condition: ' conditionNames(u)]);
     hold off;
