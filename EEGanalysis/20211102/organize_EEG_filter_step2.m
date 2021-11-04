@@ -102,7 +102,9 @@ filtered_broadband=filtered_data;
 % filtered_data=filtered_broadband;
 
 %% fiter5bands 
+tic;
 run filter5bands.m
+toc;
 
 % filtered_data=filtered_delta;
 % filtered_data=filtered_theta;
@@ -113,3 +115,8 @@ run filter5bands.m
 % plot(filtered_beta(5000:10000,8));
 % figure;
 % plot(filtered_gamma(5000:10000,8));
+
+cd /home/zhibin/Documents/Acquisition/Bimanual_reach_zhibin_20211102
+filename='filtered_data.mat';
+% save(filename); % save all variables in the workspace
+save(filename, 'filtered_broadband', 'filtered_delta', 'filtered_theta', 'filtered_alpha', 'filtered_beta', 'filtered_gamma');

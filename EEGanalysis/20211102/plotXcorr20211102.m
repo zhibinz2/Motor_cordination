@@ -1,17 +1,23 @@
 run organize_Behavioral_step1.m
 
-cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211018
+cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
+%  get detrend_data and filtered_broadband
 run organize_EEG_filter_step2.m
 
+% run the above script five times to get different filtered band data and
+% save as filtered_data.mat in the the Acquisition folder
+
+% load all the filtered data
 cd /home/zhibin/Documents/Acquisition/bimanual_Reach_zhibin_20211018
 load filtered_data.mat
 
-% filtered_data=filtered_broadband;
-% filtered_data=filtered_delta;
-% filtered_data=filtered_theta;
-% filtered_data=filtered_alpha;
-% filtered_data=filtered_beta;
-% filtered_data=filtered_gamma;
+%% select a filtered data to process
+filtered_data=filtered_broadband;
+filtered_data=filtered_delta;
+filtered_data=filtered_theta;
+filtered_data=filtered_alpha;
+filtered_data=filtered_beta;
+filtered_data=filtered_gamma;
 
 %% get the good channels
 run integrate_EEG_into_data_trials_step3.m
@@ -25,8 +31,8 @@ mat=matnlap(10, Neuroscan_spherical_goodchans, Neuroscan_spherical_chans);
 % laplacian
 filtered_data=filtered_data(:, goodchans)*mat;
 
-% reorganzied into data_trials
-data_trials
+% reorganzied into data_trials again
+run integrate_EEG_into_data_trials_step3.m
 
 % re-reference with the good chans
 reRef_data*mat
