@@ -1,7 +1,7 @@
 %% load behaviral data
 clear;
 cd('/home/zhibin/Documents/GitHub/Motor_cordination/behaviraldata')
-load('matlab2021101802.mat');
+load('matlab20211031.mat');
 
 %% Reorgainize behavioral data into BehavData and condition
 behaviraldata.subjectnumber=seed;

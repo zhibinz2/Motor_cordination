@@ -1,7 +1,7 @@
 %% Check EEG on 2021018
 % load EEG all as one
-cd('/home/zhibin/Documents/Acquisition/bimanual_Reach_zhibin_20211018')
-EEG=loadcurry([pwd '/Bimanual_reach_zhibin_20211102.cdt']);
+cd /home/zhibin/Documents/Acquisition/bimanual_Reach_zhibin_20211018
+EEG=loadcurry([pwd '/Bimanual_reach_ran_20211031.cdt']);
 dataEEG=EEG.data;
 datatimes=EEG.times;
 Fs=EEG.srate;
@@ -119,4 +119,4 @@ toc;
 cd /home/zhibin/Documents/Acquisition/Bimanual_reach_zhibin_20211102
 filename='filtered_data.mat';
 % save(filename); % save all variables in the workspace
-save(filename, 'filtered_broadband', 'filtered_delta', 'filtered_theta', 'filtered_alpha', 'filtered_beta', 'filtered_gamma');
+save(filename, 'filtered_broadband', 'filtered_delta', 'filtered_theta', 'filtered_alpha', 'filtered_beta', 'filtered_gamma', '-v7.3');
