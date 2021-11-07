@@ -159,7 +159,7 @@ while n <  numFrames %~KbCheck
     % another alternative calculation (tangent calculation)
     XL=xCenter-xML; XR=xMR-xCenter;
     distance=sqrt(XL.^2+XR.^2); %travel distance
-    theta=2*atan(-XL/XR)
+    theta=2*atan(-XL/XR);
     XJ=distance*cos(theta);
     YJ=distance*sin(theta);
     xJ=xCenter+XJ/es; yJ=yCenter-(-YJ)/es;
