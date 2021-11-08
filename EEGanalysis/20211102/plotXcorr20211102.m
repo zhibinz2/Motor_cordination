@@ -30,8 +30,9 @@ run Remove_EEG_artifact_Rereference_step6.m
 %% apply matnlap spline laplacian to the good channels
 addpath /home/zhibin/Documents/GitHub
 
-load Neuroscan_spherical_chans.mat
+
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis
+load Neuroscan_spherical_chans.mat
 
 Neuroscan_spherical_goodchans=Neuroscan_spherical_chans(goodchans,:);
 mat=matnlap(10, Neuroscan_spherical_goodchans, Neuroscan_spherical_chans);
