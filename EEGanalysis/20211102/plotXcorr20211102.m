@@ -36,6 +36,7 @@ load Neuroscan_spherical_chans.mat
 
 Neuroscan_spherical_goodchans=Neuroscan_spherical_chans(goodchans,:);
 mat=matnlap(10, Neuroscan_spherical_goodchans, Neuroscan_spherical_chans);
+% mat=matnlap(10, Neuroscan_spherical_chans, Neuroscan_spherical_chans);
 
 % laplacian
 filtered_data=filtered_data(:, goodchans)*mat;
