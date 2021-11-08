@@ -48,7 +48,7 @@ run integrate_EEG_into_data_trials_step3.m
 [reRef_data] = reRef(data_trials(:,1:NumEEGChannels,:),goodchans);
 
 
-%%
+%% plot xcorr
 UniCondi=unique(CondiData);
 
 for u=1:length(UniCondi)% u=2
@@ -67,8 +67,8 @@ for u=1:length(UniCondi)% u=2
 
     for indt=1:length(indtemp)
 
-        C3EEG=reRef_data(:,28,indtemp(indt)); % Left motor cortex
-        C4EEG=reRef_data(:,32,indtemp(indt)); % Right motor
+        C3EEG=reRef_data(500:1500,28,indtemp(indt)); % Left motor cortex
+        C4EEG=reRef_data(500:1500,32,indtemp(indt)); % Right motor
         LeftCortex=C3EEG;
         RightCortex=C4EEG;
         

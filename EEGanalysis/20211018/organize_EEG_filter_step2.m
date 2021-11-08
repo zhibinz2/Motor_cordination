@@ -1,7 +1,7 @@
 %% Check EEG on 2021018
 % load EEG all as one
-cd('/home/zhibin/Documents/Acquisition/bimanual_Reach_zhibin_20211018')
-EEG=loadcurry([pwd '/Bimanual_reach_zhibin_20211102.cdt']);
+cd /home/zhibin/Documents/Acquisition/bimanual_Reach_zhibin_20211018
+EEG=loadcurry([pwd '/Bimanual_reach_ran_20211031.cdt']);
 dataEEG=EEG.data;
 datatimes=EEG.times;
 Fs=EEG.srate;
