@@ -1,6 +1,7 @@
 %% load behaviral data
 clear;
-cd('/home/zhibin/Documents/GitHub/Motor_cordination/behaviraldata')
+cd /home/zhibin/Documents/GitHub/Motor_cordination/behaviraldata
+
 load('matlab20211031.mat');
 
 %% Reorgainize behavioral data into BehavData and condition

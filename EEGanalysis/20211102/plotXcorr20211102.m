@@ -1,3 +1,5 @@
+cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
+
 run organize_Behavioral_step1.m
 
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
@@ -20,6 +22,8 @@ filtered_data=filtered_beta;
 filtered_data=filtered_gamma;
 
 %% get the good channels
+cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
+
 run integrate_EEG_into_data_trials_step3.m
 run Remove_EEG_artifact_Rereference_step6.m
 
@@ -27,6 +31,8 @@ run Remove_EEG_artifact_Rereference_step6.m
 addpath /home/zhibin/Documents/GitHub
 
 load Neuroscan_spherical_chans.mat
+cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis
+
 Neuroscan_spherical_goodchans=Neuroscan_spherical_chans(goodchans,:);
 mat=matnlap(10, Neuroscan_spherical_goodchans, Neuroscan_spherical_chans);
 
