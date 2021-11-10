@@ -1,3 +1,4 @@
+cd /home/zhibin/Documents/GitHub/Motor_cordination
 ! git status
 ! git add .
 CommitName=char(datetime('now'));
