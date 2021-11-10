@@ -78,15 +78,19 @@ end
 
 
 %% plot just one condtion
-% u=9; % plot just one condtion
+u=6; % plot just one condtion
     
 indtemp=find(CondiData==UniCondi(u));
+
+% find the high peformance trial index within one condition
+HighInd=indtemp(find(TrialScores(indtemp)>0.6));
+LowInd=indtemp(find(TrialScores(indtemp)<0.6));
 
 % pick a condition from randomized set allPerm
 conditionSelected = UniCondi(u);
 
 % First, plot the scalp coherence
-[pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(reRef_data,rate,maxfreq,indtemp,win);
+[pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(reRef_data,rate,maxfreq,HighInd,win);
 % calculate the coherence
 coh=abs(corr).^2;
 
@@ -104,4 +108,126 @@ yticklabels({'FP1','AF3','F11','F7','F5','F3','F1','FT11','FC5','FC3','FC1','T7'
 xticks([1:59]);
 % Right hemisphere
 xticklabels({'FP2','AF4','F2','F4','F6','F8','F12','FC2','FC4','FC6','FT12','C2','C4','C6','T8','CP2','CP4','CP6','TP8','M2','P2','P4','P6','P8','PO4','PO8','O2','CB2','AFP2','AF6','AF8','AFF2H','AFF4H','AFF6H','F10','FFC2H','FFC4H','FFC6H','FFT8H','FT8','FT10','FCC2H','FCC4H','FCC6H','FTT8H','CCP2H','CCP4H','CCP6H','TTP8H','CPP2H','CPP4H','CPP6H','TPP8H','P10','PPO2H','PPO4H','PO2','PO6','PO10'});
+xtickangle(90);
+
+
+%% plot just one condtion and only the prefrontal chans
+
+% Left prefrontal
+Leftticks=[1 4 6 7 8 9 10 72 73 74];
+% Right prefrontal
+Rightticks=[3 5 12 13 14 15 16 75 76 77];
+
+
+u=4; % plot just one condtion
+    
+indtemp=find(CondiData==UniCondi(u));
+
+% find the high peformance trial index within one condition
+HighInd=indtemp(find(TrialScores(indtemp)>0.6));
+LowInd=indtemp(find(TrialScores(indtemp)<0.4));
+
+% pick a condition from randomized set allPerm
+conditionSelected = UniCondi(u);
+
+% First, plot the scalp coherence
+[pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(reRef_data,rate,maxfreq,HighInd,win);
+% calculate the coherence
+coh=abs(corr).^2;
+
+
+% Plot coh of specific frequency between the two hemispheres
+imagesc(squeeze(coh(46,Leftticks,Rightticks)));
+xlabel('right hemisphere channels');ylabel('left hemisphere channels');
+title({'45 Hz', 'coh - condition: ' num2str(conditions(u))});
+colorbar;set(gca,'clim',[0 1]);colormap('jet');
+
+% Left hemisphere
+yticks([1:10]);
+% Left hemisphere
+yticklabels({'FP1','AF3','F11','F7','F5','F3','F1','AFF5H','AFF3H','AFF1H'});
+% Right hemisphere
+xticks([1:10]);
+% Right hemisphere
+xticklabels({'FP2','AF4','F2','F4','F6','F8','F12','AFF2H','AFF4H','AFF6H'});
+xtickangle(90);
+
+%% plot just one condtion and only the motor chans
+
+% Left hemisphere
+Leftticks=[18 19 20 27 28 29 93 94 95];
+% Right hemisphere
+Rightticks=[22 23 24 31 32 33 96 97 98];
+
+u=3; % u=7; % plot just one condtion
+    
+indtemp=find(CondiData==UniCondi(u));
+
+% find the high peformance trial index within one condition
+HighInd=indtemp(find(TrialScores(indtemp)>0.6));
+LowInd=indtemp(find(TrialScores(indtemp)<0.4));
+
+% pick a condition from randomized set allPerm
+conditionSelected = UniCondi(u);
+
+% First, plot the scalp coherence
+[pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(reRef_data,rate,maxfreq,LowInd,win);
+% calculate the coherence
+coh=abs(corr).^2;
+
+
+% Plot coh of specific frequency between the two hemispheres
+imagesc(squeeze(coh(46,Leftticks,Rightticks)));
+xlabel('right hemisphere channels');ylabel('left hemisphere channels');
+title({'45 Hz', 'coh - condition: ' num2str(conditions(u))});
+colorbar;set(gca,'clim',[0 1]);colormap('jet');
+
+% Left hemisphere
+yticks([1:10]);
+% Left hemisphere
+yticklabels({'FC5','FC3','FC1','C5','C3','C1','FCC5H','FCC3H','FCC1H'});
+% Right hemisphere
+xticks([1:10]);
+% Right hemisphere
+xticklabels({'FC2','FC4','FC6','C2','C4','C6','FCC2H','FCC4H','FCC6H'});
+xtickangle(90);
+
+%% plot just one condtion and only the parietal chans
+
+% Left hemisphere
+Leftticks=[36 37 38 46 47 48 49 109 110 111];
+% Right hemisphere
+Rightticks=[40 41 42 51 52 53 54 112 113 114];
+
+u=3; % u=7; % plot just one condtion
+    
+indtemp=find(CondiData==UniCondi(u));
+
+% find the high peformance trial index within one condition
+HighInd=indtemp(find(TrialScores(indtemp)>0.6));
+LowInd=indtemp(find(TrialScores(indtemp)<0.4));
+
+% pick a condition from randomized set allPerm
+conditionSelected = UniCondi(u);
+
+% First, plot the scalp coherence
+[pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(reRef_data,rate,maxfreq,LowInd,win);
+% calculate the coherence
+coh=abs(corr).^2;
+
+
+% Plot coh of specific frequency between the two hemispheres
+imagesc(squeeze(coh(46,Leftticks,Rightticks)));
+xlabel('right hemisphere channels');ylabel('left hemisphere channels');
+title({'45 Hz', 'coh - condition: ' num2str(conditions(u))});
+colorbar;set(gca,'clim',[0 1]);colormap('jet');
+
+% Left hemisphere
+yticks([1:10]);
+% Left hemisphere
+yticklabels({'CP5','CP3','CP1','P7','P5','P3','P1','CPP5H','CPP3H','CPP1H'});
+% Right hemisphere
+xticks([1:10]);
+% Right hemisphere
+xticklabels({'CP2','CP4','CP6','P2','P4','P6','P8','CPP2H','CPP4H','CPP6H'});
 xtickangle(90);
