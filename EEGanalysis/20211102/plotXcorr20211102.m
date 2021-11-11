@@ -51,6 +51,7 @@ run integrate_EEG_into_data_trials_step3.m
 %% plot xcorr for all conditions
 UniCondi=unique(CondiData);
 
+figure;tic;
 for u=1:length(UniCondi)% u=2
     
     indtemp=find(CondiData==UniCondi(u));
@@ -58,7 +59,8 @@ for u=1:length(UniCondi)% u=2
     % pick a condition from randomized set allPerm
     conditionSelected = UniCondi(u);
     
-    subplot(1,length(UniCondi),u);
+%     subplot(1,length(UniCondi),u);
+    subplot(1,length(UniCondi),length(UniCondi)+1-u);
     % subplot(7,13,abs(7-conditionSelected)*13+(14-conditionSelected));
     
     rAll=[];rAllMaxLag=[];
@@ -67,21 +69,27 @@ for u=1:length(UniCondi)% u=2
 
     for indt=1:length(indtemp)
 
-%         C3EEG=reRef_data(500:1500,28,indtemp(indt)); % Left motor cortex
-%         C4EEG=reRef_data(500:1500,32,indtemp(indt)); % Right motor
-%         LeftCortex=C3EEG;
-%         RightCortex=C4EEG;
-        
-        FP1EEG = reRef_data(500:1500,1,indtemp(indt)); % Left prefrontal
-        FP2EEG = reRef_data(500:1500,3,indtemp(indt)); % Right prefrontal
-        LeftCortex=FP1EEG;
-        RightCortex=FP2EEG;
+
+%         FP1EEG = reRef_data(500:1500,1,indtemp(indt)); % Left prefrontal
+%         FP2EEG = reRef_data(500:1500,3,indtemp(indt)); % Right prefrontal
+%         LeftCortex=FP1EEG;
+%         RightCortex=FP2EEG;
         
 %         AF7EEG = reRef_data(500:1500,67,indtemp(indt)); % Left prefrontal
 %         AF8EEG = reRef_data(500:1500,71,indtemp(indt)); % Right prefrontal
 %         LeftCortex=AF7EEG;
 %         RightCortex=AF8EEG;
+        
+%         C3EEG=reRef_data(500:1500,28,indtemp(indt)); % Left motor cortex
+%         C4EEG=reRef_data(500:1500,32,indtemp(indt)); % Right motor
+%         LeftCortex=C3EEG;
+%         RightCortex=C4EEG;
 
+        P5EEG=reRef_data(500:1500,47,indtemp(indt)); % Left motor cortex
+        P6EEG=reRef_data(500:1500,53,indtemp(indt)); % Right motor
+        LeftCortex=P5EEG;
+        RightCortex=P6EEG;
+        
         [r,lags]=xcorr(LeftCortex, RightCortex); % if r peak is positive, then the right hemisphere is leading
         rMaxLag=lags(find(r==max(r)));
         xline(rMaxLag);
@@ -102,7 +110,10 @@ for u=1:length(UniCondi)% u=2
     
 end
 
-suptitle(['mean xcorr']);
+% suptitle(['mean xcorr']);
+toc;
+
+
 
 %% xcorr for one condition
 
@@ -123,20 +134,20 @@ yline(0);hold on;
 
 for indt=1:length(HighInd)
 
-    C3EEG=reRef_data(500:1500,28,HighInd(indt)); % Left motor cortex
-    C4EEG=reRef_data(500:1500,32,HighInd(indt)); % Right motor
-    LeftCortex=C3EEG;
-    RightCortex=C4EEG;
+%     C3EEG=reRef_data(500:1500,28,HighInd(indt)); % Left motor cortex
+%     C4EEG=reRef_data(500:1500,32,HighInd(indt)); % Right motor
+%     LeftCortex=C3EEG;
+%     RightCortex=C4EEG;
 
 %         FP1EEG = reRef_data(500:1500,1,indtemp(indt)); % Left prefrontal
 %         FP2EEG = reRef_data(500:1500,3,indtemp(indt)); % Right prefrontal
 %         LeftCortex=FP1EEG;
 %         RightCortex=FP2EEG;
 
-%         AF7EEG = reRef_data(500:1500,67,indtemp(indt)); % Left prefrontal
-%         AF8EEG = reRef_data(500:1500,71,indtemp(indt)); % Right prefrontal
-%         LeftCortex=AF7EEG;
-%         RightCortex=AF8EEG;
+        AF7EEG = reRef_data(500:1500,67,indtemp(indt)); % Left prefrontal
+        AF8EEG = reRef_data(500:1500,71,indtemp(indt)); % Right prefrontal
+        LeftCortex=AF7EEG;
+        RightCortex=AF8EEG;
 
     [r,lags]=xcorr(LeftCortex, RightCortex); % if r peak is positive, then the right hemisphere is leading
     rMaxLag=lags(find(r==max(r)));

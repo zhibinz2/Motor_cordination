@@ -3,6 +3,7 @@
 % plot the mouse trace
 UniCondi=unique(CondiData);
 
+figure;
 for u=1:length(UniCondi)% u=2
     
     indtemp=find(CondiData==UniCondi(u));
@@ -34,6 +35,7 @@ for u=1:length(UniCondi)% u=2
     hold off;
     
     xlim([0 screenXpixels]);ylim([0 screenYpixels]);
+    xlabel('Screen-x-pixel');ylabel('Screen-y-pixel');
     title(['condition ' conditionNames{UniCondi(u)}]);
     %title(['condition: ' num2str(conditionNames(UniCondi(u))) ' (radian)']);
   

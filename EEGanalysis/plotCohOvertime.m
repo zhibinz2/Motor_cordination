@@ -23,13 +23,24 @@ u=3; % u=7; % plot just one condtion
     
 indtemp=find(CondiData==UniCondi(u));
 
-%%
-uall=[7 3];
+%% plot accuracy and coherence at the same time
+% uall=[7 3];
 
-for sp=1:2
-    u=uall(sp);
+% which frequency to look at
+FreqI=25; %45;
+
+% First, plot the scalp coherence
+rate=Fs;
+maxfreq=50;
+win=500:1500; % After 500 ms
+
+
+figure;tic;
+for u=1:length(UniCondi); % sp=1:2
+%     u=uall(sp);
     indtemp=find(CondiData==UniCondi(u));
-    subplot(1,2,sp);
+    
+    subplot(1,length(UniCondi),length(UniCondi)+1-u);
 
 
     [out,idx] = sort(TrialScores(indtemp)); % example: [out,idx] = sort([14 8 91 19])
@@ -49,7 +60,7 @@ for sp=1:2
         % calculate the coherence
         coh=abs(corr).^2;
         % Plot coh of specific frequency between the two hemispheres
-        CohMean(i)=mean(squeeze(coh(46,Leftticks,Rightticks)),'all');
+        CohMean(i)=mean(squeeze(coh(FreqI+1,Leftticks,Rightticks)),'all');
     end
 
     yyaxis left; 
@@ -58,7 +69,7 @@ for sp=1:2
     ylabel('Average accuracy');hold on;
     yyaxis right; plot(1:length(out)-n+1,CohMean);ylabel('Average coherence');xlabel('per 10 trials');
     xlim([1 length(out)-n+1]);
-    title({'45 Hz', 'coh - condition: ' num2str(conditions(u))});hold off;
+    title({num2str(FreqI) ' Hz', 'coh - condition: ' num2str(conditions(u))});hold off;
 
 end
-    
+toc;
