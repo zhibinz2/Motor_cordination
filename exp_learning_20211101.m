@@ -257,7 +257,7 @@ while i < 2;
 end
 
 Screen('Flip',windowPtr);
-WaitSecs(3);
+WaitSecs(300);
 
 i=1;
 while i < 2;
@@ -292,7 +292,7 @@ end
 % FixCr(:,10:11)=0;  %try imagesc(FixCr) to display the result in Matlab
 Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
 Screen('Flip',windowPtr);
-WaitSecs(3);
+WaitSecs(300);
 
 i=1;
 while i < 2;
