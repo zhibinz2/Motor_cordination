@@ -38,6 +38,8 @@ conditionNames={'1:4' '1:2' '1:1' '2:1' '4:1'};  % conditionNames{1}
 % set the random number seed as the date of today in formate such as 20210809
 seed=input('enter the date in format YYYYMMDD:');
 behaviraldata.subjectnumber=seed;
+ExptStartTime=char(datetime('now'));
+behaviraldata.ExptStartTime=ExptStartTime;
 rng(seed);
 
 % *************************************************************************
@@ -257,7 +259,7 @@ while i < 2;
 end
 
 Screen('Flip',windowPtr);
-WaitSecs(300);
+WaitSecs(3);
 
 i=1;
 while i < 2;
@@ -292,7 +294,7 @@ end
 % FixCr(:,10:11)=0;  %try imagesc(FixCr) to display the result in Matlab
 Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
 Screen('Flip',windowPtr);
-WaitSecs(300);
+WaitSecs(3);
 
 i=1;
 while i < 2;
@@ -567,7 +569,8 @@ Screen('Flip',windowPtr);
 WaitSecs(3)
 % hit a key to continue
 KbStrokeWait;
-
+ExptEndTime=char(datetime('now'));
+behaviraldata.ExptStartTime=ExptEndTime;
 
 %*************************************
 
