@@ -294,7 +294,7 @@ end
 % FixCr(:,10:11)=0;  %try imagesc(FixCr) to display the result in Matlab
 Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
 Screen('Flip',windowPtr);
-WaitSecs(300);
+WaitSecs(3);
 
 i=1;
 while i < 2;
