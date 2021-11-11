@@ -8,7 +8,6 @@
 !xinput  list
 
 %% BenQ
-
 !xinput reattach 9 16
 !xinput reattach 13 2
 !xinput reattach 15 9
