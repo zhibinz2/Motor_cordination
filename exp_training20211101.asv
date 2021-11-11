@@ -250,25 +250,13 @@ Screen('Flip',windowPtr);
 KbStrokeWait;
 
 % Flash the upper left corner once at the start and end of eye closed period (and bottom right)
+while i
+Screen('FillRect', windowPtr, white, LeftUpperSquare);
+Screen('FillRect', windowPtr, white, RightBottomSquare);
 
-i=1;
-while i < 2;
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip',windowPtr);
-    i=i+1;
-end
-
-Screen('Flip',windowPtr);
-WaitSecs(3);
-
-i=1;
-while i < 2;
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip',windowPtr);
-    i=i+1;
-end
+WaitSecs(5);
+Screen('FillRect', windowPtr, white, LeftUpperSquare);
+Screen('FillRect', windowPtr, white, RightBottomSquare);
 
 
 instructionStart=['Now, please look at the center of the screen for 3 min before we start']
@@ -279,31 +267,11 @@ Screen('Flip',windowPtr);
 KbStrokeWait;
 
 % Flash the upper left corner once at the start and end of eye open period (and bottom right)
-i=1;
-while i < 2;
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip',windowPtr);
-    i=i+1;
-end
-
-% Another way to create a fixation cross: Doing the above with textures,
-% by preparing a little Matlab matrix with the image of a fixation
-% cross:  --> Choose whatever you like more.
-% FixCr=ones(20,20)*255;
-% FixCr(10:11,:)=0;
-% FixCr(:,10:11)=0;  %try imagesc(FixCr) to display the result in Matlab
-Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
-Screen('Flip',windowPtr);
-WaitSecs(3);
-
-i=1;
-while i < 2;
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip',windowPtr);
-    i=i+1;
-end
+Screen('FillRect', windowPtr, white, LeftUpperSquare);
+Screen('FillRect', windowPtr, white, RightBottomSquare);
+WaitSecs(5);
+Screen('FillRect', windowPtr, white, LeftUpperSquare);
+Screen('FillRect', windowPtr, white, RightBottomSquare);
 
 instructionStart=['Press a key to start']
 DrawFormattedText2(instructionStart,'win',windowPtr,...

@@ -69,7 +69,7 @@ TrialScores=[];% keep of a record of all trial scores
 % set monetary reward
 % fullBonusPerTrial=1;% $0.10 per trial if perfectly perfomed 
 % fullBonus=fullBonusPerTrial*numtotal;
-fullBonus=30;
+fullBonus=15;
 
 
 % *************************************************************************
@@ -237,7 +237,79 @@ Screen('Flip',windowPtr);
 % hit a key to continue
 KbStrokeWait;
 
+%*************************************************************************
+% Start taking eye closed and eye open resting stage EEG
+instructionStart=['Now, please close your eyes and take a rest for 3 min before I tell you to continue']
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+Screen('Flip',windowPtr);
+% hit a key to continue
+KbStrokeWait;
 
+% Flash the upper left corner once at the start and end of eye closed period (and bottom right)
+
+i=1;
+while i < 2;
+    Screen('FillRect', windowPtr, white, LeftUpperSquare);
+    Screen('FillRect', windowPtr, white, RightBottomSquare);
+    Screen('Flip',windowPtr);
+    i=i+1;
+end
+
+Screen('Flip',windowPtr);
+WaitSecs(3);
+
+i=1;
+while i < 2;
+    Screen('FillRect', windowPtr, white, LeftUpperSquare);
+    Screen('FillRect', windowPtr, white, RightBottomSquare);
+    Screen('Flip',windowPtr);
+    i=i+1;
+end
+
+
+instructionStart=['Now, please look at the center of the screen for 3 min before we start']
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+Screen('Flip',windowPtr);
+% hit a key to continue
+KbStrokeWait;
+
+% Flash the upper left corner once at the start and end of eye open period (and bottom right)
+i=1;
+while i < 2;
+    Screen('FillRect', windowPtr, white, LeftUpperSquare);
+    Screen('FillRect', windowPtr, white, RightBottomSquare);
+    Screen('Flip',windowPtr);
+    i=i+1;
+end
+
+% Another way to create a fixation cross: Doing the above with textures,
+% by preparing a little Matlab matrix with the image of a fixation
+% cross:  --> Choose whatever you like more.
+% FixCr=ones(20,20)*255;
+% FixCr(10:11,:)=0;
+% FixCr(:,10:11)=0;  %try imagesc(FixCr) to display the result in Matlab
+Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
+Screen('Flip',windowPtr);
+WaitSecs(3);
+
+i=1;
+while i < 2;
+    Screen('FillRect', windowPtr, white, LeftUpperSquare);
+    Screen('FillRect', windowPtr, white, RightBottomSquare);
+    Screen('Flip',windowPtr);
+    i=i+1;
+end
+
+instructionStart=['Press a key to start']
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+Screen('Flip',windowPtr);
+% WaitSecs(Tinterblock);
+% hit a key to continue
+KbStrokeWait;
+%*************************************************************************
 
 %*******************************Loop through block
 for block=1:numBlock
@@ -475,7 +547,16 @@ end
 
 
 % Show The End
-TotalReward=fullBonus*TotalScore;
+if TotalScore > 0 & TotalScore < 0.75
+    TotalReward = 0;
+elseif TotalScore == 0.75 & TotalScore > 0.75 0 & TotalScore < 0.8
+    TotalReward = 5;
+elseif TotalScore == 0.8 & TotalScore > 0.8 0 & TotalScore < 0.85
+    TotalReward = 10;
+else
+    TotalReward = 15;
+end
+% TotalReward=fullBonus*TotalScore;
 Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100) ';       Reward: $ ' num2str(TotalReward)];
 DrawFormattedText2(Showbonus,'win',windowPtr,...
     'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
