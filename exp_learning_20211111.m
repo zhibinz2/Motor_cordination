@@ -128,9 +128,9 @@ mice = GetMouseIndices(typeOnly);
 % case. Therefore we disable all system cursor images and draw our
 % cursors ourselves for a more beautiful look:
 % Hide the cursor
-HideCursor(windowPtr,mice(2));
+HideCursor(screenNumber,mice(2));
 HideCursor(windowPtr,mice(1));
-HideCursor
+
 
 % Get the size of the on screen windowPtr in pixels ***********************
 % For help see: Screen windowSize?
@@ -195,7 +195,7 @@ LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screen
 % *************************************************************************
 % Time management here ####################################################
 % time for resting EEG (EO=eye open; EC= eye close)
-TimeRestingEEG=150; % 2.5 min = 150 seconds
+TimeRestingEEG=1; % 2.5 min = 150 seconds
 numFramesRestEye=round (TimeRestingEEG/ifi); 
 
 % Setting default mouse Position for some time
