@@ -128,8 +128,9 @@ mice = GetMouseIndices(typeOnly);
 % case. Therefore we disable all system cursor images and draw our
 % cursors ourselves for a more beautiful look:
 % Hide the cursor
-HideCursor(windowPtr,mice(2));
+HideCursor(screenNumber,mice(2));
 HideCursor(windowPtr,mice(1));
+
 
 % Get the size of the on screen windowPtr in pixels ***********************
 % For help see: Screen windowSize?
@@ -146,7 +147,7 @@ Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 % we set the centre to be the centre of the screen
 dotCenter = [xCenter yCenter];
 
-% set the length of the reach
+% set the length of the reach ###########################################
 radius=screenYpixels/3;
 % Set default connecting dot size
 ConnectDotSize=120; 
@@ -194,7 +195,7 @@ LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screen
 % *************************************************************************
 % Time management here ####################################################
 % time for resting EEG (EO=eye open; EC= eye close)
-TimeRestingEEG=180; % 3 min = 180 seconds
+TimeRestingEEG=1; % 2.5 min = 150 seconds
 numFramesRestEye=round (TimeRestingEEG/ifi); 
 
 % Setting default mouse Position for some time
@@ -385,8 +386,10 @@ for block=1:numBlock
     end
     
     % Show bonus criteria
-    ShowbonusCrit = ['Average  Bonus\n    >65%  $3   \n    >70%  $6   \n    >75%  $9   \n'...
-        '    >80%  $12   \n    >85%  $15   \n'];
+%     ShowbonusCrit = ['Average  Bonus\n    >65%  $3   \n    >70%  $6   \n    >75%  $9   \n'...
+%         '    >80%  $12   \n    >85%  $15   \n'];
+    ShowbonusCrit = ['Average  Grade\n    <60%  F    \n    >60%  D    \n    >65%  C    \n    >70%  B-   \n    >75%  B    \n'...
+        '    >80%  B+   \n    >85%  A    \n    >90%  A+   \n'];
     DrawFormattedText2(ShowbonusCrit,'win',windowPtr,...
             'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
     
@@ -610,8 +613,10 @@ DrawFormattedText2(Showbonus,'win',windowPtr,...
             'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
         
 % Show bonus criteria
-ShowbonusCrit = ['Average  Bonus\n    >65%  $3   \n    >70%  $6   \n    >75%  $9   \n'...
-        '    >80%  $12   \n    >85%  $15   \n'];
+% ShowbonusCrit = ['Average  Bonus\n    >65%  $3   \n    >70%  $6   \n    >75%  $9   \n'...
+%         '    >80%  $12   \n    >85%  $15   \n'];
+ShowbonusCrit = ['Average  Grade\n    <60%  F    \n    >60%  D    \n    >65%  C    \n    >70%  B-   \n    >75%  B    \n'...
+        '    >80%  B+   \n    >85%  A-   \n    >90%  A    \n    >95%  A+    \n'];
 DrawFormattedText2(ShowbonusCrit,'win',windowPtr,...
             'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
     
