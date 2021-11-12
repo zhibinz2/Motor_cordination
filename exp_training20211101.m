@@ -136,6 +136,10 @@ ConnectDotSize=120;
 % the thickness of the line
 Thickness=ConnectDotSize/2;
 
+% Create a fixation cross
+FixCrX=[xCenter-Thickness/2:xCenter+Thickness/2 repmat(xCenter,1,Thickness+1)];
+FixCrY=[repmat(yCenter,1,Thickness+1) yCenter-Thickness/2:yCenter+Thickness/2];
+
 % Numer of frames to wait when specifying good timing. Note: the use of
 % wait frames is to show a generalisable coding. For example, by using
 % waitframes = 2 one would flip on every other frame. See the PTB
@@ -172,6 +176,10 @@ LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screen
 
 % *************************************************************************
 % Setting time variables
+% time for resting EEG (EO=eye open; EC= eye close)
+TimeRestingEEG=1; % 2.5 min = 150 seconds
+numFramesRestEye=round (TimeRestingEEG/ifi); 
+
 % Setting default mouse Position for some time
 planSecs =0.5 ; % rest 1 s to look at trial number, visual evoked potential
 numFramesPlan = round (planSecs/ifi);
@@ -231,8 +239,8 @@ instructionStart=['You will be controlling two mice to do the task.'...
         '\n\n\n But the dot will turn green when comes close to a trajectory line shown on the screen.'...
         '\n\n\n Try to coordinate the moving speed of your hands so as the dot can get close to line as much as possible'...
         '\n\n\n Move the dot along the trajectory to the end of the line. Complete the movement within ' num2str(moveSecs) ' seconds.'...
-        '\n\n\n You will earn Bonus money up to $ ' num2str(fullBonus) ' if performed quickly and closely to the trajectory.'...
-        '\n\n\n Questions? If none, press any key to continue after ' num2str(Tinterblock) ' seconds.']
+        '\n\n\n You could earn Bonus money up to $ ' num2str(fullBonus) ' if performed quickly and closely to the trajectory.'...
+        '\n\n\n Questions? If none, press any key to continue']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
@@ -241,37 +249,8 @@ Screen('Flip',windowPtr);
 KbStrokeWait;
 
 %*************************************************************************
-% Start taking eye closed and eye open resting stage EEG
-instructionStart=['Now, please close your eyes and take a rest for 3 min before I tell you to continue']
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-Screen('Flip',windowPtr);
-% hit a key to continue
-KbStrokeWait;
-
-% Flash the upper left corner once at the start and end of eye closed period (and bottom right)
-
-i=1;
-while i < 2;
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip',windowPtr);
-    i=i+1;
-end
-
-Screen('Flip',windowPtr);
-WaitSecs(3);
-
-i=1;
-while i < 2;
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip',windowPtr);
-    i=i+1;
-end
-
-
-instructionStart=['Now, please look at the center of the screen for 3 min before we start']
+% Start taking eye open and eye close resting stage EEG
+instructionStart=['Hit any key and then look at the center of the screen for 3 min']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
@@ -279,42 +258,107 @@ Screen('Flip',windowPtr);
 KbStrokeWait;
 
 % Flash the upper left corner once at the start and end of eye open period (and bottom right)
-i=1;
-while i < 2;
+% i=1;
+% while i < 2;
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
     Screen('FillRect', windowPtr, white, RightBottomSquare);
     Screen('Flip',windowPtr);
+%     i=i+1;
+% end
+
+
+% get a timestamp and begin taking resting EEG
+vbl = Screen('Flip', windowPtr);
+i=1;
+while i<numFramesRestEye
+% If esc is press, break out of the while loop and close the screen
+    [keyIsDown, keysecs, keyCode] = KbCheck;
+    if keyCode(KbName('escape'))
+        Screen('CloseAll');
+        break;
+    end
+    % Show the fixation cross
+    Screen('DrawDots', windowPtr, [FixCrX;FixCrY], Thickness/10, white, [0 0], 2);
+    % Show the central dot
+    % Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
+    % Flip the black screen
+    vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+    % update the while loop
     i=i+1;
 end
 
-% Another way to create a fixation cross: Doing the above with textures,
-% by preparing a little Matlab matrix with the image of a fixation
-% cross:  --> Choose whatever you like more.
-% FixCr=ones(20,20)*255;
-% FixCr(10:11,:)=0;
-% FixCr(:,10:11)=0;  %try imagesc(FixCr) to display the result in Matlab
-Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
-Screen('Flip',windowPtr);
-WaitSecs(3);
 
-i=1;
-while i < 2;
+
+% WaitSecs(TimeRestingEEG);
+
+% Flash once to mark the end of open eye resting EEG collection
+% i=1;
+% while i < 2;
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
     Screen('FillRect', windowPtr, white, RightBottomSquare);
     Screen('Flip',windowPtr);
-    i=i+1;
-end
-
-instructionStart=['Press a key to start']
+%     i=i+1;
+% end
+%****************************************************************************
+instructionStart=['Hit a key and then close your eyes to rest for 3 min before I tell you to continue.']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
-% WaitSecs(Tinterblock);
+% hit a key to continue
+KbStrokeWait;
+
+% Flash the upper left corner once at the start and end of eye closed period (and bottom right)
+% Flash once to start
+% i=1;
+% while i < 2;
+    Screen('FillRect', windowPtr, white, LeftUpperSquare);
+    Screen('FillRect', windowPtr, white, RightBottomSquare);
+    Screen('Flip',windowPtr);
+%     i=i+1;
+% end
+
+
+% Black Screen
+Screen('Flip',windowPtr);
+% WaitSecs(TimeRestingEEG);
+
+% get a timestamp and begin taking resting EEG
+vbl = Screen('Flip', windowPtr);
+i=1;
+while i<numFramesRestEye
+% If esc is press, break out of the while loop and close the screen
+    [keyIsDown, keysecs, keyCode] = KbCheck;
+    if keyCode(KbName('escape'))
+        Screen('CloseAll');
+        break;
+    end
+    % Flip the black screen
+    vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+    % update the while loop
+    i=i+1;
+end
+    
+
+% Flash again to end
+i=1;
+while i < 2;
+    Screen('FillRect', windowPtr, white, LeftUpperSquare);
+    Screen('FillRect', windowPtr, white, RightBottomSquare);
+    Screen('Flip',windowPtr);
+    i=i+1;
+end
+
+
+% ************************************************************************
+instructionStart=['OK. Press a key to start!'] % Tell subject to open eye and start
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+Screen('Flip',windowPtr);
 % hit a key to continue
 KbStrokeWait;
 %*************************************************************************
 
-
+%############################### Loop through block
 %*******************************Loop through block
 for block=1:numBlock
     
@@ -332,16 +376,28 @@ for block=1:numBlock
     
 
     %************************************ show bonus before block and rest
+    % Show performents
     if block ~= 1
-        Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100)];
+        % ScoreLR=0.2;TotalScore=0.2 % just to test alignment
+        Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) '  Average: ' sprintf('%0.2f %%', TotalScore*100)];
         DrawFormattedText2(Showbonus,'win',windowPtr,...
             'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
     end
     
-    Showblock = ['Hit a key to begin block ' num2str(block) ' / ' num2str(numBlock) ' after ' num2str(Tinterblock) ' seconds']
+    % Show bonus criteria
+%     ShowbonusCrit = ['Average  Bonus\n    >65%  $3   \n    >70%  $6   \n    >75%  $9   \n'...
+%         '    >80%  $12   \n    >85%  $15   \n'];
+    ShowbonusCrit = ['Average  Grade\n    <60%  F    \n    >60%  D    \n    >65%  C    \n    >70%  B-   \n    >75%  B    \n'...
+        '    >80%  B+   \n    >85%  A    \n    >90%  A+   \n'];
+    DrawFormattedText2(ShowbonusCrit,'win',windowPtr,...
+            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+    
+    % Show progress    
+    Showblock = ['Hit a key to begin block ' num2str(block) ' / ' num2str(numBlock)]
     DrawFormattedText2(Showblock,'win',windowPtr,...
         'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
     Screen('Flip',windowPtr);
+    
 
 %     WaitSecs(Tinterblock); % to separate blocks in the photocell signal
     % hit a key to continue
