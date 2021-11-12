@@ -130,6 +130,7 @@ mice = GetMouseIndices(typeOnly);
 % Hide the cursor
 HideCursor(windowPtr,mice(2));
 HideCursor(windowPtr,mice(1));
+HideCursor
 
 % Get the size of the on screen windowPtr in pixels ***********************
 % For help see: Screen windowSize?
@@ -146,7 +147,7 @@ Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 % we set the centre to be the centre of the screen
 dotCenter = [xCenter yCenter];
 
-% set the length of the reach
+% set the length of the reach ###########################################
 radius=screenYpixels/3;
 % Set default connecting dot size
 ConnectDotSize=120; 
@@ -192,9 +193,9 @@ LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 scree
 LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
 
 % *************************************************************************
-% Time management here
+% Time management here ####################################################
 % time for resting EEG (EO=eye open; EC= eye close)
-TimeRestingEEG=3; % in seconds
+TimeRestingEEG=150; % 2.5 min = 150 seconds
 numFramesRestEye=round (TimeRestingEEG/ifi); 
 
 % Setting default mouse Position for some time
@@ -358,7 +359,8 @@ Screen('Flip',windowPtr);
 KbStrokeWait;
 %*************************************************************************
 
-%*******************************Loop through block
+%############################### Loop through block
+%******************************* Loop through block
 for block=1:numBlock
     
     % Initialize some values
@@ -375,13 +377,22 @@ for block=1:numBlock
 
 
     %************************************ show bonus before block and rest
+    % Show performents
     if block ~= 1
-        Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100)];
+        % ScoreLR=0.2;TotalScore=0.2 % just to test alignment
+        Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) '  Average: ' sprintf('%0.2f %%', TotalScore*100)];
         DrawFormattedText2(Showbonus,'win',windowPtr,...
             'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
     end
     
-    Showblock = ['Hit a key to begin block ' num2str(block) ' / ' num2str(numBlock) ' after ' num2str(Tinterblock) ' seconds']
+    % Show bonus criteria
+    ShowbonusCrit = ['Average  Bonus\n    >65%  $3   \n    >70%  $6   \n    >75%  $9   \n'...
+        '    >80%  $12   \n    >85%  $15   \n'];
+    DrawFormattedText2(ShowbonusCrit,'win',windowPtr,...
+            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+    
+    % Show progress    
+    Showblock = ['Hit a key to begin block ' num2str(block) ' / ' num2str(numBlock)]
     DrawFormattedText2(Showblock,'win',windowPtr,...
         'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
     Screen('Flip',windowPtr);
@@ -395,8 +406,8 @@ for block=1:numBlock
     % get a timestamp at the start of block
     vbl = Screen('Flip', windowPtr);
     
-    
-    %******************** Within block loop
+    %#################### Loop throought trials Within block 
+    %******************** Loop throought trials Within block 
     % how many trials 
     for t=1:numTrials 
         % Breakout by hitting esc
@@ -406,7 +417,7 @@ for block=1:numBlock
         break;
         end
 
-        %************ Show bonus of previous trial
+        %************ Show performance of previous trial
         if t ~= 1
             for Restframes=1:numFramesRest
                 Showbonus=['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100)];
@@ -594,23 +605,18 @@ end
 
 
 % Show The End
-if TotalScore < 0.65
-    TotalReward = 0;
-elseif TotalScore == 0.65 & TotalScore > 0.65 & TotalScore < 0.7
-    TotalReward = 3;
-elseif TotalScore == 0.7 & TotalScore > 0.7 & TotalScore < 0.75
-    TotalReward = 6;
-elseif TotalScore == 0.75 & TotalScore > 0.75 & TotalScore < 0.8
-    TotalReward = 9;
-elseif TotalScore == 0.8 & TotalScore > 0.8 & TotalScore < 0.85
-    TotalReward = 12;
-else
-    TotalReward = 15;
-end
 % TotalReward=fullBonus*TotalScore;
-Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100) ';       Reward: $ ' num2str(TotalReward)];
+Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) '  Average: ' sprintf('%0.2f %%', TotalScore*100)];
 DrawFormattedText2(Showbonus,'win',windowPtr,...
-    'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
+            'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
+        
+% Show bonus criteria
+ShowbonusCrit = ['Average  Bonus\n    >65%  $3   \n    >70%  $6   \n    >75%  $9   \n'...
+        '    >80%  $12   \n    >85%  $15   \n'];
+DrawFormattedText2(ShowbonusCrit,'win',windowPtr,...
+            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+    
+% Show the end
 TheEnd = ['The End'];
 DrawFormattedText2(TheEnd,'win',windowPtr,...
     'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
