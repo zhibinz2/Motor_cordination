@@ -42,6 +42,7 @@ mat=matnlap(10, Neuroscan_spherical_goodchans, Neuroscan_spherical_chans);
 filtered_data=filtered_data(:, goodchans)*mat;
 
 % reorganzied into data_trials again
+cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 run integrate_EEG_into_data_trials_step3.m
 
 % re-reference with the good chans
