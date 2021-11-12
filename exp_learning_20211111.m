@@ -86,7 +86,6 @@ PsychDefaultSetup(2);
 Screen('Preference', 'VisualDebugLevel', 1); 
 Screen('Preference', 'SkipSyncTests', 1);
 
-
 % Get the screen numbers. This gives us a number for each of the screens
 % attached to our computer. For help see: Screen Screens?
 screens = Screen('Screens');
@@ -130,7 +129,7 @@ mice = GetMouseIndices(typeOnly);
 % Hide the cursor
 HideCursor(screenNumber,mice(2));
 HideCursor(windowPtr,mice(1));
-
+% *************************************************************************
 
 % Get the size of the on screen windowPtr in pixels ***********************
 % For help see: Screen windowSize?
@@ -241,7 +240,7 @@ instructionStart=['You will be controlling two mice to do the task.'...
         '\n\n\n Try to coordinate the moving speed of your hands so as the dot can get close to line as much as possible'...
         '\n\n\n Move the dot along the trajectory to the end of the line. Complete the movement within ' num2str(moveSecs) ' seconds.'...
         '\n\n\n You could earn Bonus money up to $ ' num2str(fullBonus) ' if performed quickly and closely to the trajectory.'...
-        '\n\n\n Questions? If none, press any key to continue']
+        '\n\n\n Questions? If none, press any key to continue.']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
@@ -606,8 +605,15 @@ for block=1:numBlock
 end
 
 
-% Show The End
+% Show The End ************************************************************
+
 % TotalReward=fullBonus*TotalScore;
+
+% Record the end of experiment
+ExptEndTime=char(datetime('now'));
+behaviraldata.ExptEndTime=ExptEndTime;
+
+% Show performance
 Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) '  Average: ' sprintf('%0.2f %%', TotalScore*100)];
 DrawFormattedText2(Showbonus,'win',windowPtr,...
             'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
@@ -628,8 +634,7 @@ Screen('Flip',windowPtr);
 WaitSecs(3)
 % hit a key to continue
 KbStrokeWait;
-ExptEndTime=char(datetime('now'));
-behaviraldata.ExptEndTime=ExptEndTime;
+
 
 %*************************************
 
