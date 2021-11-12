@@ -113,7 +113,24 @@ grey  = [0.5 0.5 0.5];
 % Open an on screen window and color it black
 % For help see: Screen Openwindow?
 [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black);
-% Get the size of the on screen windowPtr in pixels
+
+% DuoMice:****************************************************************
+% Get handles for all virtual pointing devices, aka cursors:
+typeOnly='masterPointer'; 
+mice = GetMouseIndices(typeOnly);  
+
+% DuoMice: ***************************************************************
+% Hide the system-generated cursors. We do this, because only the
+% first mouse cursor is hardware-accelerated, HideCursorie., a GPU created
+% hardware cursor. All other cursors are software-cursors, created
+% by the Windowing system. These tend to flicker badly in our use
+% case. Therefore we disable all system cursor images and draw our
+% cursors ourselves for a more beautiful look:
+% Hide the cursor
+HideCursor(windowPtr,mice(2));
+HideCursor(windowPtr,mice(1));
+
+% Get the size of the on screen windowPtr in pixels ***********************
 % For help see: Screen windowSize?
 [screenXpixels, screenYpixels] = Screen('windowSize', screenNumber);
 % Get the centre coordinate of the window in pixels
@@ -134,6 +151,10 @@ radius=screenYpixels/3;
 ConnectDotSize=120; 
 % the thickness of the line
 Thickness=ConnectDotSize/2;
+
+% Create a fixation cross
+FixCrX=[xCenter-Thickness/2:xCenter+Thickness/2 repmat(xCenter,1,Thickness+1)];
+FixCrY=[repmat(yCenter,1,Thickness+1) yCenter-Thickness/2:yCenter+Thickness/2];
 
 % Numer of frames to wait when specifying good timing. Note: the use of
 % wait frames is to show a generalisable coding. For example, by using
@@ -171,6 +192,10 @@ LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screen
 
 % *************************************************************************
 % Time management here
+% time for resting EEG (EO=eye open; EC= eye close)
+TimeRestingEEG=3; % in seconds
+numFramesRestEye=round (TimeRestingEEG/ifi); 
+
 % Setting default mouse Position for some time
 planSecs =0.5 ; % rest 1 s to look at trial number
 numFramesPlan = round (planSecs/ifi);
@@ -195,29 +220,12 @@ Tpause=0.5;
 EstimateNavigateTime=3;
 TimeTrial=planSecs+moveSecs+Tintertrial+Tpause+EstimateNavigateTime;
 % Estimate total experiment time in minuts
-TimeTotal=TimeTrial*numtotal/60;
+TimeTotal=(TimeRestingEEG*2+TimeTrial*numtotal)/60;
 
 % *************************************************************************
 % time break between block
 Tinterblock=3; 
 % *************************************************************************
-
-% DuoMice:
-% Get handles for all virtual pointing devices, aka cursors:
-typeOnly='masterPointer'; 
-mice = GetMouseIndices(typeOnly);  
-
-% DuoMice:
-% Hide the system-generated cursors. We do this, because only the
-% first mouse cursor is hardware-accelerated, HideCursorie., a GPU created
-% hardware cursor. All other cursors are software-cursors, created
-% by the Windowing system. These tend to flicker badly in our use
-% case. Therefore we disable all system cursor images and draw our
-% cursors ourselves for a more beautiful look:
-% Hide the cursor
-HideCursor(windowPtr,mice(2));
-HideCursor(windowPtr,mice(1));
-
 
 % Starting introduction
 instructionStart=['You will be controlling two mice to do the task.'...
@@ -240,37 +248,8 @@ Screen('Flip',windowPtr);
 KbStrokeWait;
 
 %*************************************************************************
-% Start taking eye closed and eye open resting stage EEG
-instructionStart=['Now, please close your eyes and take a rest for 3 min before I tell you to continue']
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-Screen('Flip',windowPtr);
-% hit a key to continue
-KbStrokeWait;
-
-% Flash the upper left corner once at the start and end of eye closed period (and bottom right)
-
-i=1;
-while i < 2;
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip',windowPtr);
-    i=i+1;
-end
-
-Screen('Flip',windowPtr);
-WaitSecs(300);
-
-i=1;
-while i < 2;
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip',windowPtr);
-    i=i+1;
-end
-
-
-instructionStart=['Now, please look at the center of the screen for 3 min before we start']
+% Start taking eye open and eye close resting stage EEG
+instructionStart=['Hit any key and then look at the center of the screen for 3 min']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
@@ -286,16 +265,49 @@ while i < 2;
     i=i+1;
 end
 
-% Another way to create a fixation cross: Doing the above with textures,
-% by preparing a little Matlab matrix with the image of a fixation
-% cross:  --> Choose whatever you like more.
-% FixCr=ones(20,20)*255;
-% FixCr(10:11,:)=0;
-% FixCr(:,10:11)=0;  %try imagesc(FixCr) to display the result in Matlab
-Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
-Screen('Flip',windowPtr);
-WaitSecs(300);
 
+% get a timestamp and begin taking resting EEG
+vbl = Screen('Flip', windowPtr);
+i=1;
+while i<numFramesRestEye
+% If esc is press, break out of the while loop and close the screen
+    [keyIsDown, keysecs, keyCode] = KbCheck;
+    if keyCode(KbName('escape'))
+        Screen('CloseAll');
+        break;
+    end
+    % Show the fixation cross
+    Screen('DrawDots', windowPtr, [FixCrX;FixCrY], Thickness/10, white, [0 0], 2);
+    % Show the central dot
+    % Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
+    % Flip the black screen
+    vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+    % update the while loop
+    i=i+1;
+end
+
+
+
+% WaitSecs(TimeRestingEEG);
+
+% Flash once to mark the end of open eye resting EEG collection
+i=1;
+while i < 2;
+    Screen('FillRect', windowPtr, white, LeftUpperSquare);
+    Screen('FillRect', windowPtr, white, RightBottomSquare);
+    Screen('Flip',windowPtr);
+    i=i+1;
+end
+%****************************************************************************
+instructionStart=['Hit a key and then close your eyes to rest for 3 min before I tell you to continue.']
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+Screen('Flip',windowPtr);
+% hit a key to continue
+KbStrokeWait;
+
+% Flash the upper left corner once at the start and end of eye closed period (and bottom right)
+% Flash once to start
 i=1;
 while i < 2;
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
@@ -304,11 +316,43 @@ while i < 2;
     i=i+1;
 end
 
-instructionStart=['Press a key to start']
+
+% Black Screen
+Screen('Flip',windowPtr);
+% WaitSecs(TimeRestingEEG);
+
+% get a timestamp and begin taking resting EEG
+vbl = Screen('Flip', windowPtr);
+i=1;
+while i<numFramesRestEye
+% If esc is press, break out of the while loop and close the screen
+    [keyIsDown, keysecs, keyCode] = KbCheck;
+    if keyCode(KbName('escape'))
+        Screen('CloseAll');
+        break;
+    end
+    % Flip the black screen
+    vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+    % update the while loop
+    i=i+1;
+end
+    
+
+% Flash again to end
+i=1;
+while i < 2;
+    Screen('FillRect', windowPtr, white, LeftUpperSquare);
+    Screen('FillRect', windowPtr, white, RightBottomSquare);
+    Screen('Flip',windowPtr);
+    i=i+1;
+end
+
+
+% ************************************************************************
+instructionStart=['OK. Press a key to start!'] % Tell subject to open eye and start
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
-% WaitSecs(Tinterblock);
 % hit a key to continue
 KbStrokeWait;
 %*************************************************************************
@@ -549,12 +593,16 @@ end
 
 
 % Show The End
-if TotalScore > 0 & TotalScore < 0.75
+if TotalScore < 0.65
     TotalReward = 0;
-elseif TotalScore == 0.75 & TotalScore > 0.75 0 & TotalScore < 0.8
-    TotalReward = 5;
-elseif TotalScore == 0.8 & TotalScore > 0.8 0 & TotalScore < 0.85
-    TotalReward = 10;
+elseif TotalScore == 0.65 & TotalScore > 0.65 & TotalScore < 0.7
+    TotalReward = 3;
+elseif TotalScore == 0.7 & TotalScore > 0.7 & TotalScore < 0.75
+    TotalReward = 6;
+elseif TotalScore == 0.75 & TotalScore > 0.75 & TotalScore < 0.8
+    TotalReward = 9;
+elseif TotalScore == 0.8 & TotalScore > 0.8 & TotalScore < 0.85
+    TotalReward = 12;
 else
     TotalReward = 15;
 end
