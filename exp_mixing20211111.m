@@ -656,7 +656,7 @@ catch
   psychrethrow(psychlasterror);
 end  
 
-
-% run SaveBehaviraldata.m
-% cd ..
-% run git_control.m
+% Save the behavioral data
+run SaveBehaviraldata.m
+cd ..
+run git_control.m
