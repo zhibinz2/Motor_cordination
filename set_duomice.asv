@@ -22,8 +22,10 @@
 %% set mouse speed
 % make this trackball's speed twice as slow
 !xinput --set-prop "Logitech USB Trackball" "Device Accel Constant Deceleration" 2
+
 % make this trackball's speed twice as fast
 !xinput --set-prop "Logitech USB Trackball" "Device Accel Constant Deceleration" 0.5
+
 
 !xinput list-props 10
 !xinput list-props 9
