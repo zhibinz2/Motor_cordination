@@ -21,6 +21,8 @@ for ntr=1:NumTrialsRecorded % take too much memory, matlab might quit
     % data_trials(1:(trialend(ntr)-trialstart(ntr)+1),1:NumEEGChannels,ntr)=filtered_data(trialstart(ntr):trialend(ntr),1:NumEEGChannels); 
     data_trials((1:NumTrialtimepoints),1:NumEEGChannels,ntr)=filtered_data((trialend(ntr)-NumTrialtimepoints+1):trialend(ntr),1:NumEEGChannels); 
 end
+% Keep in mind that after the filter, the last 10 seconds or so of the data is not usable)
+
 
 % examine 
 % plot(ind_trial_end-ind_trial_start,'ro');ylabel('trial peaks');xlabel('trial');

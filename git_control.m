@@ -4,7 +4,7 @@
 CommitName=char(datetime('now'));
 !git commit -a -m "CommitName"
 
-% !git push
+% !git push origin
 %%
 % undo all current changes
 % !git restore .

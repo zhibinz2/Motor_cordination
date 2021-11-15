@@ -38,7 +38,7 @@ Neuroscan_spherical_goodchans=Neuroscan_spherical_chans(goodchans,:);
 mat=matnlap(10, Neuroscan_spherical_goodchans, Neuroscan_spherical_chans);
 % mat=matnlap(10, Neuroscan_spherical_chans, Neuroscan_spherical_chans);
 
-% laplacian
+% laplacian (after the filter, the last 10 seconds of data is not usable)
 filtered_data=filtered_data(:, goodchans)*mat;
 
 % reorganzied into data_trials again
@@ -46,9 +46,11 @@ cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 run integrate_EEG_into_data_trials_step3.m
 
 % re-reference with the good chans
-[reRef_data] = reRef(data_trials(:,1:NumEEGChannels,:),goodchans);
+% [reRef_data] = reRef(data_trials(:,1:NumEEGChannels,:),goodchans);
 
-
+% examine data 
+% plot(filtered_data(end-20000:end,1:5));
+% plot(data_trials(:,1:5,end));
 %% plot xcorr for all conditions
 UniCondi=unique(CondiData);
 
