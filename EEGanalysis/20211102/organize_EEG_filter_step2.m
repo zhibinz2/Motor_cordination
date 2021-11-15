@@ -1,7 +1,8 @@
 %% Check EEG on 2021018
 % load EEG all as one
 cd /home/zhibin/Documents/Acquisition/bimanual_Reach_zhibin_20211018
-EEG=loadcurry([pwd '/test_zhibin20211018.cdt']);
+filenames=dir; EEGfileName=filenames(3).name;
+EEG=loadcurry([pwd '/' EEGfileName]);
 dataEEG=EEG.data;
 datatimes=EEG.times;
 Fs=EEG.srate;
