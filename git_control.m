@@ -3,8 +3,10 @@
 ! git add .
 CommitName=char(datetime('now'));
 !git commit -a -m "CommitName"
-
-% !git push origin
+% https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git
+% https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git
+% My token: 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
+% !git push 
 %%
 % undo all current changes
 % !git restore .
