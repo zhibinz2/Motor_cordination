@@ -57,14 +57,15 @@ Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 % Screen('FrameRect',windowPtr, white, [300 300 1600 600],4);    
 message = ['Are you right-handed or left-handed? Enter "L" or "R". \n Then press "Enter" to continue'];
-replySubj = Ask(windowPtr, message, white, black, 'GetChar','center');
+replySubj = Ask(windowPtr, message, white, black, 'GetChar','center'
+);
 
-Screen(windowPtr, 'Flip');
+;
 
 % hit a key to continue
 KbStrokeWait;
 
-% Screen(windowPtr, 'Flip');
+Screen(windowPtr, 'Flip');
 
 
 Priority(0);   
