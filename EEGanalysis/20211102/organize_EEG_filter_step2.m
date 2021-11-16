@@ -55,7 +55,7 @@ ind_trial_start=ind_trial_end-trialLength+1; % index of the first peak in each t
 % [pks,locs] = findpeaks(analog2data,datatimes,'MinPeakProminence',Halfhigh2,'Annotate','extents');
 % 
 % locsDiff=diff(locs);% time distances between peaks
-% % plot(locsDiff,'ro'); ylabel('locsDiff'); % look at distribution of these distances
+% % plot(locsDiff,'go'); ylabel('locsDiff'); % look at distribution of these distances
 % cutoff=mean(locsDiff)+mean(locsDiff)/5; % cutoff standard of the peak distance between trials
 % hold on; yline(cutoff,'m--');hold off; % examine the cutoff line
 % ind_locsDiff=find([locsDiff, inf]>cutoff); % indices of pks distances at the end of each trial 
@@ -100,6 +100,7 @@ filtered_data=filtfilthd(Hd,filtered_data);
 % plotx(mean(filtered_data,2));  
 % plotx(filtered_data);xlim([5000 10000]);
 
+%%
 filtered_broadband=filtered_data;
 % filtered_data=filtered_broadband;
 

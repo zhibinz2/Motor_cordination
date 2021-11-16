@@ -2,7 +2,7 @@
 % Fs=1000;ifi=0.0167;
 NumTrialsRecorded=length(ind_trial_start);
 NumTrialtimepoints=round(max(trialLength)*2*ifi*Fs);%number of samples in a trial,ideally
-NumEEGChannels=size(filtered_data,2);
+NumEEGChannels=size(detrend_data,2);
 NumAllChannels=NumEEGChannels+6; % +4;
 
 % Initialize the data_trials matrix
