@@ -2,6 +2,7 @@
 % load EEG all as one
 cd /home/zhibin/Documents/Acquisition/bimanual_Reach_zhibin_20211018
 filenames=dir; EEGfileName=filenames(3).name;
+% [EEGfileName]=uigetfile('*.cdt');
 EEG=loadcurry([pwd '/' EEGfileName]);
 dataEEG=EEG.data;
 datatimes=EEG.times;
@@ -44,6 +45,9 @@ trialLength=diff([0 ind_locsDiff]); % number of peaks in each trial
 ind_trial_end=cumsum(trialLength); % index of the last peak in each trial (index in locs)
 ind_trial_start=ind_trial_end-trialLength+1; % index of the first peak in each trial (index in locs)
 
+% find end point of data
+% dataEnd=locs(ind_trial_end(end))
+
 % % checking starting peak of the trials (index in locs)
 % plot(ind_trial_start,zeros(length(ind_trial_start)),'go'); 
 % hold on;
@@ -74,7 +78,7 @@ EEGdata=dataEEG(1:128,:);
 % tranpose the data so that time is the first dimension, channel is 2nd dimension, and trial is the 3rd dimension
 transpose_data=permute(EEGdata,[2,1]);
 % plotx(mean(transpose_data,3));
-% plotx(transpose_data);
+% plotx(transpose_data);hold on;xline(dataEnd,'m--');
 
 % detrend the data
 detrend_data=ndetrend(transpose_data,1); 
@@ -98,7 +102,7 @@ Hd = makefilter(Fs,50,55,3,20,0);
 filtered_data=filtfilthd(Hd,filtered_data);
 
 % plotx(mean(filtered_data,2));  
-% plotx(filtered_data);xlim([5000 10000]);
+% plotx(filtered_data);xlim([5000 10000]);hold on;xline(dataEnd,'m--');
 
 %%
 filtered_broadband=filtered_data;

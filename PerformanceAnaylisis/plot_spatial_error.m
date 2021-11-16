@@ -6,6 +6,8 @@ clear;
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 run organize_Behavioral_step1.m
 
+
+%%
 % ans=BehavData{1};
 % CondiData
 
@@ -28,6 +30,7 @@ UniCondi=unique(allPerm);
 % behaviraldata
 % BehavData
 
+figure;
 for conditionSelected=1:length(UniCondi)
     
     indtemp=find(allPerm==conditionSelected);
@@ -38,8 +41,8 @@ for conditionSelected=1:length(UniCondi)
     
     % subplot(7,15,abs(7-conditionSelected)*15+(15-conditionSelected-1));
     subplot(2,length(UniCondi),length(UniCondi)+1-conditionSelected);
-    
     plot(x,y,'k');
+    title(conditionNames(conditionSelected));
     hold on;
     for i=1:length(indtemp)
         % plot(dataxJyJtemp(:,1),dataxJyJtemp(:,2),'g');
@@ -48,7 +51,7 @@ for conditionSelected=1:length(UniCondi)
         % AllxJ=dataxJyJtemp(5,:); ALLyJ=dataxJyJtemp(6,:);
         ALLxJ=dataxJyJtemp(:,5); ALLyJ=dataxJyJtemp(:,6);
         plotx(ALLxJ,ALLyJ,'g');
-        ylim([100 600]);xlim([500 1500]);title(conditionNames(length(UniCondi)));
+        ylim([100 600]);xlim([500 1500]);
 
         ALLd=[];
         for p=1:length(ALLxJ)
