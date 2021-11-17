@@ -46,7 +46,7 @@ ind_trial_end=cumsum(trialLength); % index of the last peak in each trial (index
 ind_trial_start=ind_trial_end-trialLength+1; % index of the first peak in each trial (index in locs)
 
 % find end point of data
-% dataEnd=locs(ind_trial_end(end))
+dataEnd=locs(ind_trial_end(end));
 
 % % checking starting peak of the trials (index in locs)
 % plot(ind_trial_start,zeros(length(ind_trial_start)),'go'); 
@@ -102,7 +102,7 @@ Hd = makefilter(Fs,50,55,3,20,0);
 filtered_data=filtfilthd(Hd,filtered_data);
 
 % plotx(mean(filtered_data,2));  
-% plotx(filtered_data);xlim([5000 10000]);hold on;xline(dataEnd,'m--');
+% plotx(filtered_data);hold on;xline(dataEnd,'m--');
 
 %%
 filtered_broadband=filtered_data;

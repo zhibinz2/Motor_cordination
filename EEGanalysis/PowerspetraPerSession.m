@@ -20,6 +20,9 @@ end
 
 suptitle('zhibin session 3 on 11/06/2021')
 %%  C3/C4 28/32 F3/F4 9/13 FC3/FC4 19/23
+
+% plot power spetra in each condtion
+
 UniCondi=unique(CondiData);
 
 figure;tic;% plot 7 conditions
@@ -79,7 +82,7 @@ end
 toc;
 suptitle('zhibin session 3 on 11/06/2021')
 
-%% plot 6 channels
+%% plot 6 channels over different conditions
 UniCondi=unique(CondiData);
 
 % figure;tic;
