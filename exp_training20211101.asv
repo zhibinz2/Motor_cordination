@@ -434,7 +434,6 @@ for block=1:numBlock
                 vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
             end
         end          
-        time2=clock; %check timing
         %*************************Randomized selection
         % pick a condition from randomized set allPerm
         conditionSelected = allPerm(numTrials*(block-1)+t);
