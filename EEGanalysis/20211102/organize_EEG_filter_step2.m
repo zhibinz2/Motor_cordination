@@ -3,7 +3,7 @@
 cd /home/zhibin/Documents/Acquisition/bimanual_Reach_zhibin_20211018
 filenames=dir; EEGfileName=filenames(3).name;
 % [EEGfileName]=uigetfile('*.cdt');
-EEG=loadcurry([pwd '/' EEGfileName]);
+EEG=loadcurry([pwd '/' 'bimanual_Reach_Patty_20211118.cdt']);
 dataEEG=EEG.data;
 datatimes=EEG.times;
 Fs=EEG.srate;

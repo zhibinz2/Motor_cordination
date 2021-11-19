@@ -145,21 +145,21 @@ suptitle('Jack session 2')
 
 
 axes(ax1);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.9]);xlim([0 25]);title([AllchanNames{9}]); %F3
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title([AllchanNames{9}]); %F3
 legend(conditionNames);
 axes(ax2);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.9]);xlim([0 25]);title([AllchanNames{13}]); %F4
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title([AllchanNames{13}]); %F4
 legend(conditionNames);
 axes(ax3);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.9]);xlim([0 25]);title([AllchanNames{19}]); %FC3
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title([AllchanNames{19}]); %FC3
 legend(conditionNames);
 axes(ax4);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.9]);xlim([0 25]);title([AllchanNames{23}]); %FC4
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title([AllchanNames{23}]); %FC4
 legend(conditionNames);
 axes(ax5);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.9]);xlim([0 25]);title([AllchanNames{28}]); %C3
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title([AllchanNames{28}]); %C3
 legend(conditionNames);
 axes(ax6);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.9]);xlim([0 25]);title([AllchanNames{32}]); %C4
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title([AllchanNames{32}]); %C4
 legend(conditionNames);
     
