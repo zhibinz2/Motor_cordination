@@ -1,10 +1,10 @@
 cd /home/zhibin/Documents/GitHub/Motor_cordination/behaviraldata
-clear;
+% clear;
 % load('matlab2021101802.mat');
 
 
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
-run organize_Behavioral_step1.m
+% run organize_Behavioral_step1.m
 
 
 %%
