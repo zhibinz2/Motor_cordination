@@ -7,6 +7,8 @@ cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 
 
 %%
+% addpath /home/zhibin/Documents/GitHub/Motor_cordination/DrawReach/
+addpath(genpath('/home/zhibin/Documents/GitHub/'))
 % ans=BehavData{1};
 % CondiData
 

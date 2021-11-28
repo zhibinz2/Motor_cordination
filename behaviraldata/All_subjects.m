@@ -33,4 +33,4 @@ seed=20211118;
 % Patty S2
 seed=2021111901;
 % Patty S3
-seed=
+seed=20211125;
