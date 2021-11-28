@@ -21,15 +21,28 @@ for u=1:length(UniCondi)% u=2
     plot(x,y,'-', 'color', grey, 'LineWidth',5);
     hold on;
 
+%     for indt=1:length(indtemp)
+%     TracexL=squeeze(data_trials(:,NumEEGChannels+1,indtemp(indt)));
+%     TraceyL=squeeze(data_trials(:,NumEEGChannels+2,indtemp(indt)));
+%     TracexR=squeeze(data_trials(:,NumEEGChannels+3,indtemp(indt)));
+%     TraceyR=squeeze(data_trials(:,NumEEGChannels+4,indtemp(indt)));
+%     TracexJ=squeeze(data_trials(:,NumEEGChannels+5,indtemp(indt)));
+%     TraceyJ=squeeze(data_trials(:,NumEEGChannels+6,indtemp(indt)));
+%     plot(TracexL,TraceyL,'-r',TracexR,TraceyR,'-b',TracexJ,TraceyJ,'-g');
+%     end
+    
+    % Without using EEG data or resampling is better
     for indt=1:length(indtemp)
-    TracexL=squeeze(data_trials(:,NumEEGChannels+1,indtemp(indt)));
-    TraceyL=squeeze(data_trials(:,NumEEGChannels+2,indtemp(indt)));
-    TracexR=squeeze(data_trials(:,NumEEGChannels+3,indtemp(indt)));
-    TraceyR=squeeze(data_trials(:,NumEEGChannels+4,indtemp(indt)));
-    TracexJ=squeeze(data_trials(:,NumEEGChannels+5,indtemp(indt)));
-    TraceyJ=squeeze(data_trials(:,NumEEGChannels+6,indtemp(indt)));
+        dataxLRJyLRJtemp=BehavData{indtemp(indt)};
+        TracexL=dataxLRJyLRJtemp(:,1);
+        TraceyL=dataxLRJyLRJtemp(:,2);
+        TracexR=dataxLRJyLRJtemp(:,3);
+        TraceyR=dataxLRJyLRJtemp(:,4);
+        TracexJ=dataxLRJyLRJtemp(:,5);
+        TraceyJ=dataxLRJyLRJtemp(:,6);
     plot(TracexL,TraceyL,'-r',TracexR,TraceyR,'-b',TracexJ,TraceyJ,'-g');
     end
+    
     
     set(gca, 'YDir', 'reverse');
     hold off;

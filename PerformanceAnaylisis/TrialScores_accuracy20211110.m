@@ -1,4 +1,8 @@
 figure;
+
+% NumTrialsRecorded=length(allPerm);
+UniCondi=unique(allPerm);
+
 for conditionSelected=1:length(conditions)
     
     indtemp=find(CondiData==conditionSelected);
@@ -18,7 +22,4 @@ for conditionSelected=1:length(conditions)
 end
 
 
-%% plot different sessions with different color in one plot
 
-
-%% plot accuracy*average deviation

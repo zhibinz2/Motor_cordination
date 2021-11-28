@@ -2,7 +2,6 @@ cd /home/zhibin/Documents/GitHub/Motor_cordination/behaviraldata
 % clear;
 % load('matlab2021101802.mat');
 
-
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 % run organize_Behavioral_step1.m
 
@@ -70,7 +69,7 @@ for conditionSelected=1:length(UniCondi)
     subplot(2,length(UniCondi),2*length(UniCondi)+1-conditionSelected);
     plot(1:length(indtemp),SpatialError,'go');hold on;
     tbl=table((1:length(indtemp))',SpatialError');mdl = fitlm(tbl,'linear');
-    plot(mdl);hold off;ylim([0 120]);
+    plot(mdl);hold off;ylim([0 400]);
     ylabel('spatial error (pixels/score)');xlabel('trial'); title(['r^2 = ' num2str(mdl.Rsquared.Ordinary)]);
     %---delete the legend-------------
     % s=findobj('type','legend');delete(s);
