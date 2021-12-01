@@ -1,9 +1,13 @@
 %% Check EEG on 2021018
 % load EEG all as one
-cd /home/zhibin/Documents/Acquisition/bimanual_Reach_zhibin_20211018
-filenames=dir; EEGfileName=filenames(3).name;
+% cd /home/zhibin/Documents/Acquisition/bimanual_Reach_zhibin_20211018
+
+% filenames=dir; EEGfileName=filenames(3).name;
 % [EEGfileName]=uigetfile('*.cdt');
-EEG=loadcurry([pwd '/' 'bimanual_Reach_Jack_20211118.cdt']);
+
+% EEG=loadcurry([pwd '/' 'bimanual_Reach_Jack_20211118.cdt']);
+
+%%
 dataEEG=EEG.data;
 datatimes=EEG.times;
 Fs=EEG.srate;
@@ -109,9 +113,9 @@ filtered_broadband=filtered_data;
 % filtered_data=filtered_broadband;
 
 %% fiter5bands 
-tic;
-run filter5bands.m
-toc;
+% tic;
+% run filter5bands.m
+% toc;
 
 % filtered_data=filtered_delta;
 % filtered_data=filtered_theta;
@@ -123,9 +127,9 @@ toc;
 % figure;
 % plot(filtered_gamma(5000:10000,8));
 
-tic;
-% cd /home/zhibin/Documents/Acquisition/Bimanual_reach_zhibin_20211102
-filename='filtered_data.mat';
-% save(filename); % save all variables in the workspace
-save(filename, 'filtered_broadband', 'filtered_delta', 'filtered_theta', 'filtered_alpha', 'filtered_beta', 'filtered_gamma', '-v7.3');
-toc;
+% tic;
+% % cd /home/zhibin/Documents/Acquisition/Bimanual_reach_zhibin_20211102
+% filename='filtered_data.mat';
+% % save(filename); % save all variables in the workspace
+% save(filename, 'filtered_broadband', 'filtered_delta', 'filtered_theta', 'filtered_alpha', 'filtered_beta', 'filtered_gamma', '-v7.3');
+% toc;

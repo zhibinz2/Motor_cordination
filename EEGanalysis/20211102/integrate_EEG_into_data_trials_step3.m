@@ -12,7 +12,9 @@ data_trials=zeros(1000+NumTrialtimepoints+1500,NumAllChannels,NumTrialsRecorded)
 % (You need to go 500 ms before the joint dot turned green up to 1.5 secs after the Go signal.
 % I like to have a little padding because of the way the spectrogram works.
 % IF you have this, we can compute a spectrogram.)
-% Add the 1 second of bonus display after movement
+% I also add the 1 second of bonus display after movement
+% So the 4000 timepoints are structured as 
+% "500ms padding + 500ms green dot baseline + 500ms plan phase + 1000ms movement + 1000ms show bonus + 500ms padding"
 
 
 % Initialize the indices for trial start and end time point

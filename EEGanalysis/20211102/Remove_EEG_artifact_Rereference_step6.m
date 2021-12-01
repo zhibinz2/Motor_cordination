@@ -74,6 +74,13 @@ artifact.zerochans = zerochans;
 %% Re reference
 % This function pass filtered_data and get back average referenced data.
 [reRef_data] = reRef(data_trials_EEG,goodchans);
+
+% figure; % to examine reRef_data
 % erpdata = mean(reRef_data(:,:,goodepochs),3); % This includes only good epochs
 % plotx(erpdata(:,goodchans));% plot only the good channels
 % xlabel(['time (ms)']);ylabel(['amplitude']);title(['ERP'])
+
+
+% figure; % to compare with data before re reference
+% erpdata = mean(data_trials_EEG(:,:,goodepochs),3); % This includes only good epochs
+% plotx(erpdata(:,goodchans));% plot only the good channels
