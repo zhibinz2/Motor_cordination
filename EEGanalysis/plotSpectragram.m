@@ -50,12 +50,18 @@ AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2',
 
 % AllchanNames{1}
 
-     for u=1:length(UniCondi);
+%% For all 3 days
+CondiData=allPerm_alldays(logical(goodepochs_alldays));
+TrialScores=TrialScores_alldays(logical(goodepochs_alldays));
+%%
 
-    figure('units','normalized','outerposition',[0 0 0.4 0.6]);
+for u=1:length(UniCondi);
+
+    figure('units','normalized','outerposition',[0 0 0.6 0.6]);
 
     indtemp=find(CondiData==UniCondi(u));
-    HighInd=indtemp(find(TrialScores(indtemp)>0.8));
+    HighInd=indtemp(find(TrialScores(indtemp)>median(TrialScores(indtemp))));
+    LowInd=indtemp(find(TrialScores(indtemp)<median(TrialScores(indtemp))));
 
     % Compute ERP in all channels
     basedlinecorrected_ERP=mean(baselinecorrected_data_trial(:,1:128,HighInd),3);
@@ -71,7 +77,7 @@ AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2',
 %     normPowcnorm = logPowcorm-(ones(1,3000,1).*baselineMean);
     % second way to do it:
     baselineMean = mean(Powcnorm(:,501:1000,:),2);
-	normPowcnorm = (Powcnorm-ones(1,3000,1).*baselineMean)./(ones(1,3000,1).*baselineMean);
+	normPowcnorm = (Powcnorm-ones(1,4000,1).*baselineMean)./(ones(1,4000,1).*baselineMean);
     
     
     % open sgolay; open sgolayfilt
@@ -81,6 +87,7 @@ AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2',
     colormap jet; colorbar ; %caxis ([-4 4]);% caxis 
     xlabel('time(ms)'); ylabel('frequencies(Hz)'); set(gca,'ydir','normal');
     yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
+    xticks(linspace(0,4000,9));xticklabels({'-1000','-500','0','500','1000','1500','2000','2500','3000'});
     title([AllchanNames{9}]);
     
     subplot(3,2,2);
@@ -88,6 +95,7 @@ AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2',
     colormap jet; colorbar ; %caxis ([-4 4]);
     xlabel('time(ms)'); ylabel('frequencies(Hz)'); set(gca,'ydir','normal');
     yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
+    xticks(linspace(0,4000,9));xticklabels({'-1000','-500','0','500','1000','1500','2000','2500','3000'});
     title([AllchanNames{13}]);
 
     subplot(3,2,3);
@@ -95,6 +103,7 @@ AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2',
     colormap jet; colorbar ; %caxis ([-4 4]);
     xlabel('time(ms)'); ylabel('frequencies(Hz)'); set(gca,'ydir','normal');
     yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
+    xticks(linspace(0,4000,9));xticklabels({'-1000','-500','0','500','1000','1500','2000','2500','3000'});
     title([AllchanNames{19}]);
 
     subplot(3,2,4);
@@ -102,6 +111,7 @@ AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2',
     colormap jet; colorbar ; %caxis ([-4 4]);
     xlabel('time(ms)'); ylabel('frequencies(Hz)'); set(gca,'ydir','normal');
     yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
+    xticks(linspace(0,4000,9));xticklabels({'-1000','-500','0','500','1000','1500','2000','2500','3000'});
     title([AllchanNames{23}]);
 
     subplot(3,2,5);
@@ -109,6 +119,7 @@ AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2',
     colormap jet; colorbar ; %caxis ([-4 4]);
     xlabel('time(ms)'); ylabel('frequencies(Hz)'); set(gca,'ydir','normal');
     yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
+    xticks(linspace(0,4000,9));xticklabels({'-1000','-500','0','500','1000','1500','2000','2500','3000'});
     title([AllchanNames{28}]);
 
     subplot(3,2,6);
@@ -116,6 +127,7 @@ AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2',
     colormap jet; colorbar ; %caxis ([-4 4]);
     xlabel('time(ms)'); ylabel('frequencies(Hz)'); set(gca,'ydir','normal');
     yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
+    xticks(linspace(0,4000,9));xticklabels({'-1000','-500','0','500','1000','1500','2000','2500','3000'});
     title([AllchanNames{32}]);
 
     suptitle([conditionNames{UniCondi(u)}]);

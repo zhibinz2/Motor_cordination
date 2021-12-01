@@ -9,8 +9,5 @@ mat=matnlap(10, Neuroscan_spherical_goodchans, Neuroscan_spherical_chans);
 filtered_data=filtered_data(:, goodchans)*mat;
 
 
-
-
-
 %% pick the behaviorally good trials
 % TrialScores

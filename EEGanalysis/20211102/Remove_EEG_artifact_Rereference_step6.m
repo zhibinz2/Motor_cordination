@@ -70,6 +70,9 @@ artifact.editmatrix = trialdatamax;
 artifact.threshhold = threshold;
 artifact.zerochans = zerochans;
 
+%% goodepochs in boolean
+Bgoodepochs=zeros(1,nEpochs);
+Bgoodepochs(goodepochs)=1;
 
 %% Re reference
 % This function pass filtered_data and get back average referenced data.

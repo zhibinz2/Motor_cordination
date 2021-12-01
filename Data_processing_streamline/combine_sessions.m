@@ -26,10 +26,11 @@ run Integrate_Behavioral_into_data_trials_step4.m
 % Plot movements (just to check)
 run draw_movements_all_conditions_step5.m
 
-% Get goodchans
+% Get goodchans, and a boolean goodepochs array
 run Remove_EEG_artifact_Rereference_step6.m
 % Just to examine
 goodchans;
+Bgoodepochs;
 
 % Use Goodchans to do Laplacian
 run Use_Goodchans_to_Laplacian_step7.m
@@ -47,20 +48,37 @@ run Integrate_Behavioral_into_data_trials_step4.m
 data_trials_day1=data_trials;
 allPerm_day1=allPerm;
 TrialScores_day1=TrialScores;
+goodepochs_day1=Bgoodepochs;
 
 % run section 1 again with the data in day2
 data_trials_day2=data_trials;
 allPerm_day2=allPerm;
 TrialScores_day2=TrialScores;
+goodepochs_day2=Bgoodepochs;
 
 % run section 1 again with the data in day3
 data_trials_day3=data_trials;
 allPerm_day3=allPerm;
 TrialScores_day3=TrialScores;
+goodepochs_day3=Bgoodepochs;
 
 
 data_trials_alldays=cat(3,data_trials_day1,data_trials_day2,data_trials_day3);
 allPerm_alldays=[allPerm_day1 allPerm_day2 allPerm_day3];
 TrialScores_alldays=[TrialScores_day1 TrialScores_day2 TrialScores_day3];
+goodepochs_alldays=[goodepochs_day1 goodepochs_day2 goodepochs_day3];
+
+%% *100 and Baseline correct
+data_trials_alldays=data_trials_alldays.*100;
+baselinesamps = 501:1000; % use the first 500ms as baseline
+baselinecorrected_data_trial=zeros(size(data_trials_alldays)); 
+for i=1:size(data_trials_alldays,3) % loop through trials
+    erpdata=data_trials_alldays(:,:,i);
+    newerp = baselinecorrect(erpdata,baselinesamps);
+    baselinecorrected_data_trial(:,:,i)=newerp;
+end
+% plotx(mean(baselinecorrected_data_trial(:,1:128,:),3));
+% xticks(linspace(0,4000,9));xticklabels({'-1000','-500','0','500','1000','1500','2000','2500','3000'});
+baselinecorrected_data_trial;
 
 %% Combine subjects
