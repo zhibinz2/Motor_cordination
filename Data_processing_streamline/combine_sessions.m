@@ -10,7 +10,9 @@ run organize_Behavioral_step1.m
 cd /home/zhibin/Documents/Acquisition/
 % EEGfileName='bimanual_Reach_Jack_20211118'; EEG=loadcurry([pwd '/' EEGfileName '.cdt']);
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
+tic
 run organize_EEG_filter_step2.m
+toc
 % Just to examine
 filtered_data;
 

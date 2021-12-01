@@ -72,12 +72,13 @@ for u=1:length(UniCondi);
     
     % Power normalization
     % one way to it:
-%     logPowcorm=log(Powcnorm);
-%     baselineMean=mean(logPowcorm(:,501:1000,:),2);
-%     normPowcnorm = logPowcorm-(ones(1,3000,1).*baselineMean);
+    logPowcorm=log(Powcnorm);
+    baselineMean=mean(logPowcorm(:,501:1000,:),2);
+    normPowcnorm = logPowcorm-(ones(1,4000,1).*baselineMean);
     % second way to do it:
     baselineMean = mean(Powcnorm(:,501:1000,:),2);
-	normPowcnorm = (Powcnorm-ones(1,4000,1).*baselineMean)./(ones(1,4000,1).*baselineMean);
+    baselineMeanArray = ones(1,4000,1).*baselineMean;
+    normPowcnorm = (Powcnorm-baselineMeanArray)./(baselineMeanArray);
     
     
     % open sgolay; open sgolayfilt

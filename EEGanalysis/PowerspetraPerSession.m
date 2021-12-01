@@ -70,6 +70,7 @@ for u=1:length(UniCondi); % sp=1:2
     
     %*********************************************************************
 
+    Ymax=0.9;
     figure(1);
     
     [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_data_trial(:,1:128,:),rate,maxfreq,HighInd,win);
@@ -77,7 +78,7 @@ for u=1:length(UniCondi); % sp=1:2
     subplot(1,length(UniCondi),length(UniCondi)+1-u); % C3/C4 28/32 
     
     plotx(freqs,pow(:,28),'color',[0.9290 0.6940 0.1250]);
-    xlabel('freq');ylabel('pow (\muV^2/cm^2)'); xlim([0 25]);ylim([0 0.16]);
+    xlabel('freq');ylabel('pow (\muV^2/cm^2)'); xlim([0 25]);ylim([0 Ymax]);
 %     title([conditionNames{UniCondi(u)} '  ' AllchanNames{28}]);
     title(['high performance trials ' conditionNames{UniCondi(u)}]);
     hold on
@@ -108,7 +109,7 @@ for u=1:length(UniCondi); % sp=1:2
     subplot(1,length(UniCondi),length(UniCondi)+1-u); % C3/C4 28/32 
     
     plotx(freqs,pow(:,28),'color',[0.9290 0.6940 0.1250]);
-    xlabel('freq');ylabel('pow (\muV^2/cm^2)'); xlim([0 25]);ylim([0 0.16]);
+    xlabel('freq');ylabel('pow (\muV^2/cm^2)'); xlim([0 25]);ylim([0 Ymax]);
 %     title([conditionNames{UniCondi(u)} '  ' AllchanNames{28}]);
     title(['low performance trials ' conditionNames{UniCondi(u)}]);
     hold on
@@ -132,8 +133,11 @@ for u=1:length(UniCondi); % sp=1:2
 end
 % toc;
 % suptitle('Jack session 2')
-% clf %clear figure;
+% clf(figure(1));clf(figure(2)); %clear figure;
 %% plot 6 channels over different conditions
+win=1001:1500; % planning;
+win=1501:2500; % During the movement, after 500 ms of planning
+win=2501:3500; % Seeing Bonus;
 
 UniCondi=unique(CondiData);
 
@@ -141,6 +145,8 @@ UniCondi=unique(CondiData);
 % for i=1:6
 %     subplot(1,6,i);
 % end
+
+% clf(figure(1));clf(figure(2));
 
 figure(1);
 ax1=subplot(3,2,1);
@@ -241,47 +247,46 @@ for u=1:length(UniCondi);
 end
 % toc;
 % suptitle('Jack session 2')
+Ymax=0.3;
 
 figure(1);
 axes(ax1);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title(['high ' AllchanNames{9}]); %F3
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 Ymax]);xlim([0 25]);title(['high ' AllchanNames{9}]); %F3
 legend(conditionNames);
 axes(ax2);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title(['high ' AllchanNames{13}]); %F4
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 Ymax]);xlim([0 25]);title(['high ' AllchanNames{13}]); %F4
 legend(conditionNames);
 axes(ax3);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title(['high ' AllchanNames{19}]); %FC3
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 Ymax]);xlim([0 25]);title(['high ' AllchanNames{19}]); %FC3
 legend(conditionNames);
 axes(ax4);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title(['high ' AllchanNames{23}]); %FC4
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 Ymax]);xlim([0 25]);title(['high ' AllchanNames{23}]); %FC4
 legend(conditionNames);
 axes(ax5);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title(['high ' AllchanNames{28}]); %C3
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 Ymax]);xlim([0 25]);title(['high ' AllchanNames{28}]); %C3
 legend(conditionNames);
 axes(ax6);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title(['high ' AllchanNames{32}]); %C4
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 Ymax]);xlim([0 25]);title(['high ' AllchanNames{32}]); %C4
 legend(conditionNames);
 
 
 figure(2);
 axes(ax12);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title(['low ' AllchanNames{9}]); %F3
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 Ymax]);xlim([0 25]);title(['low ' AllchanNames{9}]); %F3
 legend(conditionNames);
 axes(ax22);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title(['low ' AllchanNames{13}]); %F4
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 Ymax]);xlim([0 25]);title(['low ' AllchanNames{13}]); %F4
 legend(conditionNames);
 axes(ax32);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title(['low ' AllchanNames{19}]); %FC3
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 Ymax]);xlim([0 25]);title(['low ' AllchanNames{19}]); %FC3
 legend(conditionNames);
 axes(ax42);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title(['low ' AllchanNames{23}]); %FC4
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 Ymax]);xlim([0 25]);title(['low ' AllchanNames{23}]); %FC4
 legend(conditionNames);
 axes(ax52);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title(['low ' AllchanNames{28}]); %C3
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 Ymax]);xlim([0 25]);title(['low ' AllchanNames{28}]); %C3
 legend(conditionNames);
 axes(ax62);
-xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 0.25]);xlim([0 25]);title(['low ' AllchanNames{32}]); %C4
+xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 Ymax]);xlim([0 25]);title(['low ' AllchanNames{32}]); %C4
 legend(conditionNames);
 
-
-    
