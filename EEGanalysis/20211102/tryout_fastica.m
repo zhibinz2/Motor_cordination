@@ -68,9 +68,9 @@ eeglab
 
 open fastica
 
-x=linspace(1,10,2000);
+x=linspace(0.1,10,2000);
 y1=sin(x);y2=cos(2*x); % two component
-figure;plot(x,y1);hold on; plot(x,y2);legend('y1','y2'); title('2 components');
+figure;plot(x,y1);hold on; plot(x,y2);legend('y1','y2'); title('2 source');
 
 ymix1=y1+y2;ymix2=0.1*y1+2*y2;ymix3=2*y1+0.1*y2;
 figure;plot(x,ymix1);hold on;plot(x,ymix2);plot(x,ymix3);legend('ymix1','ymix2','ymix3');title('mix signals');
@@ -94,9 +94,9 @@ figure;plot(x,A*icasig);
 legend('ymix1restore','ymix2restore','ymix3restore');title('restore mix signal');
 
 % Reconstruct the mixedsig
-figure;plot(x,A(1,1)*icasig(1,:));title('keep component1'); % Keep component 1 remove 2
-figure;plot(x,A(:,2)*icasig(2,:));title('keep component2'); % Keep component 2 remove 1
+figure;plot(x,A(:,1)*icasig(1,:));legend('reconstruct_ymix1','reconstruct_ymix2','reconstruct_ymix3');title('keep component1'); % Keep component 1 remove 2
+figure;plot(x,A(:,2)*icasig(2,:));legend('reconstruct_ymix1','reconstruct_ymix2','reconstruct_ymix3');title('keep component2'); % Keep component 2 remove 1
 
-
-figure;plot(x,A(:,2)*icasig(1,:));title('keep component1'); % Keep component 1 remove 2
-figure;plot(x,A(:,1)*icasig(2,:));title('keep component2'); % Keep component 2 remove 1
+% % Doesn't make sense
+% figure;plot(x,A(:,2)*icasig(1,:));legend('reconstruct_ymix1','reconstruct_ymix2','reconstruct_ymix3');title('keep component1'); % Keep component 1 remove 2
+% figure;plot(x,A(:,1)*icasig(2,:));legend('reconstruct_ymix1','reconstruct_ymix2','reconstruct_ymix3');title('keep component2'); % Keep component 2 remove 1
