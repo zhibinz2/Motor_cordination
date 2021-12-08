@@ -69,19 +69,19 @@ eeglab
 open fastica
 
 x=linspace(0.1,10,2000);
-y1=sin(x);y2=cos(2*x); % two component
-figure;plot(x,y1);hold on; plot(x,y2);legend('y1','y2'); title('2 source');
+y1=2*sin(x);y2=sin(2*x); % two component
+figure;plot(x,y1,'r');hold on; plot(x,y2,'b');legend('y1','y2'); title('2 source');
 
-ymix1=y1+y2;ymix2=0.1*y1+2*y2;ymix3=2*y1+0.1*y2;
-figure;plot(x,ymix1);hold on;plot(x,ymix2);plot(x,ymix3);legend('ymix1','ymix2','ymix3');title('mix signals');
+ymix1=y1+0.1*y2;ymix2=0.5*y1+0.5*y2;ymix3=0.1*y1+y2;
+figure;plot(x,ymix1,'r');hold on;plot(x,ymix2,'g');plot(x,ymix3,'b');legend('ymix1','ymix2','ymix3');title('mix signals');ylim([-2 2]);
 
 mixedsig=[ymix1;ymix2;ymix3];
 
 [icasig, A, W] = fastica(mixedsig); % mixing matrix A and the separating matrix W
 
-figure; plot(x,mixedsig);legend('ymix1','ymix2','ymix3');
+figure; plot(x,mixedsig);legend('ymix1','ymix2','ymix3');ylim([-2 2]);
 
-figure;plot(x,icasig(1,:));hold on; plot(x,icasig(2,:));legend('icasig1','icasig2');title('plot 2 ica signal');
+figure;plot(x,icasig(1,:));hold on; plot(x,icasig(2,:));legend('icasig1','icasig2');title('plot 2 ica signal');ylim([-2 2]);
 
 % separating matrix W; restore ica signal
 figure;plot(x,W(1,:)*mixedsig);hold on; plot(x,W(2,:)*mixedsig);
