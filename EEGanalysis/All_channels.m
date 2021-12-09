@@ -147,3 +147,12 @@ TRIGGEREEG = reRef_data(:,139,trial);
 FC1EEG; % Left to FCZ
 FCZEEG; % the best location for SMA
 FC2EEG; % Right to FCZ
+%%
+% x = X(:) ; 
+% y = Y(:) ; 
+% z = Z(:) ; 
+
+P = [x' y' z'] ;
+fid = fopen('test.xyz', 'wt');
+fprintf(fid, [repmat('%.f\t', 1, size(P,2)-1) '%f\n'],P.');
+fclose(fid)
