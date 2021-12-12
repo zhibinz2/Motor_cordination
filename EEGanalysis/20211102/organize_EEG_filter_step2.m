@@ -73,6 +73,14 @@ dataEnd=locs(ind_trial_end(end));
 % ind_trial_start=ind_trial_end-trialLength+1; % index of the first peak in each trial (index in locs)
 
 
+%% This can be used as one event channel to import into EEGLAB
+EventTimes=locs(ind_trial_end)-1500; % trajectory appear onset
+for i=1:length(EventTimes)
+    EventInd(i)=find(datatimes==EventTimes(i));
+end
+EventChannel=zeros(1,length(datatimes));
+EventChannel(EventInd)=1;
+
 %% detrend the data
 
 addpath(genpath('/home/zhibin/Documents/GitHub'));
@@ -95,7 +103,7 @@ detrend_data=ndetrend(transpose_data,1);
 % load eeglab toolbox to avoid filtered_data becoming NaN
 eeglab;
 close all;
-Hd = makefilter(Fs,1,0.5,3,20,0); % Astop 6 or 20;
+Hd = makefilter(Fs,1.5,1,3,20,0); % Astop 6 or 20;
 filtered_data=filtfilthd(Hd,double(detrend_data));
 
 % remove channel 91 44

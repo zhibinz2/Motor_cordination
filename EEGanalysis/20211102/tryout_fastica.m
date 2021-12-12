@@ -7,16 +7,22 @@ run organize_EEG_filter_step2.m
 
 % shorten EEG to try out
 EEGdataShort=EEGdata(:,10*1000:600*1000);
-EEGdataShort=filtered_data(10*1000:600*1000,:)';
+EEGdataShort=filtered_data(1:EventInd(70),:);
+TimesdataShort=datatimes(1:EventInd(70),:);
 % plotx(EEGdataShort);
-
+tic
 [icasig, A, W] = fastica(EEGdataShort);
+toc
 % Each row of matrix mixedsig is one observed signal.
 % the rows of icasig contain the estimated independent components.
 
 % other EEGLAB method
-[weights,sphere] = runica(data); % train using defaults 
+tic
+[weights,sphere,compvars,bias,signs,lrates,activations] = runica(EEGdataShort'); % train using defaults 
+toc
 
+imagesc(sphere)
+plotx(activations');
 plotx(icasig);
 
 
