@@ -88,6 +88,7 @@ transpose_data=permute(EEGdata,[2,1]);
 detrend_data=ndetrend(transpose_data,1); 
 % plotx(mean(detrend_data,2)); xlim([5000 10000]);
 % plotx(detrend_data); xlim([5000 10000]);
+% plotx(detrend_data(5000:10000,:));
 
 %% Broadband filter
 % apply high pass filter to filter out frequencies lower than 1;
@@ -107,6 +108,7 @@ filtered_data=filtfilthd(Hd,filtered_data);
 
 % plotx(mean(filtered_data,2));  
 % plotx(filtered_data);hold on;xline(dataEnd,'m--');
+% plotx(filtered_data(5000:10000,:));
 
 %%
 filtered_broadband=filtered_data;

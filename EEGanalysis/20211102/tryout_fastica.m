@@ -4,9 +4,20 @@ cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 tic
 run organize_EEG_filter_step2.m
 
-[icasig, A, W] = fastica(EEGdata);
+
+% shorten EEG to try out
+EEGdataShort=EEGdata(:,10*1000:600*1000);
+EEGdataShort=filtered_data(10*1000:600*1000,:)';
+% plotx(EEGdataShort);
+
+[icasig, A, W] = fastica(EEGdataShort);
 % Each row of matrix mixedsig is one observed signal.
 % the rows of icasig contain the estimated independent components.
+
+% other EEGLAB method
+[weights,sphere] = runica(data); % train using defaults 
+
+plotx(icasig);
 
 
 mixedsig=EEGdata;
