@@ -74,12 +74,12 @@ dataEnd=locs(ind_trial_end(end));
 
 
 %% This can be used as one event channel to import into EEGLAB
-EventTimes=locs(ind_trial_end)-1500; % trajectory appear onset
+EventTimes=locs(ind_trial_end);% 
 for i=1:length(EventTimes)
     EventInd(i)=find(datatimes==EventTimes(i));
 end
 EventChannel=zeros(1,length(datatimes));
-EventChannel(EventInd)=1;
+EventChannel(EventInd-1500)=1;% trajectory appear onset
 
 %% detrend the data
 

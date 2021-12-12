@@ -7,11 +7,17 @@ run organize_EEG_filter_step2.m
 
 % shorten EEG to try out
 EEGdataShort=EEGdata(:,10*1000:600*1000);
-EEGdataShort=filtered_data(1:EventInd(70),:);
-TimesdataShort=datatimes(1:EventInd(70),:);
-% plotx(EEGdataShort);
+
+EEGdataShort=filtered_data(1:EventInd(250),:);
+TimesdataShort=datatimes(1:EventInd(250));
+% 
+plot(TimesdataShort, EEGdataShort);hold on;
+for i=1:250
+    xline(EventInd(i));
+end
+
 tic
-[icasig, A, W] = fastica(EEGdataShort);
+[icasig, A, W] = fastica(EEGdataShort');
 toc
 % Each row of matrix mixedsig is one observed signal.
 % the rows of icasig contain the estimated independent components.
@@ -21,10 +27,11 @@ tic
 [weights,sphere,compvars,bias,signs,lrates,activations] = runica(EEGdataShort'); % train using defaults 
 toc
 
-imagesc(sphere)
-plotx(activations');
-plotx(icasig);
 
+%%
+imagesc(sphere)
+plot(activations');
+plot(icasig);
 
 mixedsig=EEGdata;
 
@@ -97,7 +104,70 @@ mixedsig
 for i=1:128
     SqA(i)=sumsqr(A(:,i));
 end
+figure;
 plot(1:128,SqA,'ro');ylabel('sum of square of column in A');
+[B,I]=sort(SqA,'descend');
+figure;
+plotx(TimesdataShort(1:10000),icasig(:,(1:10000)));
+% FP1 and FP2 are channel 1 and 3;
+% compute correlation between FP1 and FP2;
+[RHO,PVAL] = corr(EEGdataShort(:,3),EEGdataShort(:,3));
+figure
+[RHO,PVAL] = corr(EEGdataShort(:,1),icasig');
+figure
+plot(1:128,RHO,'bo');hold on;
+plot(1:128,PVAL,'ro');legend({'RHO' 'PVAL'})
+
+
+[RHO,PVAL] = corr(EEGdataShort(:,3),icasig');
+figure
+plot(1:128,RHO,'bo');hold on;
+plot(1:128,PVAL,'ro');legend({'RHO' 'PVAL'})
+
+
+% component 65,52,3 seem to be highly correlated with FP1 and FP2
+load('Neuroscan_spherical__topoplot_chans.mat')
+topoplot(A(:,65),test,'nosedir','+Y');
+topoplot(A(:,52),test,'nosedir','+Y');
+topoplot(A(:,3),test,'nosedir','+Y');
+
+PlotEnd=5;
+figure
+plotx(TimesdataShort(1:EventInd(PlotEnd)),EEGdataShort((1:EventInd(PlotEnd)),:));
+
+hold on;
+for i=1:PlotEnd
+    xline(EventInd(i));
+end
+
+figure
+plotx(TimesdataShort(1:EventInd(PlotEnd)),icasig(:,(1:EventInd(PlotEnd))));
+
+
+A(:,65)=0;A(:,52)=0;A(:,3)=0;imagesc(A);
+icasig(65,:)=0;icasig(52,:)=0;icasig(3,:)=0;imagesc(icasig);
+mixedsig=A*icasig;
+
+figure
+plotx(TimesdataShort(1:EventInd(PlotEnd)),mixedsig(:,(1:EventInd(PlotEnd))));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%
+
 
 for i=1:128
     SqA(i)=sumsqr(W(:,i));
@@ -107,7 +177,7 @@ plot(1:128,SqA,'ro');ylabel('sum of square of column in A');
 for i=1:128
     SqA(i)=sumsqr(A(i,:));
 end
-plot(1:128,SqA,'ro');ylabel('sum of square of column in A');
+plot(1:128,SqA,'ro');ylabel('sum of square of rows in A');
 
 RemoveICA1sig=A(:,2:128)*icasig(2:128,:);%remove #1 component and get back 128 channel signal
 
