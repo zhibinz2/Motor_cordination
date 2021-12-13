@@ -1,2 +1,0 @@
-eegdata = rand(32, 256*100);
-plot(eegdata(1:2,100:200)');
