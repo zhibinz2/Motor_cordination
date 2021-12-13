@@ -14,4 +14,4 @@
 split_reRef_data = num2cell(reRef_data, [1 2]); %split A keeping dimension 1 and 2 intact
 EEGdataShort=vertcat(split_reRef_data{:});
 
-%% Recalculate the events
+%% Recalculate the event array (for display and for EEGLAB)

@@ -73,7 +73,7 @@ dataEnd=locs(ind_trial_end(end));
 % ind_trial_start=ind_trial_end-trialLength+1; % index of the first peak in each trial (index in locs)
 
 
-%% This can be used as one event channel to import into EEGLAB
+%% This could be used as one event channel to import into EEGLAB
 EventTimes=locs(ind_trial_end);% 
 for i=1:length(EventTimes)
     EventInd(i)=find(datatimes==EventTimes(i));
