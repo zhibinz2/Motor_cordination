@@ -6,13 +6,12 @@ run organize_EEG_filter_step2.m
 
 
 % shorten EEG to try out
-EEGdataShort=EEGdata(:,10*1000:600*1000);
-
-EEGdataShort=filtered_data(1:EventInd(250),:);
-TimesdataShort=datatimes(1:EventInd(250));
+PlotEnd=350; % how many trial to plot
+EEGdataShort=filtered_data(1:EventInd(PlotEnd),:);
+TimesdataShort=datatimes(1:EventInd(PlotEnd));
 % 
 plot(TimesdataShort, EEGdataShort);hold on;
-for i=1:250
+for i=1:PlotEnd
     xline(EventInd(i));
 end
 
@@ -22,13 +21,13 @@ toc
 % Each row of matrix mixedsig is one observed signal.
 % the rows of icasig contain the estimated independent components.
 
-% other EEGLAB method
+% other EEGLAB method (tryout)
 tic
 [weights,sphere,compvars,bias,signs,lrates,activations] = runica(EEGdataShort'); % train using defaults 
 toc
 
 
-%%
+%% tryout
 imagesc(sphere)
 plot(activations');
 plot(icasig);
@@ -53,9 +52,9 @@ EEGdataRestore=A*icasig;
 icasig=W*EEGdata;
 icasigRestore=W*EEGdata;
 
-%%
+%% tryout
 fasticag
-%%
+%% tryout
 
 figure;
 plotx(icasig(:,10000:20000));
@@ -71,7 +70,7 @@ plotx(EEGdataRestore(:,10000:20000));
 imagesc(A);
 topoplot(A(1,:),EEG.chanlocs(1:128),'conv','on');
 topoplot(A(:,1),test,'conv','on','nosedir','+Y');
-%%
+%% tryout
 for i=1:12
     subplot(1,12,i);
     topoplot(A(:,i),test,'nosedir','+Y'); % plot each colum
@@ -81,7 +80,7 @@ for i=1:12
     subplot(1,12,i);
     topoplot(A(i,:),test,'nosedir','+Y');
 end
-%%
+%% tryout
 imagesc(W);
 topoplot(W(1,:),EEG.chanlocs(1:128),'conv','on');
 topoplot(W(:,1),EEG.chanlocs(1:128),'conv','on');
@@ -98,8 +97,7 @@ topoplot(A(1,:),Neuroscan_topoplot_chans);
 
 topoplot(A(1,:),chanlocs(1:128),'conv','on');
 
-%% Remove #1 component
-mixedsig
+%% Plot correlation
 
 for i=1:128
     SqA(i)=sumsqr(A(:,i));
@@ -107,29 +105,79 @@ end
 figure;
 plot(1:128,SqA,'ro');ylabel('sum of square of column in A');
 [B,I]=sort(SqA,'descend');
+
+% Component 56 55 3 have the highest weights in the mixing matrics A
+% topoplot to examine them
+
+
+
+PlotStart=95;PlotEnd=100;
 figure;
-plotx(TimesdataShort(1:10000),icasig(:,(1:10000)));
+plotx(TimesdataShort(EventInd(PlotStart):EventInd(PlotEnd)),EEGdataShort((EventInd(PlotStart):EventInd(PlotEnd)),:));
+hold on;
+for i=PlotStart:PlotEnd
+    xline(EventInd(i),'r',{'End of trial'});
+    xline(EventInd(i)-1000,'g',{'Go signal'});
+end
+hold off;
+xlim([EventInd(PlotStart+1)-2000 EventInd(PlotEnd)-2000]);
+title('Channel Singal Before ICA');
+cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis
+load('Neuroscan_spherical__topoplot_chans.mat')
+figure;
+subplot(3,1,1);topoplot(A(:,56),test,'nosedir','+Y');title('component 56');colorbar;
+subplot(3,1,2);topoplot(A(:,52),test,'nosedir','+Y');title('component 52');colorbar;
+subplot(3,1,3);topoplot(A(:,3),test,'nosedir','+Y');title('component 3'); colorbar;
+
+
+figure;
+plotx(TimesdataShort(EventInd(PlotStart):EventInd(PlotEnd)),icasig(:,(EventInd(PlotStart):EventInd(PlotEnd))));
+hold on;
+for i=PlotStart:PlotEnd
+    xline(EventInd(i),'r',{'End of trial'});
+    xline(EventInd(i)-1000,'g',{'Go signal'});
+end
+hold off;
+xlim([EventInd(PlotStart+1)-2000 EventInd(PlotEnd)-2000]);
+title('ICA Singal');
+
+
+
+
+
 % FP1 and FP2 are channel 1 and 3;
 % compute correlation between FP1 and FP2;
-[RHO,PVAL] = corr(EEGdataShort(:,3),EEGdataShort(:,3));
-figure
-[RHO,PVAL] = corr(EEGdataShort(:,1),icasig');
-figure
-plot(1:128,RHO,'bo');hold on;
-plot(1:128,PVAL,'ro');legend({'RHO' 'PVAL'})
+[RHO3,PVAL3] = corr(EEGdataShort(:,3),EEGdataShort(:,3));
 
 
-[RHO,PVAL] = corr(EEGdataShort(:,3),icasig');
+[RHO1,PVAL1] = corr(EEGdataShort(:,1),icasig');
 figure
-plot(1:128,RHO,'bo');hold on;
-plot(1:128,PVAL,'ro');legend({'RHO' 'PVAL'})
+% yyaxis left
+plot(1:128,RHO1,'bo');hold on;ylabel('correlation coefficient');
+% yyaxis right
+plot(1:128,PVAL1,'ro');ylabel('p value');
+legend({'RHO' 'PVAL'});title('FP1');hold off;
 
+
+[RHO3,PVAL3] = corr(EEGdataShort(:,3),icasig');
+figure
+% yyaxis left
+plot(1:128,RHO3,'bo');hold on;ylabel('correlation coefficient');
+% yyaxis right
+plot(1:128,PVAL3,'ro');ylabel('p value');
+legend({'RHO' 'PVAL'});title('FP3');hold off;
 
 % component 65,52,3 seem to be highly correlated with FP1 and FP2
+% Examine them
 load('Neuroscan_spherical__topoplot_chans.mat')
 topoplot(A(:,65),test,'nosedir','+Y');
 topoplot(A(:,52),test,'nosedir','+Y');
 topoplot(A(:,3),test,'nosedir','+Y');
+
+
+
+
+%% Display signal
 
 PlotEnd=5;
 figure
@@ -139,11 +187,12 @@ hold on;
 for i=1:PlotEnd
     xline(EventInd(i));
 end
+hold off;
 
 figure
 plotx(TimesdataShort(1:EventInd(PlotEnd)),icasig(:,(1:EventInd(PlotEnd))));
 
-
+%% Remove components and display
 A(:,65)=0;A(:,52)=0;A(:,3)=0;imagesc(A);
 icasig(65,:)=0;icasig(52,:)=0;icasig(3,:)=0;imagesc(icasig);
 mixedsig=A*icasig;
@@ -166,7 +215,7 @@ plotx(TimesdataShort(1:EventInd(PlotEnd)),mixedsig(:,(1:EventInd(PlotEnd))));
 
 
 
-%%
+%% tryout
 
 
 for i=1:128
@@ -192,7 +241,7 @@ plotx(icasig2(1:127,1000:5000)');
 
 
 
-%%
+%% plot channels in 3d
 % 139 channel labels
 chanlocs = struct('labels', {'FP1' 'FPZ' 'FP2' 'AF3' 'AF4' 'F11' 'F7' 'F5' 'F3' 'F1' 'FZ' 'F2' 'F4' 'F6' 'F8' 'F12' 'FT11' 'FC5' 'FC3' 'FC1' 'FCZ' 'FC2' 'FC4' 'FC6' 'FT12' 'T7' 'C5' 'C3' 'C1' 'CZ' 'C2' 'C4' 'C6' 'T8' 'TP7' 'CP5' 'CP3' 'CP1' 'CPZ' 'CP2' 'CP4' 'CP6' 'TP8' 'M1' 'M2' 'P7' 'P5' 'P3' 'P1' 'PZ' 'P2' 'P4' 'P6' 'P8' 'PO7' 'PO3' 'POZ' 'PO4' 'PO8' 'O1' 'OZ' 'O2' 'CB1' 'CB2' 'AFP1' 'AFP2' 'AF7' 'AF5' 'AFZ' 'AF6' 'AF8' 'AFF5H' 'AFF3H' 'AFF1H' 'AFF2H' 'AFF4H' 'AFF6H' 'F9' 'F10' 'FFT7H' 'FFC5H' 'FFC3H' 'FFC1H' 'FFC2H' 'FFC4H' 'FFC6H' 'FFT8H' 'FT9' 'FT7' 'FT8' 'FT10' 'FTT7H' 'FCC5H' 'FCC3H' 'FCC1H' 'FCC2H' 'FCC4H' 'FCC6H' 'FTT8H' 'TTP7H' 'CCP5H' 'CCP3H' 'CCP1H' 'CCP2H' 'CCP4H' 'CCP6H' 'TTP8H' 'TPP7H' 'CPP5H' 'CPP3H' 'CPP1H' 'CPP2H' 'CPP4H' 'CPP6H' 'TPP8H' 'P9' 'P10' 'PPO3H' 'PPO1H' 'PPO2H' 'PPO4H' 'PO9' 'PO5' 'PO1' 'PO2' 'PO6' 'PO10' 'CBZ' 'VEOG' 'HEOG' 'EMG1' 'EMG2' 'HL 1' 'HL 2' 'EMG3' 'EMG4' 'EMG5' 'EMG6' 'TRIGGER'});
 % 128 channel labels
@@ -202,7 +251,8 @@ pop_chanedit( chanlocs );
 clear
 [azimuth,elevation,r] = cart2sph(x,y,z)
 
-%% https://stackoverflow.com/questions/32212968/how-to-project-data-onto-independent-components-using-fastica-in-matlab
+%% tryout
+% https://stackoverflow.com/questions/32212968/how-to-project-data-onto-independent-components-using-fastica-in-matlab
 
 % Generate data (N=1000) from distribution
 X = gendata(1000);
@@ -216,10 +266,10 @@ Xn = gendata(50);
 % Project new point on ICA estimated independent components  
 Yn = W*Xn;
 
-%%
+%% tryout
 eeglab
 
-%% test out
+%% test out with my own signal combination
 
 open fastica
 
