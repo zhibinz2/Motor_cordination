@@ -97,22 +97,44 @@ topoplot(A(1,:),Neuroscan_topoplot_chans);
 
 topoplot(A(1,:),chanlocs(1:128),'conv','on');
 
-%% Plot correlation
+%% Plot ICA component
 
 for i=1:128
     SqA(i)=sumsqr(A(:,i));
 end
 figure;
-plot(1:128,SqA,'ro');ylabel('sum of square of column in A');
+plot(1:128,SqA,'ro');ylabel('sum of square of column in A');xlabel('ICs');
 [B,I]=sort(SqA,'descend');
 
 % Component 56 55 3 have the highest weights in the mixing matrics A
 % topoplot to examine them
-
-
-
-PlotStart=95;PlotEnd=100;
+cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis
+load('Neuroscan_spherical__topoplot_chans.mat')
 figure;
+subplot(3,1,1);topoplot(A(:,56),test,'nosedir','+Y');title('component 56');colorbar;
+subplot(3,1,2);topoplot(A(:,52),test,'nosedir','+Y');title('component 52');colorbar;
+subplot(3,1,3);topoplot(A(:,3),test,'nosedir','+Y');title('component 3'); colorbar;
+
+figure;
+subplot(3,1,1);topoplot(A(:,102),test,'nosedir','+Y');title('component 102');colorbar;
+subplot(3,1,2);topoplot(A(:,105),test,'nosedir','+Y');title('component 105');colorbar;
+subplot(3,1,3);topoplot(A(:,116),test,'nosedir','+Y');title('component 116'); colorbar;
+
+% Display signal before ICA
+PlotStart=95;PlotEnd=100;DisplayChan=[3 55 56];
+figure;
+subplot(2,1,2);
+plotx(TimesdataShort(EventInd(PlotStart):EventInd(PlotEnd)),EEGdataShort((EventInd(PlotStart):EventInd(PlotEnd)),DisplayChan));
+hold on;
+for i=PlotStart:PlotEnd
+    xline(EventInd(i),'r',{'End of trial'});
+    xline(EventInd(i)-1000,'g',{'Go signal'});
+end
+hold off;
+xlim([EventInd(PlotStart+1)-2000 EventInd(PlotEnd)-2000]);
+legend({'3','55','56'});
+title('Channel Singal Before ICA');xlabel('time samples');ylabel('uV');
+subplot(2,1,1);
 plotx(TimesdataShort(EventInd(PlotStart):EventInd(PlotEnd)),EEGdataShort((EventInd(PlotStart):EventInd(PlotEnd)),:));
 hold on;
 for i=PlotStart:PlotEnd
@@ -122,15 +144,22 @@ end
 hold off;
 xlim([EventInd(PlotStart+1)-2000 EventInd(PlotEnd)-2000]);
 title('Channel Singal Before ICA');
-cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis
-load('Neuroscan_spherical__topoplot_chans.mat')
-figure;
-subplot(3,1,1);topoplot(A(:,56),test,'nosedir','+Y');title('component 56');colorbar;
-subplot(3,1,2);topoplot(A(:,52),test,'nosedir','+Y');title('component 52');colorbar;
-subplot(3,1,3);topoplot(A(:,3),test,'nosedir','+Y');title('component 3'); colorbar;
 
-
+% Plot ICA signal
+PlotStart=95;PlotEnd=100;DisplayChan=[3 55 56];
 figure;
+subplot(2,1,2);
+plotx(TimesdataShort(EventInd(PlotStart):EventInd(PlotEnd)),icasig(DisplayChan,(EventInd(PlotStart):EventInd(PlotEnd))));
+hold on;
+for i=PlotStart:PlotEnd
+    xline(EventInd(i),'r',{'End of trial'});
+    xline(EventInd(i)-1000,'g',{'Go signal'});
+end
+hold off;
+xlim([EventInd(PlotStart+1)-2000 EventInd(PlotEnd)-2000]);
+legend({'3','55','56'});
+title('IC time series');xlabel('time samples');ylabel('uV');
+subplot(2,1,1);
 plotx(TimesdataShort(EventInd(PlotStart):EventInd(PlotEnd)),icasig(:,(EventInd(PlotStart):EventInd(PlotEnd))));
 hold on;
 for i=PlotStart:PlotEnd
@@ -139,45 +168,42 @@ for i=PlotStart:PlotEnd
 end
 hold off;
 xlim([EventInd(PlotStart+1)-2000 EventInd(PlotEnd)-2000]);
-title('ICA Singal');
+title('IC time series');
 
 
-
-
+%% Calculate Correlation
+% test
+% [RHO3,PVAL3] = corr(EEGdataShort(:,3),EEGdataShort(:,3));
 
 % FP1 and FP2 are channel 1 and 3;
 % compute correlation between FP1 and FP2;
-[RHO3,PVAL3] = corr(EEGdataShort(:,3),EEGdataShort(:,3));
-
 
 [RHO1,PVAL1] = corr(EEGdataShort(:,1),icasig');
 figure
+subplot(1,2,1);
 % yyaxis left
 plot(1:128,RHO1,'bo');hold on;ylabel('correlation coefficient');
 % yyaxis right
-plot(1:128,PVAL1,'ro');ylabel('p value');
-legend({'RHO' 'PVAL'});title('FP1');hold off;
-
-
+plot(1:128,PVAL1,'ro');ylabel('p value');xlabel('ICs');
+legend({'correlation coefficient' 'p-values '});title('correlation with FP1');hold off;
+subplot(1,2,2);
 [RHO3,PVAL3] = corr(EEGdataShort(:,3),icasig');
-figure
 % yyaxis left
 plot(1:128,RHO3,'bo');hold on;ylabel('correlation coefficient');
 % yyaxis right
-plot(1:128,PVAL3,'ro');ylabel('p value');
-legend({'RHO' 'PVAL'});title('FP3');hold off;
+plot(1:128,PVAL3,'ro');ylabel('p value');xlabel('ICs');
+legend({'correlation coefficient' 'p-values '});title('correlation with FP2');hold off;
 
-% component 65,52,3 seem to be highly correlated with FP1 and FP2
+% component 55,56,3 seem to be highly correlated with FP1 and FP2
 % Examine them
 load('Neuroscan_spherical__topoplot_chans.mat')
-topoplot(A(:,65),test,'nosedir','+Y');
-topoplot(A(:,52),test,'nosedir','+Y');
+topoplot(A(:,55),test,'nosedir','+Y');
+topoplot(A(:,56),test,'nosedir','+Y');
 topoplot(A(:,3),test,'nosedir','+Y');
 
 
 
-
-%% Display signal
+%% Display signal (tryout)
 
 PlotEnd=5;
 figure
@@ -193,12 +219,44 @@ figure
 plotx(TimesdataShort(1:EventInd(PlotEnd)),icasig(:,(1:EventInd(PlotEnd))));
 
 %% Remove components and display
-A(:,65)=0;A(:,52)=0;A(:,3)=0;imagesc(A);
-icasig(65,:)=0;icasig(52,:)=0;icasig(3,:)=0;imagesc(icasig);
+% A(:,55)=0;A(:,56)=0;A(:,3)=0;
+% icasig(65,:)=0;icasig(52,:)=0;icasig(3,:)=0;
+
+% test
+% OO=ones(128,128);OO(DisplayChan,:)=0;imagesc(OO);
+
+A(:,DisplayChan)=0; icasig(DisplayChan,:)=0;
+
 mixedsig=A*icasig;
 
 figure
-plotx(TimesdataShort(1:EventInd(PlotEnd)),mixedsig(:,(1:EventInd(PlotEnd))));
+% Plot ICA signal
+PlotStart=95;PlotEnd=100;DisplayChan=[3 55 56];
+figure;
+subplot(2,1,2);
+plotx(TimesdataShort(EventInd(PlotStart):EventInd(PlotEnd)),mixedsig(DisplayChan,(EventInd(PlotStart):EventInd(PlotEnd))));
+hold on;
+for i=PlotStart:PlotEnd
+    xline(EventInd(i),'r',{'End of trial'});
+    xline(EventInd(i)-1000,'g',{'Go signal'});
+end
+hold off;
+xlim([EventInd(PlotStart+1)-2000 EventInd(PlotEnd)-2000]);
+legend({'3','55','56'});
+title('Channel 3 55 56 with ICs removed');xlabel('time samples');ylabel('uV');
+subplot(2,1,1);
+plotx(TimesdataShort(EventInd(PlotStart):EventInd(PlotEnd)),mixedsig(:,(EventInd(PlotStart):EventInd(PlotEnd))));
+hold on;
+for i=PlotStart:PlotEnd
+    xline(EventInd(i),'r',{'End of trial'});
+    xline(EventInd(i)-1000,'g',{'Go signal'});
+end
+hold off;
+xlim([EventInd(PlotStart+1)-2000 EventInd(PlotEnd)-2000]);
+title('Mixed Signal with ICs removed');
+
+
+
 
 
 

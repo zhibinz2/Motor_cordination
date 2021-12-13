@@ -31,8 +31,15 @@ run draw_movements_all_conditions_step5.m
 % Get goodchans, and a boolean goodepochs array
 run Remove_EEG_artifact_Rereference_step6.m
 % Just to examine
+reRef_data
 goodchans;
-Bgoodepochs;
+Bgoodepochs;% in boolean
+
+% Run ICA on reRef_data
+% this should be step 6b
+reRef_data
+% to be continue...
+
 
 % Use Goodchans to do Laplacian
 run Use_Goodchans_to_Laplacian_step7.m
