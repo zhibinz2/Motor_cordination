@@ -14,6 +14,7 @@ plot(TimesdataShort, EEGdataShort);hold on;
 for i=1:PlotEnd
     xline(EventInd(i));
 end
+hold off;
 
 tic
 [icasig, A, W] = fastica(EEGdataShort');
@@ -120,7 +121,7 @@ subplot(3,1,1);topoplot(A(:,102),test,'nosedir','+Y');title('component 102');col
 subplot(3,1,2);topoplot(A(:,105),test,'nosedir','+Y');title('component 105');colorbar;
 subplot(3,1,3);topoplot(A(:,116),test,'nosedir','+Y');title('component 116'); colorbar;
 
-% Display signal before ICA
+%% Display signal before ICA
 PlotStart=95;PlotEnd=100;DisplayChan=[3 55 56];
 figure;
 subplot(2,1,2);
@@ -145,7 +146,7 @@ hold off;
 xlim([EventInd(PlotStart+1)-2000 EventInd(PlotEnd)-2000]);
 title('Channel Singal Before ICA');
 
-% Plot ICA signal
+%% Plot ICA signal
 PlotStart=95;PlotEnd=100;DisplayChan=[3 55 56];
 figure;
 subplot(2,1,2);
