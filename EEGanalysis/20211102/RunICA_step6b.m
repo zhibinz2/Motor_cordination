@@ -11,7 +11,7 @@
 % end
 
 % Fast Method
-split_reRef_data = num2cell(reRef_data, [1 2]); %split A keeping dimension 1 and 2 intact
+split_reRef_data = num2cell(reRef_data(1001:2500,:,:), [1 2]); %split A keeping dimension 1 and 2 intact
 EEGdataShort=vertcat(split_reRef_data{:});
 
 %% Recalculate the event array (for display and for EEGLAB)
@@ -22,7 +22,7 @@ NumTrials=size(reRef_data,3); % NumTrials=350; or numtotal or NumTrialsRecorded
 
 % Index for start of trials
 % IndEvents=round(linspace(1000,4000*NumTrials,NumTrials));
-IndEvents=[1000:4000:4000*NumTrials];
+IndEvents=[0:1500:(1500*(NumTrials-1))];
 IndEnds=IndEvents+1500;
 
 % Index for EEGLAB
