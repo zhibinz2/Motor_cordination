@@ -1,42 +1,7 @@
-%% BEFORE Laplacian data check
-data_trials; 
-% plotx(data_trials(:,1:128,1));
-data_trials_EEG;
-% plotx(data_trials_EEG(:,:,1));
-%% After Laplacian data check
-filtered_data=filtered_data(1:dataEnd+1000,:); % pad one second
-
-% plotx(filtered_data);hold on;xline(dataEnd,'m--');
-% plotx(filtered_data(1000:2000,1));
-
-%% 
-% So the laplacian is in microvolts/mm^2 right now.    
-% more typical in published literature would be microvolts/cm^2.   
-% in which case you should multiply by 100 the raw Laplacian values before FFT
-% ok multiply by 100 and you should be fine.
-filtered_data=filtered_data*100;
-% figure; plotx(filtered_data(1000:2000,1));
-
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 clear data_trials
 run integrate_EEG_into_data_trials_step3.m % now included the baseline and padding
 data_trials % check whether included the baseline
-
-
-%% open baselinecorrect
-baselinesamps = 501:1000; % use the first 500ms as baseline
-baselinecorrected_data_trial=zeros(size(data_trials)); 
-for i=1:size(data_trials,3) % loop through trials
-    erpdata=data_trials(:,:,i);
-    newerp = baselinecorrect(erpdata,baselinesamps);
-    baselinecorrected_data_trial(:,:,i)=newerp;
-end
-% plot(baselinecorrected_data_trial(:,:,1));
-baselinecorrected_data_trial;
-
-%% don't baseline correct before wavelet
-baselinecorrected_data_trial=data_trials;
-
 %% wavelet
 % wfreq = 1:50; % frequency(s) of interest
 wfreq = [2 4 6 8 10 14 18 24 30 40];
@@ -54,7 +19,6 @@ AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2',
 CondiData=allPerm_alldays(logical(goodepochs_alldays));
 TrialScores=TrialScores_alldays(logical(goodepochs_alldays));
 %%
-
 for u=1:length(UniCondi);
 
     figure('units','normalized','outerposition',[0 0 0.6 0.6]);
@@ -64,7 +28,7 @@ for u=1:length(UniCondi);
     LowInd=indtemp(find(TrialScores(indtemp)<median(TrialScores(indtemp))));
 
     % Compute ERP in all channels
-    basedlinecorrected_ERP=mean(baselinecorrected_data_trial(:,1:128,HighInd),3);
+    basedlinecorrected_ERP=mean(baselinecorrected_laplacian100_trial(:,1:128,HighInd),3);
     % plot(basedlinecorrected_ERP);
 
     cnorm = wavelet(basedlinecorrected_ERP,sr,wfc,wfreq);
@@ -72,86 +36,77 @@ for u=1:length(UniCondi);
     
     % Power normalization
     % one way to it:
-%     logPowcorm=log(Powcnorm);
-%     baselineMean=mean(logPowcorm(:,501:1000,:),2);
-%     normPowcnorm = logPowcorm-(ones(1,4000,1).*baselineMean);
+    logPowcorm=log(Powcnorm);
+    baselineMean=mean(logPowcorm(:,501:1000,:),2);
+    normPowcnorm = logPowcorm-(ones(1,4000,1).*baselineMean);
     % second way to do it:
-    baselineMean = mean(Powcnorm(:,501:1000,:),2);
-    
-    baselineMeanArray = ones(1,4000,1).*baselineMean;
-    normPowcnorm = (Powcnorm-baselineMeanArray)./(baselineMeanArray);
-    
-    for f=
+%     baselineMean = mean(Powcnorm(:,501:1000,:),2);
+%     baselineMeanArray = ones(1,4000,1).*baselineMean;
+%     normPowcnorm = (Powcnorm-baselineMeanArray)./(baselineMeanArray);
+
     
     % open sgolay; open sgolayfilt
+    ColorLim=4;
 
     subplot(3,2,1);
     imagesc((sgolayfilt(squeeze(normPowcnorm(:,:,9))',1,31))'); % F3/F4 9/13  
-    colormap jet; colorbar ; %caxis ([-4 4]);% caxis 
+    colormap jet; colorbar ; caxis([-1*ColorLim ColorLim]);
     xlabel('time(ms)'); ylabel('frequencies(Hz)'); set(gca,'ydir','normal');
     yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
     xticks(linspace(0,4000,9));xticklabels({'-1000','-500','0','500','1000','1500','2000','2500','3000'});
     title([AllchanNames{9}]);
+    hold on;xline(1000,'g','linewidth',5);xline(2500,'r','linewidth',5);hold off;
     
     subplot(3,2,2);
     imagesc((sgolayfilt(squeeze(normPowcnorm(:,:,13))',1,31))'); % F3/F4 9/13  
-    colormap jet; colorbar ; %caxis ([-4 4]);
+    colormap jet; colorbar ; caxis([-1*ColorLim ColorLim]);
     xlabel('time(ms)'); ylabel('frequencies(Hz)'); set(gca,'ydir','normal');
     yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
     xticks(linspace(0,4000,9));xticklabels({'-1000','-500','0','500','1000','1500','2000','2500','3000'});
     title([AllchanNames{13}]);
+    hold on;xline(1000,'g','linewidth',5);xline(2500,'r','linewidth',5);hold off;
 
     subplot(3,2,3);
     imagesc((sgolayfilt(squeeze(normPowcnorm(:,:,19))',1,31))'); % FC3/FC4 19/23 
-    colormap jet; colorbar ; %caxis ([-4 4]);
+    colormap jet; colorbar ; caxis([-1*ColorLim ColorLim]);
     xlabel('time(ms)'); ylabel('frequencies(Hz)'); set(gca,'ydir','normal');
     yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
     xticks(linspace(0,4000,9));xticklabels({'-1000','-500','0','500','1000','1500','2000','2500','3000'});
     title([AllchanNames{19}]);
+    hold on;xline(1000,'g','linewidth',5);xline(2500,'r','linewidth',5);hold off;
 
     subplot(3,2,4);
     imagesc((sgolayfilt(squeeze(normPowcnorm(:,:,23))',1,31))'); % FC3/FC4 19/23 
-    colormap jet; colorbar ; %caxis ([-4 4]);
+    colormap jet; colorbar ; caxis([-1*ColorLim ColorLim]);
     xlabel('time(ms)'); ylabel('frequencies(Hz)'); set(gca,'ydir','normal');
     yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
     xticks(linspace(0,4000,9));xticklabels({'-1000','-500','0','500','1000','1500','2000','2500','3000'});
     title([AllchanNames{23}]);
+    hold on;xline(1000,'g','linewidth',5);xline(2500,'r','linewidth',5);hold off;
 
     subplot(3,2,5);
     imagesc((sgolayfilt(squeeze(normPowcnorm(:,:,28))',1,31))'); % C3 
-    colormap jet; colorbar ; %caxis ([-4 4]);
+    colormap jet; colorbar ; caxis([-1*ColorLim ColorLim]);
     xlabel('time(ms)'); ylabel('frequencies(Hz)'); set(gca,'ydir','normal');
     yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
     xticks(linspace(0,4000,9));xticklabels({'-1000','-500','0','500','1000','1500','2000','2500','3000'});
     title([AllchanNames{28}]);
+    hold on;xline(1000,'g','linewidth',5);xline(2500,'r','linewidth',5);hold off;
 
     subplot(3,2,6);
     imagesc((sgolayfilt(squeeze(normPowcnorm(:,:,32))',1,31))'); % C4 
-    colormap jet; colorbar ; %caxis ([-4 4]);
+    colormap jet; colorbar ; caxis([-1*ColorLim ColorLim]);
     xlabel('time(ms)'); ylabel('frequencies(Hz)'); set(gca,'ydir','normal');
     yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
     xticks(linspace(0,4000,9));xticklabels({'-1000','-500','0','500','1000','1500','2000','2500','3000'});
     title([AllchanNames{32}]);
-
+    hold on;xline(1000,'g','linewidth',5);xline(2500,'r','linewidth',5);hold off;
+    
     suptitle([conditionNames{UniCondi(u)}]);
+
 end
 
-%% open wavelet
-
-wfreq = 1:50; % frequency(s) of interest
-wfc = 1.5;
-sr=1000;
-cnorm = wavelet(filtered_data(1001:5000,:),sr,wfc,wfreq);
-
-% imagesc(cnorm);
-
-figure;imagesc(abs(cnorm))
-colormap jet
-colorbar 
-caxis 
-xlabel('time(ms)');
-ylabel('frequencies(Hz)');
-set(gca,'ydir','normal')
+%%
 
 
 %% Jenny's code:  https://github.com/rameshsrinivasanuci/matlab/blob/master/jenny/WaveletTransform.m

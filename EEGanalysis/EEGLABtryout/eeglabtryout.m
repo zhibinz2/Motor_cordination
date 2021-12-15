@@ -6,6 +6,7 @@ plot(eegdata(1:2,:)');
 %% import events
 eegdata = rand(32, 256*100); % 32 channels of random activity (100 s sampled at 256 Hz).
 eegdata(33,[10:256:256*100]) = 1; % simulating a stimulus onset every second
+<<<<<<< HEAD
 eegdata(33,[100:256:256*100]+round(rand*128)) = 2;% simulating reaction times about 500 ms after stimulus onsets
 plot(eegdata(33,:),'ro');
 
@@ -17,3 +18,8 @@ runica(eegdata);
 round(EEG.etc.ic_classification.ICLabel.classifications(1:10,:)*100)
 
 %  There are six categories of components Brain, Muscle, Eye, Heart, Line Noise, Channel Noise, and Other.
+=======
+eegdata(33,[100:256:256*100]+round(rand*128)) = 2; % simulating reaction times about 500 ms after stimulus onsets
+
+eegdata(33,:);
+>>>>>>> 62422ab5d83d65da7f8e0b20959747b8474b982a
