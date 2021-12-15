@@ -158,31 +158,17 @@ mixedsig=A*icasig;
 
 figure
 % Plot ICA signal
-
-
-
-
-PlotStart=95;PlotEnd=100;DisplayChan=[3 55 56];
-figure;
-subplot(2,1,2);
-plotx(TimesdataShort(EventInd(PlotStart):EventInd(PlotEnd)),mixedsig(DisplayChan,(EventInd(PlotStart):EventInd(PlotEnd))));
+% PlotStart=95;PlotEnd=100;
+% Duration=(IndEvents(PlotStart)-1000):(IndEnds(PlotEnd)+1000);
+% TimesdataShort=1:size(EEGdataShort,1);
+plotx(TimesdataShort(Duration),mixedsig(:,Duration));
 hold on;
 for i=PlotStart:PlotEnd
-    xline(EventInd(i),'r',{'End of trial'});
-    xline(EventInd(i)-1000,'g',{'Go signal'});
+    xline(IndEvents(i),'r',{'Trial Start'});
+    xline(IndEnds(i),'g',{'Trial End'});
 end
 hold off;
-xlim([EventInd(PlotStart+1)-2000 EventInd(PlotEnd)-2000]);
-legend({'3','55','56'});
-title('Channel 3 55 56 with ICs removed');xlabel('time samples');ylabel('uV');
-subplot(2,1,1);
-plotx(TimesdataShort(EventInd(PlotStart):EventInd(PlotEnd)),mixedsig(:,(EventInd(PlotStart):EventInd(PlotEnd))));
-hold on;
-for i=PlotStart:PlotEnd
-    xline(EventInd(i),'r',{'End of trial'});
-    xline(EventInd(i)-1000,'g',{'Go signal'});
-end
-hold off;
-xlim([EventInd(PlotStart+1)-2000 EventInd(PlotEnd)-2000]);
 title('Mixed Signal with ICs removed');
+
+
 

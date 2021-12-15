@@ -39,18 +39,29 @@ Bgoodepochs;% in boolean
 
 % Run ICA on reRef_data
 % this should be step 6b
-reRef_data;
-% to be continue...
+run RunICA_step6b.m
+% input reRef_data and get mixedsig
 
-
-% Use Goodchans to do Laplacian
+% Use Goodchans to do Laplacian on mixedsig
 run Use_Goodchans_to_Laplacian_step7.m
 % now filtered_data is after laplacian
-filtered_data;%Just to examine
+laplacian_data;%Just to examine
 
-% Need to run step3 and step4 again to get new data_trials
-cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
-run integrate_EEG_into_data_trials_step3.m
+%% Cut the data and reorganzied into data_trials format
+% try using EEGLAB
+eeglab
+
+% try using my own method
+% Initialize the data_trials matrix
+laplacian_trials=zeros(1000+NumTrialtimepoints+1500,NumEEGChannels,NumTrialsRecorded);% add the 500 ms before trial as baseline
+for ntr=1:NumTrialsRecorded 
+    laplacian_trials((1:1000+NumTrialtimepoints+1500),1:NumEEGChannels,ntr)=laplacian_data((IndEvents(ntr)+1-1000):(IndEnds(ntr)+1500),1:NumEEGChannels); 
+end
+% Just to examine
+laplacian_trials;
+
+
+%% Need to step4 again to integrate behaviral data
 run Integrate_Behavioral_into_data_trials_step4.m
 
 %% combine data_trials from 3 sessions
@@ -80,6 +91,7 @@ TrialScores_alldays=[TrialScores_day1 TrialScores_day2 TrialScores_day3];
 goodepochs_alldays=[goodepochs_day1 goodepochs_day2 goodepochs_day3];
 
 %% *100 and Baseline correct
+% (So the laplacian is in microvolts/mm^2 right now.    more typical in published literature would be microvolts/cm^2.   in which case you should multiply by 100 the raw Laplacian values before FFT)
 data_trials_alldays=data_trials_alldays.*100;
 baselinesamps = 501:1000; % use the first 500ms as baseline
 baselinecorrected_data_trial=zeros(size(data_trials_alldays)); 

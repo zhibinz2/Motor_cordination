@@ -260,20 +260,6 @@ title('Mixed Signal with ICs removed');
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 %% tryout
 
 
