@@ -157,7 +157,6 @@ A(:,ComponentRemove)=0; icasig(ComponentRemove,:)=0;
 mixedsig=A*icasig;
 
 figure
-% Plot ICA signal
 % PlotStart=95;PlotEnd=100;
 % Duration=(IndEvents(PlotStart)-1000):(IndEnds(PlotEnd)+1000);
 % TimesdataShort=1:size(EEGdataShort,1);

@@ -61,8 +61,45 @@ end
 laplacian_trials;
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 %% Need to step4 again to integrate behaviral data
 run Integrate_Behavioral_into_data_trials_step4.m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 %% combine data_trials from 3 sessions
 % run section 1 again after each line of code

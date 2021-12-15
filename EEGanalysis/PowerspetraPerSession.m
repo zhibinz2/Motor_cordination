@@ -1,10 +1,48 @@
-% First, plot the scalp coherence
+% So the laplacian is in microvolts/mm^2 right now.    
+% more typical in published literature would be microvolts/cm^2.   
+% in which case you should multiply by 100 the raw Laplacian values before FFT
+% ok multiply by 100 and you should be fine.
+laplacian100_trials=laplacian_trials*100;
+
+
+%%  baselinecorrect
+cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
+baselinesamps = 501:1000; % use the first 500ms as baseline
+baselinecorrected_laplacian100_trial=zeros(size(laplacian100_trials)); 
+for i=1:size(baselinecorrected_laplacian100_trial,3) % loop through trials
+    trialdata=laplacian100_trials(:,:,i);
+    newtrialdata = baselinecorrect(trialdata,baselinesamps);
+    baselinecorrected_laplacian100_trial(:,:,i)=newtrialdata;
+end
+
+% Just to examine
+figure;
+trialdata=laplacian100_trials(:,:,1);
+baseline = mean(trialdata(baselinesamps,:),1);
+newtrialdata = trialdata - ones(size(trialdata,1),1)*baseline;
+subplot(2,1,1);
+plot(trialdata);
+subplot(2,1,2);
+plot(newtrialdata);
+% Just to examine
+figure;
+subplot(3,1,1);
+plot(laplacian_trials(:,:,1));
+subplot(3,1,2);
+plot(laplacian100_trials(:,:,1));
+subplot(3,1,3);
+plot(baselinecorrected_laplacian100_trial(:,:,1));
+
+%% don't baseline correct before wavelet (doesn't change much)
+baselinecorrected_laplacian100_trial=laplacian100_trials;
+
+%% First, plot the scalp coherence
 rate=Fs;
-maxfreq=50;
+maxfreq=25;
 win=1501:2500; % After 500 ms
 
 % First, plot the scalp coherence
-[pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_data_trial(:,1:128,:),rate,maxfreq,goodepochs,win);
+[pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(:,1:128,:),rate,maxfreq,goodepochs,win);
 
 % plot out pow the 128 channels
 AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2','F4','F6','F8','F12','FT11','FC5','FC3','FC1','FCZ','FC2','FC4','FC6','FT12','T7','C5','C3','C1','CZ','C2','C4','C6','T8','TP7','CP5','CP3','CP1','CPZ','CP2','CP4','CP6','TP8','M1','M2','P7','P5','P3','P1','PZ','P2','P4','P6','P8','PO7','PO3','POZ','PO4','PO8','O1','OZ','O2','CB1','CB2','AFP1','AFP2','AF7','AF5','AFZ','AF6','AF8','AFF5H','AFF3H','AFF1H','AFF2H','AFF4H','AFF6H','F9','F10','FFT7H','FFC5H','FFC3H','FFC1H','FFC2H','FFC4H','FFC6H','FFT8H','FT9','FT7','FT8','FT10','FTT7H','FCC5H','FCC3H','FCC1H','FCC2H','FCC4H','FCC6H','FTT8H','TTP7H','CCP5H','CCP3H','CCP1H','CCP2H','CCP4H','CCP6H','TTP8H','TPP7H','CPP5H','CPP3H','CPP1H','CPP2H','CPP4H','CPP6H','TPP8H','P9','P10','PPO3H','PPO1H','PPO2H','PPO4H','PO9','PO5','PO1','PO2','PO6','PO10','CBZ','VEOG','HEOG','EMG1','EMG2','HL 1','HL 2','EMG3','EMG4','EMG5','EMG6','TRIGGER'};
@@ -18,7 +56,7 @@ for chan=1:128
     title([AllchanNames{chan}]);
 end
 
-suptitle('zhibin session 3 on 11/06/2021')
+suptitle('session2021111802')
 %%  plot only C3/C4 28/32 F3/F4 9/13 FC3/FC4 19/23
 rate=Fs;
 maxfreq=50;
@@ -70,10 +108,10 @@ for u=1:length(UniCondi); % sp=1:2
     
     %*********************************************************************
 
-    Ymax=0.9;
+    Ymax=0.1;
     figure(1);
     
-    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_data_trial(:,1:128,:),rate,maxfreq,HighInd,win);
+    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(:,1:128,:),rate,maxfreq,HighInd,win);
     
     subplot(1,length(UniCondi),length(UniCondi)+1-u); % C3/C4 28/32 
     
@@ -104,7 +142,7 @@ for u=1:length(UniCondi); % sp=1:2
     
     figure(2);
     
-    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_data_trial(:,1:128,:),rate,maxfreq,LowInd,win);
+    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(:,1:128,:),rate,maxfreq,LowInd,win);
     
     subplot(1,length(UniCondi),length(UniCondi)+1-u); % C3/C4 28/32 
     
@@ -172,7 +210,7 @@ for u=1:length(UniCondi);
     LowInd=indtemp(find(TrialScores(indtemp)<median(TrialScores(indtemp))));
 
     figure(1);
-    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_data_trial(:,1:128,:),rate,maxfreq,HighInd,win);
+    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(:,1:128,:),rate,maxfreq,HighInd,win);
     
     ConditionColor=colors(u,:);
 
@@ -209,7 +247,7 @@ for u=1:length(UniCondi);
 
     %*********************************************************************
     figure(2);
-    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_data_trial(:,1:128,:),rate,maxfreq,LowInd,win);
+    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(:,1:128,:),rate,maxfreq,LowInd,win);
     
     ConditionColor=colors(u,:);
 
@@ -247,7 +285,7 @@ for u=1:length(UniCondi);
 end
 % toc;
 % suptitle('Jack session 2')
-Ymax=0.3;
+Ymax=0.1;
 
 figure(1);
 axes(ax1);
