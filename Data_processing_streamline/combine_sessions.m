@@ -3,12 +3,14 @@
 % Load behaviral data
 cd /home/zhibin/Documents/GitHub/Motor_cordination/behaviraldata
 % load matlab20211031.mat;
+load 2021111802.mat
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 run organize_Behavioral_step1.m
 
 % Load EEG data and apply filter to get filtered_data
-cd /home/zhibin/Documents/Acquisition/
-% EEGfileName='bimanual_Reach_Jack_20211118'; EEG=loadcurry([pwd '/' EEGfileName '.cdt']);
+% cd /home/zhibin/Documents/Acquisition/
+cd /home/zhibin/Documents/Acquisition/bimanual_Reach_Jack_2021111802
+EEGfileName='bimanual_Reach_Jack_20211118'; EEG=loadcurry([pwd '/' EEGfileName '.cdt']);
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 tic
 run organize_EEG_filter_step2.m
@@ -31,13 +33,13 @@ run draw_movements_all_conditions_step5.m
 % Get goodchans, and a boolean goodepochs array
 run Remove_EEG_artifact_Rereference_step6.m
 % Just to examine
-reRef_data
+reRef_data;
 goodchans;
 Bgoodepochs;% in boolean
 
 % Run ICA on reRef_data
 % this should be step 6b
-reRef_data
+reRef_data;
 % to be continue...
 
 
