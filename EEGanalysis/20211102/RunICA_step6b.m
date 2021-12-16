@@ -32,10 +32,19 @@ IndEventsEEGLAB(IndEnds)=2;
 plot(IndEventsEEGLAB,'ro');
 
 %% Examine data before ICA
-plot(1:size(EEGdataShort,1), EEGdataShort(:,goodchans));hold on;
+TimedataShort=1:size(EEGdataShort,1);
+plot(TimedataShort, EEGdataShort(:,goodchans));hold on;
 for i=1:length(IndEvents)
-    xline(IndEvents(i),'g');
-    xline(IndEnds(i),'r');
+    xline(IndEvents(i),'g-',{num2str(i)});
+%     xline(IndEnds(i),'r');
+end
+hold off;
+
+% trial 41 is very bad even only good channels were display
+DurationPlot=IndEvents(40):IndEvents(43);
+plotx(TimedataShort(DurationPlot),EEGdataShort(DurationPlot,goodchans));hold on;
+for i=40:43
+    xline(IndEvents(i),'g-',{num2str(i)});
 end
 hold off;
 
