@@ -1,0 +1,33 @@
+EEG = pop_loadset('filename','eeglab_data_epochs_ica.set','filepath','/home/zhibin/Downloads/EEG CN/eeglab14_1_2b/sample_data/');
+
+% organized as  channels X pnt X trials
+EEG.data; 
+EEG.nbchan;
+EEG.chanlocs;
+
+uilist    = { { 'style' 'text' 'string' 'Channels to plot' } ...
+              { 'style' 'edit' 'string' [ '1:' num2str( EEG.nbchan ) ] 'tag' 'chan' } ...
+              { 'style' 'text' 'string' 'Plot title' } ...
+              { 'style' 'edit' 'string' fastif(isempty(EEG.setname), '',EEG.setname)  'tag' 'title' } ...                  
+              { 'style' 'text' 'string' 'Plot single trials' } ...
+              { 'style' 'checkbox' 'string' '(set=yes)' 'tag' 'cbst' } ...
+              { 'style' 'text' 'string' 'Plot in rect. array' } ...
+              { 'style' 'checkbox' 'string' '(set=yes)' 'tag' 'cbra' } ...
+              { 'style' 'text' 'string' 'Other plot options (see help)' } ...
+              { 'style' 'edit' 'string' '''ydir'', 1' 'tag' 'opt' } };
+geometry = { [1 1] [1 1] [1 1] [1 1] [1 1] };
+
+[result userdata tmphalt restag ] = inputgui( 'uilist', uilist, 'geometry', geometry, 'helpcom', 'pophelp(''pop_plottopo'')', 'title', 'Topographic ERP plot - pop_plottopo()');
+ 
+channels     = eval( [ '[' restag.chan ']' ] );           
+plottitle    = restag.title;
+addoptions   = eval( [ '{' restag.opt '}' ] );
+
+% figure('name', ' plottopo()');
+options ={ 'frames' EEG.pnts 'limits' [EEG.xmin EEG.xmax 0 0]*1000 ...
+           'title' plottitle 'chans' channels addoptions{:} };
+options = { options{:} 'chanlocs' EEG.chanlocs };
+           
+% plottopo( EEG.data, options{:} );
+
+plottopo( mean(EEG.data,3), options{:} );

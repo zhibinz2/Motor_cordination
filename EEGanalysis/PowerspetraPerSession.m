@@ -7,48 +7,53 @@ laplacian100_trials=laplacian_trials*100;
 
 %%  baselinecorrect
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
-baselinesamps = 501:1000; % use the first 500ms as baseline
-baselinecorrected_laplacian100_trial=zeros(size(laplacian100_trials)); 
+baselinesamps = 1:500; % use the first 500ms as baseline
+baselinecorrected_laplacian100_trial=zeros(size(laplacian100_trials)); % initialize this matric
+% Then loop through each trial for baseline correction
 for i=1:size(baselinecorrected_laplacian100_trial,3) % loop through trials
     trialdata=laplacian100_trials(:,:,i);
     newtrialdata = baselinecorrect(trialdata,baselinesamps);
     baselinecorrected_laplacian100_trial(:,:,i)=newtrialdata;
 end
 
-% Just to examine
+% Just to examine the effect of baseline correction 
+% (doesn't seem to do much change since my data is centered on zero, since they are average referenced)
 figure;
 trialdata=laplacian100_trials(:,:,1);
 baseline = mean(trialdata(baselinesamps,:),1);
 newtrialdata = trialdata - ones(size(trialdata,1),1)*baseline;
 subplot(2,1,1);
-plot(trialdata);
+plot(trialdata);title('before baseline correct');
 subplot(2,1,2);
-plot(newtrialdata);
-% Just to examine
+plot(newtrialdata);title('after baseline correct');
+
+% Just to examine the values of laplacian and baseline correction
+% (doesn't seem change much either)
 figure;
 subplot(3,1,1);
-plot(laplacian_trials(:,:,1));
+plot(laplacian_trials(:,:,1));title('laplacian');
 subplot(3,1,2);
-plot(laplacian100_trials(:,:,1));
+plot(laplacian100_trials(:,:,1));title('laplacian*100');
 subplot(3,1,3);
-plot(baselinecorrected_laplacian100_trial(:,:,1));
+plot(baselinecorrected_laplacian100_trial(:,:,1));title('laplacian after baseline correct');
 
-%% don't baseline correct before wavelet (doesn't change much)
-baselinecorrected_laplacian100_trial=laplacian100_trials;
+%% don't baseline correct before wavelet (whatever, it doesn't change much anyway)
+% baselinecorrected_laplacian100_trial=laplacian100_trials;
 
 %% First, plot the scalp coherence
 rate=Fs;
-maxfreq=25;
-win=1501:2500; % After 500 ms
-
+maxfreq=30;
+win=501:2000; % After 500 ms
+goodepochsIncluded=1:length(goodepochs);% all epochs in the matric
 % First, plot the scalp coherence
-[pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(:,1:128,:),rate,maxfreq,goodepochs,win);
+% [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(:,1:128,:),rate,maxfreq,goodepochs,win);
+[pow,freqs,df] = allspectra(baselinecorrected_laplacian100_trial,rate,maxfreq,goodepochsIncluded,win);
 
 % plot out pow the 128 channels
 AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2','F4','F6','F8','F12','FT11','FC5','FC3','FC1','FCZ','FC2','FC4','FC6','FT12','T7','C5','C3','C1','CZ','C2','C4','C6','T8','TP7','CP5','CP3','CP1','CPZ','CP2','CP4','CP6','TP8','M1','M2','P7','P5','P3','P1','PZ','P2','P4','P6','P8','PO7','PO3','POZ','PO4','PO8','O1','OZ','O2','CB1','CB2','AFP1','AFP2','AF7','AF5','AFZ','AF6','AF8','AFF5H','AFF3H','AFF1H','AFF2H','AFF4H','AFF6H','F9','F10','FFT7H','FFC5H','FFC3H','FFC1H','FFC2H','FFC4H','FFC6H','FFT8H','FT9','FT7','FT8','FT10','FTT7H','FCC5H','FCC3H','FCC1H','FCC2H','FCC4H','FCC6H','FTT8H','TTP7H','CCP5H','CCP3H','CCP1H','CCP2H','CCP4H','CCP6H','TTP8H','TPP7H','CPP5H','CPP3H','CPP1H','CPP2H','CPP4H','CPP6H','TPP8H','P9','P10','PPO3H','PPO1H','PPO2H','PPO4H','PO9','PO5','PO1','PO2','PO6','PO10','CBZ','VEOG','HEOG','EMG1','EMG2','HL 1','HL 2','EMG3','EMG4','EMG5','EMG6','TRIGGER'};
 % AllchanNames{1}
 
-%% all chans
+%% plot power spectra of all chans
 for chan=1:128
     subplot(8,16,chan);
     plot(freqs,pow(:,chan));
@@ -57,6 +62,10 @@ for chan=1:128
 end
 
 suptitle('session2021111802')
+
+%% map plot tryout with code from EEGLAB
+
+
 %%  plot only C3/C4 28/32 F3/F4 9/13 FC3/FC4 19/23
 rate=Fs;
 maxfreq=50;
