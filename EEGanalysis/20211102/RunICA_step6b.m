@@ -22,8 +22,8 @@ NumTrials=size(reRef_data,3); % NumTrials=350; or numtotal or NumTrialsRecorded
 
 % Index for start of trials
 % IndEvents=round(linspace(1000,4000*NumTrials,NumTrials));
-IndEvents=[0:1500:(1500*(NumTrials-1))];
-IndEnds=IndEvents+1500;
+IndEvents=[1:1500:(1500*(NumTrials-1)+1)];
+IndEnds=IndEvents+1500-1;
 
 % Index for EEGLAB
 IndEventsEEGLAB=zeros(1,size(reRef_data,1));
@@ -41,7 +41,7 @@ end
 hold off;
 
 % trial 41 is very bad even only good channels were display
-DurationPlot=IndEvents(40):IndEvents(43);
+DurationPlot=IndEvents(10):IndEvents(143);
 plotx(TimedataShort(DurationPlot),EEGdataShort(DurationPlot,goodchans));hold on;
 for i=40:43
     xline(IndEvents(i),'g-',{num2str(i)});
