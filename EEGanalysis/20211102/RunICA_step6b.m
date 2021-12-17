@@ -2,7 +2,6 @@
 % this should be step 6b
 
 %% Recombine all trials into one big long time series
-
 % % Slow Method
 % EEGdataShort=reRef_data(:,:,1);
 % for i=2:size(reRef_data,3)
@@ -11,40 +10,50 @@
 % end
 
 % Fast Method
-split_reRef_data = num2cell(reRef_data(1001:2500,:,:), [1 2]); %split A keeping dimension 1 and 2 intact
+split_reRef_data = num2cell(reRef_data(:,:,goodepochs), [1 2]); %split A keeping dimension 1 and 2 intact
 EEGdataShort=vertcat(split_reRef_data{:});
 
 %% Recalculate the event array (for display and for EEGLAB)
 % So the 4000 timepoints are structured as 
 % "500ms padding + 500ms green dot baseline + 500ms plan phase + 1000ms movement + 1000ms show bonus + 500ms padding"
 
-NumTrials=size(reRef_data,3); % NumTrials=350; or numtotal or NumTrialsRecorded
+NumGoodEpochs=length(goodepochs); % NumTrials=350; or numtotal or NumTrialsRecorded
 
 % Index for start of trials
 % IndEvents=round(linspace(1000,4000*NumTrials,NumTrials));
-IndEvents=[1:1500:(1500*(NumTrials-1)+1)];
-IndEnds=IndEvents+1500-1;
+IndStart=[1:2000:(2000*(NumGoodEpochs-1)+1)];
+IndEnds=IndStart+2000-1;
 
-% Index for EEGLAB
-IndEventsEEGLAB=zeros(1,size(reRef_data,1));
-IndEventsEEGLAB(IndEvents)=1;
-IndEventsEEGLAB(IndEnds)=2;
-plot(IndEventsEEGLAB,'ro');
+%% Index for EEGLAB
+% IndEventsEEGLAB=zeros(1,size(reRef_data,1));
+% IndEventsEEGLAB(IndStart)=1;
+% IndEventsEEGLAB(IndEnds)=2;
+% plot(IndEventsEEGLAB,'ro');
 
 %% Examine data before ICA
 TimedataShort=1:size(EEGdataShort,1);
-plot(TimedataShort, EEGdataShort(:,goodchans));hold on;
-for i=1:length(IndEvents)
-    xline(IndEvents(i),'g-',{num2str(i)});
+plot(TimedataShort, EEGdataShort(:,goodchans));
+hold on;
+for i=1:length(IndStart)
+    xline(IndStart(i),'g-',{num2str(i)});
 %     xline(IndEnds(i),'r');
 end
 hold off;
 
-% trial 41 is very bad even only good channels were display
-DurationPlot=IndEvents(10):IndEvents(143);
+% trial 41 105 107 are very bad even only good channels were display
+figure
+DurationPlot=IndStart(40):IndStart(42);
 plotx(TimedataShort(DurationPlot),EEGdataShort(DurationPlot,goodchans));hold on;
-for i=40:43
-    xline(IndEvents(i),'g-',{num2str(i)});
+for i=40:42
+    xline(IndStart(i),'g-',{num2str(i)});
+end
+hold off;
+
+figure;
+DurationPlot=IndStart(103):IndStart(108);
+plotx(TimedataShort(DurationPlot),EEGdataShort(DurationPlot,goodchans));hold on;
+for i=103:108
+    xline(IndStart(i),'g-',{num2str(i)});
 end
 hold off;
 
@@ -66,7 +75,7 @@ plot(1:size(A,2),SqA,'ro');ylabel('sum of square of column in A');xlabel('ICs');
 % topoplot to examine them
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis
 load('Neuroscan_spherical__topoplot_chans.mat')
-ComponentsExam=[39 74 56 90];
+ComponentsExam=[80 68 33 104 49 94 73];
 figure;
 for i=1:length(ComponentsExam)
     subplot(length(ComponentsExam),1,i);
@@ -98,12 +107,12 @@ end
 
 figure;
 PlotStart=95;PlotEnd=100;
-Duration=(IndEvents(PlotStart)-1000):(IndEnds(PlotEnd)+1000);
+Duration=(IndStart(PlotStart)-1000):(IndEnds(PlotEnd)+1000);
 TimesdataShort=1:size(EEGdataShort,1);
 plotx(TimesdataShort(Duration),EEGdataShort(Duration,:));
 hold on;
 for i=PlotStart:PlotEnd
-    xline(IndEvents(i),'r',{'Trial Start'});
+    xline(IndStart(i),'r',{'Trial Start'});
     xline(IndEnds(i),'g',{'Trial End'});
 end
 hold off;
@@ -115,7 +124,7 @@ subplot(2,1,2);
 plotx(TimesdataShort(Duration),icasig(ComponentsExam,Duration));
 hold on;
 for i=PlotStart:PlotEnd
-    xline(IndEvents(i),'r',{'Trial Start'});
+    xline(IndStart(i),'r',{'Trial Start'});
     xline(IndEnds(i),'g',{'Trial End'});
 end
 hold off;
@@ -125,7 +134,7 @@ subplot(2,1,1);
 plotx(TimesdataShort(Duration),icasig(:,Duration));
 hold on;
 for i=PlotStart:PlotEnd
-    xline(IndEvents(i),'r',{'Trial Start'});
+    xline(IndStart(i),'r',{'Trial Start'});
     xline(IndEnds(i),'g',{'Trial End'});
 end
 hold off;
@@ -152,28 +161,87 @@ plot(1:length(RHO1),PVAL3,'ro');ylabel('p value');xlabel('ICs');
 legend({'correlation coefficient' 'p-values '});title('correlation with FP2');hold off;
 
 % component 56,3 seem to be highly correlated with FP1 and FP2
-ComponentsExam=[39 74 56 6 16 79];
+ComponentsExam=[33 49 73 96 41];
 figure;
 for i=1:length(ComponentsExam)
     subplot(length(ComponentsExam),1,i);
     topoplot(A(:,ComponentsExam(i)),test,'nosedir','+Y');title(['component' num2str(ComponentsExam(i))]);colorbar;
 end
+%% Plot ICs Topoplot Spetrogram ERP AND Power spectra,  (Similar to EEGLAB)
+ComponentsExam=[33 49 73 96 41];
+
+for i=1:length(ComponentsExam)
+    ComponentPick=ComponentsExam(i);
+    
+    % Put together trial matrics
+    icasig_trials=[];
+    for i=1:length(goodepochs)
+        icasig_trials(:,1,i)=icasig(ComponentPick,IndStart(i):IndEnds(i))';
+    end
+
+    % Just to check
+    goodchans;
+
+    figure('units','normalized','outerposition',[0 0 0.38 0.85]);
+    % Topoplot
+    subplot('Position',[0.05 0.55 0.4 0.4]);
+    topoplot(A(:,ComponentPick),test,'nosedir','+Y');
+    title(['component' num2str(ComponentPick)]);
+    colorbar;
+
+    % Plot Spectrogram
+    subplot('Position',[0.55 0.65 0.4 0.3]);
+    ColorLim=5;
+    imagesc(squeeze(icasig_trials)');colormap jet; colorbar ; ylabel('Shorted Trials'); 
+    caxis([-1*ColorLim ColorLim]);
+    xline(500,'k');xline(1000,'k');
+    title(['Component ' num2str(ComponentPick)]);
+
+    % Plot IC ERP
+    subplot('Position',[0.55 0.55 0.3 0.07]);
+    plot(1:size(icasig_trials,1),mean(icasig_trials,3)); 
+    xline(500,'k');xline(1000,'k');xlabel('time');
+
+    % Plot Powerspetra
+    subplot('Position',[0.1 0.05 0.8 0.4]);
+    rate=Fs;maxfreq=50;
+    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(icasig_trials,rate,maxfreq);
+    plot(freqs,pow);xlabel('frequecy (Hz)');ylabel('Magnitude');
+end
 
 %% Deside which components to remove and mix back the signal and display
-ComponentRemove=[39 74 56 6 16];
+ComponentRemove=[33 49];
 A(:,ComponentRemove)=0; icasig(ComponentRemove,:)=0;
 
 mixedsig=A*icasig;
 
-figure
+% Plot before and after
+PlotStart=95;PlotEnd=100;
+Duration=(IndStart(PlotStart)-1000):(IndEnds(PlotEnd)+1000);
+TimesdataShort=1:size(EEGdataShort,1);
+
+figure;
+subplot(2,1,1);
+% before ICA
+plotx(TimesdataShort(Duration),EEGdataShort(Duration,:));
+hold on;
+for i=PlotStart:PlotEnd
+    xline(IndStart(i)+500,'g-',{'Target'});
+    xline(IndEnds(i)-1000,'g.-',{'Go'});
+end
+hold off;
+title('EEG Singal Before ICA');
+
+% after ICA
+subplot(2,1,2);
 % PlotStart=95;PlotEnd=100;
 % Duration=(IndEvents(PlotStart)-1000):(IndEnds(PlotEnd)+1000);
 % TimesdataShort=1:size(EEGdataShort,1);
 plotx(TimesdataShort(Duration),mixedsig(:,Duration));
 hold on;
 for i=PlotStart:PlotEnd
-    xline(IndEvents(i),'r',{'Trial Start'});
-    xline(IndEnds(i),'g',{'Trial End'});
+    xline(IndStart(i)+500,'g-',{'Target'});
+    xline(IndEnds(i)-1000,'g.-',{'Go'});
 end
 hold off;
 title('Mixed Signal with ICs removed');

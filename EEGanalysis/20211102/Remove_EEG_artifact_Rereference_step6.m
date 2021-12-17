@@ -8,11 +8,11 @@
 %% clean artifact
 data_trials_EEG=data_trials(:,1:128,:);
 
-threshold=50; % set a amplitude threshold as criteria to remove bad channels and epochs later
+threshold=100; % set a amplitude threshold as criteria to remove bad channels and epochs later
 
-% set good standard percentages
-prctepoch = 70; % percentage of epochs that should be good
-prctchan = 97; % percentage of channels that should be good
+% set good standard percentages (the higher the stricter)
+prctepoch = 99; % percentage of epochs that should be good (might be percentage of chans)
+prctchan = 99.8; % percentage of channels that should be good (percentage of epochs)
 
 % set bad standard percentage
 cirtepoch =  1-prctepoch/100; % the percentage of bad epochs allowed

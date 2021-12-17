@@ -115,8 +115,14 @@ Hd = makefilter(Fs,50,55,3,20,0);
 filtered_data=filtfilthd(Hd,filtered_data);
 
 % plotx(mean(filtered_data,2));  
-% plotx(filtered_data);hold on;xline(dataEnd,'m--');
+% plot(filtered_data);
+hold on;
+for i=1:length(ind_trial_start)
+    xline(locs(ind_trial_start(i)),'k');
+end
+% xline(dataEnd,'m--');xlim([0 dataEnd]);
 % plotx(filtered_data(5000:10000,:));
+
 
 %%
 filtered_broadband=filtered_data;

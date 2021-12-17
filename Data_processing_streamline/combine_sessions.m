@@ -49,13 +49,13 @@ laplacian_data;%Just to examine
 
 %% Cut the data and reorganzied into data_trials format
 % try using EEGLAB
-eeglab
+% eeglab
 
 % try using my own method
 % Initialize the data_trials matrix
-laplacian_trials=zeros(1000+NumTrialtimepoints+1500,NumEEGChannels,NumTrialsRecorded);% add the 500 ms before trial as baseline
-for ntr=1:NumTrialsRecorded 
-    laplacian_trials((1:1000+NumTrialtimepoints+1500),1:NumEEGChannels,ntr)=laplacian_data((IndEvents(ntr)+1-1000):(IndEnds(ntr)+1500),1:NumEEGChannels); 
+laplacian_trials=zeros(500+NumTrialtimepoints,NumEEGChannels,length(goodepochs));% add the 500 ms before trial as baseline
+for ntr=1:length(goodepochs) 
+    laplacian_trials((1:(500+NumTrialtimepoints)),1:NumEEGChannels,ntr)=laplacian_data((IndEvents(ntr)):(IndEnds(ntr)),1:NumEEGChannels); 
 end
 % Just to examine
 laplacian_trials;
@@ -64,19 +64,7 @@ laplacian_trials;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-%% Need to step4 again to integrate behaviral data
+%% Need to step4 again to integrate behaviral data?
 run Integrate_Behavioral_into_data_trials_step4.m
 
 
