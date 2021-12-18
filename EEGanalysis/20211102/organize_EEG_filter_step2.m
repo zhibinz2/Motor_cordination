@@ -81,11 +81,16 @@ end
 EventChannel=zeros(1,length(datatimes));
 EventChannel(EventInd-1500)=1;% trajectory appear onset
 
-%% detrend the data
+%% select the EEG channels
 
 addpath(genpath('/home/zhibin/Documents/GitHub'));
 % data=dataEEG(1:128,2000000:2002000);
 EEGdata=dataEEG(1:128,:);
+
+%% Appen EventChannel for EEGLAB
+% EEGdata(129,:)=EventChannel;
+
+%% detrend the data
 
 % tranpose the data so that time is the first dimension, channel is 2nd dimension, and trial is the 3rd dimension
 transpose_data=permute(EEGdata,[2,1]);
@@ -116,10 +121,10 @@ filtered_data=filtfilthd(Hd,filtered_data);
 
 % plotx(mean(filtered_data,2));  
 % plot(filtered_data);
-hold on;
-for i=1:length(ind_trial_start)
-    xline(locs(ind_trial_start(i)),'k');
-end
+% hold on;
+% for i=1:length(ind_trial_start)
+%     xline(locs(ind_trial_start(i)),'k');
+% end
 % xline(dataEnd,'m--');xlim([0 dataEnd]);
 % plotx(filtered_data(5000:10000,:));
 

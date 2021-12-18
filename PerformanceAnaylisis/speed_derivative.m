@@ -128,20 +128,24 @@ for conditionSelected=1:length(conditions)
 %     s=findobj('type','legend');delete(s);
     end
     
-    subplot(7,15,abs(7-conditionSelected)*15+(15-conditionSelected-1));
+%     subplot(7,15,abs(7-conditionSelected)*15+(15-conditionSelected-1));
+    subplot(2,7,7+1-conditionSelected);
 
     % plot the distance
     averagehL=mean(ALLhL,1);averagehR=mean(ALLhR,1);
     plot(t,averagehL,'.r');hold on; plot(t,averagehR,'.b');hold off;
     xlabel('t');ylabel('average distance (pixels)');
+    title(['condition ' conditionNames{UniCondi(conditionSelected)}]);
+    legend({'Left','Right'});
 
-
-    subplot(7,15,abs(7-conditionSelected)*15+(15-conditionSelected));
+    %subplot(7,15,abs(7-conditionSelected)*15+(15-conditionSelected));
+    subplot(2,7,14+1-conditionSelected);
     
     % plot the velocity
     averagevL=mean(ALLvL,1);averagevR=mean(ALLvR,1);
     plot(t(2:end),averagevL,'-r');hold on; plot(t(2:end),averagevR,'-b');hold off;
-    xlabel('t');ylabel('average velocity (pixels/frame)');
+    xlabel('t');ylabel('average velocity (pixels/frame)');legend({'Left','Right'});
+    
     %---delete the legend-------------
 
 

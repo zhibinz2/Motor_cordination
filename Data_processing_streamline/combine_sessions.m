@@ -41,6 +41,7 @@ Bgoodepochs;% in boolean
 % this should be step 6b
 run RunICA_step6b.m
 % input reRef_data and get mixedsig
+mixedsig;
 
 % Use Goodchans to do Laplacian on mixedsig
 run Use_Goodchans_to_Laplacian_step7.m
