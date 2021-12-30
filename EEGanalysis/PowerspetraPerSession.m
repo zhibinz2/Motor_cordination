@@ -58,21 +58,92 @@ for chan=1:128
     subplot(8,16,chan);
     plot(freqs,pow(:,chan));
     xlabel('freq');ylabel('pow');
+    ylim([0 0.5]);
     title([AllchanNames{chan}]);
 end
 
 suptitle('session2021111802')
 
-%% Plot all powerspetra on topoplot
+
+%% Calculate subplot coordinates for scalp map
 load('coordinates.mat');
 X = [chanlocs128.X];
 Y = [chanlocs128.Y];
+Z = [chanlocs128.Z];
+labels = {'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2','F4','F6','F8','F12','FT11','FC5','FC3','FC1','FCZ','FC2','FC4','FC6','FT12','T7','C5','C3','C1','CZ','C2','C4','C6','T8','TP7','CP5','CP3','CP1','CPZ','CP2','CP4','CP6','TP8','M1','M2','P7','P5','P3','P1','PZ','P2','P4','P6','P8','PO7','PO3','POZ','PO4','PO8','O1','OZ','O2','CB1','CB2','AFP1','AFP2','AF7','AF5','AFZ','AF6','AF8','AFF5H','AFF3H','AFF1H','AFF2H','AFF4H','AFF6H','F9','F10','FFT7H','FFC5H','FFC3H','FFC1H','FFC2H','FFC4H','FFC6H','FFT8H','FT9','FT7','FT8','FT10','FTT7H','FCC5H','FCC3H','FCC1H','FCC2H','FCC4H','FCC6H','FTT8H','TTP7H','CCP5H','CCP3H','CCP1H','CCP2H','CCP4H','CCP6H','TTP8H','TPP7H','CPP5H','CPP3H','CPP1H','CPP2H','CPP4H','CPP6H','TPP8H','P9','P10','PPO3H','PPO1H','PPO2H','PPO4H','PO9','PO5','PO1','PO2','PO6','PO10','CBZ'};
+
+sort(Z) %just to examine
+ZZ=((max(Z)-min(Z))*1.5-(Z-min(Z)))./((max(Z)-min(Z))*1.5); %Make higher Z smaller fraction
+sort(ZZ) %just to examine
+
+XXPLOT=(10*Y)*0.95;
+YYPLOT=(10*X)*0.8;
+
+XXPLOT=XXPLOT.*ZZ;
+YYPLOT=YYPLOT.*ZZ;
+
+XXPLOT=-1*XXPLOT;
+YYPLOT=YYPLOT;
+
+XXPLOT=XXPLOT*0.6;
+YYPLOT=YYPLOT*0.7;
+
+XXPLOT=XXPLOT+0.5;
+YYPLOT=YYPLOT+0.5;
+
+plot(XXPLOT,YYPLOT,'ro');
+
 labels = {'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2','F4','F6','F8','F12','FT11','FC5','FC3','FC1','FCZ','FC2','FC4','FC6','FT12','T7','C5','C3','C1','CZ','C2','C4','C6','T8','TP7','CP5','CP3','CP1','CPZ','CP2','CP4','CP6','TP8','M1','M2','P7','P5','P3','P1','PZ','P2','P4','P6','P8','PO7','PO3','POZ','PO4','PO8','O1','OZ','O2','CB1','CB2','AFP1','AFP2','AF7','AF5','AFZ','AF6','AF8','AFF5H','AFF3H','AFF1H','AFF2H','AFF4H','AFF6H','F9','F10','FFT7H','FFC5H','FFC3H','FFC1H','FFC2H','FFC4H','FFC6H','FFT8H','FT9','FT7','FT8','FT10','FTT7H','FCC5H','FCC3H','FCC1H','FCC2H','FCC4H','FCC6H','FTT8H','TTP7H','CCP5H','CCP3H','CCP1H','CCP2H','CCP4H','CCP6H','TTP8H','TPP7H','CPP5H','CPP3H','CPP1H','CPP2H','CPP4H','CPP6H','TPP8H','P9','P10','PPO3H','PPO1H','PPO2H','PPO4H','PO9','PO5','PO1','PO2','PO6','PO10','CBZ'};;
-XX=(10*X+1)*0.455;YY=(10*Y+1)*0.455;
+text(XXPLOT,YYPLOT,labels,'VerticalAlignment','bottom','HorizontalAlignment','right');
+
+%% Select good trials and condition
+UniCondi=unique(CondiData);
+
+% Use Bgoodepochs to select good trials only
+CondiDataGoodTrials=CondiData(goodepochs);
+allPermGoodTrials=allPerm(goodepochs);
+TrialScoresGoodTrials=TrialScores(goodepochs);
+
+win=501:1000; % planning
+win=1001:2000; % movement
+u=1;
+u=7;
+
+%% Plot all powerspetra on scalp map
+indtemp=find(CondiDataGoodTrials==UniCondi(u));
+HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
+[pow,freqs,df] = allspectra(baselinecorrected_laplacian100_trial(win,:,HighInd),rate,maxfreq);
+
+figure('units','normalized','outerposition',[0 0 1 1]);
 for chan=1:128
-    subplot('Position',[1-YY(chan) XX(chan) 0.04 0.02]);
+    subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.04 0.03]);
     plot(freqs,pow(:,chan));
-    %xlabel('freq');ylabel('pow');
+    if ~isempty(find([1:127]==chan))
+    set(gca,'XTick',[]); set(gca,'YTick',[]); 
+    end
+    if chan==128
+        xlabel('freq');ylabel('pow');
+    end
+    ylim([0 0.25]);
+    title([AllchanNames{chan}]);
+end
+% suptitle('session2021111802')
+
+%% Plot all erp of planning on scalp map
+indtemp=find(CondiDataGoodTrials==UniCondi(u));
+HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
+
+figure('units','normalized','outerposition',[0 0 1 1]);
+for chan=1:128
+    subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.04 0.03]);
+    plot(1:length(win),mean(baselinecorrected_laplacian100_trial(win,chan,HighInd),3));
+    if ~isempty(find([1:127]==chan))
+    set(gca,'XTick',[]); set(gca,'YTick',[]); 
+    end
+    if chan==128
+        xlabel('time');ylabel('laplacian power');
+    end
+    ylim([-.5 .5]);
     title([AllchanNames{chan}]);
 end
 %suptitle('session2021111802')
@@ -88,8 +159,8 @@ win=2501:3500; % Seeing Bonus;
 AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2','F4','F6','F8','F12','FT11','FC5','FC3','FC1','FCZ','FC2','FC4','FC6','FT12','T7','C5','C3','C1','CZ','C2','C4','C6','T8','TP7','CP5','CP3','CP1','CPZ','CP2','CP4','CP6','TP8','M1','M2','P7','P5','P3','P1','PZ','P2','P4','P6','P8','PO7','PO3','POZ','PO4','PO8','O1','OZ','O2','CB1','CB2','AFP1','AFP2','AF7','AF5','AFZ','AF6','AF8','AFF5H','AFF3H','AFF1H','AFF2H','AFF4H','AFF6H','F9','F10','FFT7H','FFC5H','FFC3H','FFC1H','FFC2H','FFC4H','FFC6H','FFT8H','FT9','FT7','FT8','FT10','FTT7H','FCC5H','FCC3H','FCC1H','FCC2H','FCC4H','FCC6H','FTT8H','TTP7H','CCP5H','CCP3H','CCP1H','CCP2H','CCP4H','CCP6H','TTP8H','TPP7H','CPP5H','CPP3H','CPP1H','CPP2H','CPP4H','CPP6H','TPP8H','P9','P10','PPO3H','PPO1H','PPO2H','PPO4H','PO9','PO5','PO1','PO2','PO6','PO10','CBZ','VEOG','HEOG','EMG1','EMG2','HL 1','HL 2','EMG3','EMG4','EMG5','EMG6','TRIGGER'};
 % AllchanNames{1}
 
-
 conditionNames={'0:4' '1:4' '1:2' '1:1' '2:1' '4:1' '4:0'}; 
+
 %% For all 3 days
 CondiData=allPerm_alldays(logical(goodepochs_alldays));
 TrialScores=TrialScores_alldays(logical(goodepochs_alldays));
@@ -98,13 +169,21 @@ TrialScores=TrialScores_alldays(logical(goodepochs_alldays));
 %% plot power spetra in each condtion
 UniCondi=unique(CondiData);
 
+% Use Bgoodepochs to select good trials only
+CondiDataGoodTrials=CondiData(goodepochs);
+allPermGoodTrials=allPerm(goodepochs);
+TrialScoresGoodTrials=TrialScores(goodepochs);
+
+win=500:1000; % planning
+win=1000:2000; % movement
+
 % figure;tic;% plot 7 conditions
 
 for u=1:length(UniCondi); % sp=1:2
 %     u=uall(sp);
-    indtemp=find(CondiData==UniCondi(u));
-    HighInd=indtemp(find(TrialScores(indtemp)>median(TrialScores(indtemp))));
-    LowInd=indtemp(find(TrialScores(indtemp)<median(TrialScores(indtemp))));
+    indtemp=find(CondiDataGoodTrials==UniCondi(u));
+    HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
+    LowInd=indtemp(find(TrialScoresGoodTrials(indtemp)<median(TrialScoresGoodTrials(indtemp))));
 
 %     [out,idx] = sort(TrialScores(indtemp)); % example: [out,idx] = sort([14 8 91 19])
 %     
@@ -131,7 +210,7 @@ for u=1:length(UniCondi); % sp=1:2
     Ymax=0.1;
     figure(1);
     
-    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(:,1:128,:),rate,maxfreq,HighInd,win);
+    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial,rate,maxfreq,HighInd,win);
     
     subplot(1,length(UniCondi),length(UniCondi)+1-u); % C3/C4 28/32 
     
@@ -162,7 +241,7 @@ for u=1:length(UniCondi); % sp=1:2
     
     figure(2);
     
-    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(:,1:128,:),rate,maxfreq,LowInd,win);
+    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial,rate,maxfreq,LowInd,win);
     
     subplot(1,length(UniCondi),length(UniCondi)+1-u); % C3/C4 28/32 
     
@@ -225,12 +304,12 @@ ax62=subplot(3,2,6);
 colors=[1 1 0; 0 1 1; 0 0.4470 0.7410; 0 1 0; 0.9290 0.6940 0.1250; 1 0 1; 1 0 0];
 
 for u=1:length(UniCondi);
-    indtemp=find(CondiData==UniCondi(u));
-    HighInd=indtemp(find(TrialScores(indtemp)>median(TrialScores(indtemp))));
-    LowInd=indtemp(find(TrialScores(indtemp)<median(TrialScores(indtemp))));
+    indtemp=find(CondiDataGoodTrials==UniCondi(u));
+    HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
+    LowInd=indtemp(find(TrialScoresGoodTrials(indtemp)<median(TrialScoresGoodTrials(indtemp))));
 
     figure(1);
-    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(:,1:128,:),rate,maxfreq,HighInd,win);
+    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial,rate,maxfreq,HighInd,win);
     
     ConditionColor=colors(u,:);
 
@@ -267,7 +346,7 @@ for u=1:length(UniCondi);
 
     %*********************************************************************
     figure(2);
-    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(:,1:128,:),rate,maxfreq,LowInd,win);
+    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial,rate,maxfreq,LowInd,win);
     
     ConditionColor=colors(u,:);
 
@@ -348,3 +427,43 @@ axes(ax62);
 xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 Ymax]);xlim([0 25]);title(['low ' AllchanNames{32}]); %C4
 legend(conditionNames);
 
+
+%% examine 1:2 data and power of FC3 19 AND C3 28
+conditionNames;
+u=3;% condition 1:2
+indtemp=find(CondiDataGoodTrials==UniCondi(u));
+HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
+LowInd=indtemp(find(TrialScoresGoodTrials(indtemp)<median(TrialScoresGoodTrials(indtemp))));
+ConnectedData=baselinecorrected_laplacian100_trial(:,:,LowInd(1));
+% zeros(size(baselinecorrected_laplacian100_trial,1)*length(LowInd),128);
+for i=2:length(LowInd)
+    ConnectedData=cat(1,ConnectedData,baselinecorrected_laplacian100_trial(:,:,LowInd(i)));
+end
+figure;
+subplot(2,1,1);
+plot(1:size(ConnectedData,1),ConnectedData(:,:));%ylim([-20 20]);
+xlines=2000:2000:size(ConnectedData,1);
+hold on;
+for i=1:length(xlines)
+    xline(xlines(i));
+end
+hold off;
+title('All channels in 1:2 low performance trials');
+subplot(2,1,2);
+plot(1:size(ConnectedData,1),ConnectedData(:,[19 28]));%ylim([-20 20]);
+hold on;
+for i=1:length(xlines)
+    xline(xlines(i));
+end
+title('channel FC3 C3 in 1:2 low performance trials');
+legend({'FC3','C3'});
+hold off;
+
+% So it is trial number 3 9, 21 77,
+TrialScoresGoodTrials(LowInd(3))
+TrialScoresGoodTrials(LowInd(9))
+% Scores are not too bad
+
+[pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(win,:,LowInd),rate,maxfreq);
+figure;
+plot(freqs,pow(:,[19 28]));

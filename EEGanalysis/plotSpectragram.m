@@ -23,10 +23,13 @@ for u=1:length(UniCondi);
 
     figure('units','normalized','outerposition',[0 0 0.6 0.6]);
 
-    indtemp=find(CondiData==UniCondi(u));
-    HighInd=indtemp(find(TrialScores(indtemp)>median(TrialScores(indtemp))));
-    LowInd=indtemp(find(TrialScores(indtemp)<median(TrialScores(indtemp))));
-
+%     indtemp=find(CondiData==UniCondi(u));
+%     HighInd=indtemp(find(TrialScores(indtemp)>median(TrialScores(indtemp))));
+%     LowInd=indtemp(find(TrialScores(indtemp)<median(TrialScores(indtemp))));
+    indtemp=find(CondiDataGoodTrials==UniCondi(u));
+    HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
+    LowInd=indtemp(find(TrialScoresGoodTrials(indtemp)<median(TrialScoresGoodTrials(indtemp))));
+    
     % Compute ERP in all channels
     basedlinecorrected_ERP=mean(baselinecorrected_laplacian100_trial(:,1:128,HighInd),3);
     % plot(basedlinecorrected_ERP);
@@ -36,9 +39,9 @@ for u=1:length(UniCondi);
     
     % Power normalization
     % one way to it:
-    logPowcorm=log(Powcnorm);
-    baselineMean=mean(logPowcorm(:,501:1000,:),2);
-    normPowcnorm = logPowcorm-(ones(1,4000,1).*baselineMean);
+    logPowcorm=log10(Powcnorm);
+    baselineMean=log10(mean(Powcnorm(:,1:500,:),2));
+    normPowcnorm = logPowcorm-(ones(1,size(logPowcorm,2),1).*baselineMean);
     % second way to do it:
 %     baselineMean = mean(Powcnorm(:,501:1000,:),2);
 %     baselineMeanArray = ones(1,4000,1).*baselineMean;
@@ -109,7 +112,7 @@ end
 %%
 
 
-%% Jenny's code:  https://github.com/rameshsrinivasanuci/matlab/blob/master/jenny/WaveletTransform.m
+%% https://github.com/rameshsrinivasanuci/matlab/blob/master/jenny/WaveletTransform.m
 % now let's recover the time course
 wfreq = 1:50; % frequency(s) of interest
 wfc = 3;
