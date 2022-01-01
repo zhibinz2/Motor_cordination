@@ -1,4 +1,5 @@
 %% Stream line the steps
+clear
 
 % Load behaviral data
 cd /home/zhibin/Documents/GitHub/Motor_cordination/behaviraldata
@@ -10,7 +11,7 @@ run organize_Behavioral_step1.m
 % Load EEG data and apply filter to get filtered_data
 % cd /home/zhibin/Documents/Acquisition/
 cd /home/zhibin/Documents/Acquisition/bimanual_Reach_Jack_2021111802
-EEGfileName='bimanual_Reach_Jack_20211118'; EEG=loadcurry([pwd '/' EEGfileName '.cdt']);
+EEGfileName='bimanual_Reach_Hiro_20211115'; EEG=loadcurry([pwd '/' EEGfileName '.cdt']);
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 tic
 run organize_EEG_filter_step2.m
@@ -43,12 +44,15 @@ run RunICA_step6b.m
 % input reRef_data and get mixedsig
 mixedsig;
 
-% Use Goodchans to do Laplacian on mixedsig
+% Just to examine
+plot(mixedsig(goodchans,:)');
+
+%% Use Goodchans to do Laplacian on mixedsig (don't do laplacian)
 run Use_Goodchans_to_Laplacian_step7.m
 % now filtered_data is after laplacian
 laplacian_data;%Just to examine
 
-%% Cut the data and reorganzied into data_trials format
+%% Cut the data and reorganzied into data_trials format (skip this when do without laplacian)
 % try using EEGLAB
 % eeglab
 
@@ -61,8 +65,20 @@ end
 % Just to examine
 laplacian_trials;
 
+%% Cut the data and reorganzied into data_trials format 
+% try using EEGLAB
+% eeglab
 
-
+% try using my own method
+mixedsig=mixedsig';
+% Initialize the data_trials matrix
+afterICA_trials=zeros(500+NumTrialtimepoints,NumEEGChannels,length(goodepochs));% add the 500 ms before trial as baseline
+for ntr=1:length(goodepochs) % ntr=length(goodepochs)
+    afterICA_trials((1:(500+NumTrialtimepoints)),1:NumEEGChannels,ntr)=mixedsig((IndEnds(ntr)-1999):(IndEnds(ntr)),1:NumEEGChannels); 
+end
+% Just to examine
+afterICA_trials;
+plot(afterICA_trials(:,:,1));
 
 
 %% Need to step4 again to integrate behaviral data?

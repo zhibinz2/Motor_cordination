@@ -2,24 +2,25 @@
 % more typical in published literature would be microvolts/cm^2.   
 % in which case you should multiply by 100 the raw Laplacian values before FFT
 % ok multiply by 100 and you should be fine.
-laplacian100_trials=laplacian_trials*100;
 
+% laplacian100_trials=laplacian_trials*100;
+% Replace laplacian100_trials with afterICA_trials hereafter
 
 %%  baselinecorrect
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 baselinesamps = 1:500; % use the first 500ms as baseline
-baselinecorrected_laplacian100_trial=zeros(size(laplacian100_trials)); % initialize this matric
+baselinecorrected_trial=zeros(size(afterICA_trials)); % initialize this matric
 % Then loop through each trial for baseline correction
-for i=1:size(baselinecorrected_laplacian100_trial,3) % loop through trials
-    trialdata=laplacian100_trials(:,:,i);
+for i=1:size(baselinecorrected_trial,3) % loop through trials
+    trialdata=afterICA_trials(:,:,i);
     newtrialdata = baselinecorrect(trialdata,baselinesamps);
-    baselinecorrected_laplacian100_trial(:,:,i)=newtrialdata;
+    baselinecorrected_trial(:,:,i)=newtrialdata;
 end
 
 % Just to examine the effect of baseline correction 
 % (doesn't seem to do much change since my data is centered on zero, since they are average referenced)
 figure;
-trialdata=laplacian100_trials(:,:,1);
+trialdata=afterICA_trials(:,:,1);
 baseline = mean(trialdata(baselinesamps,:),1);
 newtrialdata = trialdata - ones(size(trialdata,1),1)*baseline;
 subplot(2,1,1);
@@ -33,21 +34,21 @@ figure;
 subplot(3,1,1);
 plot(laplacian_trials(:,:,1));title('laplacian');
 subplot(3,1,2);
-plot(laplacian100_trials(:,:,1));title('laplacian*100');
+plot(afterICA_trials(:,:,1));title('laplacian*100');
 subplot(3,1,3);
-plot(baselinecorrected_laplacian100_trial(:,:,1));title('laplacian after baseline correct');
+plot(baselinecorrected_trial(:,:,1));title('laplacian after baseline correct');
 
 %% don't baseline correct before wavelet (whatever, it doesn't change much anyway)
-% baselinecorrected_laplacian100_trial=laplacian100_trials;
+% baselinecorrected_laplacian100_trial=afterICA_trials;
 
 %% First, plot the scalp coherence
 rate=Fs;
 maxfreq=30;
-win=501:2000; % After 500 ms
+win=1001:2000; % After 500 ms
 goodepochsIncluded=1:length(goodepochs);% all epochs in the matric
 % First, plot the scalp coherence
 % [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(:,1:128,:),rate,maxfreq,goodepochs,win);
-[pow,freqs,df] = allspectra(baselinecorrected_laplacian100_trial,rate,maxfreq,goodepochsIncluded,win);
+[pow,freqs,df] = allspectra(baselinecorrected_trial,rate,maxfreq,goodepochsIncluded,win);
 
 % plot out pow the 128 channels
 AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2','F4','F6','F8','F12','FT11','FC5','FC3','FC1','FCZ','FC2','FC4','FC6','FT12','T7','C5','C3','C1','CZ','C2','C4','C6','T8','TP7','CP5','CP3','CP1','CPZ','CP2','CP4','CP6','TP8','M1','M2','P7','P5','P3','P1','PZ','P2','P4','P6','P8','PO7','PO3','POZ','PO4','PO8','O1','OZ','O2','CB1','CB2','AFP1','AFP2','AF7','AF5','AFZ','AF6','AF8','AFF5H','AFF3H','AFF1H','AFF2H','AFF4H','AFF6H','F9','F10','FFT7H','FFC5H','FFC3H','FFC1H','FFC2H','FFC4H','FFC6H','FFT8H','FT9','FT7','FT8','FT10','FTT7H','FCC5H','FCC3H','FCC1H','FCC2H','FCC4H','FCC6H','FTT8H','TTP7H','CCP5H','CCP3H','CCP1H','CCP2H','CCP4H','CCP6H','TTP8H','TPP7H','CPP5H','CPP3H','CPP1H','CPP2H','CPP4H','CPP6H','TPP8H','P9','P10','PPO3H','PPO1H','PPO2H','PPO4H','PO9','PO5','PO1','PO2','PO6','PO10','CBZ','VEOG','HEOG','EMG1','EMG2','HL 1','HL 2','EMG3','EMG4','EMG5','EMG6','TRIGGER'};
@@ -66,6 +67,7 @@ suptitle('session2021111802')
 
 
 %% Calculate subplot coordinates for scalp map
+cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis
 load('coordinates.mat');
 X = [chanlocs128.X];
 Y = [chanlocs128.Y];
@@ -112,7 +114,7 @@ u=7;
 %% Plot all powerspetra on scalp map
 indtemp=find(CondiDataGoodTrials==UniCondi(u));
 HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
-[pow,freqs,df] = allspectra(baselinecorrected_laplacian100_trial(win,:,HighInd),rate,maxfreq);
+[pow,freqs,df] = allspectra(baselinecorrected_trial(win,:,HighInd),rate,maxfreq);
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 for chan=1:128
@@ -124,19 +126,80 @@ for chan=1:128
     if chan==128
         xlabel('freq');ylabel('pow');
     end
-    ylim([0 0.25]);
+    %ylim([0 1]);
     title([AllchanNames{chan}]);
 end
 % suptitle('session2021111802')
 
-%% Plot all erp of planning on scalp map
+%% Plot all powerspetra on scalp map for each condition 
+conditionNames={'0:4' '1:4' '1:2' '1:1' '2:1' '4:1' '4:0'}; 
+Ymax=2;
+
+% High performance trials
+figure('units','normalized','outerposition',[0 0 1 1]);
+for u=[1 7]; % sp=1:2
+    ConditionColor=colors(u,:);
+    indtemp=find(CondiDataGoodTrials==UniCondi(u));
+    HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
+    LowInd=indtemp(find(TrialScoresGoodTrials(indtemp)<median(TrialScoresGoodTrials(indtemp))));
+    
+    [pow,freqs,df] = allspectra(baselinecorrected_trial(win,:,HighInd),rate,maxfreq);
+
+    for chan=1:128
+        subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.04 0.03]);
+        
+        plot(freqs,pow(:,chan),'color',ConditionColor);
+        hold on
+        if ~isempty(find([1:127]==chan))
+        set(gca,'XTick',[]); set(gca,'YTick',[]); 
+        end
+        if chan==128
+            xlabel('freq');ylabel('pow');
+        end
+        ylim([0 Ymax]);
+        title([AllchanNames{chan}]);
+    end
+end
+hold off;
+legend((conditionNames([1 7])));
+suptitle('high performance trials');
+
+% Low performance trials
+figure('units','normalized','outerposition',[0 0 1 1]);
+for u=[1 7]; % sp=1:2
+    ConditionColor=colors(u,:);
+    indtemp=find(CondiDataGoodTrials==UniCondi(u));
+    HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
+    LowInd=indtemp(find(TrialScoresGoodTrials(indtemp)<median(TrialScoresGoodTrials(indtemp))));
+    
+    [pow,freqs,df] = allspectra(baselinecorrected_trial(win,:,LowInd),rate,maxfreq);
+
+    for chan=1:128
+        subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.04 0.03]);
+        
+        plot(freqs,pow(:,chan),'color',ConditionColor);
+        hold on
+        if ~isempty(find([1:127]==chan))
+        set(gca,'XTick',[]); set(gca,'YTick',[]); 
+        end
+        if chan==128
+            xlabel('freq');ylabel('pow');
+        end
+        ylim([0 Ymax]);
+        title([AllchanNames{chan}]);
+    end
+end
+hold off;
+legend((conditionNames([1 7])));
+suptitle('low performance trials');
+%% Plot all erp of planning on scalp map for each condition
 indtemp=find(CondiDataGoodTrials==UniCondi(u));
 HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 for chan=1:128
     subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.04 0.03]);
-    plot(1:length(win),mean(baselinecorrected_laplacian100_trial(win,chan,HighInd),3));
+    plot(1:length(win),mean(baselinecorrected_trial(win,chan,HighInd),3));
     if ~isempty(find([1:127]==chan))
     set(gca,'XTick',[]); set(gca,'YTick',[]); 
     end
@@ -147,6 +210,7 @@ for chan=1:128
     title([AllchanNames{chan}]);
 end
 %suptitle('session2021111802')
+
 
 %%  plot only C3/C4 28/32 F3/F4 9/13 FC3/FC4 19/23
 rate=Fs;
@@ -173,6 +237,8 @@ UniCondi=unique(CondiData);
 CondiDataGoodTrials=CondiData(goodepochs);
 allPermGoodTrials=allPerm(goodepochs);
 TrialScoresGoodTrials=TrialScores(goodepochs);
+colors=[0 0 1; 0 0.4 0.85; 0 0.8 0.7; 0 1 0; 0.7 0.8 0; 0.85 0.4 0; 1 0 0];
+
 
 win=500:1000; % planning
 win=1000:2000; % movement
@@ -207,32 +273,38 @@ for u=1:length(UniCondi); % sp=1:2
     
     %*********************************************************************
 
-    Ymax=0.1;
+    Ymax=2;
     figure(1);
     
-    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial,rate,maxfreq,HighInd,win);
+    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_trial,rate,maxfreq,HighInd,win);
     
     subplot(1,length(UniCondi),length(UniCondi)+1-u); % C3/C4 28/32 
     
-    plotx(freqs,pow(:,28),'color',[0.9290 0.6940 0.1250]);
+%     plotx(freqs,pow(:,28),'color',[0.9290 0.6940 0.1250]);
+    plotx(freqs,pow(:,28),'color', colors(1,:));
     xlabel('freq');ylabel('pow (\muV^2/cm^2)'); xlim([0 25]);ylim([0 Ymax]);
 %     title([conditionNames{UniCondi(u)} '  ' AllchanNames{28}]);
     title(['high performance trials ' conditionNames{UniCondi(u)}]);
     hold on
     
-    plotx(freqs,pow(:,32),'color',[0 0.4470 0.7410]);
+%     plotx(freqs,pow(:,32),'color',[0 0.4470 0.7410]);
+    plotx(freqs,pow(:,32),'color', colors(7,:));
 %     title([conditionNames{UniCondi(u)} '  ' AllchanNames{32}]);
     
-    plotx(freqs,pow(:,9),'color',[1 0 1]);% F3/F4 9/13 
+%     plotx(freqs,pow(:,9),'color',[1 0 1]);% F3/F4 9/13 
+    plotx(freqs,pow(:,9),'color', colors(2,:));
 %     title([conditionNames{UniCondi(u)} '  ' AllchanNames{9}]);
     
-    plotx(freqs,pow(:,13),'color',[0 1 0]);
+%     plotx(freqs,pow(:,13),'color',[0 1 0]);
+    plotx(freqs,pow(:,13),'color', colors(6,:));
 %     title([conditionNames{UniCondi(u)} '  ' AllchanNames{13}]);
     
-    plotx(freqs,pow(:,19),'color',[1 0 0]);% red; FC3/FC4 19/23
+%     plotx(freqs,pow(:,19),'color',[1 0 0]);% red; FC3/FC4 19/23
+    plotx(freqs,pow(:,19),'color', colors(3,:));
 %     title([conditionNames{UniCondi(u)} '  ' AllchanNames{19}]);
     
-    plotx(freqs,pow(:,23),'color', [0 1 1]);% cyan; FC4 
+%     plotx(freqs,pow(:,23),'color', [0 1 1]);% cyan; FC4 
+    plotx(freqs,pow(:,23),'color', colors(5,:));
 %     title([conditionNames{UniCondi(u)} '  ' AllchanNames{23}]);
 
     legend({'C3','C4','F3','F4','FC3','FC4'});
@@ -241,29 +313,35 @@ for u=1:length(UniCondi); % sp=1:2
     
     figure(2);
     
-    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial,rate,maxfreq,LowInd,win);
+    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_trial,rate,maxfreq,LowInd,win);
     
     subplot(1,length(UniCondi),length(UniCondi)+1-u); % C3/C4 28/32 
     
-    plotx(freqs,pow(:,28),'color',[0.9290 0.6940 0.1250]);
+%     plotx(freqs,pow(:,28),'color',[0.9290 0.6940 0.1250]);
+    plotx(freqs,pow(:,28),'color', colors(1,:));
     xlabel('freq');ylabel('pow (\muV^2/cm^2)'); xlim([0 25]);ylim([0 Ymax]);
 %     title([conditionNames{UniCondi(u)} '  ' AllchanNames{28}]);
     title(['low performance trials ' conditionNames{UniCondi(u)}]);
     hold on
     
-    plotx(freqs,pow(:,32),'color',[0 0.4470 0.7410]);
+%     plotx(freqs,pow(:,32),'color',[0 0.4470 0.7410]);
+    plotx(freqs,pow(:,32),'color', colors(7,:));
 %     title([conditionNames{UniCondi(u)} '  ' AllchanNames{32}]);
     
-    plotx(freqs,pow(:,9),'color',[1 0 1]);% F3/F4 9/13 
+%     plotx(freqs,pow(:,9),'color',[1 0 1]);% F3/F4 9/13 
+    plotx(freqs,pow(:,9),'color', colors(2,:));
 %     title([conditionNames{UniCondi(u)} '  ' AllchanNames{9}]);
     
-    plotx(freqs,pow(:,13),'color',[0 1 0]);
+%     plotx(freqs,pow(:,13),'color',[0 1 0]);
+    plotx(freqs,pow(:,13),'color', colors(6,:));
 %     title([conditionNames{UniCondi(u)} '  ' AllchanNames{13}]);
     
-    plotx(freqs,pow(:,19),'color',[1 0 0]);% red; FC3/FC4 19/23
+%     plotx(freqs,pow(:,19),'color',[1 0 0]);% red; FC3/FC4 19/23
+    plotx(freqs,pow(:,19),'color', colors(3,:));
 %     title([conditionNames{UniCondi(u)} '  ' AllchanNames{19}]);
     
-    plotx(freqs,pow(:,23),'color', [0 1 1]);% cyan; FC4 
+%     plotx(freqs,pow(:,23),'color', [0 1 1]);% cyan; FC4 
+    plotx(freqs,pow(:,23),'color', colors(5,:));
 %     title([conditionNames{UniCondi(u)} '  ' AllchanNames{23}]);
 
     legend({'C3','C4','F3','F4','FC3','FC4'});
@@ -301,15 +379,16 @@ ax42=subplot(3,2,4);
 ax52=subplot(3,2,5);
 ax62=subplot(3,2,6);
 
-colors=[1 1 0; 0 1 1; 0 0.4470 0.7410; 0 1 0; 0.9290 0.6940 0.1250; 1 0 1; 1 0 0];
+% colors=[1 0 1; 0 1 1; 0 0.4470 0.7410; 0 1 0; 0.9290 0.6940 0.1250; 1 0 1; 1 0 0];
+colors=[0 0 1; 0 0.4 0.85; 0 0.8 0.7; 0 1 0; 0.7 0.8 0; 0.85 0.4 0; 1 0 0];
 
-for u=1:length(UniCondi);
+for u=1:length(UniCondi); % u=2;
     indtemp=find(CondiDataGoodTrials==UniCondi(u));
     HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
     LowInd=indtemp(find(TrialScoresGoodTrials(indtemp)<median(TrialScoresGoodTrials(indtemp))));
 
     figure(1);
-    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial,rate,maxfreq,HighInd,win);
+    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_trial,rate,maxfreq,HighInd,win);
     
     ConditionColor=colors(u,:);
 
@@ -346,7 +425,7 @@ for u=1:length(UniCondi);
 
     %*********************************************************************
     figure(2);
-    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial,rate,maxfreq,LowInd,win);
+    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_trial,rate,maxfreq,LowInd,win);
     
     ConditionColor=colors(u,:);
 
@@ -384,7 +463,7 @@ for u=1:length(UniCondi);
 end
 % toc;
 % suptitle('Jack session 2')
-Ymax=0.1;
+Ymax=1;
 
 figure(1);
 axes(ax1);
@@ -434,10 +513,10 @@ u=3;% condition 1:2
 indtemp=find(CondiDataGoodTrials==UniCondi(u));
 HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
 LowInd=indtemp(find(TrialScoresGoodTrials(indtemp)<median(TrialScoresGoodTrials(indtemp))));
-ConnectedData=baselinecorrected_laplacian100_trial(:,:,LowInd(1));
+ConnectedData=baselinecorrected_trial(:,:,LowInd(1));
 % zeros(size(baselinecorrected_laplacian100_trial,1)*length(LowInd),128);
 for i=2:length(LowInd)
-    ConnectedData=cat(1,ConnectedData,baselinecorrected_laplacian100_trial(:,:,LowInd(i)));
+    ConnectedData=cat(1,ConnectedData,baselinecorrected_trial(:,:,LowInd(i)));
 end
 figure;
 subplot(2,1,1);
@@ -464,6 +543,6 @@ TrialScoresGoodTrials(LowInd(3))
 TrialScoresGoodTrials(LowInd(9))
 % Scores are not too bad
 
-[pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(win,:,LowInd),rate,maxfreq);
+[pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_trial(win,:,LowInd),rate,maxfreq);
 figure;
 plot(freqs,pow(:,[19 28]));
