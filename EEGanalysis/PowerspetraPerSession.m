@@ -41,20 +41,20 @@ plot(baselinecorrected_trial(:,:,1));title('laplacian after baseline correct');
 %% don't baseline correct before wavelet (whatever, it doesn't change much anyway)
 % baselinecorrected_laplacian100_trial=afterICA_trials;
 
-%% First, plot the scalp coherence
+%% First, settings for plotting
 rate=Fs;
 maxfreq=30;
 win=1001:2000; % After 500 ms
-goodepochsIncluded=1:length(goodepochs);% all epochs in the matric
+% goodepochsIncluded=1:length(goodepochs);% all epochs in the matric
 % First, plot the scalp coherence
 % [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(baselinecorrected_laplacian100_trial(:,1:128,:),rate,maxfreq,goodepochs,win);
-[pow,freqs,df] = allspectra(baselinecorrected_trial,rate,maxfreq,goodepochsIncluded,win);
+% [pow,freqs,df] = allspectra(baselinecorrected_trial,rate,maxfreq,goodepochsIncluded,win);
 
 % plot out pow the 128 channels
 AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2','F4','F6','F8','F12','FT11','FC5','FC3','FC1','FCZ','FC2','FC4','FC6','FT12','T7','C5','C3','C1','CZ','C2','C4','C6','T8','TP7','CP5','CP3','CP1','CPZ','CP2','CP4','CP6','TP8','M1','M2','P7','P5','P3','P1','PZ','P2','P4','P6','P8','PO7','PO3','POZ','PO4','PO8','O1','OZ','O2','CB1','CB2','AFP1','AFP2','AF7','AF5','AFZ','AF6','AF8','AFF5H','AFF3H','AFF1H','AFF2H','AFF4H','AFF6H','F9','F10','FFT7H','FFC5H','FFC3H','FFC1H','FFC2H','FFC4H','FFC6H','FFT8H','FT9','FT7','FT8','FT10','FTT7H','FCC5H','FCC3H','FCC1H','FCC2H','FCC4H','FCC6H','FTT8H','TTP7H','CCP5H','CCP3H','CCP1H','CCP2H','CCP4H','CCP6H','TTP8H','TPP7H','CPP5H','CPP3H','CPP1H','CPP2H','CPP4H','CPP6H','TPP8H','P9','P10','PPO3H','PPO1H','PPO2H','PPO4H','PO9','PO5','PO1','PO2','PO6','PO10','CBZ','VEOG','HEOG','EMG1','EMG2','HL 1','HL 2','EMG3','EMG4','EMG5','EMG6','TRIGGER'};
 % AllchanNames{1}
 
-%% plot power spectra of all chans
+%% plot power spectra of all chans (Skip)
 for chan=1:128
     subplot(8,16,chan);
     plot(freqs,pow(:,chan));
@@ -106,12 +106,12 @@ CondiDataGoodTrials=CondiData(goodepochs);
 allPermGoodTrials=allPerm(goodepochs);
 TrialScoresGoodTrials=TrialScores(goodepochs);
 
-win=501:1000; % planning
-win=1001:2000; % movement
-u=1;
-u=7;
+% win=501:1000; % planning
+% win=1001:2000; % movement
+% u=1;
+% u=7;
 
-%% Plot all powerspetra on scalp map
+%% Plot all powerspetra on scalp map (skip)
 indtemp=find(CondiDataGoodTrials==UniCondi(u));
 HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
 [pow,freqs,df] = allspectra(baselinecorrected_trial(win,:,HighInd),rate,maxfreq);
@@ -135,8 +135,37 @@ end
 conditionNames={'0:4' '1:4' '1:2' '1:1' '2:1' '4:1' '4:0'}; 
 Ymax=2;
 
+% all performance trials
+figure('units','normalized','outerposition',[0 0 0.6 1]);
+for u=[1 7]; % sp=1:2
+    ConditionColor=colors(u,:);
+    indtemp=find(CondiDataGoodTrials==UniCondi(u));
+    
+    [pow,freqs,df] = allspectra(baselinecorrected_trial(win,:,indtemp),rate,maxfreq);
+
+    for chan=1:128
+        subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.02 0.03]);
+        
+        plot(freqs,pow(:,chan),'color',ConditionColor);
+        hold on
+        if ~isempty(find([1:127]==chan))
+        set(gca,'XTick',[]); set(gca,'YTick',[]); 
+        end
+        if chan==128
+            xlabel('freq');ylabel('pow');
+        end
+        ylim([0 Ymax]);
+        title([AllchanNames{chan}]);
+    end
+end
+hold off;
+legend((conditionNames([1 7])));
+
+
+
+
 % High performance trials
-figure('units','normalized','outerposition',[0 0 1 1]);
+figure('units','normalized','outerposition',[0 0 0.6 1]);
 for u=[1 7]; % sp=1:2
     ConditionColor=colors(u,:);
     indtemp=find(CondiDataGoodTrials==UniCondi(u));
@@ -146,7 +175,7 @@ for u=[1 7]; % sp=1:2
     [pow,freqs,df] = allspectra(baselinecorrected_trial(win,:,HighInd),rate,maxfreq);
 
     for chan=1:128
-        subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.04 0.03]);
+        subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.02 0.03]);
         
         plot(freqs,pow(:,chan),'color',ConditionColor);
         hold on
@@ -165,7 +194,7 @@ legend((conditionNames([1 7])));
 suptitle('high performance trials');
 
 % Low performance trials
-figure('units','normalized','outerposition',[0 0 1 1]);
+figure('units','normalized','outerposition',[0 0 0.6 1]);
 for u=[1 7]; % sp=1:2
     ConditionColor=colors(u,:);
     indtemp=find(CondiDataGoodTrials==UniCondi(u));
@@ -175,7 +204,7 @@ for u=[1 7]; % sp=1:2
     [pow,freqs,df] = allspectra(baselinecorrected_trial(win,:,LowInd),rate,maxfreq);
 
     for chan=1:128
-        subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.04 0.03]);
+        subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.02 0.03]);
         
         plot(freqs,pow(:,chan),'color',ConditionColor);
         hold on
@@ -192,7 +221,7 @@ end
 hold off;
 legend((conditionNames([1 7])));
 suptitle('low performance trials');
-%% Plot all erp of planning on scalp map for each condition
+%% Plot all erp of planning on scalp map for each condition (skip)
 indtemp=find(CondiDataGoodTrials==UniCondi(u));
 HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
 
@@ -212,7 +241,7 @@ end
 %suptitle('session2021111802')
 
 
-%%  plot only C3/C4 28/32 F3/F4 9/13 FC3/FC4 19/23
+%%  plot only C3/C4 28/32 F3/F4 9/13 FC3/FC4 19/23 (skip)
 rate=Fs;
 maxfreq=50;
 win=1501:2500; % During the movement, after 500 ms of planning
@@ -225,12 +254,12 @@ AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2',
 
 conditionNames={'0:4' '1:4' '1:2' '1:1' '2:1' '4:1' '4:0'}; 
 
-%% For all 3 days
+%% For all 3 days (skip)
 CondiData=allPerm_alldays(logical(goodepochs_alldays));
 TrialScores=TrialScores_alldays(logical(goodepochs_alldays));
 % plot(TrialScores,'ro');hold on;yline(median(TrialScores),'m');
 
-%% plot power spetra in each condtion
+%% plot power spetra in each condtion (skip)
 UniCondi=unique(CondiData);
 
 % Use Bgoodepochs to select good trials only
@@ -240,8 +269,8 @@ TrialScoresGoodTrials=TrialScores(goodepochs);
 colors=[0 0 1; 0 0.4 0.85; 0 0.8 0.7; 0 1 0; 0.7 0.8 0; 0.85 0.4 0; 1 0 0];
 
 
-win=500:1000; % planning
-win=1000:2000; % movement
+win=501:1000; % planning
+win=1001:2000; % movement
 
 % figure;tic;% plot 7 conditions
 
@@ -349,7 +378,7 @@ end
 % toc;
 % suptitle('Jack session 2')
 % clf(figure(1));clf(figure(2)); %clear figure;
-%% plot 6 channels over different conditions
+%% plot 6 channels over different conditions (skip)
 win=1001:1500; % planning;
 win=1501:2500; % During the movement, after 500 ms of planning
 win=2501:3500; % Seeing Bonus;
@@ -507,7 +536,7 @@ xlabel('freq');ylabel('pow (\muV^2/cm^2)');ylim([0 Ymax]);xlim([0 25]);title(['l
 legend(conditionNames);
 
 
-%% examine 1:2 data and power of FC3 19 AND C3 28
+%% examine 1:2 data and power of FC3 19 AND C3 28 (skip)
 conditionNames;
 u=3;% condition 1:2
 indtemp=find(CondiDataGoodTrials==UniCondi(u));
