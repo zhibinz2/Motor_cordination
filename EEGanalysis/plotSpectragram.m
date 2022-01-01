@@ -15,10 +15,10 @@ AllchanNames={'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2',
 
 % AllchanNames{1}
 
-%% For all 3 days
+%% For all 3 days (skip)
 CondiData=allPerm_alldays(logical(goodepochs_alldays));
 TrialScores=TrialScores_alldays(logical(goodepochs_alldays));
-%%
+%% all conditions
 for u=1:length(UniCondi);
 
     figure('units','normalized','outerposition',[0 0 0.6 0.6]);
@@ -31,7 +31,7 @@ for u=1:length(UniCondi);
     LowInd=indtemp(find(TrialScoresGoodTrials(indtemp)<median(TrialScoresGoodTrials(indtemp))));
     
     % Compute ERP in all channels
-    basedlinecorrected_ERP=mean(baselinecorrected_laplacian100_trial(:,1:128,HighInd),3);
+    basedlinecorrected_ERP=mean(baselinecorrected_trial(:,1:128,HighInd),3);
     % plot(basedlinecorrected_ERP);
 
     cnorm = wavelet(basedlinecorrected_ERP,sr,wfc,wfreq);
@@ -109,10 +109,61 @@ for u=1:length(UniCondi);
 
 end
 
-%%
+%% Only condition 4:0 and 0:4 but all channels on scalp map
+conditionNames={'0:4' '1:4' '1:2' '1:1' '2:1' '4:1' '4:0'}; 
+win=1001:2000; 
+
+% all performance trials
+for u=[1 7]; % sp=1:2
+    
+    figure('units','normalized','outerposition',[0 0 1 1]);
+    indtemp=find(CondiDataGoodTrials==UniCondi(u));
+    
+    % Compute ERP in all channels
+    basedlinecorrected_ERP=mean(baselinecorrected_trial(:,1:128,indtemp),3);
+    % plot(basedlinecorrected_ERP);
+
+    cnorm = wavelet(basedlinecorrected_ERP,sr,wfc,wfreq);
+    Powcnorm = abs(cnorm).^2;
+    
+    % Power normalization
+    % one way to it:
+    logPowcorm=log10(Powcnorm);
+    baselineMean=log10(mean(Powcnorm(:,1:500,:),2));
+    normPowcnorm = logPowcorm-(ones(1,size(logPowcorm,2),1).*baselineMean);
+    
+    % open sgolay; open sgolayfilt
+    ColorLim=2;
+    
+    for chan=1:128
+        subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.02 0.03]);
+        imagesc((sgolayfilt(squeeze(normPowcnorm(:,:,chan))',1,31))');
+        colormap jet; caxis([-1*ColorLim ColorLim]);
+        set(gca,'ydir','normal');
+        title([AllchanNames{chan}]);
+        hold on;xline(500,'k','linewidth',1);xline(1000,'k','linewidth',1);hold off;
+        if ~isempty(find([1:127]==chan))
+        set(gca,'XTick',[]); set(gca,'YTick',[]); 
+        end
+        if chan==128
+            subplot('Position',[XXPLOT(chan)-0.04 YYPLOT(chan)-0.02 0.1 0.08]);
+            imagesc((sgolayfilt(squeeze(normPowcnorm(:,:,chan))',1,31))');
+            colormap jet; caxis([-1*ColorLim ColorLim]);
+            set(gca,'ydir','normal');
+            title([AllchanNames{chan}]);
+            hold on;xline(500,'k','linewidth',1);xline(1000,'k','linewidth',1);hold off;
+            xlabel('time(ms)'); ylabel('frequencies(Hz)'); 
+            yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
+            xticks(linspace(0,2000,5));xticklabels({'-1000','-500','0','500','1000'});
+            colorbar;
+        end
+    end
+    suptitle(conditionNames(u));
+end
 
 
-%% https://github.com/rameshsrinivasanuci/matlab/blob/master/jenny/WaveletTransform.m
+
+%% https://github.com/rameshsrinivasanuci/matlab/blob/master/jenny/WaveletTransform.m (skip)
 % now let's recover the time course
 wfreq = 1:50; % frequency(s) of interest
 wfc = 3;

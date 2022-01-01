@@ -84,6 +84,11 @@ plot(afterICA_trials(:,:,1));
 %% Need to step4 again to integrate behaviral data?
 run Integrate_Behavioral_into_data_trials_step4.m
 
+%% Step 8 
+run Powerspetra.m
+
+%% Step 9
+run plotSpetragram.m
 
 
 
