@@ -136,7 +136,7 @@ conditionNames={'0:4' '1:4' '1:2' '1:1' '2:1' '4:1' '4:0'};
 Ymax=2;
 
 % all performance trials
-figure('units','normalized','outerposition',[0 0 0.6 1]);
+figure('units','normalized','outerposition',[0 0 1 1]);
 for u=[1 7]; % sp=1:2
     ConditionColor=colors(u,:);
     indtemp=find(CondiDataGoodTrials==UniCondi(u));
