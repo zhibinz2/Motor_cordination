@@ -11,8 +11,8 @@ data_trials_EEG=data_trials(:,1:128,:);
 threshold=100; % set a amplitude threshold as criteria to remove bad channels and epochs later
 
 % set good standard percentages (the higher the stricter)
-prctepoch = 99; % percentage of epochs that should be good (might be percentage of chans)
-prctchan = 99.8; % percentage of channels that should be good (percentage of epochs)
+prctepoch = 60; % percentage of channels that should be good to pronounce a epoch good (might be percentage of chans)
+prctchan = 60; % percentage of epoch that should be good to pronounce a channel good (percentage of epochs)
 
 % set bad standard percentage
 cirtepoch =  1-prctepoch/100; % the percentage of bad epochs allowed
@@ -87,3 +87,12 @@ Bgoodepochs(goodepochs)=1;
 % figure; % to compare with data before re reference
 % erpdata = mean(data_trials_EEG(:,:,goodepochs),3); % This includes only good epochs
 % plotx(erpdata(:,goodchans));% plot only the good channels
+
+%% Remove bad epochs and connect them back to one time serie and plot only the good channels
+reRef_data_goodepochs=[];
+for i=1:length(goodepochs)
+    reRef_data_goodepochs=[reRef_data_goodepochs;reRef_data(:,:,i)];
+end
+figure;
+plot(reRef_data_goodepochs(:,goodchans));
+title(['Number of good trials: ' num2str(length(goodepochs))]);

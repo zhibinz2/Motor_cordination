@@ -11,7 +11,7 @@ run organize_Behavioral_step1.m
 % Load EEG data and apply filter to get filtered_data
 % cd /home/zhibin/Documents/Acquisition/
 cd /home/zhibin/Documents/Acquisition/bimanual_Reach_Jack_2021111802
-EEGfileName='bimanual_Reach_Hiro_20211115'; EEG=loadcurry([pwd '/' EEGfileName '.cdt']);
+EEGfileName='bimanual_Reach_Patty_20211119'; EEG=loadcurry([pwd '/' EEGfileName '.cdt']);
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 tic
 run organize_EEG_filter_step2.m
@@ -37,15 +37,17 @@ run Remove_EEG_artifact_Rereference_step6.m
 reRef_data;
 goodchans;
 Bgoodepochs;% in boolean
+sum(Bgoodepochs) % number of bad epochs
 
 % Run ICA on reRef_data
 % this should be step 6b
-run RunICA_step6b.m
+open RunICA_step6b.m
 % input reRef_data and get mixedsig
 mixedsig;
 
 % Just to examine
 plot(mixedsig(goodchans,:)');
+
 
 %% Use Goodchans to do Laplacian on mixedsig (don't do laplacian)
 run Use_Goodchans_to_Laplacian_step7.m
@@ -78,8 +80,7 @@ for ntr=1:length(goodepochs) % ntr=length(goodepochs)
 end
 % Just to examine
 afterICA_trials;
-plot(afterICA_trials(:,:,1));
-
+plotx(afterICA_trials(:,:,1));
 
 %% Need to step4 again to integrate behaviral data?
 run Integrate_Behavioral_into_data_trials_step4.m
@@ -90,7 +91,9 @@ run Powerspetra.m
 %% Step 9
 run plotSpetragram.m
 
-
+%% Save data file for sharing
+cd /home/zhibin/Documents/Acquisition/bimanual_Reach_Jack_2021111802/Cleaner_Data
+run Cleaner_Data_explained.m
 
 
 

@@ -49,7 +49,7 @@ for u=1:length(UniCondi);
 
     
     % open sgolay; open sgolayfilt
-    ColorLim=4;
+    ColorLim=2;
 
     subplot(3,2,1);
     imagesc((sgolayfilt(squeeze(normPowcnorm(:,:,9))',1,31))'); % F3/F4 9/13  

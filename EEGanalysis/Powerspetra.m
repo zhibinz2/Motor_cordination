@@ -38,18 +38,19 @@ plot(afterICA_trials(:,:,1));title('laplacian*100');
 subplot(3,1,3);
 plot(baselinecorrected_trial(:,:,1));title('laplacian after baseline correct');
 
-%% Baseline romalization
+%% Baseline nromalization
 baselinesamps = 1:500; % use the first 500ms as baseline
 basenormalized_trial=zeros(size(afterICA_trials)); % initialize this matric
 % Then loop through each trial for baseline correction
 for i=1:size(basenormalized_trial,3) % loop through trials
     trialdata=afterICA_trials(:,:,i); % plot(trialdata)
     baselineMeanAbs=mean(abs(trialdata(baselinesamps,:)),1);
-    newtrialdata = trialdata-baselineMeanAbs.*ones(size(trialdata,1),1);
+    newtrialdata = trialdata./(baselineMeanAbs.*ones(size(trialdata,1),1));
     basenormalized_trial(:,:,i)=newtrialdata;
 end
 % Just to examine
-plot(basenormalized_trial(:,:,1));
+subplot(2,1,1);plot(afterICA_trials(:,:,1));
+subplot(2,1,2);plot(basenormalized_trial(:,:,1));
 %% don't baseline correct before wavelet (whatever, it doesn't change much anyway)
 % baselinecorrected_laplacian100_trial=afterICA_trials;
 
@@ -145,7 +146,9 @@ end
 
 %% Plot all powerspetra on scalp map for each condition 
 conditionNames={'0:4' '1:4' '1:2' '1:1' '2:1' '4:1' '4:0'}; 
-Ymax=0.5;
+colors=[0 0 1; 0 0.4 0.85; 0 0.8 0.7; 0 1 0; 0.7 0.8 0; 0.85 0.4 0; 1 0 0];
+
+Ymax=0.25;
 
 % all performance trials
 figure('units','normalized','outerposition',[0 0 1 1]);
@@ -167,7 +170,7 @@ for u=[1 7]; % sp=1:2
             xlabel('freq');ylabel('pow');
         end
         ylim([0 Ymax]);
-        xlim([5 25]);
+        xlim([1 25]);
         title([AllchanNames{chan}]);
     end
 end
