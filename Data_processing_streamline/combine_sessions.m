@@ -32,7 +32,8 @@ run Integrate_Behavioral_into_data_trials_step4.m
 run draw_movements_all_conditions_step5.m
 
 % Get goodchans, and a boolean goodepochs array
-run Remove_EEG_artifact_Rereference_step6.m
+% run Remove_EEG_artifact_Rereference_step6.m
+run artifact_removal_step6b.m
 % Just to examine
 reRef_data;
 goodchans;

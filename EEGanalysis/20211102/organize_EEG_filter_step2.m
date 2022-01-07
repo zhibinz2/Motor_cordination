@@ -120,7 +120,7 @@ Hd = makefilter(Fs,50,55,3,20,0);
 filtered_data=filtfilthd(Hd,filtered_data);
 
 % plotx(mean(filtered_data,2));  
-% plot(filtered_data);
+% plot(filtered_data(1:dataEnd,:));
 % hold on;
 % for i=1:length(ind_trial_start)
 %     xline(locs(ind_trial_start(i)),'k');

@@ -1,3 +1,4 @@
+%% (skip)
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 clear data_trials
 run integrate_EEG_into_data_trials_step3.m % now included the baseline and padding

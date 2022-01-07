@@ -75,7 +75,8 @@ plot(1:size(A,2),SqA,'ro');ylabel('sum of square of column in A');xlabel('ICs');
 % topoplot to examine them
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis
 load('Neuroscan_spherical__topoplot_chans.mat')
-ComponentsExam=[50 4 36 94];
+% ComponentsExam=[50 4 36 94];
+ComponentsExam=I(1:5);
 figure;
 for i=1:length(ComponentsExam)
     subplot(length(ComponentsExam),1,i);
@@ -143,6 +144,7 @@ title('IC time series');ylabel('uV');
 %% Calculate Correlation
 % FP1 and FP2 are channel 1 and 3;
 % compute correlation between FP1 and FP2;
+% clear corr;
 
 [RHO1,PVAL1] = corr(EEGdataShort(:,1),icasig');
 figure
@@ -161,14 +163,17 @@ plot(1:length(RHO1),PVAL3,'ro');ylabel('p value');xlabel('ICs');
 legend({'correlation coefficient' 'p-values '});title('correlation with FP2');hold off;
 
 % component 56,3 seem to be highly correlated with FP1 and FP2
-ComponentsExam=[50 63 36 62 108];
+% ComponentsExam=[49 65 38 70];
+[B1,I1]=sort(abs(RHO1),'descend');[B3,I3]=sort(abs(RHO3),'descend');
+ComponentsExam=unique([I1(1:3) I3(1:3)]);
+
 figure;
 for i=1:length(ComponentsExam)
     subplot(length(ComponentsExam),1,i);
     topoplot(A(:,ComponentsExam(i)),test,'nosedir','+Y');title(['component' num2str(ComponentsExam(i))]);colorbar;
 end
 %% Plot ICs Topoplot Spetrogram ERP AND Power spectra,  (Similar to EEGLAB)
-ComponentsExam=[50 36 62];
+% ComponentsExam=[50 36 62];
 
 for i=1:length(ComponentsExam)
     ComponentPick=ComponentsExam(i);
@@ -210,7 +215,9 @@ for i=1:length(ComponentsExam)
 end
 
 %% Deside which components to remove and mix back the signal and display
-ComponentRemove=[50 36 62];
+% ComponentRemove=[50 36 62];
+ComponentRemove=ComponentsExam;
+
 A(:,ComponentRemove)=0; icasig(ComponentRemove,:)=0;
 
 mixedsig=A*icasig;
