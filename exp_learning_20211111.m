@@ -250,14 +250,15 @@ KbStrokeWait;
 
 %*************************************************************************
 % Start taking eye open and eye close resting stage EEG
-instructionStart=['Hit any key and then look at the center of the screen for 3 min']
+instructionStart=['Hit any key and then look at the center of the screen for ' num2str(TimeRestingEEG/60) ' min']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
 % hit a key to continue
 KbStrokeWait;
 
-% Flash the upper left corner once at the start and end of eye open period (and bottom right)
+% Flash photocells at the start and end of eye open period 
+% Flash photocells once at the start of eye open period ###### (upper left and bottom right)
 % i=1;
 % while i < 2;
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
@@ -267,7 +268,7 @@ KbStrokeWait;
 % end
 
 
-% get a timestamp and begin taking resting EEG
+% get a timestamp and begin taking resting EEG ****************************
 vbl = Screen('Flip', windowPtr);
 i=1;
 while i<numFramesRestEye
@@ -291,7 +292,7 @@ end
 
 % WaitSecs(TimeRestingEEG);
 
-% Flash once to mark the end of open eye resting EEG collection
+% Flash photocells once to mark the end of open eye resting EEG collection ###### (upper left and bottom right)
 % i=1;
 % while i < 2;
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
@@ -307,8 +308,8 @@ Screen('Flip',windowPtr);
 % hit a key to continue
 KbStrokeWait;
 
-% Flash the upper left corner once at the start and end of eye closed period (and bottom right)
-% Flash once to start
+% Flash photocells to mark the start and end of eye closed period 
+% Flash once to start ###### (upper left and bottom right)
 % i=1;
 % while i < 2;
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
@@ -339,7 +340,7 @@ while i<numFramesRestEye
 end
     
 
-% Flash again to end
+% Flash photocells again to end ###### (upper left and bottom right)
 i=1;
 while i < 2;
     Screen('FillRect', windowPtr, white, LeftUpperSquare);

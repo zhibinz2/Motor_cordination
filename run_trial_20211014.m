@@ -77,10 +77,11 @@ while n <  numFrames %~KbCheck
 
 
     % *******************************************************************
-    % fash the upper left corner once at the start of planing phase (and bottom right)
+    % ******#################################
+    % fash photocells at the start of planing phase (upper left and bottom right)
     if n == 1
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
+    Screen('FillRect', windowPtr, white, LeftUpperSquare); % event type = 1200002
+    Screen('FillRect', windowPtr, white, RightBottomSquare); 
     end
     
     % Planning phase (hold the mice)
@@ -99,23 +100,24 @@ while n <  numFrames %~KbCheck
         
     end
     
-    %flash the upper right corner once at the end of planning phase (and bottom right)
+    % ******#################################
+    % fash photocells at the end of planning phase (upper right and bottom right)
     if n == numFramesPlan 
-    Screen('FillRect', windowPtr, white, RightUpperSquare);
+    Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
     Screen('FillRect', windowPtr, white, RightBottomSquare);
     end
     
     
-    % ******
-    % Flash the bottom left corner every other second during the whole trial
+    % *****OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    % Flash photocell every other second during the whole trial (bottom left)
     if (~isempty(find([1:2:numFrames]==n))) % every two frames
     Screen('FillRect', windowPtr, white, LeftBottomSquare);
     end
     
-    % ******
-    % Flash the upper left corner once at the end of the trial (and bottom right)
+    % ******#################################
+    % Flash photocells at the end of the trial (upper left and bottom right)
     if n == (numFrames-1)
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
+    Screen('FillRect', windowPtr, white, LeftUpperSquare); ; % event type = 1200002
     Screen('FillRect', windowPtr, white, RightBottomSquare);
     end
     

@@ -1,7 +1,7 @@
 %% organize filtered_data into data_trials=sample_timepoints x (139+4 channels) x  trial  
 % Fs=1000;ifi=0.0167;
 NumTrialsRecorded=length(ind_trial_start);
-NumTrialtimepoints=round(max(trialLength)*2*ifi*Fs);%number of samples in a trial,ideally
+NumTrialtimepoints=round(max(trialPeaks)*2*ifi*Fs);%number of samples in a trial,ideally
 NumEEGChannels=size(detrend_data,2);
 NumAllChannels=NumEEGChannels+6; % +4;
 
