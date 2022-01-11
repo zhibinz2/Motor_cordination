@@ -8,7 +8,7 @@
 % cd /home/zhibin/Documents/Acquisition/
 % EEG=loadcurry([pwd '/' 'bimanual_Reach_Jack_20211118.cdt']);
 
-%%
+%% Get useful variables from EEG
 dataEEG=EEG.data;
 datatimes=EEG.times;
 Fs=EEG.srate;
@@ -26,17 +26,25 @@ latency=[event.latency];
 plot(latency,type,'ro');xlabel('time(ms)');ylabel('event type');
 
 % method 1
-datatimes_ind_trial_start=latency(find(type==Unitype(3)))-500;
-datatimes_ind_trial_end=latency(find(type==Unitype(3)))+1000;
+datatimes_ind_trial_go=latency(find(type==Unitype(3)));
+datatimes_ind_trial_start=datatimes_ind_trial_go-1000;
+datatimes_ind_trial_end=datatimes_ind_trial_go+1000;
 
-% method 2
-datatimes_ind_trial_startend=latency(find(type==Unitype(4)));
-datatimes_ind_trial_start=datatimes_ind_trial_startend(1:2:end-1);
-datatimes_ind_trial_end=datatimes_ind_trial_startend(2:2:end);
+%     % method 2
+%     datatimes_ind_trial_startend=latency(find(type==Unitype(4)));
+%     datatimes_ind_trial_start=datatimes_ind_trial_startend(1:2:end-1);
+%     datatimes_ind_trial_end=datatimes_ind_trial_startend(2:2:end);
+% 
+    % examine the start and end points
+%     figure;
+%     subplot(1,2,1);
+%     plot(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start),'ro');
+%     xlabel('each trial');ylabel('length of time (ms)');
+%     subplot(1,2,2);
+%     hist(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start));
+%     ylabel('number of trials');xlabel('length of time (ms)');
 
-% examine the start and end points
-plot(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start),'ro');
-hist(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start));
+
 %% photocell processing to find trial start and end index (too complicative and unreliable,use event instead)
 
 %     % plot photocell analog signal

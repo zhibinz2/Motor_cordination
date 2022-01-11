@@ -136,7 +136,7 @@ for u=[1 7]; % sp=1:2
     % open sgolay; open sgolayfilt
     ColorLim=2;
     
-    for chan=1:128
+    for chan=goodchans
         subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.02 0.03]);
         imagesc((sgolayfilt(squeeze(normPowcnorm(:,:,chan))',1,31))');
         colormap jet; caxis([-1*ColorLim ColorLim]);

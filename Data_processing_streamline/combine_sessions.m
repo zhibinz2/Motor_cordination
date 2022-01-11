@@ -12,7 +12,8 @@ run organize_Behavioral_step1.m
 % Load EEG data and apply filter to get filtered_data
 cd /home/zhibin/Documents/Acquisition/
 % cd /home/zhibin/Documents/Acquisition/bimanual_Reach_Jack_2021111802
-EEGfileName='bimanual_Reach_Hiro_20211119'; EEG=loadcurry([pwd '/' EEGfileName '.cdt']);
+% EEGfileName='bimanual_Reach_Hiro_20211119'; EEG=loadcurry([pwd '/' EEGfileName '.cdt']);
+fileList = dir('*.cdt');EEG=loadcurry([pwd '/' fileList.name]);
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 tic
 run organize_EEG_filter_step2.m
@@ -48,6 +49,7 @@ open RunICA_step6b.m
 mixedsig;
 
 % Just to examine
+figure('units','normalized','outerposition',[0 0 1 0.5]);
 plot(mixedsig(goodchans,:)');
 
 
@@ -76,13 +78,13 @@ laplacian_trials;
 % try using my own method
 mixedsig=mixedsig';
 % Initialize the data_trials matrix
-afterICA_trials=zeros(500+NumTrialtimepoints,NumEEGChannels,length(goodepochs));% add the 500 ms before trial as baseline
+afterICA_trials=zeros(NumTrialtimepoints,NumEEGChannels,length(goodepochs));% add the 500 ms before trial as baseline
 for ntr=1:length(goodepochs) % ntr=length(goodepochs)
-    afterICA_trials((1:(500+NumTrialtimepoints)),1:NumEEGChannels,ntr)=mixedsig((IndEnds(ntr)-1999):(IndEnds(ntr)),1:NumEEGChannels); 
+    afterICA_trials(1:NumTrialtimepoints,1:NumEEGChannels,ntr)=mixedsig((IndEnds(ntr)-1999):(IndEnds(ntr)),1:NumEEGChannels); 
 end
 % Just to examine
 afterICA_trials;
-plotx(afterICA_trials(:,:,1));
+plotx(afterICA_trials(:,goodchans,1));
 
 %% Need to step4 again to integrate behaviral data?
 run Integrate_Behavioral_into_data_trials_step4.m

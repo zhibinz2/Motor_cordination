@@ -32,6 +32,7 @@ IndEnds=IndStart+2000-1;
 
 %% Examine data before ICA
 TimedataShort=1:size(EEGdataShort,1);
+figure('units','normalized','outerposition',[0 0 1 0.5]);
 plot(TimedataShort, EEGdataShort(:,goodchans));
 hold on;
 for i=1:length(IndStart)
@@ -76,7 +77,7 @@ plot(1:size(A,2),SqA,'ro');ylabel('sum of square of column in A');xlabel('ICs');
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis
 load('Neuroscan_spherical__topoplot_chans.mat')
 % ComponentsExam=[50 4 36 94];
-ComponentsExam=I(1:5);
+ComponentsExam=I(1:10);
 figure;
 for i=1:length(ComponentsExam)
     subplot(length(ComponentsExam),1,i);
@@ -106,8 +107,8 @@ end
 % addpath /home/zhibin/Documents/GitHub/
 % addpath(genpath('/home/zhibin/Documents/GitHub/'));
 
-figure;
-PlotStart=20;PlotEnd=25;
+figure('units','normalized','outerposition',[0 0 1 0.5]);
+PlotStart=20;PlotEnd=40;
 Duration=(IndStart(PlotStart)-1000):(IndEnds(PlotEnd)+1000);
 TimesdataShort=1:size(EEGdataShort,1);
 plotx(TimesdataShort(Duration),EEGdataShort(Duration,goodchans));
@@ -120,7 +121,7 @@ hold off;
 title('EEG Singal Before ICA');
 
 %%  Plot ICA signal
-figure;
+figure('units','normalized','outerposition',[0 0 1 1]);
 subplot(2,1,2);
 plotx(TimesdataShort(Duration),icasig(ComponentsExam,Duration));
 hold on;
@@ -173,7 +174,7 @@ for i=1:length(ComponentsExam)
     topoplot(A(:,ComponentsExam(i)),test,'nosedir','+Y');title(['component' num2str(ComponentsExam(i))]);colorbar;
 end
 %% Plot ICs Topoplot Spetrogram ERP AND Power spectra,  (Similar to EEGLAB)
-% ComponentsExam=[50 36 62];
+% ComponentsExam=[22 60 24 34];
 
 for i=1:length(ComponentsExam)
     ComponentPick=ComponentsExam(i);
@@ -227,7 +228,7 @@ PlotStart=20;PlotEnd=25;
 Duration=(IndStart(PlotStart)-1000):(IndEnds(PlotEnd)+1000);
 TimesdataShort=1:size(EEGdataShort,1);
 
-figure;
+figure('units','normalized','outerposition',[0 0 1 1]);
 subplot(2,1,1);
 % before ICA
 plotx(TimesdataShort(Duration),EEGdataShort(Duration,:));

@@ -187,6 +187,11 @@ while n <  numFrames %~KbCheck
         if inside == 1
             Jcolor = green;
             
+            % Tell PTB no more drawing commands will be issued until the next flip
+            % (This, can help acheive good timing when one is needing to do
+            % additional non-PTB processing between setting up drawing and flipping to the screen. )
+            Screen('DrawingFinished', window);
+            
             % Count green frames (not optimal)
 %             if ((xML~=xMLbefore)|(yML~=yMLbefore)|(xMR~=xMRbefore)|(yMR~=yMRbefore))==1 % at least one coortinate moved
 %                 ScoreLR=ScoreLR+round(fullBonusPerTrial/numFrames,4); % add a bonus score
@@ -212,6 +217,11 @@ while n <  numFrames %~KbCheck
             
         else % insideLR == 0
             Jcolor = white;
+            
+            % Tell PTB no more drawing commands will be issued until the next flip
+            % (This, can help acheive good timing when one is needing to do
+            % additional non-PTB processing between setting up drawing and flipping to the screen. )
+            Screen('DrawingFinished', window);
         end
     end
      
