@@ -35,7 +35,7 @@ datatimes_ind_trial_end=datatimes_ind_trial_go+1000;
 %     datatimes_ind_trial_start=datatimes_ind_trial_startend(1:2:end-1);
 %     datatimes_ind_trial_end=datatimes_ind_trial_startend(2:2:end);
 % 
-    % examine the start and end points
+%     % examine the start and end points
 %     figure;
 %     subplot(1,2,1);
 %     plot(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start),'ro');
@@ -46,7 +46,7 @@ datatimes_ind_trial_end=datatimes_ind_trial_go+1000;
 
 
 %% photocell processing to find trial start and end index (too complicative and unreliable,use event instead)
-
+% 
 %     % plot photocell analog signal
 %     analog1=133; 
 %     analog1data=dataEEG(analog1,:);
