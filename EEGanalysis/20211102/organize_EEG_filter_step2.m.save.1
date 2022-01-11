@@ -25,18 +25,10 @@ latency=[event.latency];
 % examine the events
 plot(latency,type,'ro');xlabel('time(ms)');ylabel('event type');
 
-% method 1
 datatimes_ind_trial_start=latency(find(type==Unitype(3)))-500;
 datatimes_ind_trial_end=latency(find(type==Unitype(3)))+1000;
 
-% method 2
-datatimes_ind_trial_startend=latency(find(type==Unitype(4)));
-datatimes_ind_trial_start=datatimes_ind_trial_startend(1:2:end-1);
-datatimes_ind_trial_end=datatimes_ind_trial_startend(2:2:end);
 
-% examine the start and end points
-plot(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start),'ro');
-hist(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start));
 %% photocell processing to find trial start and end index (too complicative and unreliable,use event instead)
 
 %     % plot photocell analog signal
@@ -112,7 +104,7 @@ hist(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start));
 %     clear datatimes_ind_trial_end datatimes_ind_trial_start
 %     datatimes_ind_trial_end=locs(locs_ind_trial_end)+1; % plus one to get indices in datatimes, because datatimes starts from 0
 %     datatimes_ind_trial_start=locs(locs_ind_trial_start)+1;
-% 
+%
 %     % find end point of data  (index in datatimes)
 %     datatimes_dataEnd=locs(locs_ind_trial_end(end));
 %     

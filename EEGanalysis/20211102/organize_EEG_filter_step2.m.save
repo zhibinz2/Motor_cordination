@@ -25,18 +25,10 @@ latency=[event.latency];
 % examine the events
 plot(latency,type,'ro');xlabel('time(ms)');ylabel('event type');
 
-% method 1
 datatimes_ind_trial_start=latency(find(type==Unitype(3)))-500;
 datatimes_ind_trial_end=latency(find(type==Unitype(3)))+1000;
 
-% method 2
-datatimes_ind_trial_startend=latency(find(type==Unitype(4)));
-datatimes_ind_trial_start=datatimes_ind_trial_startend(1:2:end-1);
-datatimes_ind_trial_end=datatimes_ind_trial_startend(2:2:end);
 
-% examine the start and end points
-plot(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start),'ro');
-hist(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start));
 %% photocell processing to find trial start and end index (too complicative and unreliable,use event instead)
 
 %     % plot photocell analog signal
@@ -112,7 +104,7 @@ hist(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start));
 %     clear datatimes_ind_trial_end datatimes_ind_trial_start
 %     datatimes_ind_trial_end=locs(locs_ind_trial_end)+1; % plus one to get indices in datatimes, because datatimes starts from 0
 %     datatimes_ind_trial_start=locs(locs_ind_trial_start)+1;
-% 
+%
 %     % find end point of data  (index in datatimes)
 %     datatimes_dataEnd=locs(locs_ind_trial_end(end));
 %     
@@ -229,91 +221,3 @@ hist(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start));
 %     plot(datatimes_ind_trial_end,ones(length(datatimes_ind_trial_end)),'ro');
 %     ylim([-20 20]);
 %     subplot(1,2,2);
-%     plot(datatimes_ind_trial_end-datatimes_ind_trial_start,'go'); % look at trial duration in ms
-%     yline(mean(datatimes_ind_trial_end-datatimes_ind_trial_start),'m--','mean');
-%     yline(median(datatimes_ind_trial_end-datatimes_ind_trial_start),'m--','median');
-%     % or
-%     plot(datatimes(int64(datatimes_ind_trial_end))-datatimes(int64(datatimes_ind_trial_start)),'go'); % look at trial duration in ms
-%     ylabel('time(ms)');xlabel('each trial');
-
-%% This could be used as one event channel to import into EEGLAB
-%     EventTimes=locs(ind_trial_end);% 
-%     for i=1:length(EventTimes)
-%         EventInd(i)=find(datatimes==EventTimes(i));
-%     end
-%     EventChannel=zeros(1,length(datatimes));
-%     EventChannel(EventInd-1500)=1;% trajectory appear onset
-
-%% select the EEG channels
-
-addpath(genpath('/home/zhibin/Documents/GitHub'));
-% data=dataEEG(1:128,2000000:2002000);
-EEGdata=dataEEG(1:128,:);
-
-%% Appen EventChannel for EEGLAB
-% EEGdata(129,:)=EventChannel;
-
-%% detrend the data
-
-% tranpose the data so that time is the first dimension, channel is 2nd dimension, and trial is the 3rd dimension
-transpose_data=permute(EEGdata,[2,1]);
-% plotx(mean(transpose_data,3));
-% plotx(transpose_data);hold on;xline(dataEnd,'m--');
-
-% detrend the data
-detrend_data=ndetrend(transpose_data,1); 
-% plotx(mean(detrend_data,2)); xlim([5000 10000]);
-% plotx(detrend_data); xlim([5000 10000]);
-% plotx(detrend_data(5000:10000,:));
-
-%% Broadband filter
-% apply high pass filter to filter out frequencies lower than 1;
-% load eeglab toolbox to avoid filtered_data becoming NaN
-eeglab;
-close all;
-Hd = makefilter(Fs,1.5,1,3,20,0); % Astop 6 or 20;
-filtered_data=filtfilthd(Hd,double(detrend_data));
-
-% remove channel 91 44
-% filtered_data(:,91)=[];filtered_data(:,44)=[];
-%  plotx(filtered_data); xlim([5000 10000]);
-
-% apply low pass filter to filter out frequencies higher than 50;
-Hd = makefilter(Fs,50,55,3,20,0);
-filtered_data=filtfilthd(Hd,filtered_data);
-
-% plotx(mean(filtered_data,2));  
-% plot(filtered_data(1:dataEnd,:));
-% hold on;
-% for i=1:length(ind_trial_start)
-%     xline(locs(ind_trial_start(i)),'k');
-% end
-% xline(dataEnd,'m--');xlim([0 dataEnd]);
-% plotx(filtered_data(5000:10000,:));
-
-
-%%
-filtered_broadband=filtered_data;
-% filtered_data=filtered_broadband;
-
-%% fiter5bands 
-% tic;
-% run filter5bands.m
-% toc;
-
-% filtered_data=filtered_delta;
-% filtered_data=filtered_theta;
-% filtered_data=filtered_alpha;
-% filtered_data=filtered_beta;
-% filtered_data=filtered_gamma;
-
-% plot(filtered_beta(5000:10000,8));
-% figure;
-% plot(filtered_gamma(5000:10000,8));
-
-% tic;
-% % cd /home/zhibin/Documents/Acquisition/Bimanual_reach_zhibin_20211102
-% filename='filtered_data.mat';
-% % save(filename); % save all variables in the workspace
-% save(filename, 'filtered_broadband', 'filtered_delta', 'filtered_theta', 'filtered_alpha', 'filtered_beta', 'filtered_gamma', '-v7.3');
-% toc;
