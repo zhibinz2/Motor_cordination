@@ -190,7 +190,7 @@ while n <  numFrames %~KbCheck
             % Tell PTB no more drawing commands will be issued until the next flip
             % (This, can help acheive good timing when one is needing to do
             % additional non-PTB processing between setting up drawing and flipping to the screen. )
-            Screen('DrawingFinished', window);
+            Screen('DrawingFinished', windowPtr);
             
             % Count green frames (not optimal)
 %             if ((xML~=xMLbefore)|(yML~=yMLbefore)|(xMR~=xMRbefore)|(yMR~=yMRbefore))==1 % at least one coortinate moved
@@ -221,7 +221,7 @@ while n <  numFrames %~KbCheck
             % Tell PTB no more drawing commands will be issued until the next flip
             % (This, can help acheive good timing when one is needing to do
             % additional non-PTB processing between setting up drawing and flipping to the screen. )
-            Screen('DrawingFinished', window);
+            Screen('DrawingFinished', windowPtr);
         end
     end
      
