@@ -23,11 +23,11 @@ end
 
 
 %% test
-% radius=320; rad_ang=pi/6; 
-% [x,y] = drawReach(radius, rad_ang, xCenter, yCenter);
-% plot(x,y,'go');
-% xlim([0 1920]);ylim([0 1080]);
-% hold on; 
-% plot(xCenter, yCenter,'ro');
-% plot(x(end),y(end),'ro');
-% set(gca, 'YDir', 'reverse');
+radius=320; rad_ang=pi/6; 
+[x,y] = drawReach(radius, rad_ang, xCenter, yCenter);
+plot(x,y,'go');
+xlim([0 1920]);ylim([0 1080]);
+hold on; 
+plot(xCenter, yCenter,'ro');
+plot(x(end),y(end),'ro');
+set(gca, 'YDir', 'reverse');

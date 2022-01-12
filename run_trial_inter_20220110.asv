@@ -25,9 +25,9 @@ while n <  numFrames %~KbCheck
     Screen('DrawLine', windowPtr, white, xCenter, yCenter-screenXpixels/6, xCenter, yCenter-screenXpixels/4, 1);
     head   = [ xCenter, yCenter-screenXpixels/4 ]; % coordinates of head
     width  = 10;           % width of arrow head
-    points = [ head-[width, 0]         % left corner
-               head+[width, 0]         % right corner
-               head-[0, width] ];      % vertex
+    points = [ head-[0, width]         % left corner
+               head+[0, width]         % right corner
+               head-[width, 0] ];      % vertex
     Screen('FillPoly', windowPtr, white , points);
     % create a line and a triangle on the right
     Screen('DrawLine', windowPtr, white, xCenter+screenXpixels/6, yCenter, xCenter+screenXpixels/4, yCenter, 1);
