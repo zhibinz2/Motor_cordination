@@ -3,7 +3,7 @@
 !xinput  list
 
 %% 
-!xinput reattach 17 18
+!xinput reattach 14 15
 !xinput  list
 
 %%
