@@ -39,10 +39,10 @@ end
 
 
 
-[x,y] = drawReach(radius, rad_ang, xCenter, yCenter);
-plot(x,y,'go');
-xlim([0 1920]);ylim([0 1080]);
-hold on; 
-plot(xCenter, yCenter,'ro');
-plot(x(end),y(end),'ro');
-set(gca, 'YDir', 'reverse');
+% [x,y] = drawReach(radius, rad_ang, xCenter, yCenter);
+% plot(x,y,'go');
+% xlim([0 1920]);ylim([0 1080]);
+% hold on; 
+% plot(xCenter, yCenter,'ro');
+% plot(x(end),y(end),'ro');
+% set(gca, 'YDir', 'reverse');
