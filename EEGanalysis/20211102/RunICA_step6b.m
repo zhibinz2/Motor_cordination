@@ -24,6 +24,20 @@ NumGoodEpochs=length(goodepochs); % NumTrials=350; or numtotal or NumTrialsRecor
 IndStart=[1:2000:(2000*(NumGoodEpochs-1)+1)];
 IndEnds=IndStart+2000-1;
 
+%% Examine EEGdataShort
+%     close;
+%     figure('units','normalized','outerposition',[0 0 1 1]);
+%     plot(EEGdataShort(:,goodchans));
+%     title(['Number of good trials: ' num2str(length(goodepochs))]);
+%     hold on;
+%     for i=1:length(IndStart)
+%         xline(IndStart(i),'g-',{num2str(i)});
+%     %     xline(IndEnds(i),'r');
+%     end
+%     hold off;
+% 
+%     xlim([2000 20000]);
+
 %% Index for EEGLAB
 % IndEventsEEGLAB=zeros(1,size(reRef_data,1));
 % IndEventsEEGLAB(IndStart)=1;
@@ -80,7 +94,7 @@ load('Neuroscan_spherical__topoplot_chans.mat')
 ComponentsExam=I(1:10);
 figure;
 for i=1:length(ComponentsExam)
-    subplot(length(ComponentsExam),1,i);
+    subplot(5,2,i);
     topoplot(A(:,ComponentsExam(i)),test,'nosedir','+Y');title(['component' num2str(ComponentsExam(i))]);colorbar;
 end
     
@@ -150,17 +164,19 @@ title('IC time series');ylabel('uV');
 [RHO1,PVAL1] = corr(EEGdataShort(:,1),icasig');
 figure
 subplot(1,2,1);
-% yyaxis left
-plot(1:length(RHO1),RHO1,'bo');hold on;ylabel('correlation coefficient');
-% yyaxis right
-plot(1:length(RHO1),PVAL1,'ro');ylabel('p value');xlabel('ICs');
+plot(1:length(RHO1),RHO1,'bo');hold on;
+yyaxis left;ylabel('correlation coefficient','color','b');set(gca,'ycolor','b');
+plot(1:length(RHO1),PVAL1,'ro');
+yyaxis right; ylabel('p value','color','r');set(gca,'ycolor','r'); xlabel('ICs');
 legend({'correlation coefficient' 'p-values '});title('correlation with FP1');hold off;
 subplot(1,2,2);
 [RHO3,PVAL3] = corr(EEGdataShort(:,3),icasig');
-% yyaxis left
-plot(1:length(RHO1),RHO3,'bo');hold on;ylabel('correlation coefficient');
-% yyaxis right
-plot(1:length(RHO1),PVAL3,'ro');ylabel('p value');xlabel('ICs');
+
+plot(1:length(RHO1),RHO3,'bo');hold on;
+yyaxis left;ylabel('correlation coefficient','color','b');set(gca,'ycolor','b');
+
+plot(1:length(RHO1),PVAL3,'ro');
+yyaxis right; ylabel('p value','color','r');set(gca,'ycolor','r'); xlabel('ICs');
 legend({'correlation coefficient' 'p-values '});title('correlation with FP2');hold off;
 
 % component 56,3 seem to be highly correlated with FP1 and FP2

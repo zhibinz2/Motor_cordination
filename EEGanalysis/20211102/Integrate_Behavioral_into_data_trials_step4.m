@@ -20,7 +20,8 @@ end
 
 % % examine RSBehavData
 % ans=RSBehavData{1};
-% ans=RSBehavData{51};
+% ans=RSBehavData(51);
+% ans=cell2mat(RSBehavData{1});
 
 
 %% integrate BehavData and CondiData into data_trials: trials x (139+4 channels) x sample_timepoints;

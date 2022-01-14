@@ -35,12 +35,12 @@ chansum = sum(binarythreshhold,2); % how many bad epochs in each chan
 epochsum = sum(binarythreshhold,1); % how many bad chans in each epoch
 
 % bar(chansum); % examine the chans 
-badchancrit = prctile(chansum,0.1); % criteria to determine bad chans
+badchancrit = prctile(chansum,0.001); % criteria to determine bad chans
 badchanedit = find(chansum > badchancrit); % get the initial bad chans
 goodchanedit = setdiff([1:nChans],badchanedit); % get the initial good chans
 
 % bar(epochsum); % examine the epochs
-badepochcrit = prctile(epochsum,0.1); % criteria to determine bad epochs
+badepochcrit = prctile(epochsum,0.001); % criteria to determine bad epochs
 badepochedit = find(epochsum > badepochcrit); % get the initial bad epochs
 goodepochedit = setdiff([1:nEpochs],badepochedit); % get the initial good epochs
 

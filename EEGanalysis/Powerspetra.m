@@ -107,12 +107,13 @@ YYPLOT=YYPLOT*0.7;
 XXPLOT=XXPLOT+0.5;
 YYPLOT=YYPLOT+0.5;
 
-plot(XXPLOT,YYPLOT,'ro');
+close;
+figure('units','normalized','outerposition',[0 0 1 1]);
+plot(XXPLOT,YYPLOT,'r.');
 
 % labels = {'FP1','FPZ','FP2','AF3','AF4','F11','F7','F5','F3','F1','FZ','F2','F4','F6','F8','F12','FT11','FC5','FC3','FC1','FCZ','FC2','FC4','FC6','FT12','T7','C5','C3','C1','CZ','C2','C4','C6','T8','TP7','CP5','CP3','CP1','CPZ','CP2','CP4','CP6','TP8','M1','M2','P7','P5','P3','P1','PZ','P2','P4','P6','P8','PO7','PO3','POZ','PO4','PO8','O1','OZ','O2','CB1','CB2','AFP1','AFP2','AF7','AF5','AFZ','AF6','AF8','AFF5H','AFF3H','AFF1H','AFF2H','AFF4H','AFF6H','F9','F10','FFT7H','FFC5H','FFC3H','FFC1H','FFC2H','FFC4H','FFC6H','FFT8H','FT9','FT7','FT8','FT10','FTT7H','FCC5H','FCC3H','FCC1H','FCC2H','FCC4H','FCC6H','FTT8H','TTP7H','CCP5H','CCP3H','CCP1H','CCP2H','CCP4H','CCP6H','TTP8H','TPP7H','CPP5H','CPP3H','CPP1H','CPP2H','CPP4H','CPP6H','TPP8H','P9','P10','PPO3H','PPO1H','PPO2H','PPO4H','PO9','PO5','PO1','PO2','PO6','PO10','CBZ'};;
 text(XXPLOT,YYPLOT,labels,'VerticalAlignment','bottom','HorizontalAlignment','right');
 
-close;
 %% Select good trials and condition
 UniCondi=unique(CondiData);
 
@@ -150,7 +151,7 @@ end
 conditionNames={'0:4' '1:4' '1:2' '1:1' '2:1' '4:1' '4:0'}; 
 colors=[0 0 1; 0 0.4 0.85; 0 0.8 0.7; 0 1 0; 0.7 0.8 0; 0.85 0.4 0; 1 0 0];
 
-Ymax=0.1;
+Ymax=1.5;
 
 % all performance trials
 figure('units','normalized','outerposition',[0 0 1 1]);
@@ -160,7 +161,7 @@ for u=[1 7]; % sp=1:2
     
     [pow,freqs,df] = allspectra(basenormalized_trial(win,:,indtemp),rate,maxfreq);
 
-    for chan=goodchans
+    for chan=1:128 % only good channels
         subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.03 0.03]);
         
         plot(freqs,pow(:,chan),'color',ConditionColor);
@@ -177,7 +178,7 @@ for u=[1 7]; % sp=1:2
     end
 end
 hold off;
-legend((conditionNames([1 7])));
+legend((conditionNames([1 7])),'Location','southeast');
 
 
 

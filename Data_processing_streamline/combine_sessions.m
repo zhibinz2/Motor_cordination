@@ -15,9 +15,8 @@ cd /home/zhibin/Documents/Acquisition/
 % EEGfileName='bimanual_Reach_Hiro_20211119'; EEG=loadcurry([pwd '/' EEGfileName '.cdt']);
 fileList = dir('*.cdt');EEG=loadcurry([pwd '/' fileList.name]);
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
-tic
-run organize_EEG_filter_step2.m
-toc
+run organize_photocells_step2.m
+run EEG_filter_step2b.m
 % Just to examine
 filtered_data;
 
@@ -29,9 +28,11 @@ data_trials;
 
 % step4 resample the movements
 run Integrate_Behavioral_into_data_trials_step4.m
-
 % Plot movements (just to check)
 run draw_movements_all_conditions_step5.m
+% Speed profile
+cd /home/zhibin/Documents/GitHub/Motor_cordination/PerformanceAnaylisis
+open speed_derivative.m
 
 % Get goodchans, and a boolean goodepochs array
 % run Remove_EEG_artifact_Rereference_step6.m
@@ -48,7 +49,7 @@ open RunICA_step6b.m
 % input reRef_data and get mixedsig
 mixedsig;
 
-% Just to examine
+% Just to examine the final clean data
 figure('units','normalized','outerposition',[0 0 1 0.5]);
 plot(mixedsig(goodchans,:)');
 
@@ -84,16 +85,16 @@ for ntr=1:length(goodepochs) % ntr=length(goodepochs)
 end
 % Just to examine
 afterICA_trials;
-plotx(afterICA_trials(:,goodchans,1));
+plotx(afterICA_trials(:,goodchans,2));
 
 %% Need to step4 again to integrate behaviral data?
-run Integrate_Behavioral_into_data_trials_step4.m
+open Integrate_Behavioral_into_data_trials_step4.m
 
 %% Step 8 
-run Powerspetra.m
+open Powerspetra.m
 
 %% Step 9
-run plotSpetragram.m
+open plotSpectrogram.m
 
 %% Save data file for sharing
 cd /home/zhibin/Documents/Acquisition/bimanual_Reach_Jack_2021111802/Cleaner_Data
