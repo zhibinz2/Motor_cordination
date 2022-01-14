@@ -10,8 +10,8 @@ for ntr=1:NumTrialsRecorded
     padstart=xLyLxRyRxJyJtempshift(1,:).*ones(size(xLyLxRyRxJyJtempshift,1),1); % padding before the start of trial
     padtend=xLyLxRyRxJyJtempshift(end,:).*ones(size(xLyLxRyRxJyJtempshift,1),1); % padding after
     xLyLxRyRxJyJtempshiftpad=[padstart;xLyLxRyRxJyJtempshift;padtend]; % concatenate
-    RSxLyLxRyRxJyJtempshiftpad=resample(xLyLxRyRxJyJtempshiftpad,size(data_trials,1),length(xLyLxRyRxJyJtemp)); % resample
-    RSxLyLxRyRxJyJtempshift=RSxLyLxRyRxJyJtempshiftpad(size(data_trials,1)+1:2*size(data_trials,1),:);% remove the padding
+    RSxLyLxRyRxJyJtempshiftpad=resample(xLyLxRyRxJyJtempshiftpad,1500,length(xLyLxRyRxJyJtemp)); % resample
+    RSxLyLxRyRxJyJtempshift=RSxLyLxRyRxJyJtempshiftpad(1501:3000,:);% remove the padding
     RSxLyLxRyRxJyJtemp=RSxLyLxRyRxJyJtempshift+shift.*ones(size(RSxLyLxRyRxJyJtempshift,1),1); % shift back to the original position
     
     RSxLyLxRyRxJyJtemp=RSxLyLxRyRxJyJtemp'; % transpose to fit into trial EEG matrix
@@ -26,10 +26,11 @@ end
 
 %% integrate BehavData and CondiData into data_trials: trials x (139+4 channels) x sample_timepoints;
 
-% for ntr=NumTrialsRecorded*(block-1)+1:NumTrialsRecorded*(block-1)+NumTrialsRecorded
-for ntr=1:NumTrialsRecorded
-    data_trials(:,NumEEGChannels+1:NumEEGChannels+6,ntr)=[cell2mat(RSBehavData{ntr})]'; % replace the last four channels
-end
+    % Should not integreate, different length
+    % for ntr=NumTrialsRecorded*(block-1)+1:NumTrialsRecorded*(block-1)+NumTrialsRecorded
+%     for ntr=1:NumTrialsRecorded
+%         data_trials(:,NumEEGChannels+1:NumEEGChannels+6,ntr)=[cell2mat(RSBehavData{ntr})]'; % replace the last four channels
+%     end
 
 % % Just to check out
 % CondiData;

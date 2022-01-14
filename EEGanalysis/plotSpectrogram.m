@@ -173,6 +173,7 @@ normPowcnorm_ALLchan_sgolay_ALLtrials=[]; % Structure of this matrix: wfreq x ti
 
 win=501:1000; % baseline section
 
+% Method 1 (slow,8min)
 tic
 for i=1:size(baselinecorrected_trial_paddings,3)
     
@@ -185,15 +186,18 @@ for i=1:size(baselinecorrected_trial_paddings,3)
     
     % Power normalization
     % one way to it:
-    logPowcorm=log10(Powcnorm);
-    baselineMean=log10(mean(Powcnorm(:,win,:),2));
-    normPowcnorm = logPowcorm-(ones(1,size(logPowcorm,2),1).*baselineMean);
+%     logPowcorm=log10(Powcnorm);
+%     baselineMean=log10(mean(Powcnorm(:,win,:),2));
+    normPowcnorm = log10(Powcnorm)-(ones(1,size(log10(Powcnorm),2),1).*log10(mean(Powcnorm(:,win,:),2)));
     
     normPowcnorm_ALLchan_sgolay=[];
     for chan=1:128 %goodchans
-        normPowcnorm_perchan=squeeze(normPowcnorm(:,:,chan))';
-        normPowcnorm_perchan_sgolay=sgolayfilt(normPowcnorm_perchan,1,31);
-        normPowcnorm_perchan_sgolay=normPowcnorm_perchan_sgolay';
+%         normPowcnorm_perchan=squeeze(normPowcnorm(:,:,chan))';
+%         normPowcnorm_perchan_sgolay=sgolayfilt(normPowcnorm_perchan,1,31);
+%         normPowcnorm_perchan_sgolay=normPowcnorm_perchan_sgolay';
+        normPowcnorm_perchan_sgolay=sgolayfilt(squeeze(normPowcnorm(:,:,chan))',1,31)';
+        % remove paddings
+%         normPowcnorm_perchan_sgolay=normPowcnorm_perchan_sgolay(:,1001:2500);
 %             close;figure;imagesc(normPowcnorm_perchan_sgolay);
 %             colormap jet; ColorLim=2; caxis([-1*ColorLim ColorLim]);
 %             set(gca,'ydir','normal');
@@ -203,7 +207,7 @@ for i=1:size(baselinecorrected_trial_paddings,3)
 %             yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
 %             xticks(linspace(0,2000,5));xticklabels({'-1000','-500','0','500','1000'});
 %             colorbar;
-        normPowcnorm_ALLchan_sgolay=cat(3,normPowcnorm_ALLchan_sgolay,normPowcnorm_perchan_sgolay);
+        normPowcnorm_ALLchan_sgolay=cat(3,normPowcnorm_ALLchan_sgolay,normPowcnorm_perchan_sgolay(:,1001:2500));
     end
     normPowcnorm_ALLchan_sgolay_ALLtrials=cat(4,normPowcnorm_ALLchan_sgolay_ALLtrials,normPowcnorm_ALLchan_sgolay);
 
@@ -211,6 +215,10 @@ end
 toc
 % examine
 size(normPowcnorm_ALLchan_sgolay_ALLtrials)
+
+
+% Method 2? (faster)
+
 
 %% https://github.com/rameshsrinivasanuci/matlab/blob/master/jenny/WaveletTransform.m (skip)
 % now let's recover the time course

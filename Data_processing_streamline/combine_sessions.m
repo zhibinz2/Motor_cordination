@@ -27,7 +27,7 @@ data_trials;
 % "500ms padding + 500ms green dot baseline + 500ms plan phase + 1000ms movement + 1000ms show bonus + 500ms padding"
 
 % step4 resample the movements
-run Integrate_Behavioral_into_data_trials_step4.m
+run Resample_Behaviral_step4.m
 % Plot movements (just to check)
 run draw_movements_all_conditions_step5.m
 % Speed profile

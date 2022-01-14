@@ -438,7 +438,7 @@ for conditionSelected=1:length(conditions)
     end
     xlabel('t');ylabel('average acceleration (pixels/1000ms^2)');legend({'Left','Right'},'Location','southwest');
     title('acceleration');
-    ylim([-6e-3 6e-3]);
+    ylim([-7e-3 7e-3]);
     %---delete the legend-------------
 
 
