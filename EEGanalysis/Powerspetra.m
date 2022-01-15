@@ -107,7 +107,6 @@ YYPLOT=YYPLOT*0.7;
 XXPLOT=XXPLOT+0.5;
 YYPLOT=YYPLOT+0.5;
 
-close;
 figure('units','normalized','outerposition',[0 0 1 1]);
 plot(XXPLOT,YYPLOT,'r.');
 
