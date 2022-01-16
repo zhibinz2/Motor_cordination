@@ -95,7 +95,6 @@ subplot(1,2,2);plot(ALLaR(:,CondiDataGoodTrials(i)));ylim([-7e-3 7e-3]);
 
 
 %% plot the average
-
 figure('units','normalized','outerposition',[0 0 1 1]);
 for conditionSelected=1:length(UniCondi);
 
@@ -111,8 +110,8 @@ for conditionSelected=1:length(UniCondi);
     averageALLvL=mean(ALLvL(:,indtemp),2);
     averageALLvR=mean(ALLvR(:,indtemp),2);
     % examine
-%     figure;plot(averageALLvL,'r');hold on;plot(averageALLvR,'b');
-%     plot(average_spectrogram(1:length(averageALLvL),goodchans),'k');
+    figure;plot(averageALLvL,'r');hold on;plot(averageALLvR,'b');
+%     plot(average_spectrogram(1:length(averageALLvL),1),'k');
 
     averageALLaL=mean(ALLaL(:,indtemp),2);
     averageALLaR=mean(ALLaR(:,indtemp),2);
@@ -126,7 +125,7 @@ for conditionSelected=1:length(UniCondi);
     
     % plot the velocity corr left
     subplot(4,7,7+1-conditionSelected);
-    RHO = corr(averageALLvL,average_spectrogram(1:length(averageALLvL),goodchans));
+    RHO = corr(averageALLvL,average_spectrogram(1:1499,1));
 %   figure;plot(averageALLvL,'r');hold on;plot(averageALLvR,'b');plotx(average_spectrogram(1:length(averageALLvL),goodchans),'k');
 %   figure;subplot(1,2,1);topoplot(RHO,test(goodchans),'nosedir','+Y','conv','on');ColorLim=1;subplot(1,2,2);
     plot(1:112,RHO,'ro');xlabel('channels');ylabel('correlation coefficient');ylim([-1 1]);
