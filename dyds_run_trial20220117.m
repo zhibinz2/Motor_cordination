@@ -159,12 +159,12 @@ while n <  numFrames %~KbCheck
 
     %********************************************************************
     % another alternative calculation (tangent calculation)
-    XL=yCenter-YML; XR=XMR-xCenter;
+    YL=yCenter-yML; XR=xMR-xCenter;
 %     distance=sqrt(XL.^2+XR.^2); %travel distance
 %     theta=2*atan(-XL/XR);
     XJ=XR;
     YJ=YL;
-    xJ=xCenter+XJ/es; yJ=yCenter-(-YJ)/es;
+    xJ=xCenter+XJ/es; yJ=yCenter-(YJ)/es;
     
     %********************************************************************
     % When both hands falls within each other near the curve, both cursors turn green

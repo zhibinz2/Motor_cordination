@@ -164,7 +164,7 @@ while n <  numFrames %~KbCheck
 %     theta=2*atan(-XL/XR);
     XJ=XR;
     YJ=YL;
-    xJ=xCenter+XJ/es; yJ=yCenter-(-YJ)/es;
+    xJ=xCenter+XJ/es; yJ=yCenter-(YJ)/es;
     
     %********************************************************************
     % When both hands falls within each other near the curve, both cursors turn green
