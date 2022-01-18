@@ -28,12 +28,12 @@ behaviraldata.ExptStartTime=ExptStartTime;
 rng(seed);
 
 % *************************************************************************
-% % number of trials per block
-% numTrials=length(conditions);
-% % number of blocks
-% numBlock=10;
-% % total trial number
-% numtotal=numTrials*numBlock; 
+% number of trials per block
+numTrials=length(conditions);
+% number of blocks
+numBlock=10;
+% total trial number
+numtotal=numTrials*numBlock; 
 % % num of conditions in the experiment
 % numconditions=length(conditions);
 % % how many semirandom permutation set in the experiment 
@@ -68,8 +68,10 @@ try
 % Here we call some default settings for setting up Psychtoolbox 
 PsychDefaultSetup(2);
 % Start with black screen
+% Removes the blue screen flash and minimize extraneous warnings.
 Screen('Preference', 'VisualDebugLevel', 1); 
 Screen('Preference', 'SkipSyncTests', 1);
+Screen('Preference', 'SuppressAllWarnings', 1);
 
 % Get the screen numbers. This gives us a number for each of the screens
 % attached to our computer. For help see: Screen Screens?
@@ -121,8 +123,8 @@ ConnectDotSize=120;
 Thickness=ConnectDotSize/2;
 
 % Create a fixation cross
-FixCrX=[xCenter-Thickness/2:xCenter+Thickness/2 repmat(xCenter,1,Thickness+1)];
-FixCrY=[repmat(yCenter,1,Thickness+1) yCenter-Thickness/2:yCenter+Thickness/2];
+FixCrX=[xCenter-Thickness/4:xCenter+Thickness/4 repmat(xCenter,1,Thickness/2+1)];
+FixCrY=[repmat(yCenter,1,Thickness/2+1) yCenter-Thickness/4:yCenter+Thickness/4];
 
 % Numer of frames to wait when specifying good timing. Note: the use of
 % wait frames is to show a generalisable coding. For example, by using
@@ -159,71 +161,47 @@ LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 scree
 LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
 
 % *************************************************************************
-% Setting time variables
-% time for resting EEG (EO=eye open; EC= eye close)
+% % Setting time variables
+% % time for resting EEG (EO=eye open; EC= eye close)
 TimeRestingEEG=1; % 2.5 min = 150 seconds
 numFramesRestEye=round (TimeRestingEEG/ifi); 
-
-% Setting default mouse Position for some time
-planSecs =0.5 ; % rest 1 s to look at trial number, visual evoked potential
-numFramesPlan = round (planSecs/ifi);
-
-% Length of time and number of frames we will use for each drawing trial
-moveSecs = 4; %4; % 4 s to move
-numFramesMove = round(moveSecs / ifi);
-
-% total number of frames per trial
-numFrames=numFramesPlan+numFramesMove; 
+% 
+% % Setting default mouse Position for some time
+% planSecs =0.5 ; % rest 1 s to look at trial number, visual evoked potential
+% numFramesPlan = round (planSecs/ifi);
+% 
+% % Length of time and number of frames we will use for each drawing trial
+% moveSecs = 4; %4; % 4 s to move
+% numFramesMove = round(moveSecs / ifi);
+% 
+% % total number of frames per trial
+% numFrames=numFramesPlan+numFramesMove; 
 
 % *************************************************************************
 % time duration to show bonus 
-Tintertrial=1;
-numFramesRest = round (Tintertrial/ifi);
-
-% time pause to smooth transition at the start of each trial
-% Keep in mind: it takes about an additional 3 seconds to place the mice
-Tpause=0.5;
-
-% Estimate the time per trial
-EstimateNavigateTime=3;
-TimeTrial=planSecs+moveSecs+Tintertrial+Tpause+EstimateNavigateTime;
-% Estimate total experiment time in minuts
-TimeTotal=TimeTrial*numtotal/60;
+% Tintertrial=1;
+% numFramesRest = round (Tintertrial/ifi);
+% 
+% % time pause to smooth transition at the start of each trial
+% % Keep in mind: it takes about an additional 3 seconds to place the mice
+% Tpause=0.5;
+% 
+% % Estimate the time per trial
+% EstimateNavigateTime=3;
+% TimeTrial=planSecs+moveSecs+Tintertrial+Tpause+EstimateNavigateTime;
+% % Estimate total experiment time in minuts
+% TimeTotal=TimeTrial*numtotal/60;
 
 % *************************************************************************
 % time break between block
-Tinterblock=3; 
+% Tinterblock=3; 
 % *************************************************************************
-
-% DuoMice:
-% Get handles for all virtual pointing devices, aka cursors:
-typeOnly='masterPointer'; 
-mice = GetMouseIndices(typeOnly);  
-
-% DuoMice:
-% Hide the system-generated cursors. We do this, because only the
-% first mouse cursor is hardware-accelerated, ie., a GPU created
-% hardware cursor. All other cursors are software-cursors, created
-% by the Windowing system. These tend to flicker badly in our use
-% case. Therefore we disable all system cursor images and draw our
-% cursors ourselves for a more beautiful look:
-% Hide the cursor
-HideCursor(windowPtr,mice(2));
-HideCursor(windowPtr,mice(1));
 
 
 % Starting introduction
 instructionStart=['You will be controlling two pens to do the task.'...
         '\n\n\n Each trial start when you have placed both pens at the center starting point.'...
-        '\n\n\n Left pen will be shown in a red dot. Right shown in blue. Starting point in white.'...
-        '\n\n\n Starting point will turn green, when you had placed both mice on it. Then the trial will start.'...
-        '\n\n\n Movement of your left hand goes to the left, right hand goes to the right.'...
-        '\n\n\n Move in horizontal direction to control the position of the dot.'...
-        '\n\n\n You will not be able to see your pens in red and blue dots during the trials.'...
-        '\n\n\n But the dot will turn green when comes close to a trajectory line shown on the screen.'...
-        '\n\n\n Try to coordinate the moving speed of your hands in suggested ratio'...
-        '\n\n\n Move the dot along the trajectory to the end of the line. Complete the movement within ' num2str(moveSecs) ' seconds.'...
-        '\n\n\n You could earn Bonus money up to $ ' num2str(fullBonus) ' if performed quickly and closely to the trajectory.'...
+        %'\n\n\n You could earn Bonus money up to $ ' num2str(fullBonus) ' if performed quickly and closely to the trajectory.'...
         '\n\n\n Questions? If none, press any key to continue']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
@@ -349,43 +327,43 @@ for block=1:numBlock
     % Initialize some values
     n = 1;
     
-    % To keep a record of the percentage of time inside the square
-    behaviraldata.dataBlock(block).dataTrialNumInside=[];
-    %xLyL=[]; xRyR=[]; % to keep track of mouse trace
-    behaviraldata.dataBlock(block).dataTrialL.xLyL=[];
-    behaviraldata.dataBlock(block).dataTrialR.xRyR=[];
-    behaviraldata.dataBlock(block).dataTrialJ.xJyJ=[];
+%     % To keep a record of the percentage of time inside the square
+%     behaviraldata.dataBlock(block).dataTrialNumInside=[];
+%     %xLyL=[]; xRyR=[]; % to keep track of mouse trace
+%     behaviraldata.dataBlock(block).dataTrialL.xLyL=[];
+%     behaviraldata.dataBlock(block).dataTrialR.xRyR=[];
+%     behaviraldata.dataBlock(block).dataTrialJ.xJyJ=[];
     %save block number info
     behaviraldata.dataBlock(block).blockNumber=block;
     
 
     %************************************ show bonus before block and rest
-    % Show performents
-    if block ~= 1
-        % ScoreLR=0.2;TotalScore=0.2 % just to test alignment
-        Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) '  Average: ' sprintf('%0.2f %%', TotalScore*100)];
-        DrawFormattedText2(Showbonus,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
-    end
-    
-    % Show bonus criteria
-%     ShowbonusCrit = ['Average  Bonus\n    >65%  $3   \n    >70%  $6   \n    >75%  $9   \n'...
-%         '    >80%  $12   \n    >85%  $15   \n'];
-    ShowbonusCrit = ['Average  Grade\n    <60%  F    \n    >60%  D    \n    >65%  C    \n    >70%  B-   \n    >75%  B    \n'...
-        '    >80%  B+   \n    >85%  A    \n    >90%  A+   \n'];
-    DrawFormattedText2(ShowbonusCrit,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
-    
-    % Show progress    
-    Showblock = ['Hit a key to begin block ' num2str(block) ' / ' num2str(numBlock)]
-    DrawFormattedText2(Showblock,'win',windowPtr,...
-        'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
-    Screen('Flip',windowPtr);
-    
-
-%     WaitSecs(Tinterblock); % to separate blocks in the photocell signal
-    % hit a key to continue
-    KbStrokeWait;
+%     % Show performents
+%     if block ~= 1
+%         % ScoreLR=0.2;TotalScore=0.2 % just to test alignment
+%         Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) '  Average: ' sprintf('%0.2f %%', TotalScore*100)];
+%         DrawFormattedText2(Showbonus,'win',windowPtr,...
+%             'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
+%     end
+%     
+%     % Show bonus criteria
+% %     ShowbonusCrit = ['Average  Bonus\n    >65%  $3   \n    >70%  $6   \n    >75%  $9   \n'...
+% %         '    >80%  $12   \n    >85%  $15   \n'];
+%     ShowbonusCrit = ['Average  Grade\n    <60%  F    \n    >60%  D    \n    >65%  C    \n    >70%  B-   \n    >75%  B    \n'...
+%         '    >80%  B+   \n    >85%  A    \n    >90%  A+   \n'];
+%     DrawFormattedText2(ShowbonusCrit,'win',windowPtr,...
+%             'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+%     
+%     % Show progress    
+%     Showblock = ['Hit a key to begin block ' num2str(block) ' / ' num2str(numBlock)]
+%     DrawFormattedText2(Showblock,'win',windowPtr,...
+%         'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
+%     Screen('Flip',windowPtr);
+%     
+% 
+% %     WaitSecs(Tinterblock); % to separate blocks in the photocell signal
+%     % hit a key to continue
+%     KbStrokeWait;
 
     %*******************************************************
 

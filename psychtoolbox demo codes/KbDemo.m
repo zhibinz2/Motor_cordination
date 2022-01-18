@@ -12,7 +12,7 @@ function KbDemo
 % 
 % The advantage of GetChar/CharAvail is that they may be used
 % asychronously - the OS will pick up the character whether your code
-% is looking for it when it comes.
+% is looking for it when it comes.3333333
 %
 % This demo works fine the with Keyspan Digital Media Remote:
 % http://www.keyspan.com/products/usb/remote/

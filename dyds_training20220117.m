@@ -68,8 +68,10 @@ try
 % Here we call some default settings for setting up Psychtoolbox 
 PsychDefaultSetup(2);
 % Start with black screen
+% Removes the blue screen flash and minimize extraneous warnings.
 Screen('Preference', 'VisualDebugLevel', 1); 
 Screen('Preference', 'SkipSyncTests', 1);
+Screen('Preference', 'SuppressAllWarnings', 1);
 
 % Get the screen numbers. This gives us a number for each of the screens
 % attached to our computer. For help see: Screen Screens?
@@ -325,43 +327,43 @@ for block=1:numBlock
     % Initialize some values
     n = 1;
     
-    % To keep a record of the percentage of time inside the square
-    behaviraldata.dataBlock(block).dataTrialNumInside=[];
-    %xLyL=[]; xRyR=[]; % to keep track of mouse trace
-    behaviraldata.dataBlock(block).dataTrialL.xLyL=[];
-    behaviraldata.dataBlock(block).dataTrialR.xRyR=[];
-    behaviraldata.dataBlock(block).dataTrialJ.xJyJ=[];
+%     % To keep a record of the percentage of time inside the square
+%     behaviraldata.dataBlock(block).dataTrialNumInside=[];
+%     %xLyL=[]; xRyR=[]; % to keep track of mouse trace
+%     behaviraldata.dataBlock(block).dataTrialL.xLyL=[];
+%     behaviraldata.dataBlock(block).dataTrialR.xRyR=[];
+%     behaviraldata.dataBlock(block).dataTrialJ.xJyJ=[];
     %save block number info
     behaviraldata.dataBlock(block).blockNumber=block;
     
 
     %************************************ show bonus before block and rest
-    % Show performents
-    if block ~= 1
-        % ScoreLR=0.2;TotalScore=0.2 % just to test alignment
-        Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) '  Average: ' sprintf('%0.2f %%', TotalScore*100)];
-        DrawFormattedText2(Showbonus,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
-    end
-    
-    % Show bonus criteria
-%     ShowbonusCrit = ['Average  Bonus\n    >65%  $3   \n    >70%  $6   \n    >75%  $9   \n'...
-%         '    >80%  $12   \n    >85%  $15   \n'];
-    ShowbonusCrit = ['Average  Grade\n    <60%  F    \n    >60%  D    \n    >65%  C    \n    >70%  B-   \n    >75%  B    \n'...
-        '    >80%  B+   \n    >85%  A    \n    >90%  A+   \n'];
-    DrawFormattedText2(ShowbonusCrit,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
-    
-    % Show progress    
-    Showblock = ['Hit a key to begin block ' num2str(block) ' / ' num2str(numBlock)]
-    DrawFormattedText2(Showblock,'win',windowPtr,...
-        'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
-    Screen('Flip',windowPtr);
-    
-
-%     WaitSecs(Tinterblock); % to separate blocks in the photocell signal
-    % hit a key to continue
-    KbStrokeWait;
+%     % Show performents
+%     if block ~= 1
+%         % ScoreLR=0.2;TotalScore=0.2 % just to test alignment
+%         Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) '  Average: ' sprintf('%0.2f %%', TotalScore*100)];
+%         DrawFormattedText2(Showbonus,'win',windowPtr,...
+%             'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
+%     end
+%     
+%     % Show bonus criteria
+% %     ShowbonusCrit = ['Average  Bonus\n    >65%  $3   \n    >70%  $6   \n    >75%  $9   \n'...
+% %         '    >80%  $12   \n    >85%  $15   \n'];
+%     ShowbonusCrit = ['Average  Grade\n    <60%  F    \n    >60%  D    \n    >65%  C    \n    >70%  B-   \n    >75%  B    \n'...
+%         '    >80%  B+   \n    >85%  A    \n    >90%  A+   \n'];
+%     DrawFormattedText2(ShowbonusCrit,'win',windowPtr,...
+%             'sx','center','sy', yCenter+screenYpixels/10,'xalign','center','yalign','top','baseColor',white);
+%     
+%     % Show progress    
+%     Showblock = ['Hit a key to begin block ' num2str(block) ' / ' num2str(numBlock)]
+%     DrawFormattedText2(Showblock,'win',windowPtr,...
+%         'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
+%     Screen('Flip',windowPtr);
+%     
+% 
+% %     WaitSecs(Tinterblock); % to separate blocks in the photocell signal
+%     % hit a key to continue
+%     KbStrokeWait;
 
     %*******************************************************
 
@@ -380,21 +382,21 @@ for block=1:numBlock
         end
 
         %************ Show bonus of previous trial
-        time1=clock; %check timing
-        if t ~= 1
-            for Restframes=1:numFramesRest
-                Showbonus=['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100)];
-                DrawFormattedText2(Showbonus,'win',windowPtr,...
-                'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white); 
-            
-%                 Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
-%                 DrawFormattedText2(Showtrial,'win',windowPtr,...
-%                 'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
-                %Flip to the screen   
-                vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-            end
-        end          
-        time2=clock; %check timing
+%         time1=clock; %check timing
+%         if t ~= 1
+%             for Restframes=1:numFramesRest
+%                 Showbonus=['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100)];
+%                 DrawFormattedText2(Showbonus,'win',windowPtr,...
+%                 'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white); 
+%             
+% %                 Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
+% %                 DrawFormattedText2(Showtrial,'win',windowPtr,...
+% %                 'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
+%                 %Flip to the screen   
+%                 vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+%             end
+%         end          
+%         time2=clock; %check timing
         %*************************Randomized selection
         % pick a condition from randomized set allPerm
         conditionSelected = allPerm(numTrials*(block-1)+t);
