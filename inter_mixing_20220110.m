@@ -540,7 +540,7 @@ for block=1:numBlock
         % get a timestamp at the start of the trial
         vbl = Screen('Flip', windowPtr);
         % Run one trial 
-        run run_trial_inter_20220110.m 
+        run inter_run_trial_20220110.m 
 
 
         % reset n

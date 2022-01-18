@@ -23,7 +23,8 @@ end
 
 
 %% test
-% radius=320; rad_ang=pi/6; 
+% close;figure;
+% radius=320; rad_ang=pi/6; xCenter=1920/2; yCenter=1080/2;
 % [x,y] = drawReach(radius, rad_ang, xCenter, yCenter);
 % plot(x,y,'go');
 % xlim([0 1920]);ylim([0 1080]);
