@@ -87,6 +87,11 @@ end
 afterICA_trials;
 plotx(afterICA_trials(:,goodchans,2));
 
+%% save the cleaner data after ICA
+cd /home/zhibin/Documents/Acquisition
+% cd /home/zhibin/Documents/Acquisition/Bimanual_reach_zhibin_20211106/Cleaner_Data
+save('Cleaner_Data.mat','afterICA_trials','goodepochs','goodchans');
+
 %% Need to step4 again to integrate behaviral data?
 open Integrate_Behavioral_into_data_trials_step4.m
 
@@ -99,6 +104,12 @@ open plotSpectrogram.m
 %% Save data file for sharing
 cd /home/zhibin/Documents/Acquisition/bimanual_Reach_Jack_2021111802/Cleaner_Data
 run Cleaner_Data_explained.m
+
+%%  Speed profile and correlation
+cd /home/zhibin/Documents/GitHub/Motor_cordination/PerformanceAnaylisis
+open speed_derivative.m
+open Correlation_Speed_profile.m
+
 
 
 

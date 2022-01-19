@@ -21,7 +21,7 @@ CondiDataGoodTrials;
 i=1; % which trial
 theta_trial_spectrogram=squeeze(normPowcnorm_ALLchan_sgolay_ALLtrials(FreqSelected,:,:,i)); % time x chans
 
-%%
+%% Examine correlation in this one trial - left hand (skip)
 clear corr
 XXX1=ALLvL(:,1);XXX2=theta_trial_spectrogram(1:size(ALLvL,1),:);
 [RHO,PVAL] = corr(XXX1,XXX2);
@@ -34,7 +34,7 @@ figure;
 topoplot(mean(RHO,1)',test,'nosedir','+Y');ColorLim=1;
 colormap jet; colorbar ; caxis([-1*ColorLim ColorLim]);
 title('Correlation coefficent between velocity and spectrogram');
-%%
+%% same as above - right hand (skip)
 clear RHO PVAL corr
 XXX1=ALLvR(:,1);XXX2=theta_trial_spectrogram(1:size(ALLvR,1),:);
 [RHO,PVAL] = corr(XXX1,XXX2);
@@ -48,17 +48,13 @@ topoplot(mean(RHO,1)',test,'nosedir','+Y');ColorLim=1;
 colormap jet; colorbar ; caxis([-1*ColorLim ColorLim]);
 title('Correlation coefficent between velocity and spectrogram');
 
-%%
+%% compare speed profile of left and right hand in all good trials
 subplot(1,2,1);imagesc(ALLvL(:,CondiDataGoodTrials));
 subplot(1,2,2);imagesc(ALLvR(:,CondiDataGoodTrials));
-%%
-
+%% compare speed profile of left and right hand in one trial
 subplot(1,2,1);plot(ALLvL(:,CondiDataGoodTrials(i)));
 subplot(1,2,2);plot(ALLvR(:,CondiDataGoodTrials(i)));
-%%
-
-
-%%
+%% correlation of left hand in one trial (skip)
 clear corr
 XXX1=ALLaL(:,i);XXX2=theta_trial_spectrogram(1:size(ALLaL,1),:);
 [RHO,PVAL] = corr(XXX1,XXX2);
@@ -71,7 +67,7 @@ figure;
 topoplot(mean(RHO,1)',test,'nosedir','+Y');ColorLim=1;
 colormap jet; colorbar ; caxis([-1*ColorLim ColorLim]);
 title('Correlation coefficent between velocity and spectrogram');
-%%
+%% one trial for right hand (skip)
 clear RHO PVAL corr
 XXX1=ALLaR(:,i);XXX2=theta_trial_spectrogram(1:size(ALLaR,1),:);
 [RHO,PVAL] = corr(XXX1,XXX2);
@@ -85,14 +81,12 @@ topoplot(mean(RHO,1)',test,'nosedir','+Y');ColorLim=1;
 colormap jet; colorbar ; caxis([-1*ColorLim ColorLim]);
 title('Correlation coefficent between velocity and spectrogram');
 
-%%
+%% compare left and right acceleration, all good trials
 subplot(1,2,1);imagesc(ALLaL(:,CondiDataGoodTrials));
 subplot(1,2,2);imagesc(ALLaR(:,CondiDataGoodTrials));
-%%
-
+%% compare left and right acceleration, in one trials
 subplot(1,2,1);plot(ALLaL(:,CondiDataGoodTrials(i)));ylim([-7e-3 7e-3]);
 subplot(1,2,2);plot(ALLaR(:,CondiDataGoodTrials(i)));ylim([-7e-3 7e-3]);
-
 
 %% plot the average
 figure('units','normalized','outerposition',[0 0 1 1]);
@@ -110,7 +104,7 @@ for conditionSelected=1:length(UniCondi);
     averageALLvL=mean(ALLvL(:,indtemp),2);
     averageALLvR=mean(ALLvR(:,indtemp),2);
     % examine
-    figure;plot(averageALLvL,'r');hold on;plot(averageALLvR,'b');
+%     figure;plot(averageALLvL,'r');hold on;plot(averageALLvR,'b');
 %     plot(average_spectrogram(1:length(averageALLvL),1),'k');
 
     averageALLaL=mean(ALLaL(:,indtemp),2);
@@ -125,7 +119,7 @@ for conditionSelected=1:length(UniCondi);
     
     % plot the velocity corr left
     subplot(4,7,7+1-conditionSelected);
-    RHO = corr(averageALLvL,average_spectrogram(1:1499,1));
+    RHO = corr(averageALLvL,average_spectrogram(1:1499,goodchans));
 %   figure;plot(averageALLvL,'r');hold on;plot(averageALLvR,'b');plotx(average_spectrogram(1:length(averageALLvL),goodchans),'k');
 %   figure;subplot(1,2,1);topoplot(RHO,test(goodchans),'nosedir','+Y','conv','on');ColorLim=1;subplot(1,2,2);
     plot(1:112,RHO,'ro');xlabel('channels');ylabel('correlation coefficient');ylim([-1 1]);
@@ -275,7 +269,6 @@ for conditionSelected=1:length(UniCondi);
     title(['condition ' conditionNames{UniCondi(conditionSelected)} ' Ra']);
 end
 
-%% Look for a channel
-labels(goodchans(61))
-labels(goodchans(97))
-labels(goodchans(27))
+%% Look for what channels they are
+labels(goodchans([61]))
+labels(goodchans([61 97 27]))  % {'75-AFF2H'}    {'113-CPP4H'}    {'32-C4'}

@@ -213,10 +213,16 @@ for i=1:size(baselinecorrected_trial_paddings,3)
 
 end
 toc
+%Elapsed time is 446.206188 seconds.
+
+          
 % examine
 size(normPowcnorm_ALLchan_sgolay_ALLtrials)
-
-
+% ans =     10        1500         128         289
+          
+          
+          
+          
 % Method 2? (faster)
 
 

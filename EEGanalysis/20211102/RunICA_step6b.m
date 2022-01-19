@@ -146,6 +146,7 @@ end
 hold off;
 legend(strsplit(num2str(ComponentsExam)));
 title('IC time series');xlabel('time samples');ylabel('uV');
+
 subplot(2,1,1);
 plotx(TimesdataShort(Duration),icasig(:,Duration));
 hold on;
@@ -269,6 +270,5 @@ for i=PlotStart:PlotEnd
 end
 hold off;
 title('Mixed Signal with ICs removed');
-
 
 

@@ -33,18 +33,18 @@ datatimes_ind_trial_start=datatimes_ind_trial_go-1000;
 datatimes_ind_trial_end=datatimes_ind_trial_go+1000;
 
 %     % method 2
-    datatimes_ind_trial_startend=latency(find(type==Unitype(4)));
-    datatimes_ind_trial_start=datatimes_ind_trial_startend(1:2:end-1);
-    datatimes_ind_trial_end=datatimes_ind_trial_startend(2:2:end);
-
-    % examine the start and end points
-    figure;
-    subplot(1,2,1);
-    plot(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start),'ro');
-    xlabel('each trial');ylabel('length of time (ms)');
-    subplot(1,2,2);
-    hist(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start));
-    ylabel('number of trials');xlabel('length of time (ms)');
+%     datatimes_ind_trial_startend=latency(find(type==Unitype(4)));
+%     datatimes_ind_trial_start=datatimes_ind_trial_startend(1:2:end-1);
+%     datatimes_ind_trial_end=datatimes_ind_trial_startend(2:2:end);
+% 
+%     % examine the start and end points
+%     figure;
+%     subplot(1,2,1);
+%     plot(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start),'ro');
+%     xlabel('each trial');ylabel('length of time (ms)');
+%     subplot(1,2,2);
+%     hist(datatimes(datatimes_ind_trial_end)-datatimes(datatimes_ind_trial_start));
+%     ylabel('number of trials');xlabel('length of time (ms)');
 
 
 %% photocell processing to find trial start and end index (too complicative and unreliable,use event instead)
