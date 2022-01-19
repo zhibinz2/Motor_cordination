@@ -215,16 +215,16 @@ end
 toc
 %Elapsed time is 446.206188 seconds.
 
-          
 % examine
 size(normPowcnorm_ALLchan_sgolay_ALLtrials)
-% ans =     10        1500         128         289
-          
-          
-          
+% ans =     10        1500         128         289 
           
 % Method 2? (faster)
 
+
+%% Save the normPowcnorm_ALLchan_sgolay_ALLtrials matrix
+cd /home/zhibin/Documents/Acquisition/Bimanual_reach_zhibin_20211106/Cleaner_Data
+save('normPowcnorm_ALLchan_sgolay_ALLtrials.mat','normPowcnorm_ALLchan_sgolay_ALLtrials','goodepochs','goodchans','-v7.3');
 
 %% https://github.com/rameshsrinivasanuci/matlab/blob/master/jenny/WaveletTransform.m (skip)
 % now let's recover the time course

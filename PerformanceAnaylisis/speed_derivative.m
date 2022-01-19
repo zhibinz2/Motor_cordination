@@ -445,7 +445,7 @@ for conditionSelected=1:length(conditions)
 %     hold off;
 end
 
-%% Using the resampled behaviral data and apply Savitzky-Golay Filter (trial level) 
+%% Using the resampled behaviral data and apply Savitzky-Golay Filter (trial level) (for correlation)
 % To Add to data_trials as another 4 channels: vL vR aL aR (maybe not, unequal length)
 data_trials; 
 % To produce the following array
