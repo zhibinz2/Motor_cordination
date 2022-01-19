@@ -9,7 +9,7 @@ DirectDistance=sqrt((radius.^2)/2);
 N      = radius;
 x=linspace(0,DirectDistance,N) ;
 ROOTexp=nthroot(DirectDistance+1,DirectDistance);
-y=y=log(x+1)/log(ROOTexp);
+y=log(x+1)/log(ROOTexp);
 
 
 y=flip(y);

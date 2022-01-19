@@ -1,48 +1,65 @@
 % This edition change the 3/4 circle into 1/2 circle. And remove the connecting dots
 
-while n <  numFrames %~KbCheck 
+% while n <  numFrames %~KbCheck 
+while numberOfSecondsRemaining > 0
+
     % If esc is press, break out of the while loop and close the screen
     [keyIsDown, keysecs, keyCode] = KbCheck;
     if keyCode(KbName('escape'))
         Screen('CloseAll');
         break;
     end
-
-    % Draw the route
-    Screen('DrawDots', windowPtr, [x;y], Thickness, white, [0 0], 2);
     
-    % Show the movement ratio
-    textRatio=conditionNames{conditionSelected};
-    % show it at the end of the trajectory
-    DrawFormattedText2(textRatio,'win',windowPtr,...
-            'sx',x(end),'sy', y(end)-Thickness, 'xalign','center','yalign','top','baseColor',white);
+    % Update the while loop with time
+    numberOfSecondsElapsed = round((now - startTime) * 10 ^ 5);
+    numberOfSecondsRemaining = durationInSeconds - numberOfSecondsElapsed;
+    % Display time remaining
+    Screen('DrawText', windowPtr, 'Press the left or right arrow key to move, or the escape key to quit.', 20, 20, black);
+    Screen('DrawText', windowPtr, sprintf('%i seconds remaining...', numberOfSecondsRemaining), 20, 50, black);
+
+
+    xOffset = 0;
+    yOffset = -elevationStep;
+    offsetspotRect = OffsetRect(startspotRect, xOffset, yOffset);
+    Screen('FillOval', windowPtr, green, offsetspotRect);
+%     Screen('Flip', windowPtr);
+
+
+%     % Draw the route
+%     Screen('DrawDots', windowPtr, [x;y], Thickness, white, [0 0], 2);
+%     
+%     % Show the movement ratio
+%     textRatio=conditionNames{conditionSelected};
+%     % show it at the end of the trajectory
+%     DrawFormattedText2(textRatio,'win',windowPtr,...
+%             'sx',x(end),'sy', y(end)-Thickness, 'xalign','center','yalign','top','baseColor',white);
 %     % show it below the starting point
 %     DrawFormattedText2(textRatio,'win',windowPtr,...
 %             'sx','center','sy', yCenter+screenYpixels/10, 'xalign','center','yalign','top','baseColor',white);
         
     % Draw guiding arrows
     % create a line and a triangle on the left
-    Screen('DrawLine', windowPtr, white, xCenter, yCenter-screenXpixels/6, xCenter, yCenter-screenXpixels/4, 1);
-    head   = [ xCenter, yCenter-screenXpixels/4 ]; % coordinates of head
-    width  = 10;           % width of arrow head
-    points = [ head-[width, 0]         % left corner
-               head+[width, 0]         % right corner
-               head-[0, width] ];      % vertex
-    Screen('FillPoly', windowPtr, white , points);
+%     Screen('DrawLine', windowPtr, white, xCenter, yCenter-screenXpixels/6, xCenter, yCenter-screenXpixels/4, 1);
+%     head   = [ xCenter, yCenter-screenXpixels/4 ]; % coordinates of head
+%     width  = 10;           % width of arrow head
+%     points = [ head-[width, 0]         % left corner
+%                head+[width, 0]         % right corner
+%                head-[0, width] ];      % vertex
+%     Screen('FillPoly', windowPtr, white , points);
     % create a line and a triangle on the right
-    Screen('DrawLine', windowPtr, white, xCenter+screenXpixels/6, yCenter, xCenter+screenXpixels/4, yCenter, 1);
-    head   = [ xCenter+screenXpixels/4, yCenter ]; % coordinates of head
-    width  = 10;           % width of arrow head
-    points = [ head-[0, width]         % left corner
-               head+[0, width]         % right corner
-               head+[width, 0] ];      % vertex
-    Screen('FillPoly', windowPtr, white , points);
+%     Screen('DrawLine', windowPtr, white, xCenter+screenXpixels/6, yCenter, xCenter+screenXpixels/4, yCenter, 1);
+%     head   = [ xCenter+screenXpixels/4, yCenter ]; % coordinates of head
+%     width  = 10;           % width of arrow head
+%     points = [ head-[0, width]         % left corner
+%                head+[0, width]         % right corner
+%                head+[width, 0] ];      % vertex
+%     Screen('FillPoly', windowPtr, white , points);
     
     
     % *******************************************************************
     % Get mouse location
-    [xML0, yML0] = GetMouse(windowPtr,mice(2));
-    [xMR0, yMR0] = GetMouse(windowPtr,mice(1));
+%     [xML0, yML0] = GetMouse(windowPtr,mice(2));
+%     [xMR0, yMR0] = GetMouse(windowPtr,mice(1));
     
     % Shift the mouse location to map the tablets
 %     xML=xML0/2; % the upper left quatrand of the scrren
@@ -50,11 +67,11 @@ while n <  numFrames %~KbCheck
 %     xMR=xCenter+xMR0/2; % the upper right quatrand of the screen
 %     yMR=yMR0/2;% the upper right quatrand of the screen
     % xML=xML0/2; % the left side of the scrren
-    xML=xML0*(11/20); % a bit more than half of the left side of the scrren
-    yML=yML0; % the left side of the scrren
+%     xML=xML0*(11/20); % a bit more than half of the left side of the scrren
+%     yML=yML0; % the left side of the scrren
     % xMR=xCenter+xMR0/2; % the right side of the screen
-    xMR=(xCenter-screenXpixels/20)+xMR0*(11/20); % a bit more than half of the right side of the scrren
-    yMR=yMR0;% the right side of the screen
+%     xMR=(xCenter-screenXpixels/20)+xMR0*(11/20); % a bit more than half of the right side of the scrren
+%     yMR=yMR0;% the right side of the screen
     
     
     %********************************************************************
@@ -68,8 +85,8 @@ while n <  numFrames %~KbCheck
     
     %********************************************************************
     % Hide the cursor
-    HideCursor(windowPtr,mice(2));
-    HideCursor(windowPtr,mice(1));
+%     HideCursor(windowPtr,mice(2));
+%     HideCursor(windowPtr,mice(1));
      
     % Display the cursor as a dot
 %     Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
@@ -79,54 +96,54 @@ while n <  numFrames %~KbCheck
     % *******************************************************************
     % ******#################################
     % fash photocells at the start of planing phase (upper left and bottom right)
-    if n == 1
-    Screen('FillRect', windowPtr, white, LeftUpperSquare); % event type = 1200002
-    Screen('FillRect', windowPtr, white, RightBottomSquare); 
-    end
+%     if n == 1
+%     Screen('FillRect', windowPtr, white, LeftUpperSquare); % event type = 1200002
+%     Screen('FillRect', windowPtr, white, RightBottomSquare); 
+%     end
     
     % Planning phase (hold the mice)
-    if n< numFramesPlan 
+%     if n< numFramesPlan 
 %         SetMouse(x(1),y(1), windowPtr, mice(2));
 %         SetMouse(x(1),y(1), windowPtr, mice(1)); 
         % Hide the cursor
 %         HideCursor(windowPtr,mice(2));
 %         HideCursor(windowPtr,mice(1)); 
-        textPlan=['Wait...'];
-        DrawFormattedText2(textPlan,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
+%         textPlan=['Wait...'];
+%         DrawFormattedText2(textPlan,'win',windowPtr,...
+%             'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
         %Screen('DrawText', windowPtr, ['Place mice at the starting points'], xCenter-steplength/1.5, yCenter, white);
         %DrawFormattedText2(['Place mice at starting point and start drawing in 1 second!'],'win',windowPtr,...
         %'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
         
-    end
+%     end
     
     % ******#################################
     % fash photocells at the end of planning phase (upper right and bottom right)
-    if n == numFramesPlan 
-    Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    end
+%     if n == numFramesPlan 
+%     Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
+%     Screen('FillRect', windowPtr, white, RightBottomSquare);
+%     end
     
     
     % *****OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
     % Flash photocell every other second during the whole trial (bottom left)
-    if (~isempty(find([1:2:numFrames]==n))) % every two frames
-    Screen('FillRect', windowPtr, white, LeftBottomSquare);
-    end
+%     if (~isempty(find([1:2:numFrames]==n))) % every two frames
+%     Screen('FillRect', windowPtr, white, LeftBottomSquare);
+%     end
     
     % ******#################################
     % Flash photocells at the end of the trial (upper left and bottom right)
-    if n == (numFrames-1)
-    Screen('FillRect', windowPtr, white, LeftUpperSquare); ; % event type = 1200002
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    end
+%     if n == (numFrames-1)
+%     Screen('FillRect', windowPtr, white, LeftUpperSquare); ; % event type = 1200002
+%     Screen('FillRect', windowPtr, white, RightBottomSquare);
+%     end
     
     
      
     %********************************************************************
     % Decrease the scale of movement by es times
 %     es=screenXpixels/screenYpixels; % it has a limit of 0 ~ (screenXpixels/screenYpixels)
-    es=1/3; % 2.5 % for biggest movement
+%     es=1/3; % 2.5 % for biggest movement
     
     %********************************************************************
 %     % Display the joint position as a dot
@@ -159,33 +176,33 @@ while n <  numFrames %~KbCheck
 
     %********************************************************************
     % another alternative calculation (tangent calculation)
-    YL=yCenter-yML; XR=xMR-xCenter;
+%     YL=yCenter-yML; XR=xMR-xCenter;
 %     distance=sqrt(XL.^2+XR.^2); %travel distance
 %     theta=2*atan(-XL/XR);
-    XJ=XR;
-    YJ=YL;
-    xJ=xCenter+XJ/es; yJ=yCenter-(YJ)/es;
+%     XJ=XR;
+%     YJ=YL;
+%     xJ=xCenter+XJ/es; yJ=yCenter-(YJ)/es;
     
     %********************************************************************
     % When both hands falls within each other near the curve, both cursors turn green
     % When Joint dot near the line 
-    pt=[xJ yJ]; v1=dotCenter; v2=[x(end) y(end)];
-    distance=point_to_line_distance(pt, v1, v2);
-    withinRadius=norm(pt-dotCenter);
-    withinRadiusReverse=norm(pt-v2);
-    inside = (distance<Thickness) & (withinRadius < radius+Thickness) & (withinRadiusReverse < radius+Thickness);
+%     pt=[xJ yJ]; v1=dotCenter; v2=[x(end) y(end)];
+%     distance=point_to_line_distance(pt, v1, v2);
+%     withinRadius=norm(pt-dotCenter);
+%     withinRadiusReverse=norm(pt-v2);
+%     inside = (distance<Thickness) & (withinRadius < radius+Thickness) & (withinRadiusReverse < radius+Thickness);
 %     inside = (distance<Thickness) & (withinRadius < radius+Thickness) & (yJ+Thickness)>0 & ...
 %     (xML < xMLbefore) & (xMR > xMRbefore);
     
-    if n > numFramesPlan % start counting scores after planning phase
-        % MLcolor=red;MRcolor=blue;
-        textMove=['Go!'];
-        DrawFormattedText2(textMove,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',green);
-        % display the joint movement
-        Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
-        if inside == 1
-            Jcolor = green;
+%     if n > numFramesPlan % start counting scores after planning phase
+%         % MLcolor=red;MRcolor=blue;
+%         textMove=['Go!'];
+%         DrawFormattedText2(textMove,'win',windowPtr,...
+%             'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',green);
+%         % display the joint movement
+%         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, Jcolor, [], 2);
+%         if inside == 1
+%             Jcolor = green;
             
             % Tell PTB no more drawing commands will be issued until the next flip
             % (This, can help acheive good timing when one is needing to do
@@ -215,43 +232,69 @@ while n <  numFrames %~KbCheck
 %             PolyshapeUnion=union(PolyshapeUnion,intersect(PolyshapGreenPixel,polyTrajatory));
 %             % figure;plot(PolyshapeUnion);ylim([0 screenYpixels]);xlim([0 screenXpixels]);set(gca, 'YDir', 'reverse');
 %             
-        else % insideLR == 0
-            Jcolor = green;
+%         else % insideLR == 0
+%             Jcolor = green;
             
             % Tell PTB no more drawing commands will be issued until the next flip
             % (This, can help acheive good timing when one is needing to do
             % additional non-PTB processing between setting up drawing and flipping to the screen. )
 %             Screen('DrawingFinished', windowPtr);
-        end
-    end
+%         end
+%     end
      
     % Flip to the screen
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
     
     % Keep track of the nummers of flames when dot is inside the rect
-    NumInside(n)=inside;    
+%     NumInside(n)=inside;    
         
     % keep a record of the mouse position to be use as previous position in
     % the next loop
-    xMLbefore=xML;
-    yMLbefore=yML;
-    xMRbefore=xMR;
-    yMRbefore=yMR;
-    xJbefore=xJ;
-    yJbefore=yJ;
+%     xMLbefore=xML;
+%     yMLbefore=yML;
+%     xMRbefore=xMR;
+%     yMRbefore=yMR;
+%     xJbefore=xJ;
+%     yJbefore=yJ;
     
     % Keep track of the mouse trace
-    xLyL(n,1) = xML;
-    xLyL(n,2) = yML;
-    xRyR(n,1) = xMR;
-    xRyR(n,2) = yMR;
-    xJyJ(n,1)=xJ;
-    xJyJ(n,2)=yJ;
+%     xLyL(n,1) = xML;
+%     xLyL(n,2) = yML;
+%     xRyR(n,1) = xMR;
+%     xRyR(n,2) = yMR;
+%     xJyJ(n,1)=xJ;
+%     xJyJ(n,2)=yJ;
     % update n
-    n = n+1;
+%     n = n+1;
+    
+    % Update the while loop
+    [ keyIsDown, seconds, keyCode ] = KbCheck;
+    escapeKey = KbName('ESCAPE');
 
+    if keyIsDown
+        if keyCode(rightKey)
+            if elevationStep < screenYpixels
+                elevationStep = elevationStep + spotDiameter;
+            else
+                elevationStep = initialElevationStep;
+            end
+%         elseif keyCode(leftKey)
+%             if rotationAngle > 0
+%                 rotationAngle = rotationAngle - 0.1;
+%             else
+%                 rotationAngle = 2 * pi;
+%             end
+        elseif keyCode(escapeKey)
+            break;
+        end
+    end
+
+    % If the user holds down a key, KbCheck will report multiple events.
+    % To condense multiple 'keyDown' events into a single event, we wait until all
+    % keys have been released.
+    KbReleaseWait;
 
 end
 
     % Reset
-    Jcolor = green;
+%     Jcolor = green;

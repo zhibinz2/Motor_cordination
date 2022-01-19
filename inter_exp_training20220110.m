@@ -440,9 +440,9 @@ for block=1:numBlock
         conditionSelected = allPerm(numTrials*(block-1)+t);
         % produced the position parameters #########################
             rad_ang=conditions(conditionSelected);
-            if conditionSelected = 5;
+            if conditionSelected == 5
                 [x,y] = drawLog(radius, xCenter, yCenter);
-            elseif conditionSelected = 6;
+            elseif conditionSelected == 6
                 [x,y] = drawExpo(radius, xCenter, yCenter);
             else
                 [x,y] = drawReach(radius,rad_ang, xCenter, yCenter);
