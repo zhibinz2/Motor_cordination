@@ -16,7 +16,7 @@ end
 
 %**************************************************************************
 % the set of conditions
-% conditions = [0 2*atan(1/4) 2*atan(1/2) 2*atan(1) 2*atan(2/1) 2*atan(4/1) pi];
+conditions = [0 2*atan(1/4) 2*atan(1/2) 2*atan(1) 2*atan(2/1) 2*atan(4/1) pi];
 % conditionNames={'0:4' '1:4' '1:2' '1:1' 'log' 'exp' '4:0'};  % conditionNames{1}
 
 %************************************** Randomization of the experiment
@@ -28,12 +28,12 @@ behaviraldata.ExptStartTime=ExptStartTime;
 rng(seed);
 
 % *************************************************************************
-% number of trials per block
+% % number of trials per block
 numTrials=length(conditions);
 % number of blocks
 numBlock=10;
-% total trial number
-numtotal=numTrials*numBlock; 
+% % total trial number
+% numtotal=numTrials*numBlock; 
 % % num of conditions in the experiment
 % numconditions=length(conditions);
 % % how many semirandom permutation set in the experiment 
@@ -93,13 +93,22 @@ black = BlackIndex(screenNumber);
 red   = [1 0 0];
 blue  = [0 0 1];
 green = [0 1 0];
+% white = [1 1 1];
 white = [white white white];
 black = [black black black];
+% white = [0 0 0];
 grey  = [0.5 0.5 0.5];
 
 % Open an on screen window and color it black
 % For help see: Screen Openwindow?
-[windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black);
+[windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); % This will draw on a black backgroud
+
+% This will draw on a white window layer on top and make subsequent text black
+% [windowPtr, windowRect] = Screen('OpenWindow', screenNumber); 
+
+% This will draw on black background and create a semi-translucent black layer cover on top
+% [windowPtr, windowRect] = Screen('OpenWindow', screenNumber,black); %
+
 % Get the size of the on screen windowPtr in pixels
 % For help see: Screen windowSize?
 [screenXpixels, screenYpixels] = Screen('windowSize', screenNumber);
@@ -110,6 +119,38 @@ grey  = [0.5 0.5 0.5];
 % For help see: Screen BlendFunction?
 % Also see: Chapter 6 of the OpenGL programming guide
 Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+% Set text display options for operating system other than Linux.
+if ~IsLinux
+    Screen('TextFont', window, 'Arial');
+    Screen('TextSize', window, 18);
+end
+
+% Enable unified mode of KbName, so KbName accepts identical key names on
+% all operating systems:
+KbName('UnifyKeyNames');
+
+% Set keys.
+rightKey = KbName('RightArrow');
+leftKey = KbName('LeftArrow');
+escapeKey = KbName('ESCAPE');
+
+
+% Here are the parameters for this demo.
+spotRadius = 25; % The radius of the spot.
+% rotationRadius = 200; % The radius of the rotation.
+% initialRotationAngle = 3 * pi / 2; % The initial rotation angle in radians.
+initialElevationStep = spotRadius;
+
+% Use the parameters.
+spotDiameter = spotRadius * 2;
+spotRect = [0 0 spotDiameter spotDiameter];
+centeredspotRect = CenterRect(spotRect, windowRect); % Center the spot.
+shiftToBottom = screenYpixels/2-spotRadius;
+startspotRect = centeredspotRect+[0 shiftToBottom 0 shiftToBottom];
+% rotationAngle = initialRotationAngle;
+elevationStep = initialElevationStep;
+
 
 % We can define a center for the dot coordinates to be relaitive to. Here
 % we set the centre to be the centre of the screen
@@ -162,6 +203,12 @@ LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screen
 
 % *************************************************************************
 % % Setting time variables
+
+% Set up the timer.
+startTime = now;
+durationInSeconds = 60;
+numberOfSecondsRemaining = durationInSeconds;
+
 % % time for resting EEG (EO=eye open; EC= eye close)
 TimeRestingEEG=1; % 2.5 min = 150 seconds
 numFramesRestEye=round (TimeRestingEEG/ifi); 
@@ -199,10 +246,13 @@ numFramesRestEye=round (TimeRestingEEG/ifi);
 
 
 % Starting introduction
+% instructionStart=['You will be controlling two pens to do the task.'...
+%         '\n\n\n Each trial start when you have placed both pens at the center starting point.'...
+%         '\n\n\n You could earn Bonus money up to $ ' num2str(fullBonus) ' if performed quickly and closely to the trajectory.'...
+%         '\n\n\n Questions? If none, press any key to continue'];
 instructionStart=['You will be controlling two pens to do the task.'...
         '\n\n\n Each trial start when you have placed both pens at the center starting point.'...
-        %'\n\n\n You could earn Bonus money up to $ ' num2str(fullBonus) ' if performed quickly and closely to the trajectory.'...
-        '\n\n\n Questions? If none, press any key to continue']
+        '\n\n\n Questions? If none, press any key to continue'];
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
@@ -212,7 +262,7 @@ KbStrokeWait;
 
 %*************************************************************************
 % Start taking eye open and eye close resting stage EEG
-instructionStart=['Hit any key and then look at the center of the screen for 3 min']
+instructionStart=['Hit any key and then look at the center of the screen for 3 min'];
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
@@ -249,8 +299,6 @@ while i<numFramesRestEye
     i=i+1;
 end
 
-
-
 % WaitSecs(TimeRestingEEG);
 
 % Flash once to mark the end of open eye resting EEG collection
@@ -262,7 +310,7 @@ end
 %     i=i+1;
 % end
 %****************************************************************************
-instructionStart=['Hit a key and then close your eyes to rest for 3 min before I tell you to continue.']
+instructionStart=['Hit a key and then close your eyes to rest for 3 min before I tell you to continue.'];
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
@@ -301,7 +349,7 @@ while i<numFramesRestEye
 end
     
 
-% Flash again to end
+% Flash again to mark the end of resting EEG collection
 i=1;
 while i < 2;
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
@@ -312,7 +360,7 @@ end
 
 
 % ************************************************************************
-instructionStart=['OK. Press a key to start!'] % Tell subject to open eye and start
+instructionStart=['OK. Press a key to start!']; % Tell subject to open eye and start
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
@@ -398,115 +446,115 @@ for block=1:numBlock
 %         end          
 %         time2=clock; %check timing
         %*************************Randomized selection
-        % pick a condition from randomized set allPerm
-        conditionSelected = allPerm(numTrials*(block-1)+t);
-        % produced the position parameters #########################
-            rad_ang=conditions(conditionSelected);
-            if conditionSelected == 5
-                [x,y] = drawLog(radius, xCenter, yCenter);
-            elseif conditionSelected == 6
-                [x,y] = drawExpo(radius, xCenter, yCenter);
-            else
-                [x,y] = drawReach(radius,rad_ang, xCenter, yCenter);
-            end
+%         % pick a condition from randomized set allPerm
+%         conditionSelected = allPerm(numTrials*(block-1)+t);
+%         % produced the position parameters #########################
+%             rad_ang=conditions(conditionSelected);
+%             if conditionSelected == 5
+%                 [x,y] = drawLog(radius, xCenter, yCenter);
+%             elseif conditionSelected == 6
+%                 [x,y] = drawExpo(radius, xCenter, yCenter);
+%             else
+%                 [x,y] = drawReach(radius,rad_ang, xCenter, yCenter);
+%             end
         % produced the polyshape area for score calculation
             % polyTrajatory = polyshape([x(1)-3*Thickness/2 x(1)+3*Thickness/2 x(end)+3*Thickness/2 x(end)-3*Thickness/2],...
             %   [y(1)+3*Thickness/2 y(1)-3*Thickness/2 y(end)-3*Thickness/2 y(end)+3*Thickness/2]);
             
             % the circle version
-            polyTrajatory=polycircle(x(1),y(1),Thickness/2);
-            for cir=2:length(x)
-                polyTrajatory=union(polyTrajatory,polycircle(x(cir),y(cir),Thickness/2));
-            end
+%             polyTrajatory=polycircle(x(1),y(1),Thickness/2);
+%             for cir=2:length(x)
+%                 polyTrajatory=union(polyTrajatory,polycircle(x(cir),y(cir),Thickness/2));
+%             end
         
-        % initialize a small green pixel polyshap area for score calculation
-            %PolyshapGreenPixelInitial=polyshape([x(1)-Thickness/2 x(1)+Thickness/2 x(1)+Thickness/2 x(1)-Thickness/2],...
-            %   [y(1)-Thickness/2 y(1)-Thickness/2 y(1)+Thickness/2 y(1)+Thickness/2]);
-            
-             % the circle version
-            PolyshapGreenPixelInitial=polycircle(x(1),y(1),Thickness/2); 
-        
-            %figure;plot(polyTrajatory);hold on; plot(PolyshapGreenPixelInitial); hold off;
-            %ylim([0 screenYpixels]);xlim([0 screenXpixels]);set(gca, 'YDir', 'reverse');
-            PolyshapeUnion=intersect(polyTrajatory,PolyshapGreenPixelInitial);
-            %figure;plot(PolyshapeUnion);ylim([0 screenYpixels]);xlim([0 screenXpixels]);set(gca, 'YDir', 'reverse');area(PolyshapeUnion)
-            
+%         % initialize a small green pixel polyshap area for score calculation
+%             %PolyshapGreenPixelInitial=polyshape([x(1)-Thickness/2 x(1)+Thickness/2 x(1)+Thickness/2 x(1)-Thickness/2],...
+%             %   [y(1)-Thickness/2 y(1)-Thickness/2 y(1)+Thickness/2 y(1)+Thickness/2]);
+%             
+%              % the circle version
+%             PolyshapGreenPixelInitial=polycircle(x(1),y(1),Thickness/2); 
+%         
+%             %figure;plot(polyTrajatory);hold on; plot(PolyshapGreenPixelInitial); hold off;
+%             %ylim([0 screenYpixels]);xlim([0 screenXpixels]);set(gca, 'YDir', 'reverse');
+%             PolyshapeUnion=intersect(polyTrajatory,PolyshapGreenPixelInitial);
+%             %figure;plot(PolyshapeUnion);ylim([0 screenYpixels]);xlim([0 screenXpixels]);set(gca, 'YDir', 'reverse');area(PolyshapeUnion)
+%             
         %***********************************************
         
         % Trial start only when both mice placed at the starting point
-        Insidestart = 0;
-        while Insidestart == 0
-            % If esc is press, break out of the while loop and close the screen
-            [keyIsDown, keysecs, keyCode] = KbCheck;
-            if keyCode(KbName('escape'))
-                Screen('CloseAll');
-                break;
-            end
+%         Insidestart = 0;
+%         while Insidestart == 0
+%             % If esc is press, break out of the while loop and close the screen
+%             [keyIsDown, keysecs, keyCode] = KbCheck;
+%             if keyCode(KbName('escape'))
+%                 Screen('CloseAll');
+%                 break;
+%             end
             
             % Draw the route
             % Screen('DrawDots', windowPtr, [x;y], Thickness, white, [0 0], 2);
 
             % Display the starting point 
-            Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, white, [], 2);
+%             Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, white, [], 2);
             
             % Display instruction
-            textPlan=['Place both pens at the starting points'];
-            DrawFormattedText2(textPlan,'win',windowPtr,...
-                'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
+%             textPlan=['Place both pens at the starting points'];
+%             DrawFormattedText2(textPlan,'win',windowPtr,...
+%                 'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
             
             % Show trial and block number
-            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
-            DrawFormattedText2(Showtrial,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
+%             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
+%             DrawFormattedText2(Showtrial,'win',windowPtr,...
+%             'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
            
             % Get mouse location
-            [xML0, yML0] = GetMouse(windowPtr,mice(2));
-            [xMR0, yMR0] = GetMouse(windowPtr,mice(1));
+%             [xML0, yML0] = GetMouse(windowPtr,mice(2));
+%             [xMR0, yMR0] = GetMouse(windowPtr,mice(1));
 
             % Shift the mouse location to map the tablets
 %             xML=xML0/2; % the upper left quatrand of the scrren
 %             yML=yML0/2; % the upper left quatrand of the scrren
 %             xMR=xCenter+xMR0/2; % the upper right quatrand of the screen
 %             yMR=yMR0/2;% the upper right quatrand of the screen
-            % xML=xML0/2; % the left side of the screen
-            xML=xML0*(11/20); % a bit more than half of the left side of the scrren
-            yML=yML0; % the left side of the scrren
-            % xMR=xCenter+xMR0*(11/20); % the right side of the screen
-            xMR=(xCenter-screenXpixels/20)+xMR0*(11/20); % a bit more than half of the right side of the scrren
-            yMR=yMR0;% the right side of the screen
-    
-            % Display the cursor as a dot
-            Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
-            Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
+%             % xML=xML0/2; % the left side of the screen
+%             xML=xML0*(11/20); % a bit more than half of the left side of the scrren
+%             yML=yML0; % the left side of the scrren
+%             % xMR=xCenter+xMR0*(11/20); % the right side of the screen
+%             xMR=(xCenter-screenXpixels/20)+xMR0*(11/20); % a bit more than half of the right side of the scrren
+%             yMR=yMR0;% the right side of the screen
+%     
+%             % Display the cursor as a dot
+%             Screen('DrawDots', windowPtr, [xML yML], Thickness, red, [], 2);
+%             Screen('DrawDots', windowPtr, [xMR yMR], Thickness, blue, [], 2);
+%             
+%             % initial the before values
+%             xMLbefore=xML;
+%             yMLbefore=yML;
+%             xMRbefore=xMR;
+%             yMRbefore=yMR;
+%             
+%             xJbefore=[]; yJbefore=[];% initialize the joint before value
             
-            % initial the before values
-            xMLbefore=xML;
-            yMLbefore=yML;
-            xMRbefore=xMR;
-            yMRbefore=yMR;
-            
-            xJbefore=[]; yJbefore=[];% initialize the joint before value
-            
-            % flip to screen
-            vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-            
-            % update the while loop
-            Insidestart = (sqrt((xML-xCenter).^2+(yML-yCenter).^2) < Thickness/2/5) & ...
-                (sqrt((xMR-xCenter).^2+(yMR-yCenter).^2)<Thickness/2/5);
-            
-            if Insidestart == 1
-                Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, green, [], 2);
-                % flip to screen
-                vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-                % pause to smooth transition
-                WaitSecs(Tpause);
-            end
-            
-        end
-        
-        % reset the trial score to zero
-        ScoreLR=0;
-        GreenPixelsCovered=[];
+%             % flip to screen
+%             vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+%             
+%             % update the while loop
+%             Insidestart = (sqrt((xML-xCenter).^2+(yML-yCenter).^2) < Thickness/2/5) & ...
+%                 (sqrt((xMR-xCenter).^2+(yMR-yCenter).^2)<Thickness/2/5);
+%             
+%             if Insidestart == 1
+%                 Screen('DrawDots', windowPtr, [x(1) y(1)], Thickness, green, [], 2);
+%                 % flip to screen
+%                 vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+%                 % pause to smooth transition
+%                 WaitSecs(Tpause);
+%             end
+%             
+%         end
+%         
+%         % reset the trial score to zero
+%         ScoreLR=0;
+%         GreenPixelsCovered=[];
 
         % get a timestamp at the start of the trial
         vbl = Screen('Flip', windowPtr);
@@ -515,7 +563,7 @@ for block=1:numBlock
 
 
         % reset n
-        n=1;
+%         n=1;
 
         % DuoMice:
         % Show master cursors again:
@@ -524,19 +572,19 @@ for block=1:numBlock
 %         end
 
 
-        % To keep a record of the percentage of time inside the square
-        behaviraldata.dataBlock(block).dataTrialNumInside(t).NumInside=NumInside;
-        
-        % Store behaviral data
-        behaviraldata.dataBlock(block).dataTrialL(t).xLyL=xLyL;
-        behaviraldata.dataBlock(block).dataTrialR(t).xRyR=xRyR;
-        behaviraldata.dataBlock(block).dataTrialJ(t).xJyJ=xJyJ;
-        
-        %save trial condition
-        behaviraldata.dataBlock(block).dataTrialNumInside(t).condition=conditionSelected;
-        behaviraldata.dataBlock(block).dataTrialL(t).condition=conditionSelected;
-        behaviraldata.dataBlock(block).dataTrialR(t).condition=conditionSelected;
-        behaviraldata.dataBlock(block).dataTrialJ(t).condition=conditionSelected;
+%         % To keep a record of the percentage of time inside the square
+%         behaviraldata.dataBlock(block).dataTrialNumInside(t).NumInside=NumInside;
+%         
+%         % Store behaviral data
+%         behaviraldata.dataBlock(block).dataTrialL(t).xLyL=xLyL;
+%         behaviraldata.dataBlock(block).dataTrialR(t).xRyR=xRyR;
+%         behaviraldata.dataBlock(block).dataTrialJ(t).xJyJ=xJyJ;
+%         
+%         %save trial condition
+%         behaviraldata.dataBlock(block).dataTrialNumInside(t).condition=conditionSelected;
+%         behaviraldata.dataBlock(block).dataTrialL(t).condition=conditionSelected;
+%         behaviraldata.dataBlock(block).dataTrialR(t).condition=conditionSelected;
+%         behaviraldata.dataBlock(block).dataTrialJ(t).condition=conditionSelected;
         
         % calculate the score in this trial
         % Count interset of polyshape areas
@@ -553,23 +601,23 @@ for block=1:numBlock
 %         plot(polyTrajatory);
 %         hold off;
             
-        % update the scores
-        % ScoreLR=fullBonusPerTrial*area(PolyshapeUnion)/area(polyTrajatory);
-        ScoreLR=area(PolyshapeUnion)/area(polyTrajatory); % use percentile reward
-        % Save trial scores
-        TrialScores=[TrialScores ScoreLR];
-        
-        % TotalScore=TotalScore+ScoreLR;
-        if TotalScore==0;
-            TotalScore=ScoreLR;
-        else
-            TotalScore=mean(TrialScores); % show average score instead
-        end
-         
-        % reset trial score values
-        clear PolyshapGreenPixelInitial; 
-        clear polyTrajatory; 
-        clear PolyshapeUnion; 
+%         % update the scores
+%         % ScoreLR=fullBonusPerTrial*area(PolyshapeUnion)/area(polyTrajatory);
+%         ScoreLR=area(PolyshapeUnion)/area(polyTrajatory); % use percentile reward
+%         % Save trial scores
+%         TrialScores=[TrialScores ScoreLR];
+%         
+%         % TotalScore=TotalScore+ScoreLR;
+%         if TotalScore==0;
+%             TotalScore=ScoreLR;
+%         else
+%             TotalScore=mean(TrialScores); % show average score instead
+%         end
+%          
+%         % reset trial score values
+%         clear PolyshapGreenPixelInitial; 
+%         clear polyTrajatory; 
+%         clear PolyshapeUnion; 
 
     end
 
@@ -577,10 +625,10 @@ end
 
 
 % Show The End
-TotalReward=fullBonus*TotalScore;
-Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100) ';       Reward: $ ' num2str(TotalReward)];
-DrawFormattedText2(Showbonus,'win',windowPtr,...
-    'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
+% TotalReward=fullBonus*TotalScore;
+% Showbonus = ['Score: ' sprintf('%0.2f %%', ScoreLR*100) ';      Average: ' sprintf('%0.2f %%', TotalScore*100) ';       Reward: $ ' num2str(TotalReward)];
+% DrawFormattedText2(Showbonus,'win',windowPtr,...
+%     'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white);
 TheEnd = ['The End'];
 DrawFormattedText2(TheEnd,'win',windowPtr,...
     'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);

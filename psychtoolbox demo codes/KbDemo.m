@@ -185,7 +185,7 @@ try
     whichScreen = max(Screen('Screens'));
 
     % Open a new window.
-    [ window, windowRect ] = Screen('OpenWindow', whichScreen);
+     [ window, windowRect ] = Screen('OpenWindow', whichScreen);
 
     % Set text display options. We skip on Linux.
     if ~IsLinux
