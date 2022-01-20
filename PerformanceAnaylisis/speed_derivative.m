@@ -14,7 +14,7 @@
 %     plot(t(3:end),a,'-or');
 %     legend({'h', 'v','a'})
 
-%% Using the original behaviral data (averaged)
+%% Using the original behaviral data (averaged) (skip)
 % cd('/home/zhibin/Documents/GitHub/Motor_cordination/behaviraldata')
 % load('matlab2021101802.mat');
 
@@ -157,7 +157,7 @@ for conditionSelected=1:length(conditions)
 end
 
 
-%% Using the resampled behaviral data (all trials)
+%% Using the resampled behaviral data (all trials) (skip)
 % cd('/home/zhibin/Documents/GitHub/Motor_cordination/behaviraldata')
 % load('matlab2021101802.mat');
 
@@ -445,7 +445,7 @@ for conditionSelected=1:length(conditions)
 %     hold off;
 end
 
-%% Using the resampled behaviral data and apply Savitzky-Golay Filter (trial level) (for correlation)
+%% Using the resampled behaviral data and apply Savitzky-Golay Filter and save the profiles (trial level) (for correlation)
 % To Add to data_trials as another 4 channels: vL vR aL aR (maybe not, unequal length)
 data_trials; 
 % To produce the following array
