@@ -138,18 +138,14 @@ escapeKey = KbName('ESCAPE');
 
 % Here are the parameters for this demo.
 spotRadius = 25; % The radius of the spot.
-% rotationRadius = 200; % The radius of the rotation.
-% initialRotationAngle = 3 * pi / 2; % The initial rotation angle in radians.
-initialElevationStep = spotRadius;
 
 % Use the parameters.
 spotDiameter = spotRadius * 2;
 spotRect = [0 0 spotDiameter spotDiameter];
-centeredspotRect = CenterRect(spotRect, windowRect); % Center the spot.
-shiftToBottom = screenYpixels/2-spotRadius;
-startspotRect = centeredspotRect+[0 shiftToBottom 0 shiftToBottom];
-% rotationAngle = initialRotationAngle;
-elevationStep = initialElevationStep;
+startspotRectL = [screenXpixels*1/3-spotRadius screenYpixels-2*spotRadius screenXpixels*1/3+spotRadius screenYpixels];
+startspotRectR = [screenXpixels*2/3-spotRadius screenYpixels-2*spotRadius screenXpixels*2/3+spotRadius screenYpixels];
+startbarRect   = [screenXpixels*1/3-spotRadius screenYpixels-4*spotRadius screenXpixels*2/3+spotRadius screenYpixels-2*spotRadius];
+elevationL = 0; elevationR = 0;
 
 
 % We can define a center for the dot coordinates to be relaitive to. Here
@@ -243,121 +239,121 @@ numFramesRestEye=round (TimeRestingEEG/ifi);
 % time break between block
 % Tinterblock=3; 
 % *************************************************************************
-
-
-% Starting introduction
-% instructionStart=['You will be controlling two pens to do the task.'...
-%         '\n\n\n Each trial start when you have placed both pens at the center starting point.'...
-%         '\n\n\n You could earn Bonus money up to $ ' num2str(fullBonus) ' if performed quickly and closely to the trajectory.'...
-%         '\n\n\n Questions? If none, press any key to continue'];
-instructionStart=['You will be controlling two pens to do the task.'...
-        '\n\n\n Each trial start when you have placed both pens at the center starting point.'...
-        '\n\n\n Questions? If none, press any key to continue'];
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-Screen('Flip',windowPtr);
-% WaitSecs(Tinterblock);
-% hit a key to continue
-KbStrokeWait;
+%     
+%     
+%     % Starting introduction
+%     % instructionStart=['You will be controlling two pens to do the task.'...
+%     %         '\n\n\n Each trial start when you have placed both pens at the center starting point.'...
+%     %         '\n\n\n You could earn Bonus money up to $ ' num2str(fullBonus) ' if performed quickly and closely to the trajectory.'...
+%     %         '\n\n\n Questions? If none, press any key to continue'];
+%     instructionStart=['You will be controlling two pens to do the task.'...
+%             '\n\n\n Each trial start when you have placed both pens at the center starting point.'...
+%             '\n\n\n Questions? If none, press any key to continue'];
+%     DrawFormattedText2(instructionStart,'win',windowPtr,...
+%         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+%     Screen('Flip',windowPtr);
+%     % WaitSecs(Tinterblock);
+%     % hit a key to continue
+%     KbStrokeWait;
 
 %*************************************************************************
-% Start taking eye open and eye close resting stage EEG
-instructionStart=['Hit any key and then look at the center of the screen for 3 min'];
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-Screen('Flip',windowPtr);
-% hit a key to continue
-KbStrokeWait;
-
-% Flash the upper left corner once at the start and end of eye open period (and bottom right)
-% i=1;
-% while i < 2;
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip',windowPtr);
-%     i=i+1;
-% end
-
-
-% get a timestamp and begin taking resting EEG
-vbl = Screen('Flip', windowPtr);
-i=1;
-while i<numFramesRestEye
-% If esc is press, break out of the while loop and close the screen
-    [keyIsDown, keysecs, keyCode] = KbCheck;
-    if keyCode(KbName('escape'))
-        Screen('CloseAll');
-        break;
-    end
-    % Show the fixation cross
-    Screen('DrawDots', windowPtr, [FixCrX;FixCrY], Thickness/10, white, [0 0], 2);
-    % Show the central dot
-    % Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
-    % Flip the black screen
-    vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-    % update the while loop
-    i=i+1;
-end
-
-% WaitSecs(TimeRestingEEG);
-
-% Flash once to mark the end of open eye resting EEG collection
-% i=1;
-% while i < 2;
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip',windowPtr);
-%     i=i+1;
-% end
-%****************************************************************************
-instructionStart=['Hit a key and then close your eyes to rest for 3 min before I tell you to continue.'];
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-Screen('Flip',windowPtr);
-% hit a key to continue
-KbStrokeWait;
-
-% Flash the upper left corner once at the start and end of eye closed period (and bottom right)
-% Flash once to start
-% i=1;
-% while i < 2;
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip',windowPtr);
-%     i=i+1;
-% end
-
-
-% Black Screen
-Screen('Flip',windowPtr);
-% WaitSecs(TimeRestingEEG);
-
-% get a timestamp and begin taking resting EEG
-vbl = Screen('Flip', windowPtr);
-i=1;
-while i<numFramesRestEye
-% If esc is press, break out of the while loop and close the screen
-    [keyIsDown, keysecs, keyCode] = KbCheck;
-    if keyCode(KbName('escape'))
-        Screen('CloseAll');
-        break;
-    end
-    % Flip the black screen
-    vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-    % update the while loop
-    i=i+1;
-end
-    
-
-% Flash again to mark the end of resting EEG collection
-i=1;
-while i < 2;
-    Screen('FillRect', windowPtr, white, LeftUpperSquare);
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip',windowPtr);
-    i=i+1;
-end
-
+%     % Start taking eye open and eye close resting stage EEG
+%     instructionStart=['Hit any key and then look at the center of the screen for 3 min'];
+%     DrawFormattedText2(instructionStart,'win',windowPtr,...
+%         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+%     Screen('Flip',windowPtr);
+%     % hit a key to continue
+%     KbStrokeWait;
+%     
+%     % Flash the upper left corner once at the start and end of eye open period (and bottom right)
+%     % i=1;
+%     % while i < 2;
+%         Screen('FillRect', windowPtr, white, LeftUpperSquare);
+%         Screen('FillRect', windowPtr, white, RightBottomSquare);
+%         Screen('Flip',windowPtr);
+%     %     i=i+1;
+%     % end
+%     
+%     
+%     % get a timestamp and begin taking resting EEG
+%     vbl = Screen('Flip', windowPtr);
+%     i=1;
+%     while i<numFramesRestEye
+%     % If esc is press, break out of the while loop and close the screen
+%         [keyIsDown, keysecs, keyCode] = KbCheck;
+%         if keyCode(KbName('escape'))
+%             Screen('CloseAll');
+%             break;
+%         end
+%         % Show the fixation cross
+%         Screen('DrawDots', windowPtr, [FixCrX;FixCrY], Thickness/10, white, [0 0], 2);
+%         % Show the central dot
+%         % Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
+%         % Flip the black screen
+%         vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+%         % update the while loop
+%         i=i+1;
+%     end
+%     
+%     % WaitSecs(TimeRestingEEG);
+%     
+%     % Flash once to mark the end of open eye resting EEG collection
+%     % i=1;
+%     % while i < 2;
+%         Screen('FillRect', windowPtr, white, LeftUpperSquare);
+%         Screen('FillRect', windowPtr, white, RightBottomSquare);
+%         Screen('Flip',windowPtr);
+%     %     i=i+1;
+%     % end
+%     %****************************************************************************
+%     instructionStart=['Hit a key and then close your eyes to rest for 3 min before I tell you to continue.'];
+%     DrawFormattedText2(instructionStart,'win',windowPtr,...
+%         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+%     Screen('Flip',windowPtr);
+%     % hit a key to continue
+%     KbStrokeWait;
+%     
+%     % Flash the upper left corner once at the start and end of eye closed period (and bottom right)
+%     % Flash once to start
+%     % i=1;
+%     % while i < 2;
+%         Screen('FillRect', windowPtr, white, LeftUpperSquare);
+%         Screen('FillRect', windowPtr, white, RightBottomSquare);
+%         Screen('Flip',windowPtr);
+%     %     i=i+1;
+%     % end
+%     
+%     
+%     % Black Screen
+%     Screen('Flip',windowPtr);
+%     % WaitSecs(TimeRestingEEG);
+%     
+%     % get a timestamp and begin taking resting EEG
+%     vbl = Screen('Flip', windowPtr);
+%     i=1;
+%     while i<numFramesRestEye
+%     % If esc is press, break out of the while loop and close the screen
+%         [keyIsDown, keysecs, keyCode] = KbCheck;
+%         if keyCode(KbName('escape'))
+%             Screen('CloseAll');
+%             break;
+%         end
+%         % Flip the black screen
+%         vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+%         % update the while loop
+%         i=i+1;
+%     end
+%         
+%     
+%     % Flash again to mark the end of resting EEG collection
+%     i=1;
+%     while i < 2;
+%         Screen('FillRect', windowPtr, white, LeftUpperSquare);
+%         Screen('FillRect', windowPtr, white, RightBottomSquare);
+%         Screen('Flip',windowPtr);
+%         i=i+1;
+%     end
+% 
 
 % ************************************************************************
 instructionStart=['OK. Press a key to start!']; % Tell subject to open eye and start
