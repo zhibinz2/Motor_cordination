@@ -101,13 +101,13 @@ grey  = [0.5 0.5 0.5];
 
 % Open an on screen window and color it black
 % For help see: Screen Openwindow?
-% [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); % This will draw on a black backgroud
+[windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); % This will draw on a black backgroud
 
 % This will draw on a white window layer on top and make subsequent text black
 % [windowPtr, windowRect] = Screen('OpenWindow', screenNumber); 
 
 % This will draw on black background and somehow create a semi-translucent black layer cover on top
-[windowPtr, windowRect] = Screen('OpenWindow', screenNumber,black); 
+% [windowPtr, windowRect] = Screen('OpenWindow', screenNumber,green); 
 
 % Get the size of the on screen windowPtr in pixels
 % For help see: Screen windowSize?
@@ -118,7 +118,7 @@ grey  = [0.5 0.5 0.5];
 % Enable alpha blending for anti-aliasing
 % For help see: Screen BlendFunction?
 % Also see: Chapter 6 of the OpenGL programming guide
-Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+% Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 % Set text display options for operating system other than Linux.
 if ~IsLinux
