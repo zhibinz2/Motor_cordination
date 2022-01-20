@@ -146,11 +146,11 @@ for chan=1:128
 end
 % suptitle('session2021111802')
 
-%% Plot all powerspetra on scalp map for each condition 
+%% Plot all powerspetra on scalp map for condition '0:4' and '4:0' (all trials)
 conditionNames={'0:4' '1:4' '1:2' '1:1' '2:1' '4:1' '4:0'}; 
 colors=[0 0 1; 0 0.4 0.85; 0 0.8 0.7; 0 1 0; 0.7 0.8 0; 0.85 0.4 0; 1 0 0];
 
-Ymax=1.5;
+Ymax=2.5;
 
 % all performance trials
 figure('units','normalized','outerposition',[0 0 1 1]);
@@ -180,7 +180,7 @@ hold off;
 legend((conditionNames([1 7])),'Location','southeast');
 
 
-
+%% Plot all powerspetra on scalp map for condition '0:4' and '4:0' (high & low trials)
 
 % High performance trials
 figure('units','normalized','outerposition',[0 0 0.6 1]);
@@ -239,7 +239,8 @@ end
 hold off;
 legend((conditionNames([1 7])));
 suptitle('low performance trials');
-%% Plot all erp of planning on scalp map for each condition (skip)
+%% Plot all erp of planning on scalp map for each condition (examine)
+u=1;
 indtemp=find(CondiDataGoodTrials==UniCondi(u));
 HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
 
@@ -253,7 +254,7 @@ for chan=1:128
     if chan==128
         xlabel('time');ylabel('laplacian power');
     end
-    ylim([-.5 .5]);
+    ylim([-15 15]);
     title([AllchanNames{chan}]);
 end
 %suptitle('session2021111802')
@@ -277,7 +278,7 @@ CondiData=allPerm_alldays(logical(goodepochs_alldays));
 TrialScores=TrialScores_alldays(logical(goodepochs_alldays));
 % plot(TrialScores,'ro');hold on;yline(median(TrialScores),'m');
 
-%% plot power spetra in each condtion (skip)
+%% plot power spetra in 6 channels in each condtion (skip)
 UniCondi=unique(CondiData);
 
 % Use Bgoodepochs to select good trials only

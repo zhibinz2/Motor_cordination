@@ -51,10 +51,10 @@ mixedsig;
 
 % Just to examine the final clean data
 figure('units','normalized','outerposition',[0 0 1 0.5]);
-plot(mixedsig(goodchans,:)');
+% plot(mixedsig(goodchans,:)');
+% plot(mixedsig');
 
-
-%% Use Goodchans to do Laplacian on mixedsig (don't do laplacian)
+%% Use Goodchans to do Laplacian on mixedsig (skip, don't do laplacian)
 run Use_Goodchans_to_Laplacian_step7.m
 % now filtered_data is after laplacian
 laplacian_data;%Just to examine
@@ -85,14 +85,18 @@ for ntr=1:length(goodepochs) % ntr=length(goodepochs)
 end
 % Just to examine
 afterICA_trials;
-plotx(afterICA_trials(:,goodchans,2));
+% plotx(afterICA_trials(:,goodchans,2));
 
 %% save the cleaner data after ICA
 cd /home/zhibin/Documents/Acquisition
 % cd /home/zhibin/Documents/Acquisition/Bimanual_reach_zhibin_20211106/Cleaner_Data
-save('Cleaner_Data.mat','afterICA_trials','goodepochs','goodchans');
+save('Cleaner_Data.mat','afterICA_trials','goodepochs','goodchans',...
+    'artifact','behaviraldata','BehavData',...
+    'CondiData','CondiDataGoodTrials','conditionNames',...
+    'datatimes_ind_trial_end','datatimes_ind_trial_go','datatimes_ind_trial_start',...
+    'filename','seed','IndEnds','IndStart');
 
-%% Need to step4 again to integrate behaviral data?
+%% Need to step4 again to integrate behaviral data? (skip)
 open Integrate_Behavioral_into_data_trials_step4.m
 
 %% Step 8 
@@ -101,7 +105,11 @@ open Powerspetra.m
 %% Step 9
 open plotSpectrogram.m
 
-%% Save data file for sharing
+%% Save the normPowcnorm_ALLchan_sgolay_ALLtrials matrix
+cd /home/zhibin/Documents/Acquisition/Bimanual_reach_zhibin_20211106/Cleaner_Data
+save('normPowcnorm_ALLchan_sgolay_ALLtrials.mat','normPowcnorm_ALLchan_sgolay_ALLtrials','-v7.3');
+
+%% Save data file for sharing (skip)
 cd /home/zhibin/Documents/Acquisition/bimanual_Reach_Jack_2021111802/Cleaner_Data
 run Cleaner_Data_explained.m
 

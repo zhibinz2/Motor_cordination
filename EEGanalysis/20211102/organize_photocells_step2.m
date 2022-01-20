@@ -28,7 +28,8 @@ plot(latency,type,'ro');xlabel('time(ms)');ylabel('event type');
 % method 1
 datatimes_ind_trial_go=latency(find(type==Unitype(3)));
 % remove unwanted photocell signal
-datatimes_ind_trial_go(end)=[];
+% datatimes_ind_trial_go(end)=[];
+
 datatimes_ind_trial_start=datatimes_ind_trial_go-1000;
 datatimes_ind_trial_end=datatimes_ind_trial_go+1000;
 

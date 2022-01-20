@@ -47,7 +47,7 @@ filtered_data=filtfilthd(Hd,filtered_data);
 
 
 %%
-filtered_broadband=filtered_data;
+% filtered_broadband=filtered_data;
 % filtered_data=filtered_broadband;
 
 %% fiter5bands 

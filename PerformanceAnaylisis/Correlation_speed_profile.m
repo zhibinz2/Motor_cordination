@@ -152,7 +152,7 @@ end
 %% PLS Regression
 % https://www.mathworks.com/help/stats/plsregress.html#mw_635e159a-1335-4e52-af7f-5fc82592798a
 [XLOADINGS,YLOADINGS] = plsregress(average_spectrogram(1:length(averageALLvL),goodchans),averageALLvL);
-%% PLS Regression tryout
+%% PLS Regression tryout (matlab example)
 [XL,yl,XS,YS,beta,PCTVAR,MSE,stats] = plsregress(average_spectrogram(1:length(averageALLvL),goodchans),averageALLvL);
 W0 = stats.W ./ sqrt(sum(stats.W.^2,1));
 p = size(XL,1);
@@ -167,7 +167,9 @@ hold off
 axis tight
 xlabel('Channels')
 ylabel('variable importance in projection (VIP) scores')
-%% PLS Regression
+%% PLS Regression (5 fold)
+% https://www.mathworks.com/help/stats/plsregress.html
+
 figure('units','normalized','outerposition',[0 0 1 1]);
 for conditionSelected=1:length(UniCondi);
 

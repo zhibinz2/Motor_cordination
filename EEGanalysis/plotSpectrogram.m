@@ -25,7 +25,7 @@ baselinecorrected_trial;
 padding=zeros(500,size(baselinecorrected_trial,2),size(baselinecorrected_trial,3));
 baselinecorrected_trial_paddings=cat(1,padding,baselinecorrected_trial,padding);
 
-%% all conditions
+%% all conditions in 6 channels (skip)
 for u=1:length(UniCondi);
 
     figure('units','normalized','outerposition',[0 0 0.6 0.6]);
@@ -121,7 +121,7 @@ conditionNames={'0:4' '1:4' '1:2' '1:1' '2:1' '4:1' '4:0'};
 win=501:1000; %baseline section
 
 % all performance trials
-for u=[1 7]; % sp=1:2
+for u=1:7; % [1 7] % sp=1:2
     
     figure('units','normalized','outerposition',[0 0 1 1]);
     indtemp=find(CondiDataGoodTrials==UniCondi(u));
@@ -168,20 +168,23 @@ for u=[1 7]; % sp=1:2
     suptitle(conditionNames(u));
 end
 
-%% Produce a matrix of spectrogram for each trial and each channel
-normPowcnorm_ALLchan_sgolay_ALLtrials=[]; % Structure of this matrix: wfreq x time x chans x trials
+%% Produce a matrix of spectrogram for each trial and each channel for correlation and PLS Regression
+% normPowcnorm_ALLchan_sgolay_ALLtrials=[]; % Structure of this matrix: wfreq x time x chans x trials
+normPowcnorm_ALLchan_sgolay_ALLtrials=zeros([length(wfreq) 1500 128 size(baselinecorrected_trial_paddings,3)]);
+% check dimension
+% size(normPowcnorm_ALLchan_sgolay_ALLtrials)
 
 win=501:1000; % baseline section
 
-% Method 1 (slow,8min)
+% Method 1 (slow,8-10 min)
 tic
-for i=1:size(baselinecorrected_trial_paddings,3)
+for i=1:size(baselinecorrected_trial_paddings,3) % loop over trials
     
     % Compute ERP in all channels
-    basedlinecorrected_ERP=mean(baselinecorrected_trial_paddings(:,1:128,i),3);
+    basedlinecorrected_trial=baselinecorrected_trial_paddings(:,1:128,i);
     % plot(basedlinecorrected_ERP);
 
-    cnorm = wavelet(basedlinecorrected_ERP,sr,wfc,wfreq);
+    cnorm = wavelet(basedlinecorrected_trial,sr,wfc,wfreq);
     Powcnorm = abs(cnorm).^2;
     
     % Power normalization
@@ -190,7 +193,11 @@ for i=1:size(baselinecorrected_trial_paddings,3)
 %     baselineMean=log10(mean(Powcnorm(:,win,:),2));
     normPowcnorm = log10(Powcnorm)-(ones(1,size(log10(Powcnorm),2),1).*log10(mean(Powcnorm(:,win,:),2)));
     
-    normPowcnorm_ALLchan_sgolay=[];
+    % for each trial
+    % normPowcnorm_ALLchan_sgolay=[];
+    normPowcnorm_ALLchan_sgolay = zeros([length(wfreq) 1500 size(baselinecorrected_trial,2)]);
+    
+    % apply sgolay filter on each channel
     for chan=1:128 %goodchans
 %         normPowcnorm_perchan=squeeze(normPowcnorm(:,:,chan))';
 %         normPowcnorm_perchan_sgolay=sgolayfilt(normPowcnorm_perchan,1,31);
@@ -207,8 +214,47 @@ for i=1:size(baselinecorrected_trial_paddings,3)
 %             yticks([1:length(wfreq)]);yticklabels({'2','4','6','8','10','14','18','24','30','40'});
 %             xticks(linspace(0,2000,5));xticklabels({'-1000','-500','0','500','1000'});
 %             colorbar;
-        normPowcnorm_ALLchan_sgolay=cat(3,normPowcnorm_ALLchan_sgolay,normPowcnorm_perchan_sgolay(:,1001:2500));
+
+        % concatenate each channels back
+%         normPowcnorm_ALLchan_sgolay=cat(3,normPowcnorm_ALLchan_sgolay,normPowcnorm_perchan_sgolay(:,1001:2500));
+        normPowcnorm_ALLchan_sgolay(:,:,chan)=normPowcnorm_perchan_sgolay(:,1001:2500);
     end
+    
+    % concatenate each trial back
+%     normPowcnorm_ALLchan_sgolay_ALLtrials=cat(4,normPowcnorm_ALLchan_sgolay_ALLtrials,normPowcnorm_ALLchan_sgolay);
+    normPowcnorm_ALLchan_sgolay_ALLtrials(:,:,:,i)=normPowcnorm_ALLchan_sgolay;
+end
+toc
+% Elapsed time is 446.206188 seconds. if using cat (matrix concatenate)
+% Elapsed time is 80.740070 seconds. if initialized zero matrix
+
+% examine
+size(normPowcnorm_ALLchan_sgolay_ALLtrials)
+% ans =     10        1500         128         289 
+          
+%% Method 2 faster? (skip) (not working, sgolayfilt does not work well with 3 dimension)
+tic
+for i=1:size(baselinecorrected_trial_paddings,3) % loop over trials
+    
+    % Compute ERP in all channels
+    basedlinecorrected_trial=baselinecorrected_trial_paddings(:,1:128,i);
+    % plot(basedlinecorrected_ERP);
+
+    cnorm = wavelet(basedlinecorrected_trial,sr,wfc,wfreq);
+    Powcnorm = abs(cnorm).^2;
+    
+    % Power normalization
+    % one way to it:
+%     logPowcorm=log10(Powcnorm);
+%     baselineMean=log10(mean(Powcnorm(:,win,:),2));
+    normPowcnorm = log10(Powcnorm)-(ones(1,size(log10(Powcnorm),2),1).*log10(mean(Powcnorm(:,win,:),2)));
+       
+    % apply sgolay filter on all channels     
+    transpose_normPowcnorm=permute(normPowcnorm,[2,1,3]);
+%     x=transpose_normPowcnorm;order=1;framelen=31;weights=[];dim=1
+    normPowcnorm_perchan_sgolay=sgolayfilt(normPowcnorm,1,31,[],1);
+    
+    % concatenate each trial back
     normPowcnorm_ALLchan_sgolay_ALLtrials=cat(4,normPowcnorm_ALLchan_sgolay_ALLtrials,normPowcnorm_ALLchan_sgolay);
 
 end
@@ -218,13 +264,13 @@ toc
 % examine
 size(normPowcnorm_ALLchan_sgolay_ALLtrials)
 % ans =     10        1500         128         289 
-          
-% Method 2? (faster)
 
-
-%% Save the normPowcnorm_ALLchan_sgolay_ALLtrials matrix
-cd /home/zhibin/Documents/Acquisition/Bimanual_reach_zhibin_20211106/Cleaner_Data
-save('normPowcnorm_ALLchan_sgolay_ALLtrials.mat','normPowcnorm_ALLchan_sgolay_ALLtrials','goodepochs','goodchans','-v7.3');
+%% Save the normPowcnorm_ALLchan_sgolay_ALLtrials matrix (in combine_sessions.m too)
+% cd /home/zhibin/Documents/Acquisition/Bimanual_reach_zhibin_20211106/Cleaner_Data
+cd /home/zhibin/Documents/Acquisition/
+tic
+save('normPowcnorm_ALLchan_sgolay_ALLtrials.mat','normPowcnorm_ALLchan_sgolay_ALLtrials','-v7.3');
+toc
 
 %% https://github.com/rameshsrinivasanuci/matlab/blob/master/jenny/WaveletTransform.m (skip)
 % now let's recover the time course

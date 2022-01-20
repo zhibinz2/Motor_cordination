@@ -13,7 +13,7 @@
 split_reRef_data = num2cell(reRef_data(:,:,goodepochs), [1 2]); %split A keeping dimension 1 and 2 intact
 EEGdataShort=vertcat(split_reRef_data{:});
 
-%% Recalculate the event array (for display and for EEGLAB)
+%% Recalculate the event array (for display and for EEGLAB) for good trials only
 % So the 4000 timepoints are structured as 
 % "500ms padding + 500ms green dot baseline + 500ms plan phase + 1000ms movement + 1000ms show bonus + 500ms padding"
 
@@ -45,6 +45,7 @@ IndEnds=IndStart+2000-1;
 % plot(IndEventsEEGLAB,'ro');
 
 %% Examine data before ICA
+tic
 TimedataShort=1:size(EEGdataShort,1);
 figure('units','normalized','outerposition',[0 0 1 0.5]);
 plot(TimedataShort, EEGdataShort(:,goodchans));
@@ -54,6 +55,7 @@ for i=1:length(IndStart)
 %     xline(IndEnds(i),'r');
 end
 hold off;
+toc
 
 % trial 41 105 107 are very bad even only good channels were display
 figure
@@ -136,16 +138,6 @@ title('EEG Singal Before ICA');
 
 %%  Plot ICA signal
 figure('units','normalized','outerposition',[0 0 1 1]);
-subplot(2,1,2);
-plotx(TimesdataShort(Duration),icasig(ComponentsExam,Duration));
-hold on;
-for i=PlotStart:PlotEnd
-    xline(IndStart(i),'r',{'Trial Start'});
-    xline(IndEnds(i),'g',{'Trial End'});
-end
-hold off;
-legend(strsplit(num2str(ComponentsExam)));
-title('IC time series');xlabel('time samples');ylabel('uV');
 
 subplot(2,1,1);
 plotx(TimesdataShort(Duration),icasig(:,Duration));
@@ -155,7 +147,20 @@ for i=PlotStart:PlotEnd
     xline(IndEnds(i),'g',{'Trial End'});
 end
 hold off;
-title('IC time series');ylabel('uV');
+title('all IC time series');ylabel('uV');
+
+subplot(2,1,2);
+plotx(TimesdataShort(Duration),icasig(ComponentsExam,Duration));
+hold on;
+for i=PlotStart:PlotEnd
+    xline(IndStart(i),'r',{'Trial Start'});
+    xline(IndEnds(i),'g',{'Trial End'});
+end
+hold off;
+legend(strsplit(num2str(ComponentsExam)));
+title('first 10 IC time series');xlabel('time samples');ylabel('uV');
+
+
 
 %% Calculate Correlation
 % FP1 and FP2 are channel 1 and 3;
@@ -190,6 +195,17 @@ for i=1:length(ComponentsExam)
     subplot(length(ComponentsExam),1,i);
     topoplot(A(:,ComponentsExam(i)),test,'nosedir','+Y');title(['component' num2str(ComponentsExam(i))]);colorbar;
 end
+
+figure;
+for i=1:3
+    subplot(3,2,2*i-1);
+    topoplot(A(:,I1(i)),test,'nosedir','+Y');title(['component' num2str(I1(i))]);colorbar;
+    subplot(3,2,2*i);
+    topoplot(A(:,I3(i)),test,'nosedir','+Y');title(['component' num2str(I3(i))]);colorbar;
+end
+    
+    
+
 %% Plot ICs Topoplot Spetrogram ERP AND Power spectra,  (Similar to EEGLAB)
 % ComponentsExam=[22 60 24 34];
 
@@ -233,7 +249,7 @@ for i=1:length(ComponentsExam)
 end
 
 %% Deside which components to remove and mix back the signal and display
-% ComponentRemove=[50 36 62];
+% ComponentRemove=[19];
 ComponentRemove=ComponentsExam;
 
 A(:,ComponentRemove)=0; icasig(ComponentRemove,:)=0;
