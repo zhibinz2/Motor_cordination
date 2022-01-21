@@ -88,6 +88,8 @@ screenNumber = max(screens);
 % For help see: help WhiteIndex and help BlackIndex
 white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
+white0 = WhiteIndex(0);
+black0 = BlackIndex(0);
 
 % Initialize some colors
 red   = [1 0 0];
@@ -102,6 +104,7 @@ grey  = [0.5 0.5 0.5];
 % Open an on screen window and color it black
 % For help see: Screen Openwindow?
 [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); % This will draw on a black backgroud
+[windowPtr0, windowRect0] = PsychImaging('Openwindow', 0, black); 
 
 % This will draw on a white window layer on top and make subsequent text black
 % [windowPtr, windowRect] = Screen('OpenWindow', screenNumber); 
@@ -112,9 +115,12 @@ grey  = [0.5 0.5 0.5];
 % Get the size of the on screen windowPtr in pixels
 % For help see: Screen windowSize?
 [screenXpixels, screenYpixels] = Screen('windowSize', screenNumber);
+[screenXpixels0, screenYpixels0] = Screen('windowSize', 0);
+
 % Get the centre coordinate of the window in pixels
 % For help see: help RectCenter
 [xCenter, yCenter] = RectCenter(windowRect); 
+
 % Enable alpha blending for anti-aliasing
 % For help see: Screen BlendFunction?
 % Also see: Chapter 6 of the OpenGL programming guide
@@ -171,11 +177,13 @@ waitframes = 1;
 
 % Retreive the maximum priority number
 topPriorityLevel = MaxPriority(windowPtr); 
+topPriorityLevel0 = MaxPriority(windowPtr0); 
 % set Priority once at the start of a script after setting up onscreen window.
 Priority(topPriorityLevel);
 
 % Measure the vertical refresh rate of the monitor
 ifi = Screen('GetFlipInterval', windowPtr);
+ifi0 = Screen('GetFlipInterval', windowPtr0);
 
 % Check if ifi=0.0167
 if round(1/ifi)~=60
@@ -413,7 +421,7 @@ for block=1:numBlock
 
     % get a timestamp at the start of block
     vbl = Screen('Flip', windowPtr);
-    
+    vbl = Screen('Flip', windowPtr0);
 
     %******************** Within block loop
     % how many trials 
@@ -629,6 +637,7 @@ TheEnd = ['The End'];
 DrawFormattedText2(TheEnd,'win',windowPtr,...
     'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
 Screen('Flip',windowPtr);
+Screen('Flip',windowPtr0);
 WaitSecs(3)
 % hit a key to continue
 KbStrokeWait;

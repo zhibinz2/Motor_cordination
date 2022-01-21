@@ -4,7 +4,7 @@ close all;
 clearvars;
 
 % Here we call some default settings for setting up Psychtoolbox
-PsychDefaultSetup(2); 
+PsychDefaultSetup(2); Screen('Preference', 'SkipSyncTests', 1); 
 % Start with black screen
 Screen('Preference', 'VisualDebugLevel', 1); 
 

@@ -102,6 +102,7 @@ grey  = [0.5 0.5 0.5];
 % Open an on screen window and color it black
 % For help see: Screen Openwindow?
 [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); % This will draw on a black backgroud
+[windowPtr0, windowRect] = PsychImaging('Openwindow', 0, black); 
 
 % This will draw on a white window layer on top and make subsequent text black
 % [windowPtr, windowRect] = Screen('OpenWindow', screenNumber); 
@@ -112,6 +113,7 @@ grey  = [0.5 0.5 0.5];
 % Get the size of the on screen windowPtr in pixels
 % For help see: Screen windowSize?
 [screenXpixels, screenYpixels] = Screen('windowSize', screenNumber);
+
 % Get the centre coordinate of the window in pixels
 % For help see: help RectCenter
 [xCenter, yCenter] = RectCenter(windowRect); 
@@ -144,7 +146,7 @@ spotDiameter = spotRadius * 2;
 spotRect = [0 0 spotDiameter spotDiameter];
 startspotRectL = [screenXpixels*1/3-spotRadius screenYpixels-2*spotRadius screenXpixels*1/3+spotRadius screenYpixels];
 startspotRectR = [screenXpixels*2/3-spotRadius screenYpixels-2*spotRadius screenXpixels*2/3+spotRadius screenYpixels];
-startbarRect   = [screenXpixels*1/3-spotRadius screenYpixels-4*spotRadius screenXpixels*2/3+spotRect]
+startbarRect   = [screenXpixels*1/3-spotRadius screenYpixels-4*spotRadius screenXpixels*2/3+spotRadius screenYpixels-2*spotRadius];
 elevationL = 0; elevationR = 0;
 
 
