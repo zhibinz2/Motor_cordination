@@ -48,26 +48,36 @@ while numberOfSecondsRemaining > 0
     vbl  = Screen('Flip', windowPtr0, vbl + (waitframes -0.5) * ifi);
 
     % Update the while loop
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
+    % [ keyIsDown, seconds, keyCode ] = KbCheck;
+    [keyboardIndices, productNames, allInfos] = GetKeyboardIndices
+%     deviceNumberL=10;deviceNumberR=15;
+    deviceNumberL=6;deviceNumberR=10;
+    [keyIsDownL, secsL, keyCodeL, deltaSecsL] = KbCheck([deviceNumberL]);
+    [keyIsDownR, secsR, keyCodeR, deltaSecsR] = KbCheck([deviceNumberR]);
+
     escapeKey = KbName('ESCAPE');
 
-    if keyIsDown
-        
-        if keyCode (leftKey)
+    if keyIsDownL
+        if keyCodeL (leftKey)
             if elevationL < screenYpixels - spotDiameter
                 elevationL = elevationL + spotDiameter;
             else
                 elevationL = 0;
             end
-        elseif keyCode (rightKey)
+        end
+    end
+
+    if keyIsDownR
+        if keyCodeR (rightKey)
             if elevationR < screenYpixels - spotDiameter
                 elevationR = elevationR + spotDiameter;
             else
                 elevationR = 0;
             end
-        elseif keyCode(escapeKey)
-            break;
         end
+    end
+    if keyCodeL (escapeKey) | keyCodeR (escapeKey) 
+            break;
     end
 
     % If the user holds down a key, KbCheck will report multiple events.
