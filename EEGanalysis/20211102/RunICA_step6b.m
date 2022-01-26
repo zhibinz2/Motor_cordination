@@ -249,7 +249,7 @@ for i=1:length(ComponentsExam)
 end
 
 %% Deside which components to remove and mix back the signal and display
-% ComponentRemove=[19];
+% ComponentRemove=[40];
 ComponentRemove=ComponentsExam;
 
 A(:,ComponentRemove)=0; icasig(ComponentRemove,:)=0;
