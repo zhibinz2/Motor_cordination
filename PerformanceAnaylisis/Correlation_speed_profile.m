@@ -1,12 +1,12 @@
 % This is after plotSpectrogram.m
 %% Correlation of speed profile
-%% XXX1
+%% Define XXX1
 % time x trials 
 ALLhL=ALLhL(goodepochs,:)';ALLhR=ALLhR(goodepochs,:)';% travel distance
 ALLvL=ALLvL(goodepochs,:)';ALLvR=ALLvR(goodepochs,:)';% velocity
 ALLaL=ALLaL(goodepochs,:)';ALLaR=ALLaR(goodepochs,:)';% acceleration
 
-%% XXX2
+%% Define XXX2 (select frequency to investigate)
 % Structure of this matrix: 
 % wfreq x time x chans x trials
 %    10   1500    128     289
@@ -14,7 +14,7 @@ size(normPowcnorm_ALLchan_sgolay_ALLtrials)
 
 % select a frequency to analysis
 wfreq; % checking
-FreqSelected=3; % theta =6
+FreqSelected=5; % 3=theta;5=alpha;8=beta;
 CondiDataGoodTrials;
 
 % select a trial
@@ -252,9 +252,9 @@ for conditionSelected=1:length(UniCondi);
     averageALLaL=mean(ALLaL(:,indtemp),2);
     averageALLaR=mean(ALLaR(:,indtemp),2);
     
-    % select a frequency
+    % select a frequency ##############################################
     wfreq; 
-    FreqSelected=3;
+    FreqSelected=8;  % 3=theta;5=alpha;8=beta;
     % select trials and average the spectrogram across the trials
     trials_spectrogram=squeeze(normPowcnorm_ALLchan_sgolay_ALLtrials(FreqSelected,:,:,HighInd));
     average_spectrogram=mean(trials_spectrogram,3);
@@ -280,10 +280,10 @@ for conditionSelected=1:length(UniCondi);
     ylim([-1 5]);
     
     vipScorelabels =  strsplit(num2str((1:length(vipScore)')));
-    text(1:length(vipScore),vipScore,vipScorelabels,'VerticalAlignment','top','HorizontalAlignment','right');
+    text(1:length(vipScore),vipScore,vipScorelabels,'VerticalAlignment','bottom','HorizontalAlignment','right');
     MaxGoodChan=find(vipScore==max(vipScore));
     vipScorelabels = {num2str(MaxGoodChan)};
-    text(MaxGoodChan,max(vipScore),vipScorelabels,'VerticalAlignment','top','HorizontalAlignment','right','color',[1 0 0]);
+    text(MaxGoodChan,max(vipScore),vipScorelabels,'VerticalAlignment','bottom','HorizontalAlignment','right','color',[1 0 0]);
     
     [bigvalues, bigidx] = sort(vipScore, 'descend');
     PredictChans=bigidx(1:5);
@@ -310,10 +310,10 @@ for conditionSelected=1:length(UniCondi);
     ylim([-1 5]);
     
     vipScorelabels =  strsplit(num2str((1:length(vipScore)')));
-    text(1:length(vipScore),vipScore,vipScorelabels,'VerticalAlignment','top','HorizontalAlignment','right');
+    text(1:length(vipScore),vipScore,vipScorelabels,'VerticalAlignment','bottom','HorizontalAlignment','right');
     MaxGoodChan=find(vipScore==max(vipScore));
     vipScorelabels = {num2str(MaxGoodChan)};
-    text(MaxGoodChan,max(vipScore),vipScorelabels,'VerticalAlignment','top','HorizontalAlignment','right','color',[1 0 0]);
+    text(MaxGoodChan,max(vipScore),vipScorelabels,'VerticalAlignment','bottom','HorizontalAlignment','right','color',[1 0 0]);
     
     [bigvalues, bigidx] = sort(vipScore, 'descend');
     PredictChans=bigidx(1:5);
@@ -340,10 +340,10 @@ for conditionSelected=1:length(UniCondi);
     ylim([-1 5]);
     
     vipScorelabels =  strsplit(num2str((1:length(vipScore)')));
-    text(1:length(vipScore),vipScore,vipScorelabels,'VerticalAlignment','top','HorizontalAlignment','right');
+    text(1:length(vipScore),vipScore,vipScorelabels,'VerticalAlignment','bottom','HorizontalAlignment','right');
     MaxGoodChan=find(vipScore==max(vipScore));
     vipScorelabels = {num2str(MaxGoodChan)};
-    text(MaxGoodChan,max(vipScore),vipScorelabels,'VerticalAlignment','top','HorizontalAlignment','right','color',[1 0 0]);
+    text(MaxGoodChan,max(vipScore),vipScorelabels,'VerticalAlignment','bottom','HorizontalAlignment','right','color',[1 0 0]);
     
     [bigvalues, bigidx] = sort(vipScore, 'descend');
     PredictChans=bigidx(1:5);
@@ -370,10 +370,10 @@ for conditionSelected=1:length(UniCondi);
     ylim([-1 5]);
     
     vipScorelabels =  strsplit(num2str((1:length(vipScore)')));
-    text(1:length(vipScore),vipScore,vipScorelabels,'VerticalAlignment','top','HorizontalAlignment','right');
+    text(1:length(vipScore),vipScore,vipScorelabels,'VerticalAlignment','bottom','HorizontalAlignment','right');
     MaxGoodChan=find(vipScore==max(vipScore));
     vipScorelabels = {num2str(MaxGoodChan)};
-    text(MaxGoodChan,max(vipScore),vipScorelabels,'VerticalAlignment','top','HorizontalAlignment','right','color',[1 0 0]);
+    text(MaxGoodChan,max(vipScore),vipScorelabels,'VerticalAlignment','bottom','HorizontalAlignment','right','color',[1 0 0]);
     
     [bigvalues, bigidx] = sort(vipScore, 'descend');
     PredictChans=bigidx(1:5);
@@ -381,15 +381,20 @@ for conditionSelected=1:length(UniCondi);
     AllPredictChans=[AllPredictChans;PredictChans];
 end
 
+suptitle(['Frequency ' num2str(wfreq(FreqSelected)) ' Hz']);
 AllPredictChans;
 AllPredictChans=unique(AllPredictChans);
+
 %% Look for what channels they are
 labels;
-PredictChansToMark=goodchans([67]);
-labels(goodchans([61]))
-labels(goodchans([61 97 27]))  % {'75-AFF2H'}    {'113-CPP4H'}    {'32-C4'}
-labels(goodchans(AllPredictChans'))
-labels(goodchans([13 49 67 63 75 89]))
+
+PredictChansToMark=goodchans([99]);
+
+% labels(goodchans([61]))
+% labels(goodchans([61 97 27]))  % {'75-AFF2H'}    {'113-CPP4H'}    {'32-C4'}
+% labels(goodchans(AllPredictChans'))
+% labels(goodchans([13 49 67 63 75 89]))
+
 labels(PredictChansToMark)
 
 

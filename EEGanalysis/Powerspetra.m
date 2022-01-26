@@ -240,7 +240,7 @@ hold off;
 legend((conditionNames([1 7])));
 suptitle('low performance trials');
 %% Plot all erp of planning on scalp map for each condition (examine)
-u=1;
+u=7;
 indtemp=find(CondiDataGoodTrials==UniCondi(u));
 HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
 

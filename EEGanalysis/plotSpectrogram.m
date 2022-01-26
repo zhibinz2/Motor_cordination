@@ -121,9 +121,9 @@ conditionNames={'0:4' '1:4' '1:2' '1:1' '2:1' '4:1' '4:0'};
 win=501:1000; %baseline section
 
 % all performance trials
-for u=1:7; % [1 7] % sp=1:2
+for u=[1 7] % =1:7; % sp=1:2
     
-    figure('units','normalized','outerposition',[0 0 1 1]);
+    figure('units','normalized','outerposition',[0 0 0.8 0.8]);
     indtemp=find(CondiDataGoodTrials==UniCondi(u));
     
     % Compute ERP in all channels
