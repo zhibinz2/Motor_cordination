@@ -12,10 +12,14 @@ run organize_Behavioral_step1.m
 % Load EEG data and apply filter to get filtered_data
 cd /home/zhibin/Documents/Acquisition/
 % cd /home/zhibin/Documents/Acquisition/bimanual_Reach_Jack_2021111802
-% EEGfileName='bimanual_Reach_Hiro_20211119'; EEG=loadcurry([pwd '/' EEGfileName '.cdt']);
+% EEGfileName='bimanual_Reach_Jack_20211118'; EEG=loadcurry([pwd '/' EEGfileName '.cdt']);
 fileList = dir('*.cdt');EEG=loadcurry([pwd '/' fileList.name]);
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
+
 run organize_photocells_step2.m
+% Just to examine number of trial extracted
+datatimes_ind_trial_go;
+
 run EEG_filter_step2b.m
 % Just to examine
 filtered_data;
@@ -30,6 +34,7 @@ data_trials;
 run Resample_Behaviral_step4.m
 % Plot movements (just to check)
 run draw_movements_all_conditions_step5.m
+
 % Speed profile
 cd /home/zhibin/Documents/GitHub/Motor_cordination/PerformanceAnaylisis
 open speed_derivative.m
@@ -39,7 +44,7 @@ open speed_derivative.m
 run artifact_removal_step6b.m
 % Just to examine
 reRef_data;
-goodchans;
+goodchans;goodepochs;
 Bgoodepochs;% in boolean
 sum(Bgoodepochs) % number of bad epochs
 
@@ -87,6 +92,14 @@ end
 afterICA_trials;
 % plotx(afterICA_trials(:,goodchans,2));
 
+
+
+%% Need to step4 again to integrate behaviral data? (skip)
+open Integrate_Behavioral_into_data_trials_step4.m
+
+%% Step 8 
+open Powerspetra.m
+
 %% save the cleaner data after ICA
 cd /home/zhibin/Documents/Acquisition
 % cd /home/zhibin/Documents/Acquisition/Bimanual_reach_zhibin_20211106/Cleaner_Data
@@ -95,12 +108,6 @@ save('Cleaner_Data.mat','afterICA_trials','goodepochs','goodchans',...
     'CondiData','CondiDataGoodTrials','conditionNames',...
     'datatimes_ind_trial_end','datatimes_ind_trial_go','datatimes_ind_trial_start',...
     'filename','seed','IndEnds','IndStart');
-
-%% Need to step4 again to integrate behaviral data? (skip)
-open Integrate_Behavioral_into_data_trials_step4.m
-
-%% Step 8 
-open Powerspetra.m
 
 %% Step 9
 open plotSpectrogram.m

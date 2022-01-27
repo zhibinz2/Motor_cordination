@@ -23,6 +23,7 @@ detrend_data=ndetrend(transpose_data,1);
 %% Broadband filter
 % apply high pass filter to filter out frequencies lower than 1;
 % load eeglab toolbox to avoid filtered_data becoming NaN
+tic
 eeglab;
 close all;
 Hd = makefilter(Fs,1.5,1,3,20,0); % Astop 6 or 20;
@@ -35,6 +36,7 @@ filtered_data=filtfilthd(Hd,double(detrend_data));
 % apply low pass filter to filter out frequencies higher than 50;
 Hd = makefilter(Fs,50,55,3,20,0);
 filtered_data=filtfilthd(Hd,filtered_data);
+toc
 
 % plotx(mean(filtered_data,2));  
 % plot(filtered_data(1:dataEnd,:));

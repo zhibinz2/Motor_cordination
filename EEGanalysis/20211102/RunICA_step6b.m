@@ -44,7 +44,7 @@ IndEnds=IndStart+2000-1;
 % IndEventsEEGLAB(IndEnds)=2;
 % plot(IndEventsEEGLAB,'ro');
 
-%% Examine data before ICA
+%% Examine data before ICA (can skip)
 tic
 TimedataShort=1:size(EEGdataShort,1);
 figure('units','normalized','outerposition',[0 0 1 0.5]);
@@ -119,7 +119,7 @@ end
 % subplot(3,1,2);topoplot(A(:,53),test,'nosedir','+Y');title('component 53');colorbar;
 % subplot(3,1,3);topoplot(A(:,101),test,'nosedir','+Y');title('component 101'); colorbar;
 
-%% Display signal before ICA
+%% Display signal before ICA 
 % addpath /home/zhibin/Documents/GitHub/
 % addpath(genpath('/home/zhibin/Documents/GitHub/'));
 
@@ -249,7 +249,7 @@ for i=1:length(ComponentsExam)
 end
 
 %% Deside which components to remove and mix back the signal and display
-% ComponentRemove=[19];
+% ComponentRemove=[41 22];
 ComponentRemove=ComponentsExam;
 
 A(:,ComponentRemove)=0; icasig(ComponentRemove,:)=0;

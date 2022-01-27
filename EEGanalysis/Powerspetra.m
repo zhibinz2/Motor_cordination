@@ -49,8 +49,8 @@ for i=1:size(basenormalized_trial,3) % loop through trials
     basenormalized_trial(:,:,i)=newtrialdata;
 end
 % Just to examine
-subplot(2,1,1);plot(afterICA_trials(:,:,1));
-subplot(2,1,2);plot(basenormalized_trial(:,:,1));
+subplot(2,1,1);plot(afterICA_trials(:,:,1));title('after ICA');
+subplot(2,1,2);plot(basenormalized_trial(:,:,1));title('baseline normalized');
 %% don't baseline correct before wavelet (whatever, it doesn't change much anyway)
 % baselinecorrected_laplacian100_trial=afterICA_trials;
 
@@ -150,7 +150,7 @@ end
 conditionNames={'0:4' '1:4' '1:2' '1:1' '2:1' '4:1' '4:0'}; 
 colors=[0 0 1; 0 0.4 0.85; 0 0.8 0.7; 0 1 0; 0.7 0.8 0; 0.85 0.4 0; 1 0 0];
 
-Ymax=2.5;
+Ymax=0.25;
 
 % all performance trials
 figure('units','normalized','outerposition',[0 0 1 1]);
@@ -240,7 +240,7 @@ hold off;
 legend((conditionNames([1 7])));
 suptitle('low performance trials');
 %% Plot all erp of planning on scalp map for each condition (examine)
-u=1;
+u=7;
 indtemp=find(CondiDataGoodTrials==UniCondi(u));
 HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials(indtemp))));
 

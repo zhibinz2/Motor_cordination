@@ -54,7 +54,7 @@ binarythreshhold(trialdatamax > threshold2) = 1;
 
 epochsum2 = sum(binarythreshhold(goodchanedit,goodepochedit),1); % how many bad chans in each good epoch of the upated label matrix % whos % to look at the workspace
 % figure;bar(goodepochedit,epochsum2);
-newbadepochcrit = prctile(epochsum2,90); % criteria to determine bad epochs in 2nd round
+newbadepochcrit = prctile(epochsum2,1); % criteria to determine bad epochs in 2nd round
 newbadepochedit = goodepochedit(find(epochsum2 > newbadepochcrit)); % get the bad epochs in 2nd round
 badepochedit = [badepochedit newbadepochedit]; % add the bad epochs in 1s round
 goodepochedit_final = setdiff([1:nEpochs],badepochedit);  % get the final good epochs
