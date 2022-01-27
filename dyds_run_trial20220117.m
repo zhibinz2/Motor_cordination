@@ -37,8 +37,6 @@ while numberOfSecondsRemaining > 0
     end
     
 
-     
-
 
     Screen('FillOval', windowPtr0, red, offsetspotRectL');
     Screen('DrawDots', windowPtr0, [FixCrX;FixCrY-yOffsetL], Thickness/10, white, [0 0], 2);
@@ -48,10 +46,7 @@ while numberOfSecondsRemaining > 0
     vbl  = Screen('Flip', windowPtr0, vbl + (waitframes -0.5) * ifi);
 
     % Update the while loop
-    % [ keyIsDown, seconds, keyCode ] = KbCheck;
-    [keyboardIndices, productNames, allInfos] = GetKeyboardIndices
-%     deviceNumberL=10;deviceNumberR=15;
-    deviceNumberL=6;deviceNumberR=10;
+    % use GetKeyboardIndices to get deviceNumberL and deviceNumberR in set_duomice.m
     [keyIsDownL, secsL, keyCodeL, deltaSecsL] = KbCheck([deviceNumberL]);
     [keyIsDownR, secsR, keyCodeR, deltaSecsR] = KbCheck([deviceNumberR]);
 

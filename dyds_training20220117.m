@@ -1,9 +1,19 @@
 % This edition change the 3/4 circle into 1/2 circle. And remove the connecting dots
-sca;
-clc;
-close all;
-clear all; 
-clearvars; 
+sca;clc;close all;clear all;clearvars; 
+%% set keyboard
+% Update the while loop
+% [ keyIsDown, seconds, keyCode ] = KbCheck;
+[keyboardIndices, productNames, allInfos] = GetKeyboardIndices
+% Examine keyboards names and keyboardIndices
+productNames'
+% Examie keyboard device index
+keyboardIndices'
+% Show Keyboard names and device index side by side
+strcat(productNames',' ------(',num2str(keyboardIndices'),' )')
+% Pick 'Dell Dell USB Entry Keyboard' as Left
+deviceNumberL=4;
+% Pick 'Dell KB216 Wired Keyboard' as right
+deviceNumberR=10;
 
 % Break and issue an error message if the installed Psychtoolbox is not
 % based on OpenGL or Screen() is not working properly.

@@ -37,9 +37,9 @@ productNames'
 % Examie keyboard device index
 keyboardIndices'
 % Show Keyboard names and device index side by side
-strcat(productNames',' ------(',num2str(keyboardIndices'),' )')
+strcat(productNames)
 % Pick 'Dell Dell USB Entry Keyboard' as Left
-deviceNumberL=4;
+deviceNumberL=6;
 % Pick 'Dell KB216 Wired Keyboard' as right
 deviceNumberR=10;
 % [keyIsDownL, secsL, keyCodeL, deltaSecsL] = KbCheck([deviceNumberL]);
