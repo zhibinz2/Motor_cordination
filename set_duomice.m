@@ -3,7 +3,7 @@
 !xinput  list
 
 %% 
-!xinput reattach 22 15
+!xinput reattach 23 24
 !xinput  list
 
 %%
@@ -44,3 +44,7 @@ deviceNumberL=4;
 deviceNumberR=10;
 % [keyIsDownL, secsL, keyCodeL, deltaSecsL] = KbCheck([deviceNumberL]);
 % [keyIsDownR, secsR, keyCodeR, deltaSecsR] = KbCheck([deviceNumberR]);
+
+%% set display
+XOrgConfCreator
+XOrgConfSelector

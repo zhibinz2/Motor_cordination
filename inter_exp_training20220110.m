@@ -61,7 +61,6 @@ for p=1:numPerm
 end
 
 
-
 % *************************************************************************
 % keep a record of the scores
 TotalScore=0;% total score so far

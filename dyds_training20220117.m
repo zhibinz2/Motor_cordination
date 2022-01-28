@@ -5,15 +5,22 @@ sca;clc;close all;clear all;clearvars;
 % [ keyIsDown, seconds, keyCode ] = KbCheck;
 [keyboardIndices, productNames, allInfos] = GetKeyboardIndices
 % Examine keyboards names and keyboardIndices
-productNames'
+productNames';
 % Examie keyboard device index
-keyboardIndices'
+keyboardIndices';
 % Show Keyboard names and device index side by side
 strcat(productNames',' ------(',num2str(keyboardIndices'),' )')
-% Pick 'Dell Dell USB Entry Keyboard' as Left
-deviceNumberL=4;
-% Pick 'Dell KB216 Wired Keyboard' as right
-deviceNumberR=10;
+
+% % Pick 'Dell Dell USB Entry Keyboard' as Left
+% deviceNumberL=input('Pick the number for "Dell Dell USB Entry Keyboard" for player on the left:');% deviceNumberL=8;
+% % Pick 'Dell KB216 Wired Keyboard' as right
+% deviceNumberR=input('Pick the number for "Dell KB216 Wired Keyboard" for player on the right:');% deviceNumberR=9;
+
+% deviceNumberL = keyboardIndices(find(contains(productNames, 'Dell Dell USB Entry Keyboard')));
+% deviceNumberR = keyboardIndices(find(contains(productNames, 'Dell KB216 Wired Keyboard')));
+
+deviceNumberL = keyboardIndices(find(ismember(productNames, 'Dell Dell USB Entry Keyboard')));
+deviceNumberR = keyboardIndices(find(ismember(productNames, 'Dell KB216 Wired Keyboard')));
 
 % Break and issue an error message if the installed Psychtoolbox is not
 % based on OpenGL or Screen() is not working properly.
@@ -41,9 +48,9 @@ rng(seed);
 % % number of trials per block
 numTrials=length(conditions);
 % number of blocks
-numBlock=10;
-% % total trial number
-% numtotal=numTrials*numBlock; 
+numBlock=3;
+% total trial number
+numtotal=numTrials*numBlock; 
 % % num of conditions in the experiment
 % numconditions=length(conditions);
 % % how many semirandom permutation set in the experiment 
@@ -114,7 +121,7 @@ grey  = [0.5 0.5 0.5];
 % Open an on screen window and color it black
 % For help see: Screen Openwindow?
 [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); % This will draw on a black backgroud
-[windowPtr0, windowRect0] = PsychImaging('Openwindow', 0, black); 
+% [windowPtr0, windowRect0] = PsychImaging('Openwindow', 0, black); 
 
 % This will draw on a white window layer on top and make subsequent text black
 % [windowPtr, windowRect] = Screen('OpenWindow', screenNumber); 
@@ -125,7 +132,7 @@ grey  = [0.5 0.5 0.5];
 % Get the size of the on screen windowPtr in pixels
 % For help see: Screen windowSize?
 [screenXpixels, screenYpixels] = Screen('windowSize', screenNumber);
-[screenXpixels0, screenYpixels0] = Screen('windowSize', 0);
+% [screenXpixels0, screenYpixels0] = Screen('windowSize', 0);
 
 % Get the centre coordinate of the window in pixels
 % For help see: help RectCenter
@@ -187,13 +194,13 @@ waitframes = 1;
 
 % Retreive the maximum priority number
 topPriorityLevel = MaxPriority(windowPtr); 
-topPriorityLevel0 = MaxPriority(windowPtr0); 
+% topPriorityLevel0 = MaxPriority(windowPtr0); 
 % set Priority once at the start of a script after setting up onscreen window.
 Priority(topPriorityLevel);
 
 % Measure the vertical refresh rate of the monitor
 ifi = Screen('GetFlipInterval', windowPtr);
-ifi0 = Screen('GetFlipInterval', windowPtr0);
+% ifi0 = Screen('GetFlipInterval', windowPtr0);
 
 % Check if ifi=0.0167
 if round(1/ifi)~=60
@@ -219,8 +226,7 @@ LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screen
 % % Setting time variables
 
 % Set up the timer.
-startTime = now;
-durationInSeconds = 60;
+durationInSeconds = 10;
 numberOfSecondsRemaining = durationInSeconds;
 
 % % time for resting EEG (EO=eye open; EC= eye close)
@@ -431,7 +437,7 @@ for block=1:numBlock
 
     % get a timestamp at the start of block
     vbl = Screen('Flip', windowPtr);
-    vbl = Screen('Flip', windowPtr0);
+%     vbl = Screen('Flip', windowPtr0);
 
     %******************** Within block loop
     % how many trials 
@@ -451,11 +457,12 @@ for block=1:numBlock
 %                 DrawFormattedText2(Showbonus,'win',windowPtr,...
 %                 'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',white); 
 %             
-% %                 Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
-% %                 DrawFormattedText2(Showtrial,'win',windowPtr,...
-% %                 'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
-%                 %Flip to the screen   
-%                 vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+                Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
+                DrawFormattedText2(Showtrial,'win',windowPtr,...
+                'sx','center','sy', yCenter+screenYpixels/5,'xalign','center','yalign','top','baseColor',white);
+%                 Flip to the screen   
+                % vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+                
 %             end
 %         end          
 %         time2=clock; %check timing
@@ -572,6 +579,7 @@ for block=1:numBlock
 
         % get a timestamp at the start of the trial
         vbl = Screen('Flip', windowPtr);
+        WaitSecs(1);
         % Run one trial 
         run dyds_run_trial20220117.m 
 
@@ -628,10 +636,12 @@ for block=1:numBlock
 %             TotalScore=mean(TrialScores); % show average score instead
 %         end
 %          
-%         % reset trial score values
+        %reset trial score values
 %         clear PolyshapGreenPixelInitial; 
 %         clear polyTrajatory; 
 %         clear PolyshapeUnion; 
+        
+
 
     end
 
@@ -647,7 +657,7 @@ TheEnd = ['The End'];
 DrawFormattedText2(TheEnd,'win',windowPtr,...
     'sx','center','sy', yCenter+screenYpixels/3,'xalign','center','yalign','top','baseColor',white);
 Screen('Flip',windowPtr);
-Screen('Flip',windowPtr0);
+% Screen('Flip',windowPtr0);
 WaitSecs(3)
 % hit a key to continue
 KbStrokeWait;

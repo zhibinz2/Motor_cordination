@@ -1,7 +1,7 @@
 % This edition change the 3/4 circle into 1/2 circle. And remove the connecting dots
 startTime = now;
 PassL=1;PassR=1;
-numberOfSecondsRemaining=durationInSeconds;
+numberOfSecondsRemaining=
 % while n <  numFrames %~KbCheck 
 while numberOfSecondsRemaining > 0 
 
@@ -27,7 +27,7 @@ while numberOfSecondsRemaining > 0
     offsetbarRect   = startbarRect + [xOffsetL -yOffsetL xOffsetR -yOffsetR];
     Screen('FillOval', windowPtr, red, offsetspotRectL');
     Screen('FillOval', windowPtr, blue, offsetspotRectR');
-    if abs(elevationR-elevationL)<4*spotDiameter
+    if abs(elevationR-elevationL)<3*spotDiameter
         Screen('DrawLine', windowPtr, green, screenXpixels*1/3-spotRadius , screenYpixels-3*spotRadius-yOffsetL, screenXpixels*2/3+spotRadius, screenYpixels-3*spotRadius-yOffsetR ,10);
         % Flip to the screen
         vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
@@ -55,32 +55,30 @@ while numberOfSecondsRemaining > 0
             [keyIsDownL, secsL, keyCodeL, deltaSecsL] = KbCheck([deviceNumberL]);
             if keyIsDownL
                 if keyCodeL (leftKey)
-                    if elevationL < screenYpixels - 3*spotDiameter
+                    if elevationL < screenYpixels - 2*spotDiameter
                         elevationL = elevationL + spotDiameter;
                     else
-                        elevationL = elevationL;
+                        elevationL = screenYpixels - 2*spotDiameter;
                     end
                 end
             end
     end
-%     PassL=~isempty(KbReleaseWait([deviceNumberL]));
-%     PassL=~KbReleaseWait([deviceNumberL])
+    PassL=~isempty(KbReleaseWait([deviceNumberL]));
 
     % Right player
     if PassR == 1 % update elevation only when key was release
             [keyIsDownR, secsR, keyCodeR, deltaSecsR] = KbCheck([deviceNumberR]);
             if keyIsDownR
                 if keyCodeR (rightKey)
-                    if elevationR < screenYpixels - 3*spotDiameter
+                    if elevationR < screenYpixels - 2*spotDiameter
                         elevationR = elevationR + spotDiameter;
                     else
-                        elevationR = elevationR;
+                        elevationR = screenYpixels - 2*spotDiameter;
                     end
                 end
             end
     end
-%     PassR=~isempty(KbReleaseWait([deviceNumberR]));
-%     PassR=~KbReleaseWait([deviceNumberR])
+    PassR=~isempty(KbReleaseWait([deviceNumberR]));
 
 
     % If the user holds down a key, KbCheck will report multiple events.
@@ -96,12 +94,6 @@ while numberOfSecondsRemaining > 0
         Screen('CloseAll');
         break;
     end
-
-        
-    parfor PassLR=[deviceNumberL deviceNumberR]
-        KbReleaseWait([PassLR])
-    end
-
 
 end
 
