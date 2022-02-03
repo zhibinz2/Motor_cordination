@@ -20,8 +20,10 @@ while numberOfSecondsRemaining > 0
     Screen('DrawText', windowPtr, sprintf('%i seconds remaining...', numberOfSecondsRemaining), 20, 50, white);
 
 
-    xOffsetL = 0; xOffsetR = 0;
-    yOffsetL = elevationL; yOffsetR = elevationR;
+    xOffsetL = 0; 
+    xOffsetR = 0;
+    yOffsetL = elevationL; 
+    yOffsetR = elevationR;
     offsetspotRectL = OffsetRect(startspotRectL, xOffsetL, -yOffsetL);
     offsetspotRectR = OffsetRect(startspotRectR, xOffsetR, -yOffsetR);
     offsetbarRect   = startbarRect + [xOffsetL -yOffsetL xOffsetR -yOffsetR];
