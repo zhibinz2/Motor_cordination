@@ -540,7 +540,7 @@ for block=1:numBlock
         % get a timestamp at the start of the trial
         vbl = Screen('Flip', windowPtr);
         % Run one trial 
-        run inter_run_trial_20220110.m 
+        run dyds_LogExp_run_trial_20220110.m.m 
 
 
         % reset n

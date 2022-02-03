@@ -7,7 +7,7 @@
 !xinput  list
 
 %%
-!xinput remove-master 17
+!xinput remove-master 29
 !xinput  list
 %%
 !xinput disable 20

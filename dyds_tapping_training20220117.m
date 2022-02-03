@@ -581,7 +581,7 @@ for block=1:numBlock
         vbl = Screen('Flip', windowPtr);
         WaitSecs(1);
         % Run one trial 
-        run dyds_run_trial20220117.m 
+        run dyds_tapping_run_trial20220117.m 
 
 
         % reset n

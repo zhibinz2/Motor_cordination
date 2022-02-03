@@ -21,15 +21,6 @@ end
 
 %**************************************************************************
 % the set of conditions
-% conditions = [1:1:11]*(pi/2/6);% 11 conditions from (0-180) degrees
-% conditions = [0:1:12]*(pi/2/6);% 13 conditions from [0-180] degrees
-% conditions = [0:1:10]*(pi/2/10);% block 1: 11 conditions from [0-90] degrees
-% conditions = [1:1:10]*(pi/2/10)+pi/2;% block 2: 10 conditions from (90-180] degrees
-% conditions = [0:1:10]*(pi/2/10)+pi/4;% 11 conditions from [45-135] degrees
-
-% conditions in degree (7 condition with set movement ratio of 0:1, 1:4, 1:2, 1:1, 2:1, 4:1, 1:0)
-% conditions = [0 2*atan(1/4)*180/pi 2*atan(1/2)*180/pi 2*atan(1)*180/pi 2*atan(2/1)*180/pi 2*atan(4/1)*180/pi 90];
-
 % conditions in radian (7 condition with set movement ratio of 0:1, 1:4, 1:2, 1:1, 2:1, 4:1, 1:0)
 conditions = [0 2*atan(1/4) 2*atan(1/2) 2*atan(1) 2*atan(2/1) 2*atan(4/1) pi];
 conditionNames={'0:4' '1:4' '1:2' '1:1' 'log' 'exp' '4:0'};  % conditionNames{1}
@@ -548,8 +539,7 @@ for block=1:numBlock
         % get a timestamp at the start of the trial
         vbl = Screen('Flip', windowPtr);
         % Run one trial 
-        run inter_run_trial_20220110.m 
-
+        run dyds_mirror_run_trial_20220203.m 
 
         % reset n
         n=1;
