@@ -14,8 +14,8 @@ cd /home/zhibin/Documents/Acquisition/
 % cd /home/zhibin/Documents/Acquisition/bimanual_Reach_Jack_2021111802
 % EEGfileName='bimanual_Reach_Jack_20211118'; EEG=loadcurry([pwd '/' EEGfileName '.cdt']);
 fileList = dir('*.cdt');EEG=loadcurry([pwd '/' fileList.name]);
-cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 
+cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 run organize_photocells_step2.m
 % Just to examine number of trial extracted
 datatimes_ind_trial_go;
@@ -44,6 +44,7 @@ open speed_derivative.m
 run artifact_removal_step6b.m
 % Just to examine
 reRef_data;
+badchans;badepochs;
 goodchans;goodepochs;
 Bgoodepochs;% in boolean
 sum(Bgoodepochs) % number of bad epochs
@@ -56,7 +57,7 @@ mixedsig;
 
 % Just to examine the final clean data
 figure('units','normalized','outerposition',[0 0 1 0.5]);
-% plot(mixedsig(goodchans,:)');
+plot(mixedsig(goodchans,:)');
 % plot(mixedsig');
 
 %% Use Goodchans to do Laplacian on mixedsig (skip, don't do laplacian)

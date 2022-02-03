@@ -23,7 +23,7 @@ trialdatamax = squeeze(max(abs(data_trials_EEG),[],1));
 % figure;imagesc(trialdatamax);colorbar;ylabel('chan');xlabel('trial');
 % figure;imagesc(log10(trialdatamax));colorbar;
 
-% first round of artifact labelling **************
+% first round of artifact labelling **************#########################
 threshold=500; % set a amplitude threshold as criteria to remove bad channels and epochs later
 
 % Create a label matrix that labels bad chan and epoch as 1 
@@ -44,7 +44,7 @@ badepochcrit = prctile(epochsum,0.001); % criteria to determine bad epochs
 badepochedit = find(epochsum > badepochcrit); % get the initial bad epochs
 goodepochedit = setdiff([1:nEpochs],badepochedit); % get the initial good epochs
 
-% second round of labelling **************
+% second round of labelling **************#################################
 threshold2=100;
 % update the label matrix that labels bad chan and epoch as 1 
 binarythreshhold = zeros(size(trialdatamax));
@@ -54,7 +54,7 @@ binarythreshhold(trialdatamax > threshold2) = 1;
 
 epochsum2 = sum(binarythreshhold(goodchanedit,goodepochedit),1); % how many bad chans in each good epoch of the upated label matrix % whos % to look at the workspace
 % figure;bar(goodepochedit,epochsum2);
-newbadepochcrit = prctile(epochsum2,1); % criteria to determine bad epochs in 2nd round
+newbadepochcrit = prctile(epochsum2,90); % criteria to determine bad epochs in 2nd round
 newbadepochedit = goodepochedit(find(epochsum2 > newbadepochcrit)); % get the bad epochs in 2nd round
 badepochedit = [badepochedit newbadepochedit]; % add the bad epochs in 1s round
 goodepochedit_final = setdiff([1:nEpochs],badepochedit);  % get the final good epochs

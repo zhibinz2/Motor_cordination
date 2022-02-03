@@ -49,8 +49,10 @@ for i=1:size(basenormalized_trial,3) % loop through trials
     basenormalized_trial(:,:,i)=newtrialdata;
 end
 % Just to examine
-subplot(2,1,1);plot(afterICA_trials(:,:,1));title('after ICA');
-subplot(2,1,2);plot(basenormalized_trial(:,:,1));title('baseline normalized');
+subplot(2,1,1);plotx(afterICA_trials(:,:,1));title('after ICA');
+subplot(2,1,2);plotx(basenormalized_trial(:,:,1));title('baseline normalized');
+
+plot(basenormalized_trial(:,:,1));title('baseline normalized');
 %% don't baseline correct before wavelet (whatever, it doesn't change much anyway)
 % baselinecorrected_laplacian100_trial=afterICA_trials;
 
@@ -150,7 +152,7 @@ end
 conditionNames={'0:4' '1:4' '1:2' '1:1' '2:1' '4:1' '4:0'}; 
 colors=[0 0 1; 0 0.4 0.85; 0 0.8 0.7; 0 1 0; 0.7 0.8 0; 0.85 0.4 0; 1 0 0];
 
-Ymax=0.25;
+Ymax=50;
 
 % all performance trials
 figure('units','normalized','outerposition',[0 0 1 1]);
@@ -158,7 +160,8 @@ for u=[1 7]; % sp=1:2
     ConditionColor=colors(u,:);
     indtemp=find(CondiDataGoodTrials==UniCondi(u));
     
-    [pow,freqs,df] = allspectra(basenormalized_trial(win,:,indtemp),rate,maxfreq);
+    [pow,freqs,df] = allspectra(baselinecorrected_trial(win,:,indtemp),rate,maxfreq);
+    %[pow,freqs,df] = allspectra(basenormalized_trial(win,:,indtemp),rate,maxfreq);
 
     for chan=1:128 % only good channels
         subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.03 0.03]);
@@ -173,7 +176,7 @@ for u=[1 7]; % sp=1:2
         end
         ylim([0 Ymax]);
         xlim([1 25]);
-        title([AllchanNames{chan}]);
+        title([labels{chan}]);
     end
 end
 hold off;
@@ -247,7 +250,7 @@ HighInd=indtemp(find(TrialScoresGoodTrials(indtemp)>median(TrialScoresGoodTrials
 figure('units','normalized','outerposition',[0 0 1 1]);
 for chan=1:128
     subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.04 0.03]);
-    plot(1:length(win),mean(baselinecorrected_trial(win,chan,HighInd),3));
+    plot(1:length(win),mean(baselinecorrected_trial(win,chan,indtemp),3));
     if ~isempty(find([1:127]==chan))
     set(gca,'XTick',[]); set(gca,'YTick',[]); 
     end
@@ -255,7 +258,9 @@ for chan=1:128
         xlabel('time');ylabel('laplacian power');
     end
     ylim([-15 15]);
-    title([AllchanNames{chan}]);
+    if any(goodchans == chan) % only give goodchans title
+        title([labels{chan}]);
+    end
 end
 %suptitle('session2021111802')
 
