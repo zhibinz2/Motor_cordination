@@ -149,7 +149,7 @@ while n <  numFrames %~KbCheck
     % another alternative calculation (tangent calculation)
     XL=xML-xCenter; YL=yML-yCenter; 
     XR=xMR-xCenter; YR=yMR-yCenter;
-    xJ=xCenter+(XR+XL); yJ=yCenter+(YR+YL);
+    xJ=xCenter+(XL-XR); yJ=yCenter+(YL-YR);
     
     %********************************************************************
     % When both hands falls within each other near the curve, both cursors turn green
@@ -162,11 +162,11 @@ while n <  numFrames %~KbCheck
 %     inside = (distance<Thickness) & (withinRadius < radius+Thickness) & (yJ+Thickness)>0 & ...
 %     (xML < xMLbefore) & (xMR > xMRbefore);
     
-    if n > 0; % numFramesPlan % start counting scores after planning phase
+    if n > numFramesPlan % start counting scores after planning phase
         % MLcolor=red;MRcolor=blue;
         textMove=['Go!'];
         DrawFormattedText2(textMove,'win',windowPtr,...
-            'sx','center','sy', yCenter+screenYpixels/20,'xalign','center','yalign','top','baseColor',green);
+            'sx','center','sy', 'center','xalign','center','yalign','center','baseColor',green);
         % display the joint movement
         Screen('DrawDots', windowPtr, [xJ yJ], Thickness, yellow, [], 2);
 %         if inside == 1
@@ -214,7 +214,7 @@ while n <  numFrames %~KbCheck
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
     
     % Keep track of the nummers of flames when dot is inside the rect
-%     NumInside(n)=inside;    
+    NumInside(n)=inside;    
         
     % keep a record of the mouse position to be use as previous position in
     % the next loop
@@ -239,4 +239,4 @@ while n <  numFrames %~KbCheck
 end
 
     % Reset
-%     Jcolor = green;
+    Jcolor = green;

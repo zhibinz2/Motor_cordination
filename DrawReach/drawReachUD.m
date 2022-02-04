@@ -1,4 +1,4 @@
-function [xU,yU,xD,yD] = drawReachLR(radius,rad_ang, xCenter, yCenter);
+function [xU,yU,xD,yD] = drawReachUD(radius,rad_ang, xCenter, yCenter);
 % Bimanual type A1
 % radius = maximum radius
 % N = how many pixiels
@@ -24,7 +24,6 @@ yU=yU+yCenter;
 
 xD=xD+xCenter;
 yD=yD+yCenter;
-
 
 end
 
