@@ -2,11 +2,11 @@
 rb_840_keymap = [7, 3, 4, 1, 2, 5, 6, 0]; % /830 (DeviceL) /dev/ttyUSB0
 rb_834_keymap = [7, 0, 1, 2, 3, 4, 5, 6]; % /844 (DeviceR) /dev/ttyUSB1
 
-ports = serialportlist("available");
+ports = serialportlist("available")
 %    "/dev/ttyUSB1"    "/dev/ttyS0"    "/dev/ttyUSB0"
 
 %% FOR RB 834/844 on the Right (DeviceR) /dev/ttyUSB1
-deviceR = serialport(ports(1),115200,"Timeout",1);
+deviceR = serialport('/dev/ttyUSB0',115200,"Timeout",0.03);
 keymapR=rb_834_keymap;
 
 %In order to identify an XID device, you need to send it "_c1", to
@@ -14,7 +14,7 @@ keymapR=rb_834_keymap;
 %"XID", and we will not be covering other protocols.
 deviceR.flush()
 write(deviceR,"_c1","char")
-query_return = read(deviceR,5,"char");
+query_returnR = read(deviceR,5,"char");
 
 %Next, we need to identify which XID model we connected to.
 write(deviceR,"_d2","char")
@@ -34,14 +34,14 @@ write(deviceR,sprintf("mh%c%c", 255, 0), "char")
 
 
 %% FOR RB 830/840 on the Right (DeviceL) /dev/ttyUSB0
-deviceL = serialport(ports(3),115200,"Timeout",1);
+deviceL = serialport('/dev/ttyUSB1',115200,"Timeout",0.03);
 keymapL=rb_840_keymap;
 %In order to identify an XID device, you need to send it "_c1", to
 %which it will respond with "_xid" followed by a protocol value. 0 is
 %"XID", and we will not be covering other protocols.
 deviceL.flush()
 write(deviceL,"_c1","char")
-query_return = read(deviceL,5,"char");
+query_returnL = read(deviceL,5,"char");
 
 %Next, we need to identify which XID model we connected to.
 write(deviceL,"_d2","char")

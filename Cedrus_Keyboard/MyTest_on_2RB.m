@@ -8,7 +8,7 @@ ports = serialportlist("available")
 %    "/dev/ttyUSB1"    "/dev/ttyS0"    "/dev/ttyUSB0"
 
 %% FOR RB 834/844 on the Right (DeviceR) /dev/ttyUSB1
-deviceR = serialport(ports(1),115200,"Timeout",1);
+deviceR = serialport('/dev/ttyUSB0',115200,"Timeout",0.02);
 keymapR=rb_834_keymap;
 
 %In order to identify an XID device, you need to send it "_c1", to
@@ -41,8 +41,8 @@ tic
 readKeypress(deviceR, keymapR)
 readKeypress(deviceR, keymapR)
 toc
-%% FOR RB 830/840 on the Right (DeviceL) /dev/ttyUSB0
-deviceL = serialport(ports(3),115200,"Timeout",1);
+%% FOR RB 830/840 on the Left (DeviceL) /dev/ttyUSB0
+deviceL = serialport('/dev/ttyUSB1',115200,"Timeout",0.02);
 keymapL=rb_840_keymap;
 %In order to identify an XID device, you need to send it "_c1", to
 %which it will respond with "_xid" followed by a protocol value. 0 is
@@ -75,3 +75,7 @@ tic
 readKeypress(deviceL, rb_840_keymap)
 readKeypress(deviceL, rb_840_keymap)
 toc
+
+
+%% Psychtoolbox function CedrusResponseBox
+CedrusResponseBox

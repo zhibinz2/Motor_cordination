@@ -4,7 +4,7 @@ sca;clc;close all;clear all;clearvars;
 %% set keyboards
 addpath Cedrus_Keyboard/
 run setCedrusRB.m
-% run SuppressWarning.m 
+run SuppressWarning.m 
 % run setDellKeyboards.m
 %%
 % Break and issue an error message if the installed Psychtoolbox is not

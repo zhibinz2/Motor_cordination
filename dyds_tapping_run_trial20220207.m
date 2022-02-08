@@ -65,7 +65,7 @@ while numberOfSecondsRemaining > 0
     
     % Left player
     if pressedL1 ==1 | pressedL2 == 1 % key press detected
-        if RBkeyL1 == 4
+        if RBkeyL1 == 4 | RBkeyL2 == 4
             if elevationL < screenYpixels - 3*spotDiameter
                 elevationL = elevationL + spotDiameter;
             else
@@ -75,7 +75,7 @@ while numberOfSecondsRemaining > 0
     end
     % Right player
     if pressedR1 ==1 | pressedR2 == 1 % key press detected
-        if RBkeyR1 == 2
+        if RBkeyR1 == 2 | RBkeyR2 == 2
             if elevationR < screenYpixels - 3*spotDiameter
                 elevationR = elevationR + spotDiameter;
             else
