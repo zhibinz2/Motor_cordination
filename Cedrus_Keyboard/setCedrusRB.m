@@ -1,14 +1,14 @@
-clear
-
+%% set keyboard
 rb_840_keymap = [7, 3, 4, 1, 2, 5, 6, 0]; % /830 (DeviceL) /dev/ttyUSB0
 rb_834_keymap = [7, 0, 1, 2, 3, 4, 5, 6]; % /844 (DeviceR) /dev/ttyUSB1
 
-ports = serialportlist("available")
-
+ports = serialportlist("available");
 %    "/dev/ttyUSB1"    "/dev/ttyS0"    "/dev/ttyUSB0"
 
-%% FOR RB 844 on the Right (DeviceR) /dev/ttyUSB1
+%% FOR RB 834/844 on the Right (DeviceR) /dev/ttyUSB1
 deviceR = serialport(ports(1),115200,"Timeout",1);
+keymapR=rb_834_keymap;
+
 %In order to identify an XID device, you need to send it "_c1", to
 %which it will respond with "_xid" followed by a protocol value. 0 is
 %"XID", and we will not be covering other protocols.
@@ -31,15 +31,11 @@ setPulseDuration(deviceR, 1000)
 %Not every XID device supports 16 bits of output, but you need to provide
 %both bytes every time.
 write(deviceR,sprintf("mh%c%c", 255, 0), "char")
-%%
-disp("You have two seconds to press a key!")
 
-pause(2)
 
-readKeypress(deviceR, rb_834_keymap)
-
-%% FOR RB 830 on the Right (DeviceL) /dev/ttyUSB0
+%% FOR RB 830/840 on the Right (DeviceL) /dev/ttyUSB0
 deviceL = serialport(ports(3),115200,"Timeout",1);
+keymapL=rb_840_keymap;
 %In order to identify an XID device, you need to send it "_c1", to
 %which it will respond with "_xid" followed by a protocol value. 0 is
 %"XID", and we will not be covering other protocols.
@@ -57,15 +53,8 @@ modelL_id = read(deviceL,1,"char");
 %You can either set the necessary pulse duration, or simply lower the lines
 %manually when desired.
 setPulseDuration(deviceL, 1000)
-setPulseDuration(deviceL, 5)
+
 %mh followed by two bytes of a bitmask is how you raise/lower output lines.
 %Not every XID device supports 16 bits of output, but you need to provide
 %both bytes every time.
 write(deviceL,sprintf("mh%c%c", 255, 0), "char")
-
-%%
-disp("You have two seconds to press a key!")
-
-pause(2)
-
-readKeypress(deviceL, rb_840_keymap)

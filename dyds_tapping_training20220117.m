@@ -23,6 +23,7 @@ strcat(productNames',' ------(',num2str(keyboardIndices'),' )')
 deviceNumberL = keyboardIndices(find(ismember(productNames, 'Dell Dell USB Entry Keyboard')));
 deviceNumberR = keyboardIndices(find(ismember(productNames, 'Dell KB216 Wired Keyboard')));
 
+%%
 % Break and issue an error message if the installed Psychtoolbox is not
 % based on OpenGL or Screen() is not working properly.
 AssertOpenGL;

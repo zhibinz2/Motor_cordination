@@ -7,8 +7,10 @@ ports = serialportlist("available")
 
 %    "/dev/ttyUSB1"    "/dev/ttyS0"    "/dev/ttyUSB0"
 
-%% FOR RB 844 on the Right (DeviceR) /dev/ttyUSB1
+%% FOR RB 834/844 on the Right (DeviceR) /dev/ttyUSB1
 deviceR = serialport(ports(1),115200,"Timeout",1);
+keymapR=rb_834_keymap;
+
 %In order to identify an XID device, you need to send it "_c1", to
 %which it will respond with "_xid" followed by a protocol value. 0 is
 %"XID", and we will not be covering other protocols.
@@ -31,15 +33,17 @@ setPulseDuration(deviceR, 1000)
 %Not every XID device supports 16 bits of output, but you need to provide
 %both bytes every time.
 write(deviceR,sprintf("mh%c%c", 255, 0), "char")
-%%
+%% Right
 disp("You have two seconds to press a key!")
 
 pause(2)
-
-readKeypress(deviceR, rb_834_keymap)
-
-%% FOR RB 830 on the Right (DeviceL) /dev/ttyUSB0
+tic
+readKeypress(deviceR, keymapR)
+readKeypress(deviceR, keymapR)
+toc
+%% FOR RB 830/840 on the Right (DeviceL) /dev/ttyUSB0
 deviceL = serialport(ports(3),115200,"Timeout",1);
+keymapL=rb_840_keymap;
 %In order to identify an XID device, you need to send it "_c1", to
 %which it will respond with "_xid" followed by a protocol value. 0 is
 %"XID", and we will not be covering other protocols.
@@ -63,9 +67,11 @@ setPulseDuration(deviceL, 1000)
 %both bytes every time.
 write(deviceL,sprintf("mh%c%c", 255, 0), "char")
 
-%%
+%% Left
 disp("You have two seconds to press a key!")
 
 pause(2)
-
+tic
 readKeypress(deviceL, rb_840_keymap)
+readKeypress(deviceL, rb_840_keymap)
+toc

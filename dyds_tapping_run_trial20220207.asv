@@ -69,7 +69,7 @@ while numberOfSecondsRemaining > 0
             if elevationL < screenYpixels - 3*spotDiameter
                 elevationL = elevationL + spotDiameter;
             else
-%                 elevationL = elevationL;
+                elevationL = elevationL;
             end
         end
     end
@@ -79,7 +79,7 @@ while numberOfSecondsRemaining > 0
             if elevationR < screenYpixels - 3*spotDiameter
                 elevationR = elevationR + spotDiameter;
             else
-%                 elevationR = elevationR;
+                elevationR = elevationR;
             end
         end
     end

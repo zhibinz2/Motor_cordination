@@ -1,75 +1,20 @@
 % This version uses two Cedrus RB
 % This edition change the 3/4 circle into 1/2 circle. And remove the connecting dots
 sca;clc;close all;clear all;clearvars; 
-%% set keyboard
-rb_840_keymap = [7, 3, 4, 1, 2, 5, 6, 0]; % /830 (DeviceL) /dev/ttyUSB0
-rb_834_keymap = [7, 0, 1, 2, 3, 4, 5, 6]; % /844 (DeviceR) /dev/ttyUSB1
-
-ports = serialportlist("available")
-%    "/dev/ttyUSB1"    "/dev/ttyS0"    "/dev/ttyUSB0"
-
-deviceNumberL = keyboardIndices(find(ismember(productNames, 'Dell Dell USB Entry Keyboard')));
-deviceNumberR = keyboardIndices(find(ismember(productNames, 'Dell KB216 Wired Keyboard')));
-
-%% FOR RB 844 on the Right (DeviceR) /dev/ttyUSB1
-deviceR = serialport(ports(1),115200,"Timeout",1);
-%In order to identify an XID device, you need to send it "_c1", to
-%which it will respond with "_xid" followed by a protocol value. 0 is
-%"XID", and we will not be covering other protocols.
-deviceR.flush()
-write(deviceR,"_c1","char")
-query_return = read(deviceR,5,"char");
-
-%Next, we need to identify which XID model we connected to.
-write(deviceR,"_d2","char")
-deviceR_id = read(deviceR,1,"char");
-write(deviceR,"_d3","char")
-modelR_id = read(deviceR,1,"char");
-
-%By default the pulse duration is set to 0, which is "indefinite".
-%You can either set the necessary pulse duration, or simply lower the lines
-%manually when desired.
-setPulseDuration(deviceR, 1000)
-
-%mh followed by two bytes of a bitmask is how you raise/lower output lines.
-%Not every XID device supports 16 bits of output, but you need to provide
-%both bytes every time.
-write(deviceR,sprintf("mh%c%c", 255, 0), "char")
-
-%% FOR RB 830 on the Right (DeviceL) /dev/ttyUSB0
-deviceL = serialport(ports(3),115200,"Timeout",1);
-%In order to identify an XID device, you need to send it "_c1", to
-%which it will respond with "_xid" followed by a protocol value. 0 is
-%"XID", and we will not be covering other protocols.
-deviceL.flush()
-write(deviceL,"_c1","char")
-query_return = read(deviceL,5,"char");
-
-%Next, we need to identify which XID model we connected to.
-write(deviceL,"_d2","char")
-deviceL_id = read(deviceL,1,"char");
-write(deviceL,"_d3","char")
-modelL_id = read(deviceL,1,"char");
-
-%By default the pulse duration is set to 0, which is "indefinite".
-%You can either set the necessary pulse duration, or simply lower the lines
-%manually when desired.
-setPulseDuration(deviceL, 1000)
-
-%mh followed by two bytes of a bitmask is how you raise/lower output lines.
-%Not every XID device supports 16 bits of output, but you need to provide
-%both bytes every time.
-write(deviceL,sprintf("mh%c%c", 255, 0), "char")
-
+%% set keyboards
+addpath Cedrus_Keyboard/
+run setCedrusRB.m
+% run SuppressWarning.m 
+% run setDellKeyboards.m
 %%
 % Break and issue an error message if the installed Psychtoolbox is not
 % based on OpenGL or Screen() is not working properly.
+
 AssertOpenGL;
  
 if ~IsLinux
   error('Sorry, this demo currently only works on a Linux.');    
 end
-
 
 %**************************************************************************
 % the set of conditions
@@ -485,8 +430,8 @@ for block=1:numBlock
         % Breakout by hitting esc
         [keyIsDown, keysecs, keyCode] = KbCheck;  
         if keyCode(KbName('escape'))
-        Screen('CloseAll');
-        break;
+            Screen('CloseAll');
+            break;
         end
 
         %************ Show bonus of previous trial

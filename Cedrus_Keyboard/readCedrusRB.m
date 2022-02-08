@@ -1,11 +1,12 @@
-function [pressed, RBkey, port, stamp]=readCedrusRB(dev, keymap)
+% function [pressed, RBkey, port, stamp]=readCedrusRB(dev, keymap)
+function [pressed, RBkey]=readCedrusRB(dev, keymap)
 % This is my version of Cedrus's readKeypress
     k = read(dev,6,"char");
     if isempty(k)
         return
     end
     
-    stamp = typecast(int8(k(3:6)),'int32'); % time stamp
+%     stamp = typecast(int8(k(3:6)),'int32'); % time stamp
     
     %Convert the bits to an array
     respInfo = logical(dec2bin(k(2))-'0');
@@ -21,7 +22,6 @@ function [pressed, RBkey, port, stamp]=readCedrusRB(dev, keymap)
     key = int8(respInfo(3) + respInfo(2)*2 + respInfo(1)*4); % which key
     RBkey=keymap(key+1);% which key 
     pressed = respInfo(4); % pressed or released
-    port = respInfo(8) + respInfo(7)*2 + respInfo(6)*4 + respInfo(5)*8; % Port number
+%     port = respInfo(8) + respInfo(7)*2 + respInfo(6)*4 + respInfo(5)*8; % Port number
     
-
 end
