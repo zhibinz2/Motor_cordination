@@ -49,15 +49,12 @@ while numberOfSecondsRemaining > 0
     end
 
     
-    
+    % left player
     try
         tic
         % Left player
         [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL);
         [pressedL2, RBkeyL2]=readCedrusRB(deviceL, keymapL);
-        % Right player
-        [pressedR1, RBkeyR1]=readCedrusRB(deviceR, keymapR);
-        [pressedR2, RBkeyR2]=readCedrusRB(deviceR, keymapR);
         toc
     catch
         % do nothing; % if no nothing is pressed or released continue to next loop without throwing error 
@@ -72,6 +69,16 @@ while numberOfSecondsRemaining > 0
 %                 elevationL = elevationL;
             end
         end
+    end
+    % Right player
+    try
+        tic
+        % Right player
+        [pressedR1, RBkeyR1]=readCedrusRB(deviceR, keymapR);
+        [pressedR2, RBkeyR2]=readCedrusRB(deviceR, keymapR);
+        toc
+    catch
+        % do nothing; 
     end
     % Right player
     if pressedR1 ==1 | pressedR2 == 1 % key press detected
