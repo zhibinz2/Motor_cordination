@@ -1,7 +1,7 @@
-% This version uses two dell keyboards
+% This version uses two Cedrus RB
 % This edition change the 3/4 circle into 1/2 circle. And remove the connecting dots
 startTime = now;
-PassL=1;PassR=1;
+% PassL=1;PassR=1;
 numberOfSecondsRemaining=durationInSeconds;
 % while n <  numFrames %~KbCheck 
 while numberOfSecondsRemaining > 0 
@@ -52,10 +52,11 @@ while numberOfSecondsRemaining > 0
 %     vbl  = Screen('Flip', windowPtr0, vbl + (waitframes -0.5) * ifi);
 
     % Left player
-    if  PassL == 1 % update elevation only when key was release
+    [pressedL, RBkeyL, portL, stampL]=readCedrusRB(deviceR, rb_834_keymap);
+%     if  PassL == 1 % update elevation only when key was release
             % Update the while loop
             % use GetKeyboardIndices to get deviceNumberL and deviceNumberR in set_duomice.m
-            [keyIsDownL, secsL, keyCodeL, deltaSecsL] = KbCheck([deviceNumberL]);
+%             [keyIsDownL, secsL, keyCodeL, deltaSecsL] = KbCheck([deviceNumberL]);
             if keyIsDownL
                 if keyCodeL (leftKey)
                     if elevationL < screenYpixels - 3*spotDiameter
@@ -70,8 +71,9 @@ while numberOfSecondsRemaining > 0
 %     PassL=~KbReleaseWait([deviceNumberL])
 
     % Right player
-    if PassR == 1 % update elevation only when key was release
-            [keyIsDownR, secsR, keyCodeR, deltaSecsR] = KbCheck([deviceNumberR]);
+    [pressedR, RBkeyR, portR, stampR]=readCedrusRB(deviceL, rb_840_keymap);
+%     if PassR == 1 % update elevation only when key was release
+%             [keyIsDownR, secsR, keyCodeR, deltaSecsR] = KbCheck([deviceNumberR]);
             if keyIsDownR
                 if keyCodeR (rightKey)
                     if elevationR < screenYpixels - 3*spotDiameter
@@ -100,10 +102,11 @@ while numberOfSecondsRemaining > 0
         break;
     end
 
-        
-    parfor PassLR=[deviceNumberL deviceNumberR]
-        KbReleaseWait([PassLR])
-    end
+%     PassL=0;PassR=0;
+%     parfor PassLR=[deviceNumberL deviceNumberR]
+%         KbReleaseWait([PassLR])
+%     end
+%     PassL=1;PassR=1;
 
 
 end

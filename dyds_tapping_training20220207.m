@@ -1,28 +1,67 @@
-% This version uses two dell keyboards
+% This version uses two Cedrus RB
 % This edition change the 3/4 circle into 1/2 circle. And remove the connecting dots
 sca;clc;close all;clear all;clearvars; 
 %% set keyboard
-% Update the while loop
-% [ keyIsDown, seconds, keyCode ] = KbCheck;
-[keyboardIndices, productNames, allInfos] = GetKeyboardIndices
-% Examine keyboards names and keyboardIndices
-productNames';
-% Examie keyboard device index
-keyboardIndices';
-% Show Keyboard names and device index side by side
-strcat(productNames',' ------(',num2str(keyboardIndices'),' )')
+rb_840_keymap = [7, 3, 4, 1, 2, 5, 6, 0]; % /830 (DeviceL) /dev/ttyUSB0
+rb_834_keymap = [7, 0, 1, 2, 3, 4, 5, 6]; % /844 (DeviceR) /dev/ttyUSB1
 
-% % Pick 'Dell Dell USB Entry Keyboard' as Left
-% deviceNumberL=input('Pick the number for "Dell Dell USB Entry Keyboard" for player on the left:');% deviceNumberL=8;
-% % Pick 'Dell KB216 Wired Keyboard' as right
-% deviceNumberR=input('Pick the number for "Dell KB216 Wired Keyboard" for player on the right:');% deviceNumberR=9;
-
-% deviceNumberL = keyboardIndices(find(contains(productNames, 'Dell Dell USB Entry Keyboard')));
-% deviceNumberR = keyboardIndices(find(contains(productNames, 'Dell KB216 Wired Keyboard')));
+ports = serialportlist("available")
+%    "/dev/ttyUSB1"    "/dev/ttyS0"    "/dev/ttyUSB0"
 
 deviceNumberL = keyboardIndices(find(ismember(productNames, 'Dell Dell USB Entry Keyboard')));
 deviceNumberR = keyboardIndices(find(ismember(productNames, 'Dell KB216 Wired Keyboard')));
 
+%% FOR RB 844 on the Right (DeviceR) /dev/ttyUSB1
+deviceR = serialport(ports(1),115200,"Timeout",1);
+%In order to identify an XID device, you need to send it "_c1", to
+%which it will respond with "_xid" followed by a protocol value. 0 is
+%"XID", and we will not be covering other protocols.
+deviceR.flush()
+write(deviceR,"_c1","char")
+query_return = read(deviceR,5,"char");
+
+%Next, we need to identify which XID model we connected to.
+write(deviceR,"_d2","char")
+deviceR_id = read(deviceR,1,"char");
+write(deviceR,"_d3","char")
+modelR_id = read(deviceR,1,"char");
+
+%By default the pulse duration is set to 0, which is "indefinite".
+%You can either set the necessary pulse duration, or simply lower the lines
+%manually when desired.
+setPulseDuration(deviceR, 1000)
+
+%mh followed by two bytes of a bitmask is how you raise/lower output lines.
+%Not every XID device supports 16 bits of output, but you need to provide
+%both bytes every time.
+write(deviceR,sprintf("mh%c%c", 255, 0), "char")
+
+%% FOR RB 830 on the Right (DeviceL) /dev/ttyUSB0
+deviceL = serialport(ports(3),115200,"Timeout",1);
+%In order to identify an XID device, you need to send it "_c1", to
+%which it will respond with "_xid" followed by a protocol value. 0 is
+%"XID", and we will not be covering other protocols.
+deviceL.flush()
+write(deviceL,"_c1","char")
+query_return = read(deviceL,5,"char");
+
+%Next, we need to identify which XID model we connected to.
+write(deviceL,"_d2","char")
+deviceL_id = read(deviceL,1,"char");
+write(deviceL,"_d3","char")
+modelL_id = read(deviceL,1,"char");
+
+%By default the pulse duration is set to 0, which is "indefinite".
+%You can either set the necessary pulse duration, or simply lower the lines
+%manually when desired.
+setPulseDuration(deviceL, 1000)
+
+%mh followed by two bytes of a bitmask is how you raise/lower output lines.
+%Not every XID device supports 16 bits of output, but you need to provide
+%both bytes every time.
+write(deviceL,sprintf("mh%c%c", 255, 0), "char")
+
+%%
 % Break and issue an error message if the installed Psychtoolbox is not
 % based on OpenGL or Screen() is not working properly.
 AssertOpenGL;
@@ -582,7 +621,7 @@ for block=1:numBlock
         vbl = Screen('Flip', windowPtr);
         WaitSecs(1);
         % Run one trial 
-        run dyds_tapping_run_trial20220117.m 
+        run dyds_tapping_run_trial20220207.m 
 
 
         % reset n
