@@ -59,3 +59,6 @@ textureIndex=Screen('MakeTexture',window,double(K));
 Screen('DrawTexture', window, textureIndex, [],pos);
 vbl = Screen('Flip', window);
 vbl = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
+%% If screen crash, 
+% To get out, press "Ctrl+0" to navigate to the invisible command window, 
+% then "Ctrl + C" and "sca"

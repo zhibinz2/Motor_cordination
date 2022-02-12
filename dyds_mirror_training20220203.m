@@ -101,7 +101,7 @@ white = [white white white];
 black = [black black black];
 grey  = [0.5 0.5 0.5];
 yellow  = [1 1 0];
-megenta = [1 0 1]
+megenta = [1 0 1];
 
 
 % Open an on screen window and color it black

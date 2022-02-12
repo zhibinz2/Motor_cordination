@@ -1,0 +1,106 @@
+% This version shows checkerboard on two hemi-fields and sends LSL markers
+% to the fNIRS laptop
+sca; clc; close all; clear all; clearvars; 
+
+% Break and issue an error message if the installed Psychtoolbox is not
+% based on OpenGL or Screen() is not working properly.
+AssertOpenGL;
+
+if ~IsLinux
+  error('Sorry, this demo currently only works on a Linux.');    
+end
+
+% *************************************************************************
+% % number of trials per block
+numTrials=5;
+% number of blocks
+numBlock=3;
+% total trial number
+numtotal=numTrials*numBlock; 
+
+% *************************************************************************
+try      
+    
+    % Here we call some default settings for setting up Psychtoolbox 
+    PsychDefaultSetup(2);
+
+    % Start with black screen
+    % Removes the blue screen flash and minimize extraneous warnings.
+    Screen('Preference', 'VisualDebugLevel', 1); 
+    Screen('Preference', 'SkipSyncTests', 1);
+    Screen('Preference', 'SuppressAllWarnings', 1);
+
+    % Get the screen numbers. This gives us a number for each of the screens
+    % attached to our computer. For help see: Screen Screens?
+    screens = Screen('Screens');
+    % Draw we select the maximum of these numbers. So in a situation where we
+    % have two screens attached to our monitor we will draw to the external
+    % screen. When only one screen is attached to the monitor we will draw to
+    % this. For help see: help max
+    screenNumber = max(screens);
+
+    % Define black and white (white will be 1 and black 0). This is because 
+    % luminace values are (in general) defined between 0 and 1.0
+    % For help see: help WhiteIndex and help BlackIndex
+    white = WhiteIndex(screenNumber);
+    black = BlackIndex(screenNumber);
+    white = [white white white];
+    black = [black black black];
+    % Initialize some other colors
+    red   = [1 0 0];
+    blue  = [0 0 1];
+    green = [0 1 0];
+    grey  = [0.5 0.5 0.5];
+    yellow  = [1 1 0];
+    megenta = [1 0 1];
+
+    % Open an on screen window and color it black
+    % For help see: Screen Openwindow?
+    % This will draw on a black backgroud with a size of [0 0 500 1000] and
+    % return a window pointer windowPtr
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 600 400]); 
+
+    % Get the size of the on screen windowPtr in pixels
+    % For help see: Screen windowSize?
+    [screenXpixels, screenYpixels] = Screen('windowSize', windowPtr);
+
+    % Get the centre coordinate of the window in pixels
+    % For help see: help RectCenter
+    [xCenter, yCenter] = RectCenter(windowRect); 
+
+    % Enable alpha blending for anti-aliasing
+    % For help see: Screen BlendFunction?
+    % Also see: Chapter 6 of the OpenGL programming guide
+    Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    % Set text display options for operating system other than Linux.
+    % For help see: Screen TextFont?
+    if ~IsLinux
+        Screen('TextFont', windowPtr, 'Arial');
+        Screen('TextSize', windowPtr, 18);
+    end
+
+    % Retreive the maximum priority number
+    topPriorityLevel = MaxPriority(windowPtr); 
+    % topPriorityLevel0 = MaxPriority(windowPtr0); 
+    % set Priority once at the start of a script after setting up onscreen window.
+    Priority(topPriorityLevel);
+
+    % Measure the vertical refresh rate of the monitor
+    ifi = Screen('GetFlipInterval', windowPtr);
+    % Check if ifi=0.0167
+    if round(1/ifi)~=60
+      error('Error: Screen flash frequency is not set at 60Hz.');    
+    end
+    
+    % Numer of frames to wait when specifying good timing. Note: the use of
+    % wait frames is to show a generalisable coding. For example, by using
+    % waitframes = 2 one would flip on every other frame. See the PTB
+    % documentation for details. In what follows we flip every frame.  
+    waitframes = 1;
+
+
+catch
+    sca
+    psychrethrow(psychlasterror);
+end  

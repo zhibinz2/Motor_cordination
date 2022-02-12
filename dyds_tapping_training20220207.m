@@ -9,9 +9,8 @@ run SuppressWarning.m
 %%
 % Break and issue an error message if the installed Psychtoolbox is not
 % based on OpenGL or Screen() is not working properly.
-
 AssertOpenGL;
- 
+
 if ~IsLinux
   error('Sorry, this demo currently only works on a Linux.');    
 end
@@ -90,8 +89,8 @@ screenNumber = max(screens);
 % For help see: help WhiteIndex and help BlackIndex
 white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
-white0 = WhiteIndex(0);
-black0 = BlackIndex(0);
+% white0 = WhiteIndex(0);
+% black0 = BlackIndex(0);
 
 % Initialize some colors
 red   = [1 0 0];
@@ -132,6 +131,21 @@ grey  = [0.5 0.5 0.5];
 if ~IsLinux
     Screen('TextFont', window, 'Arial');
     Screen('TextSize', window, 18);
+end
+
+% Retreive the maximum priority number
+topPriorityLevel = MaxPriority(windowPtr); 
+% topPriorityLevel0 = MaxPriority(windowPtr0); 
+% set Priority once at the start of a script after setting up onscreen window.
+Priority(topPriorityLevel);
+
+% Measure the vertical refresh rate of the monitor
+ifi = Screen('GetFlipInterval', windowPtr);
+% ifi0 = Screen('GetFlipInterval', windowPtr0);
+
+% Check if ifi=0.0167
+if round(1/ifi)~=60
+  error('Error: Screen flash frequency is not set at 60Hz.');    
 end
 
 % Enable unified mode of KbName, so KbName accepts identical key names on
@@ -176,21 +190,6 @@ FixCrY=[repmat(yCenter,1,Thickness/2+1) yCenter-Thickness/4:yCenter+Thickness/4]
 % waitframes = 2 one would flip on every other frame. See the PTB
 % documentation for details. In what follows we flip every frame.  
 waitframes = 1;
-
-% Retreive the maximum priority number
-topPriorityLevel = MaxPriority(windowPtr); 
-% topPriorityLevel0 = MaxPriority(windowPtr0); 
-% set Priority once at the start of a script after setting up onscreen window.
-Priority(topPriorityLevel);
-
-% Measure the vertical refresh rate of the monitor
-ifi = Screen('GetFlipInterval', windowPtr);
-% ifi0 = Screen('GetFlipInterval', windowPtr0);
-
-% Check if ifi=0.0167
-if round(1/ifi)~=60
-  error('Error: Screen flash frequency is not set at 60Hz.');    
-end
 
 % Set defaut joint dot color
 Jcolor=green;
