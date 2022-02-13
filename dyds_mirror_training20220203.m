@@ -262,6 +262,7 @@ KbStrokeWait;
 
 % get a timestamp and begin taking resting EEG
 vbl = Screen('Flip', windowPtr);
+
 i=1;
 while i<numFramesRestEye
 % If esc is press, break out of the while loop and close the screen

@@ -71,14 +71,13 @@ try
     % Checkerboard Design****************************************
     K = (checkerboard > 0.5);
     % MakeTexture
-    textureIndex=Screen('MakeTexture',window,double(K));
+    textureIndex=Screen('MakeTexture',windowPtr,double(K));
     % Position of the checkerboard
     posL = [xCenter- xCenter/12*5,yCenter - yCenter/8*3,xCenter- xCenter/12*1,yCenter + yCenter/8*3];
     posR = [xCenter- xCenter/12*1,yCenter - yCenter/8*3,xCenter+ xCenter/12*5,yCenter + yCenter/8*3];
 
     % ****************************************Checkerboard Design
     
-
     % Enable alpha blending for anti-aliasing
     % For help see: Screen BlendFunction?
     % Also see: Chapter 6 of the OpenGL programming guide
@@ -109,6 +108,11 @@ try
     % waitframes = 2 one would flip on every other frame. See the PTB
     % documentation for details. In what follows we flip every frame.  
     waitframes = 1;
+    
+    %% Setting time variables**********************************************
+    % total number of frames per trial
+    numFrames=round(1/ifi)*10; % 10 seconds 
+    %% **********************************************Setting time variables
 
     % get a timestamp and begin 
     vbl = Screen('Flip', windowPtr);
@@ -128,11 +132,30 @@ try
             Screen('CloseAll');
             break;
             end
+            
+            % initial or reset trial frame number
+            n=1;
 
             run trial_checkerboard_LSL_fNIR.m
-        end
-    end
 
+        end
+        
+        
+        % Show The End
+        TheEnd = ['The End'];
+        DrawFormattedText2(TheEnd,'win',windowPtr,...
+            'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+        Screen('Flip',windowPtr);
+        WaitSecs(3)
+        % hit a key to continue
+        KbStrokeWait;
+
+        %*************************************
+        Priority(0);   
+        sca;
+
+    end
+% initials trial frame number
 
 catch
     sca
