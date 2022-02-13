@@ -73,8 +73,8 @@ try
     % MakeTexture
     textureIndex=Screen('MakeTexture',windowPtr,double(K));
     % Position of the checkerboard
-    posL = [xCenter- xCenter/12*5,yCenter - yCenter/8*3,xCenter- xCenter/12*1,yCenter + yCenter/8*3];
-    posR = [xCenter- xCenter/12*1,yCenter - yCenter/8*3,xCenter+ xCenter/12*5,yCenter + yCenter/8*3];
+    posL = [xCenter-screenXpixels/12*5,yCenter-screenYpixels/8*3,xCenter-screenXpixels/12*1,yCenter+screenYpixels/8*3];
+    posR = [xCenter+screenXpixels/12*1,yCenter-screenYpixels/8*3,xCenter+screenXpixels/12*5,yCenter+screenYpixels/8*3];
 
     % ****************************************Checkerboard Design
     
@@ -114,9 +114,6 @@ try
     numFrames=round(1/ifi)*10; % 10 seconds 
     %% **********************************************Setting time variables
 
-    % get a timestamp and begin 
-    vbl = Screen('Flip', windowPtr);
-
     %############################### Loop through block
     %*******************************Loop through block
     for block=1:numBlock
@@ -132,9 +129,20 @@ try
             Screen('CloseAll');
             break;
             end
-            
+
+            % Show trial and block number
+            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
+            DrawFormattedText2(Showtrial,'win',windowPtr,...
+            'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+
+            % flip to screen and pause for 1 sec
+            Screen('Flip', windowPtr);
+            pause(1); % or WaitSecs(1);
+
             % initial or reset trial frame number
             n=1;
+            % get a timestamp and begin the trial
+            vbl = Screen('Flip', windowPtr);
 
             run trial_checkerboard_LSL_fNIR.m
 

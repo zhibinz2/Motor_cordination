@@ -1,5 +1,4 @@
- 
-while n < numFrames
+ while n < numFrames
     % If esc is press, break out of the while loop and close the screen
     [keyIsDown, keysecs, keyCode] = KbCheck;
     if keyCode(KbName('escape'))
@@ -12,6 +11,8 @@ while n < numFrames
 
     % Flip to the screen
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+
+    % LSL markers to the local network
 
     % update n
     n = n+1;
