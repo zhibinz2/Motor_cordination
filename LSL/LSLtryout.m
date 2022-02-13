@@ -2,7 +2,10 @@
 % instantiate the library
 disp('Loading library...');
 
-addpath C:\Users\zhibi\Documents\GitHub\labstreaminglayer\LSL\liblsl-Matlab\bin\
+% addpath C:\Users\zhibi\Documents\GitHub\labstreaminglayer\LSL\liblsl-Matlab\bin\
+% addpath /home/hnl/Documents/GitHub/labstreaminglayer/LSL/liblsl-Matlab
+addpath(genpath('/home/hnl/Documents/GitHub/labstreaminglayer/LSL/liblsl-Matlab'));
+cd /home/hnl/Documents/GitHub/labstreaminglayer/LSL/liblsl-Matlab
 lib = lsl_loadlib();
 
 % make a new stream outlet
@@ -12,11 +15,11 @@ info = lsl_streaminfo(lib,'BioSemi','EEG',8,100,'cf_float32','sdfwerr32432');
 disp('Opening an outlet...');
 outlet = lsl_outlet(info);
 
-% send data into the outlet, sample by sample
-disp('Now transmitting data...');
-
-
-outlet.push_sample(1);
+while true
+    % send data into the outlet, sample by sample
+    disp('Now transmitting data...');
+    outlet.push_sample(1);
+end
 
 
 %% Sending Marker
@@ -44,8 +47,13 @@ outlet = lsl_outlet(info);
 disp('Now transmitting data...');
 markers = {'Test-Marker', 'Trial-Start', 'Trial-End'};
 mrk = markers{1};
-disp(['now sending ' mrk]);
-outlet.push_sample({mrk});   % note that the string is wrapped into a cell-array
+
+while
+    disp(['now sending ' mrk]);
+    outlet.push_sample({mrk});   % note that the string is wrapped into a cell-array
+end
+
+
 
 %% load LSL labrecorder file
 
