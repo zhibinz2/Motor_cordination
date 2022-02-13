@@ -46,3 +46,8 @@ markers = {'Test-Marker', 'Trial-Start', 'Trial-End'};
 mrk = markers{1};
 disp(['now sending ' mrk]);
 outlet.push_sample({mrk});   % note that the string is wrapped into a cell-array
+
+%% load LSL labrecorder file
+
+addpath  C:\Users\zhibi\Documents\GitHub\xdf-Matlab
+[streams,fileheader] = load_xdf('sub-P001_ses-S001_task-Default_run-001_eeg.xdf');
