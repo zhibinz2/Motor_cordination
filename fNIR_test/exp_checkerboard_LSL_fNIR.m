@@ -117,13 +117,17 @@ try
     [xCenter, yCenter] = RectCenter(windowRect); 
 
     % Checkerboard Design****************************************
-    K = (checkerboard > 0.5);
+    % Black and white
+    K1 = (checkerboard > 0.5);
+    K2 = ~K1;
+    % Green and white
+
     % MakeTexture
-    textureIndex=Screen('MakeTexture',windowPtr,double(K));
+    textureIndex1=Screen('MakeTexture',windowPtr,double(K1));
+    textureIndex2=Screen('MakeTexture',windowPtr,double(K2));
     % Position of the checkerboard
     posL = [xCenter-screenXpixels/12*5,yCenter-screenYpixels/8*3,xCenter-screenXpixels/12*1,yCenter+screenYpixels/8*3];
     posR = [xCenter+screenXpixels/12*1,yCenter-screenYpixels/8*3,xCenter+screenXpixels/12*5,yCenter+screenYpixels/8*3];
-
     % ****************************************Checkerboard Design
     
     % Enable alpha blending for anti-aliasing
@@ -154,8 +158,10 @@ try
     % Numer of frames to wait when specifying good timing. Note: the use of
     % wait frames is to show a generalisable coding. For example, by using
     % waitframes = 2 one would flip on every other frame. See the PTB
-    % documentation for details. In what follows we flip every frame.  
-    waitframes = 1;
+    % documentation for details. In what follows we flip every frame. 
+    % In order to reverse the checkerboard at 8Hz
+    % We have to reverse the checkerboard every (1/8)/ifi frames
+    waitframes = (1/8)/ifi;
     
     %% Setting time variables**********************************************
     % total number of frames per trial
@@ -196,6 +202,16 @@ try
             vbl = Screen('Flip', windowPtr);
 
             run trial_checkerboard_LSL_fNIR.m
+            
+            if block ~= numBlock & t ~=numTrials
+                % Show Resting
+                Resting = ['Rest for 20s'];
+                DrawFormattedText2(Resting,'win',windowPtr,...
+                    'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+                Screen('Flip',windowPtr);
+                % Rest 20 sec
+                pause(20)
+            end
 
         end
         
