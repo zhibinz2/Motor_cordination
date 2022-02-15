@@ -35,7 +35,7 @@ while numberOfSecondsElapsed < 10
 
     % LSL markers to the local network
     % send data into the outlet, sample by sample
-    outlet1.push_sample(1); % send data number 1
+%     outlet1.push_sample(1); % send data number 1
     % send markers into the outlet
     mrk = markers{1};
     outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array

@@ -8,7 +8,7 @@ addpath(genpath('/home/hnl/Documents/GitHub/labstreaminglayer/LSL/liblsl-Matlab'
 % instantiate the library for LSL
 lib = lsl_loadlib();
 % make new stream outlets
-info1 = lsl_streaminfo(lib,'BioSemi','EEG',8,100,'cf_float32','sdfwerr32432');
+% info1 = lsl_streaminfo(lib,'BioSemi','EEG',8,100,'cf_float32','sdfwerr32432');
 % the name (here MyMarkerStream) is visible to the experimenter and should be chosen so that 
 % it is clearly recognizable as your MATLAB software's marker stream
 % The content-type should be Markers by convention, and the next three arguments indicate the 
@@ -18,7 +18,7 @@ info1 = lsl_streaminfo(lib,'BioSemi','EEG',8,100,'cf_float32','sdfwerr32432');
 % other programs could continue to record from the stream with only a minor interruption).
 info2 = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','myuniquesourceid23443');
 % open the outlets
-outlet1 = lsl_outlet(info1);
+% outlet1 = lsl_outlet(info1);
 outlet2 = lsl_outlet(info2);
 % Set markers
 markers = {'Test-Marker', 'Trial-Start', 'Trial-End'};
@@ -106,7 +106,8 @@ try
     % For help see: Screen Openwindow?
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
-    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 600 400]); 
+%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 600 400]); 
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
     % For help see: Screen windowSize?
@@ -118,22 +119,31 @@ try
 
     % Checkerboard Design****************************************
     % Black and white
-    K1 = (checkerboard > 0.5);
-    K2 = ~K1;
+%     K1 = (checkerboard > 0.5);
+%     K2 = ~K1;
     % Green and white
-
+    greenSquare=repmat(cat(3,0,1,0),10,10);
+    whiteSquare=repmat(cat(3,1,1,1),10,10);
+    QuadraSquare1=[greenSquare whiteSquare;whiteSquare greenSquare];
+    QuadraSquare2=[whiteSquare greenSquare;greenSquare whiteSquare];
+    K1=repmat(QuadraSquare1,5,5);
+    K2=repmat(QuadraSquare2,5,5);
     % MakeTexture
-    textureIndex1=Screen('MakeTexture',windowPtr,double(K1));
-    textureIndex2=Screen('MakeTexture',windowPtr,double(K2));
+%     textureIndex1=Screen('MakeTexture',windowPtr,double(K1));
+%     textureIndex2=Screen('MakeTexture',windowPtr,double(K2));
+    textureIndex1=Screen('MakeTexture',windowPtr,K1);
+    textureIndex2=Screen('MakeTexture',windowPtr,K2);
     % Position of the checkerboard
-    posL = [xCenter-screenXpixels/12*5,yCenter-screenYpixels/8*3,xCenter-screenXpixels/12*1,yCenter+screenYpixels/8*3];
-    posR = [xCenter+screenXpixels/12*1,yCenter-screenYpixels/8*3,xCenter+screenXpixels/12*5,yCenter+screenYpixels/8*3];
+    xLcenter=xCenter/2;xRcenter=xCenter/2*3;
+    posL = [xLcenter-screenXpixels/6,yCenter-screenXpixels/6,xLcenter+screenXpixels/6,yCenter+screenXpixels/6];
+    posR = [xRcenter-screenXpixels/6,yCenter-screenXpixels/6,xRcenter+screenXpixels/6,yCenter+screenXpixels/6];
     % ****************************************Checkerboard Design
     
     % Enable alpha blending for anti-aliasing
     % For help see: Screen BlendFunction?
     % Also see: Chapter 6 of the OpenGL programming guide
     Screen('BlendFunction', windowPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    Screen('ColorRange', windowPtr, 1, -1,1);
 
     % Set text display options for operating system other than Linux.
     % For help see: Screen TextFont?
@@ -163,10 +173,52 @@ try
     % We have to reverse the checkerboard every (1/8)/ifi frames
     waitframes = (1/8)/ifi;
     
-    %% Setting time variables**********************************************
+    % Setting time variables**********************************************
     % total number of frames per trial
     numFrames=round(1/ifi)*10; % 10 seconds 
-    %% **********************************************Setting time variables
+    % **********************************************Setting time variables
+    
+    % Baseline taking 60s  **********************************************
+    instructionStart=['Hit any key and then look at the center of the screen for 1 min']
+    DrawFormattedText2(instructionStart,'win',windowPtr,...
+        'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+    Screen('Flip',windowPtr);
+    % hit a key to continue
+    KbStrokeWait;
+    % Create a fixation cross
+    FixCrX=[xCenter-round(screenXpixels/100):xCenter+round(screenXpixels/100) repmat(xCenter,1,round(screenXpixels/50)+1)];
+    FixCrY=[repmat(yCenter,1,round(screenXpixels/50)+1) yCenter-round(screenXpixels/100):yCenter+round(screenXpixels/100)];
+    
+    startTime = now;
+    numberOfSecondsElapsed = 0;
+    while numberOfSecondsElapsed < 60
+        % If esc is press, break out of the while loop and close the screen
+        [keyIsDown, keysecs, keyCode] = KbCheck;
+        if keyCode(KbName('escape'))
+            Screen('CloseAll');
+            break;
+        end
+        % Update the while loop with time
+        numberOfSecondsElapsed = round((now - startTime) * 10 ^ 5);
+        % Show the fixation cross
+        Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/300, white, [0 0], 2);
+        Screen('Flip', windowPtr);
+        % LSL markers to the local network
+        % send data into the outlet, sample by sample
+%         outlet1.push_sample(1); % send data number 1
+        % send markers into the outlet
+        mrk = markers{1};
+        outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+    end
+    pause(5);% to separate baseline markers and trial markers
+    instructionStart=['OK. Press a key to start!'] % Tell subject to open eye and start
+    DrawFormattedText2(instructionStart,'win',windowPtr,...
+        'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+    Screen('Flip',windowPtr);
+    % hit a key to continue
+    KbStrokeWait;
+    % ************************************************ Baseline taking 60s 
+
 
     %############################### Loop through block
     %*******************************Loop through block
@@ -215,24 +267,22 @@ try
 
         end
         
-        
-        % Show The End
-        TheEnd = ['The End'];
-        DrawFormattedText2(TheEnd,'win',windowPtr,...
-            'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
-        Screen('Flip',windowPtr);
-        WaitSecs(3)
-        % hit a key to continue
-        KbStrokeWait;
-
-        %*************************************
-        Priority(0);   
-        sca;
-
     end
 % initials trial frame number
+% Show The End
+TheEnd = ['The End'];
+DrawFormattedText2(TheEnd,'win',windowPtr,...
+    'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+Screen('Flip',windowPtr);
+WaitSecs(3)
+% hit a key to continue
+KbStrokeWait;
+
+%*************************************
+Priority(0);   
+sca;
 
 catch
-    sca
+    sca;
     psychrethrow(psychlasterror);
 end  

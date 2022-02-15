@@ -10,18 +10,30 @@ n=50;p=2;q=3;
 I = checkerboard(n,p,q);
 imshow(I)
 
-K = (checkerboard > 0.5);
+K = (checkerboard(90,5,5) > 0.5);
 figure, imshow(K)
 
-imshow([0 0.5 1;1 0.5 0])
+greenSquare=repmat(cat(3,0,1,0),10,10);
+whiteSquare=repmat(cat(3,1,1,1),10,10);
+QuadraSquare1=[greenSquare whiteSquare;whiteSquare greenSquare];
+QuadraSquare2=[whiteSquare greenSquare;greenSquare whiteSquare];
+K1=repmat(QuadraSquare1,5,5);
+K2=repmat(QuadraSquare2,5,5);
+figure, imshow(K1)
+figure, imagesc(K1)
 
+C = [0 2 4 6; 8 10 12 14; 16 18 20 22];
+imagesc(C)
+imshow([0 0.5])
+
+K=repmat([green white;white green],5,5);
 %% Psychtoolbox 
 Screen MakeTexture?
 % textureIndex=Screen('MakeTexture', WindowIndex, imageMatrix [, optimizeForDrawAngle=0] [, specialFlags=0] [, floatprecision] [, textureOrientation=0] [, textureShader=0]);
 Screen DrawTexture?
 % Screen('DrawTexture', windowPointer, texturePointer [,sourceRect] [,destinationRect] [,rotationAngle] [, filterMode] [, globalAlpha] [, modulateColor] [, textureShader] [, specialFlags] [, auxParameters]);
 
-%% Tryout
+%% Tryout https://www.mathworks.com/matlabcentral/answers/349487-psychtoolbox-checkerboard-alternation-error
 % Clear the workspace and the screen
 sca;
 close all;
@@ -37,6 +49,7 @@ screenNumber = max(screens);
 white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
 grey = white / 2;
+green = [0 1 0];
 % Open an on screen window
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, grey, [0 0 400 400]);
 ifi = Screen('GetFlipInterval', window);
@@ -54,8 +67,9 @@ dimx = cx;
 dimy = cy;
 baseRect = [0 0 dimx dimy];
 pos = [cx- dimx/2 ,cy - dimy/2,cx+ dimx/2 ,cy + dimy/2];
-% MakeTexture
-textureIndex=Screen('MakeTexture',window,double(K));
+% MakeTexture: for help, see Screen DrawTexture?
+Screen('ColorRange',window);
+textureIndex=Screen('MakeTexture',window,K1);
 Screen('DrawTexture', window, textureIndex, [],pos);
 vbl = Screen('Flip', window);
 vbl = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
