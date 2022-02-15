@@ -21,7 +21,7 @@ info2 = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','myuniques
 % outlet1 = lsl_outlet(info1);
 outlet2 = lsl_outlet(info2);
 % Set markers
-markers = {'Test-Marker', 'Trial-Start', 'Trial-End'};
+markers = {'Baseline-Start', 'Baseline-End', 'Trial-Start', 'Trial-End'};
 
 % ##################################################################### LSL
 
@@ -189,6 +189,13 @@ try
     FixCrX=[xCenter-round(screenXpixels/100):xCenter+round(screenXpixels/100) repmat(xCenter,1,round(screenXpixels/50)+1)];
     FixCrY=[repmat(yCenter,1,round(screenXpixels/50)+1) yCenter-round(screenXpixels/100):yCenter+round(screenXpixels/100)];
     
+    % LSL markers to the local network
+    % send data into the outlet, sample by sample
+%         outlet1.push_sample(1); % send data number 1
+    % send markers into the outlet
+    mrk = markers{1};
+    outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+
     startTime = now;
     numberOfSecondsElapsed = 0;
     while numberOfSecondsElapsed < 60
@@ -203,13 +210,11 @@ try
         % Show the fixation cross
         Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/300, white, [0 0], 2);
         Screen('Flip', windowPtr);
-        % LSL markers to the local network
-        % send data into the outlet, sample by sample
-%         outlet1.push_sample(1); % send data number 1
-        % send markers into the outlet
-        mrk = markers{1};
-        outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
     end
+    % send markers into the outlet
+    mrk = markers{2};
+    outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+
     pause(5);% to separate baseline markers and trial markers
     instructionStart=['OK. Press a key to start!'] % Tell subject to open eye and start
     DrawFormattedText2(instructionStart,'win',windowPtr,...
@@ -247,11 +252,20 @@ try
 
             % pick a condition from randomized set allPerm
             conditionSelected = allPerm(numTrials*(block-1)+t);
-
+            
+            % LSL markers to the local network
+            % send data into the outlet, sample by sample
+        %     outlet1.push_sample(1); % send data number 1
+            % send markers into the outlet
+            mrk = markers{3};
+            outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
             % initial or reset trial frame number
             n=1;
             % get a timestamp and begin the trial
             vbl = Screen('Flip', windowPtr);
+            % send markers into the outlet
+            mrk = markers{4};
+            outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
 
             run trial_checkerboard_LSL_fNIR.m
             
