@@ -207,6 +207,7 @@ try
         end
         % Update the while loop with time
         numberOfSecondsElapsed = round((now - startTime) * 10 ^ 5);
+        
         % Show the fixation cross
         Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/300, white, [0 0], 2);
         Screen('Flip', windowPtr);
@@ -248,7 +249,7 @@ try
 
             % flip to screen and pause for 1 sec
             Screen('Flip', windowPtr);
-            pause(1); % or WaitSecs(1);
+            pause(2); % or WaitSecs(1);
 
             % pick a condition from randomized set allPerm
             conditionSelected = allPerm(numTrials*(block-1)+t);
@@ -263,13 +264,14 @@ try
             n=1;
             % get a timestamp and begin the trial
             vbl = Screen('Flip', windowPtr);
+
+            run trial_checkerboard_LSL_fNIR.m
+
             % send markers into the outlet
             mrk = markers{4};
             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-
-            run trial_checkerboard_LSL_fNIR.m
             
-            if block ~= numBlock & t ~=numTrials
+            if block ~= numBlock && t ~=numTrials
                 % Show Resting
                 Resting = ['Rest for 20s'];
                 DrawFormattedText2(Resting,'win',windowPtr,...

@@ -195,7 +195,7 @@ try
     % send markers into the outlet
     mrk = markers{1};
     outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-    
+
     startTime = now;
     numberOfSecondsElapsed = 0;
     while numberOfSecondsElapsed < 60
@@ -207,10 +207,15 @@ try
         end
         % Update the while loop with time
         numberOfSecondsElapsed = round((now - startTime) * 10 ^ 5);
+        
         % Show the fixation cross
         Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/300, white, [0 0], 2);
         Screen('Flip', windowPtr);
     end
+    % send markers into the outlet
+    mrk = markers{2};
+    outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+
     pause(5);% to separate baseline markers and trial markers
     instructionStart=['OK. Press a key to start!'] % Tell subject to open eye and start
     DrawFormattedText2(instructionStart,'win',windowPtr,...
@@ -244,7 +249,7 @@ try
 
             % flip to screen and pause for 1 sec
             Screen('Flip', windowPtr);
-            pause(1); % or WaitSecs(1);
+            pause(2); % or WaitSecs(1);
 
             % pick a condition from randomized set allPerm
             conditionSelected = allPerm(numTrials*(block-1)+t);
@@ -265,7 +270,7 @@ try
 
             run trial_checkerboard_LSL_fNIR.m
             
-            if block ~= numBlock & t ~=numTrials
+            if block ~= numBlock && t ~=numTrials
                 % Show Resting
                 Resting = ['Rest for 20s'];
                 DrawFormattedText2(Resting,'win',windowPtr,...
