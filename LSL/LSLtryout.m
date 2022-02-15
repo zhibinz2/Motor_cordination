@@ -60,7 +60,12 @@ end
 addpath /home/zhibin/Documents/GitHub/xdf-Matlab
 cd /home/zhibin/Documents/Artinis NIRS/zhibin/20220213fNIRS_LSL
 
+cd C:\Users\NIRS\Documents\GitHub\xdf-Matlab
+addpath C:\Users\NIRS\Documents\GitHub\xdf-Matlab
+cd C:\Users\NIRS\Desktop\Aquizition\zhibin\20220215
+
 [streams,fileheader] = load_xdf('sub-P001_ses-S001_task-Default_run-001_20220313.xdf');
+[streams,fileheader] = load_xdf('sub-P001_ses-S001_task-Default_run-001_eeg.xdf');
 
 info1=streams{1,1}.info;
 info1.name % OxySoft
@@ -86,6 +91,11 @@ time_stamps3=streams{1,3}.time_stamps;  num2str(time_stamps3(1))
 segments3=streams{1,3}.segments;
 
 plot(time_stamps3, time_series3, 'ro')
+
+plot(time_stamps3(1),2, 'bo');
+plot(time_stamps3(2),2.5, 'ro');
+plot(time_stamps3(3:2:25),2, 'bo');
+plot(time_stamps3(4:2:26),2.5, 'ro');
 
 info4=streams{1,4}.info;
 info4.name % MyMarkerStream
