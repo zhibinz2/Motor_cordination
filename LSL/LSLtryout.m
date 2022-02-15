@@ -54,8 +54,54 @@ while
 end
 
 
-
 %% load LSL labrecorder file
 
-addpath  C:\Users\zhibi\Documents\GitHub\xdf-Matlab
-[streams,fileheader] = load_xdf('sub-P001_ses-S001_task-Default_run-001_eeg.xdf');
+% addpath  C:\Users\zhibi\Documents\GitHub\xdf-Matlab
+addpath /home/zhibin/Documents/GitHub/xdf-Matlab
+cd /home/zhibin/Documents/Artinis NIRS/zhibin/20220213fNIRS_LSL
+
+[streams,fileheader] = load_xdf('sub-P001_ses-S001_task-Default_run-001_20220313.xdf');
+
+info1=streams{1,1}.info;
+info1.name % OxySoft
+time_series1=streams{1,1}.time_series;
+time_stamps1=streams{1,1}.time_stamps;
+segments1=streams{1,1}.segments;
+srate=info1.effective_srate;
+clock_offsets=info1.clock_offsets;
+
+
+plot(time_stamps1,time_series1(1,:));hold on;
+
+info2=streams{1,2}.info;
+info2.name % OxySoft Event Marker
+time_series2=streams{1,2}.time_series; % noting here
+time_stamps2=streams{1,2}.time_stamps; % noting here
+
+
+info3=streams{1,3}.info;
+info3.name %BioSemi
+time_series3=streams{1,3}.time_series;
+time_stamps3=streams{1,3}.time_stamps;  num2str(time_stamps3(1))
+segments3=streams{1,3}.segments;
+
+plot(time_stamps3, time_series3, 'ro')
+
+info4=streams{1,4}.info;
+info4.name % MyMarkerStream
+time_series4=streams{1,4}.time_series;
+time_stamps4=streams{1,4}.time_stamps; num2str(time_stamps4(1))
+
+plot(time_stamps4, 2, 'bo');
+
+figure; bar(time_series4);
+figure; scatter(time_series4);
+
+n=1;
+num2str(time_stamps1(n))
+num2str(time_stamps3(n))
+num2str(time_stamps4(n))
+
+num2str(time_stamps1(end))
+num2str(time_stamps3(end))
+num2str(time_stamps4(end))
