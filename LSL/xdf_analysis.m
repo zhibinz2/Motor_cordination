@@ -14,7 +14,7 @@ cd C:\Users\NIRS\Desktop\Acquisition\zhibin
 
 [streams,fileheader] = load_xdf('sub-P001_ses-S001_task-Default_run-001_20220313.xdf');
 [streams,fileheader] = load_xdf('sub-P001_ses-S001_task-Default_run-001_eeg2022021503.xdf');
-[streams,fileheader] = load_xdf('2022021507.xdf');
+[streams,fileheader] = load_xdf('2022021508.xdf');
 %%
 info1=streams{1,1}.info;
 info1.name % OxySoft
