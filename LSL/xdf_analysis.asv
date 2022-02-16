@@ -9,7 +9,7 @@ addpath C:\Users\NIRS\Documents\GitHub\xdf-Matlab
 
 
 cd C:\Users\NIRS\Desktop\Acquisition\zhibin
-cd F:\UCI_dataset\fNIR\20220215\2022021508
+cd F:\UCI dataset\fNIR\20220215\2022021508
 
 %%
 
@@ -26,7 +26,6 @@ srate=info1.effective_srate;
 clock_offsets=info1.clock_offsets;
 
 plot(time_stamps1,time_series1(1,:));hold on;
-cd
 plotx(time_stamps1,time_series1');
 %%
 info2=streams{1,2}.info;
