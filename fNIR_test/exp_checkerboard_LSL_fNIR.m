@@ -21,7 +21,7 @@ info2 = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','myuniques
 % outlet1 = lsl_outlet(info1);
 outlet2 = lsl_outlet(info2);
 % Set markers
-markers = {'Baseline-Start', 'Baseline-End', 'Trial-Start', 'Trial-End'};
+markers = {'Baseline-Start', 'Baseline-End', 'Trial-Start', 'Trial-End','Screen_Flip'};
 
 % ##################################################################### LSL
 
@@ -211,6 +211,11 @@ try
         % Show the fixation cross
         Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/300, white, [0 0], 2);
         Screen('Flip', windowPtr);
+
+        % LSL marker to check screen flip frequency
+        % send markers into the outlet
+        mrk = markers{5};
+        outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
     end
     % send markers into the outlet
     mrk = markers{2};
@@ -261,7 +266,7 @@ try
             mrk = markers{3};
             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
             % initial or reset trial frame number
-            n=1;
+%             n=1;
             % get a timestamp and begin the trial
             vbl = Screen('Flip', windowPtr);
 
@@ -270,8 +275,8 @@ try
             % send markers into the outlet
             mrk = markers{4};
             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-            
-            if block ~= numBlock && t ~=numTrials
+
+            if block ~= numBlock | t ~= numTrials % only bypass the last trial
                 % Show Resting
                 Resting = ['Rest for 20s'];
                 DrawFormattedText2(Resting,'win',windowPtr,...

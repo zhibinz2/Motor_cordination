@@ -32,10 +32,15 @@ while numberOfSecondsElapsed < 10
     
     % Show the fixation cross
         Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/300, white, [0 0], 2);
-        
+
     % Flip to the screen
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
 
+     % LSL marker to check screen flip frequency
+    % send markers into the outlet
+    mrk = markers{5};
+    outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+
     % update n
-    n = n+1;
+%     n = n+1;
 end
