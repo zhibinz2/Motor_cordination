@@ -126,7 +126,7 @@ LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpi
 LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
 
 % Loop the animation until a key is pressed
-HideCursor
+HideCursor;
 
 % NumInside=[]; % To keep a record of the percentage of time inside the square
 xy=[]; % to keep track of mouse trace

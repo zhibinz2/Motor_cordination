@@ -43,6 +43,7 @@ conditionNames={'L' 'R'};  % conditionNames{1}
 % % number of trials per block
 numTrials=4;
 % number of blocks
+
 numBlock=3;
 % total trial number
 numtotal=numTrials*numBlock; 
@@ -153,7 +154,7 @@ try
     end
 
     % Retreive the maximum priority number
-    topPriorityLevel = MaxPriority(windowPtr); 
+    topPriorityLevel = MaxPriority(windowPtr) ; 
     % topPriorityLevel0 = MaxPriority(windowPtr0); 
     % set Priority once at the start of a script after setting up onscreen window.
     Priority(topPriorityLevel);
@@ -179,7 +180,7 @@ try
     % **********************************************Setting time variables
     
     % Baseline taking 60s  **********************************************
-    instructionStart=['Hit any key and then look at the center of the screen for 1 min']
+    instructionStart=['Hit any key and then look at the center of the screen for 1 min'];
     DrawFormattedText2(instructionStart,'win',windowPtr,...
         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
     Screen('Flip',windowPtr);
@@ -205,8 +206,9 @@ try
             Screen('CloseAll');
             break;
         end
+
         % Update the while loop with time
-        numberOfSecondsElapsed = round((now - startTime) * 10 ^ 5);
+        numberOfSecondsElapsed = (now - startTime) * 10 ^ 5;
         
         % Show the fixation cross
         Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/300, white, [0 0], 2);
@@ -222,7 +224,7 @@ try
     outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
 
     pause(5);% to separate baseline markers and trial markers
-    instructionStart=['OK. Press a key to start!'] % Tell subject to open eye and start
+    instructionStart=['OK. Press a key to start!']; % Tell subject to open eye and start
     DrawFormattedText2(instructionStart,'win',windowPtr,...
         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
     Screen('Flip',windowPtr);
@@ -230,6 +232,7 @@ try
     KbStrokeWait;
     % ************************************************ Baseline taking 60s 
 
+    HideCursor;
 
     %############################### Loop through block
     %*******************************Loop through block
@@ -247,13 +250,13 @@ try
             break;
             end
 
-            % Show trial and block number
+            % Show trial and block number at the bottom
             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
 
             % flip to screen and pause for 1 sec
-            Screen('Flip', windowPtr);
+            vbl=Screen('Flip', windowPtr);
             pause(2); % or WaitSecs(1);
 
             % pick a condition from randomized set allPerm
@@ -265,11 +268,13 @@ try
             % send markers into the outlet
             mrk = markers{3};
             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+
             % initial or reset trial frame number
-%             n=1;
+            n=1;
             % get a timestamp and begin the trial
             vbl = Screen('Flip', windowPtr);
-
+            
+            % Run the trial #################
             run trial_checkerboard_LSL_fNIR.m
 
             % send markers into the outlet
@@ -281,9 +286,9 @@ try
                 Resting = ['Rest for 20s'];
                 DrawFormattedText2(Resting,'win',windowPtr,...
                     'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
-                Screen('Flip',windowPtr);
+                vbl=Screen('Flip',windowPtr);
                 % Rest 20 sec
-                pause(20)
+                pause(20);
             end
 
         end
@@ -294,10 +299,10 @@ try
 TheEnd = ['The End'];
 DrawFormattedText2(TheEnd,'win',windowPtr,...
     'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
-Screen('Flip',windowPtr);
+vbl=Screen('Flip',windowPtr);
 WaitSecs(3)
 % hit a key to continue
-KbStrokeWait;
+KbStrokeWait;     
 
 %*************************************
 Priority(0);   
