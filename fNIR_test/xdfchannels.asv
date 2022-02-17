@@ -1,8 +1,30 @@
 cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination
 
-allPerm
+% conditions
+allPerm;
 
+% channels
 O2HbChans=1:2:43;
-O2HbChansL=1:2:
-O2HbChansR=
+O2HbChansL=1:2:21;
+O2HbChansR=2:2:22;
 HHbChans=2:2:44;
+HHbChansL=23:2:43;
+HHbChansR=24:2:44;
+
+time_series1(O2HbChansL);
+time_series1(O2HbChansR);
+
+time_series1(HHbChansL);
+time_series1(HHbChansR);
+
+% organized time_series1 into trials
+time_series1_baseline=time_series1(stamp1index_Baseline_Start:stamp1index_Baseline_End);
+
+trial_length=max(stamp1index_Trial_End-stamp1index_Trial_Start);
+NumTrials=length(stamp1index_Trial_Start);
+NumChans=size(time_series1,1);
+
+time_series1_trials=zeros(trial_length,NumChans,NumTrials);
+for i=1:NumTrials
+    time_series1_trials(:,1:NumChans,i)=time_series1(:,stamp1index_Trial_Start(i):stamp1index_Trial_Start(i)+trial_length)';
+end

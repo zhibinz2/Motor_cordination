@@ -55,6 +55,36 @@ plot(time_stamps2(index_Screen_Flip),3, 'go');
 
 figure; plot(diff(time_stamps2(index_Screen_Flip)),'ro');
 diff(time_stamps2(index_Screen_Flip))
+
+% map index in time_stamps2 to time_stamps1
+[stamp1index_Baseline_Start,stamp1index_Baseline_End,stamp1index_Trial_Start,stamp1index_Trial_End] = getStamp1indices(time_stamps1,time_stamps2,time_series2);
+
+repmat_stamp1=repmat(time_stamps1',[1,length(time_stamps2)]);
+[minValue,closestIndex_stamp1] = min(abs(repmat_stamp1-time_stamps2));
+closestValue = time_stamps1(closestIndex_stamp1) 
+
+time_stamps2(index_Baseline_Start)
+time_stamps2(index_Baseline_End)
+time_stamps2(index_Trial_Start)
+time_stamps2(index_Trial_End)
+
+stamp1index_Baseline_Start
+stamp1index_Baseline_End
+stamp1index_Trial_Start
+stamp1index_Trial_End
+
+% find(ismember(time_stamps1,time_stamps2(index_Baseline_Start)))
+% find(ismember(time_stamps1,time_stamps2(index_Baseline_End)))
+% find(ismember(time_stamps1,time_stamps2(index_Trial_Start)))
+% find(ismember(time_stamps1,time_stamps2(index_Trial_End)))
+
+% time_stamps2(index_Baseline_Start)
+% time_stamps2(index_Baseline_End)
+% time_stamps2(index_Trial_Start)
+% time_stamps2(index_Trial_End)
+
+
+
 %%
 info3=streams{1,3}.info;
 info3.name %BioSemi

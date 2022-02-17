@@ -1,6 +1,5 @@
 cd C:\Users\NIRS\Desktop\USB documents\Matlab\matlab file converter
 
-cd F:\UCI_dataset\fNIR\USB documents\Matlab
 addpath F:\UCI_dataset\fNIR\USB documents\Matlab
 addpath Matlab
 
@@ -8,8 +7,6 @@ oxysoft2matlab
 
 oxysoft2matlab ({'20211214.oxy5', 'Measurement Examples.oxyproj'})
 
-cd F:\UCI_dataset\fNIR\20220215\2022021508
-oxysoft2matlab ({'2022021505.oxy5','map_digitized_project.oxyproj'})
 %%
 DataFNIR=ans;
 DataFNIR=nirs_data;
