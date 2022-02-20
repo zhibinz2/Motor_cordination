@@ -12,10 +12,11 @@ cd C:\Users\NIRS\Desktop\Acquisition\zhibin
 cd F:\UCI_dataset\fNIR\20220215\2022021508
 
 %%
+clear
 
 [streams,fileheader] = load_xdf('sub-P001_ses-S001_task-Default_run-001_20220313.xdf');
 [streams,fileheader] = load_xdf('sub-P001_ses-S001_task-Default_run-001_eeg2022021503.xdf');
-[streams,fileheader] = load_xdf('2022021508.xdf');
+[streams,fileheader] = load_xdf('2022021506.xdf');
 %%
 info1=streams{1,1}.info;
 info1.name % OxySoft
@@ -56,8 +57,10 @@ plot(time_stamps2(index_Screen_Flip),3, 'go');
 figure; plot(diff(time_stamps2(index_Screen_Flip)),'ro');
 diff(time_stamps2(index_Screen_Flip))
 
+cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\fNIR_test
 % map index in time_stamps2 to time_stamps1
 [stamp1index_Baseline_Start,stamp1index_Baseline_End,stamp1index_Trial_Start,stamp1index_Trial_End] = getStamp1indices(time_stamps1,time_stamps2,time_series2);
+run xdfchannels.m
 
 repmat_stamp1=repmat(time_stamps1',[1,length(time_stamps2)]);
 [minValue,closestIndex_stamp1] = min(abs(repmat_stamp1-time_stamps2));
