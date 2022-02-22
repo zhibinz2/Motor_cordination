@@ -1,32 +1,33 @@
-TrialTime=1/srate*[1:1:size(time_series1_trialsL,1)]-10;
+TrialTime=1/srate*[1:1:size(time_series1_trialsL,1)]-8.82;
+Ylim=2;
 
 figure;
 subplot(2,2,1);
 TrialsLO2ChansL=squeeze(mean(time_series1_trialsL(:,O2HbChansL,:),2))'; % keep all trials, but average across all right oxy channels 
 TrialsLHHChansL=squeeze(mean(time_series1_trialsL(:,HHbChansL,:),2))';
-plot95(TrialTime,TrialsLO2ChansL,'r');hold on;
-plot95(TrialTime,TrialsLHHChansL,'b');hold off;grid
+plotSEM(TrialTime,TrialsLO2ChansL,'r');hold on;
+plotSEM(TrialTime,TrialsLHHChansL,'b');hold off;grid;ylim([-Ylim Ylim]);
 title('Left cortex Left condi');
 
 subplot(2,2,2);
 TrialsLO2ChansR=squeeze(mean(time_series1_trialsL(:,O2HbChansR,:),2))'; % keep all trials, but average across all right oxy channels 
 TrialsLHHChansR=squeeze(mean(time_series1_trialsL(:,HHbChansR,:),2))';
-plot95(TrialTime,TrialsLO2ChansR,'r');hold on;
-plot95(TrialTime,TrialsLHHChansR,'b');hold off;grid
+plotSEM(TrialTime,TrialsLO2ChansR,'r');hold on;
+plotSEM(TrialTime,TrialsLHHChansR,'b');hold off;grid;ylim([-Ylim Ylim]);
 title('Right cortex Right condi');
 
 subplot(2,2,3);
 TrialsRO2ChansL=squeeze(mean(time_series1_trialsR(:,O2HbChansL,:),2))'; % keep all trials, but average across all right oxy channels 
 TrialsRHHChansL=squeeze(mean(time_series1_trialsR(:,HHbChansL,:),2))';
-plot95(TrialTime,TrialsRO2ChansL,'r');hold on;
-plot95(TrialTime,TrialsRHHChansL,'b');hold off;grid
+plotSEM(TrialTime,TrialsRO2ChansL,'r');hold on;
+plotSEM(TrialTime,TrialsRHHChansL,'b');hold off;grid;ylim([-Ylim Ylim]);
 title('Right cortex Left condi');
 
 subplot(2,2,4);
 TrialsRO2ChansR=squeeze(mean(time_series1_trialsR(:,O2HbChansR,:),2))'; % keep all trials, but average across all right oxy channels 
 TrialsRHHChansR=squeeze(mean(time_series1_trialsR(:,HHbChansR,:),2))';
-plot95(TrialTime,TrialsRO2ChansR,'r');hold on;
-plot95(TrialTime,TrialsRHHChansR,'b');hold off;grid
+plotSEM(TrialTime,TrialsRO2ChansR,'r');hold on;
+plotSEM(TrialTime,TrialsRHHChansR,'b');hold off;grid;ylim([-Ylim Ylim]);
 title('Right cortex Right condi');
 
 

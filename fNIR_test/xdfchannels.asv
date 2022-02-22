@@ -44,6 +44,6 @@ time_series1_trialsR=time_series1_trials(:,:,trialsR)-baseline_averagesR.*ones(s
 % baseline normalization
 baseline_averagesL=mean(mean(abs(time_series1_trialsL(1:trial_length,:,:)),3),1);
 baseline_averagesR=mean(mean(abs(time_series1_trialsR(1:trial_length,:,:)),3),1);
-time_series1_trialsL=time_series1_trialsL./(baseline_averagesL.*ones(size(time_series1_trials,1),1).*ones(1,1,length(trialsL)));
-time_series1_trialsR=time_series1_trialsR./(baseline_averagesR.*ones(size(time_series1_trials,1),1).*ones(1,1,length(trialsR)));
+time_series1_trialsL=time_series1_trialsL./baseline_averagesL.*ones(size(time_series1_trials,1),1).*ones(1,1,length(trialsL));
+time_series1_trialsR=time_series1_trialsR./baseline_averagesR.*ones(size(time_series1_trials,1),1).*ones(1,1,length(trialsR));
 
