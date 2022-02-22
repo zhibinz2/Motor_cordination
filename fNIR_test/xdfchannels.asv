@@ -6,8 +6,8 @@ trialsL=find(allPerm==1);
 trialsR=find(allPerm==2);
 
 % channels
-O2HbChans=1:2:43;
-HHbChans=2:2:44;
+% O2HbChans=1:2:43;
+% HHbChans=2:2:44;
 
 O2HbChansL=1:2:21;
 HHbChansL=2:2:22;
@@ -15,35 +15,90 @@ HHbChansL=2:2:22;
 O2HbChansR=23:2:43;
 HHbChansR=24:2:44;
 
-time_series1(O2HbChansL);
-time_series1(O2HbChansR);
+% time_series1(O2HbChansL);
+% time_series1(O2HbChansR);
+% 
+% time_series1(HHbChansL);
+% time_series1(HHbChansR);
 
-time_series1(HHbChansL);
-time_series1(HHbChansR);
+%% do not detrend, artiface at the beginning make it even more slanted
+% cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\EEGanalysis\20211102
+% before_detrend_data=time_series1(:,1000:end);
+% detrend_data=ndetrend(before_detrend_data',1); 
+% figure;
+% subplot(2,1,1);plot(before_detrend_data');title('before detrend');
+% subplot(2,1,2);plot(detrend_data);title('after detrend');
+
+%% sgolay filter
+% figure;
+% subplot(2,1,1);plot(time_series1');title('before sgolay');
+% subplot(2,1,2);plot(sgolayfilt(double(time_series1'),1,61));title('after sgolay');
+
+sgolayfilt_data=sgolayfilt(double(time_series1'),1,201);
+%%
 
 % organized time_series1 into trials
-time_series1_baseline=time_series1(stamp1index_Baseline_Start:stamp1index_Baseline_End);
+% time_series1_baseline=time_series1(:,stamp1index_Baseline_Start:stamp1index_Baseline_End);
 
-trial_length=max(stamp1index_Trial_End-stamp1index_Trial_Start);
+trial_length=max(stamp1index_Trial_End-stamp1index_Trial_Start)
+trial_length=634;
 NumTrials=length(stamp1index_Trial_Start);
-NumChans=size(time_series1,1);
+NumChans=size(sgolayfilt_data,2);
 
 time_series1_trials=zeros(4*trial_length,NumChans,NumTrials);
 for i=1:NumTrials
-    time_series1_trials(:,1:NumChans,i)=time_series1(:,stamp1index_Trial_Start(i)-trial_length:stamp1index_Trial_Start(i)+3*trial_length-1)';
+    time_series1_trials(:,1:NumChans,i)=sgolayfilt_data((stamp1index_Trial_Start(i)-trial_length):(stamp1index_Trial_Start(i)+3*trial_length-1),:);
 end
-time_series1_trials;
 
-% baseline correction
-baseline_averagesL=mean(mean(time_series1_trials(1:trial_length,:,trialsL),3),1);
-baseline_averagesR=mean(mean(time_series1_trials(1:trial_length,:,trialsR),3),1);
+% % do not detrend, make wave spear as squares
+% figure;
+% subplot(2,1,1);plot(time_series1_trials(:,:,1));
+% subplot(2,1,2);plot(ndetrend(time_series1_trials(:,:,1),1));
 
-time_series1_trialsL=time_series1_trials(:,:,trialsL)-baseline_averagesL.*ones(size(time_series1_trials,1),1).*ones(1,1,length(trialsL));
-time_series1_trialsR=time_series1_trials(:,:,trialsR)-baseline_averagesR.*ones(size(time_series1_trials,1),1).*ones(1,1,length(trialsR));
+figure;
+plotx(time_series1_trials(:,:,1));
 
-% baseline normalization
-baseline_averagesL=mean(mean(abs(time_series1_trialsL(1:trial_length,:,:)),3),1);
-baseline_averagesR=mean(mean(abs(time_series1_trialsR(1:trial_length,:,:)),3),1);
-time_series1_trialsL=time_series1_trialsL./baseline_averagesL.*ones(size(time_series1_trials,1),1).*ones(1,1,length(trialsL));
-time_series1_trialsR=time_series1_trialsR./baseline_averagesR.*ones(size(time_series1_trials,1),1).*ones(1,1,length(trialsR));
+%% baseline correction
+% baseline_averagesL=mean(mean(time_series1_trials(1:trial_length,:,trialsL),3),1);
+% baseline_averagesR=mean(mean(time_series1_trials(1:trial_length,:,trialsR),3),1);
+% 
+% time_series1_trialsL=time_series1_trials(:,:,trialsL)-baseline_averagesL.*ones(size(time_series1_trials,1),1).*ones(1,1,length(trialsL));
+% time_series1_trialsR=time_series1_trials(:,:,trialsR)-baseline_averagesR.*ones(size(time_series1_trials,1),1).*ones(1,1,length(trialsR));
 
+baseline_averages=mean(mean(time_series1_trials(1:trial_length,:,:),1),1);
+baseline_averages_mat=baseline_averages.*ones(size(time_series1_trials,1),1);
+
+% figure; imagesc(baseline_averages_mat(:,:,1));
+% figure; imagesc(squeeze(baseline_averages_mat(1,:,:)));
+
+time_series1_trials_baselinecorrected=time_series1_trials-baseline_averages_mat;
+
+figure; 
+subplot(2,1,1);plotx(time_series1_trials(:,:,1));title('before baseline correct');
+subplot(2,1,2);plotx(time_series1_trials_baselinecorrected(:,:,1));title('after');
+
+%% detrend
+figure; 
+subplot(2,1,1);plotx(time_series1_trials_baselinecorrected(:,:,1));title('before detrend');
+subplot(2,1,2);
+%% baseline normalization
+% baseline_averagesL=mean(mean(abs(time_series1_trialsL(1:trial_length,:,:)),3),1);
+% baseline_averagesR=mean(mean(abs(time_series1_trialsR(1:trial_length,:,:)),3),1);
+% time_series1_trialsL=time_series1_trialsL./(baseline_averagesL.*ones(size(time_series1_trials,1),1).*ones(1,1,length(trialsL)));
+% time_series1_trialsR=time_series1_trialsR./(baseline_averagesR.*ones(size(time_series1_trials,1),1).*ones(1,1,length(trialsR)));
+
+abs_baseline_averages=mean(mean(abs(time_series1_trials_baselinecorrected(1:trial_length,:,:)),1),1);
+abs_baseline_averages_mat=abs_baseline_averages.*ones(size(time_series1_trials_baselinecorrected,1),1);
+
+% figure; imagesc(abs_baseline_averages_mat(:,:,1));
+% figure; imagesc(squeeze(abs_baseline_averages_mat(1,:,:)));
+
+time_series1_trials_baselinenormalization=time_series1_trials_baselinecorrected./abs_baseline_averages_mat;
+
+figure; 
+subplot(2,1,1);plotx(time_series1_trials_baselinecorrected(:,:,1));title('before baseline normalization');
+subplot(2,1,2);plotx(time_series1_trials_baselinenormalization(:,:,1));title('after');
+
+%% Separate left and right stimulus
+time_series1_trialsL=time_series1_trials_baselinenormalization(:,:,trialsL);
+time_series1_trialsR=time_series1_trials_baselinenormalization(:,:,trialsR);

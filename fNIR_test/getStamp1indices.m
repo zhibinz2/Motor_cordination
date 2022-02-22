@@ -5,7 +5,7 @@ index_Baseline_Start = find(strcmp(horzcat({time_series2{:}}),'Baseline-Start')=
 index_Baseline_End = find(strcmp(horzcat({time_series2{:}}),'Baseline-End')==1);
 index_Trial_Start = find(strcmp(horzcat({time_series2{:}}),'Trial-Start')==1);
 index_Trial_End = find(strcmp(horzcat({time_series2{:}}),'Trial-End')==1);
-index_Screen_Flip = find(strcmp(horzcat({time_series2{:}}),'Screen_Flip')==1);
+% index_Screen_Flip = find(strcmp(horzcat({time_series2{:}}),'Screen_Flip')==1);
 
 repmat_stamp1_Baseline_Start=repmat(time_stamps1',[1,length(time_stamps2(index_Baseline_Start))]);
 [minValue_Baseline_Start,stamp1index_Baseline_Start] = min(abs(repmat_stamp1_Baseline_Start-time_stamps2(index_Baseline_Start)));
