@@ -12,7 +12,7 @@
 % cd F:\UCI_dataset\fNIR\20220215\2022021508
 cd F:\UCI_dataset\fNIR\20220215\
 %%
-clear
+clear;close all;
 fileList = dir('*.xdf');
 fileList.name
 [streams,fileheader] = load_xdf(fileList.name);
@@ -74,9 +74,10 @@ cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\fNIR_test
 % map index in time_stamps2 to time_stamps1
 [stamp1index_Baseline_Start,stamp1index_Baseline_End,stamp1index_Trial_Start,stamp1index_Trial_End] = getStamp1indices(time_stamps1,time_stamps2,time_series2);
 
+%%
 % load behaviral
 open xdfchannels.m
-
+%%
 % repmat_stamp1=repmat(time_stamps1',[1,length(time_stamps2)]);
 % [minValue,closestIndex_stamp1] = min(abs(repmat_stamp1-time_stamps2));
 % closestValue = time_stamps1(closestIndex_stamp1) 

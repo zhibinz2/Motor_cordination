@@ -15,6 +15,13 @@ HHbChansL=2:2:22;
 O2HbChansR=23:2:43;
 HHbChansR=24:2:44;
 
+% Only the occipital lobe
+% O2HbChansL=[1 3 5 7 9];
+% HHbChansL=[2 4 6 8 10];
+% 
+% O2HbChansR=[23 25 27 29 31];
+% HHbChansR=[24 26 28 30 32];
+
 % time_series1(O2HbChansL);
 % time_series1(O2HbChansR);
 % 
@@ -35,8 +42,8 @@ HHbChansR=24:2:44;
 % subplot(2,1,2);plot(sgolayfilt(double(time_series1'),1,61));title('after sgolay');
 
 sgolayfilt_data=sgolayfilt(double(time_series1'),1,201);
-%%
 
+%%
 % organized time_series1 into trials
 % time_series1_baseline=time_series1(:,stamp1index_Baseline_Start:stamp1index_Baseline_End);
 
@@ -77,17 +84,21 @@ figure;
 subplot(2,1,1);plotx(time_series1_trials(:,:,1));title('before baseline correct');
 subplot(2,1,2);plotx(time_series1_trials_baselinecorrected(:,:,1));title('after');
 
+%% Separate left and right stimulus (if not detrend and not normalize)
+% time_series1_trialsL=time_series1_trials_baselinecorrected(:,:,trialsL);
+% time_series1_trialsR=time_series1_trials_baselinecorrected(:,:,trialsR);
+
 %% detrend
-% time_series1_trials_detrend=zeros(size(time_series1_trials_baselinecorrected));
-% for i=1:12
-%     time_series1_trials_detrend(:,:,i)=ndetrend(time_series1_trials_baselinecorrected(:,:,i),1);
-% end
-% figure; 
-% subplot(2,1,1);plotx(time_series1_trials_baselinecorrected(:,:,1));title('before detrend');
-% subplot(2,1,2);plotx(time_series1_trials_detrend(:,:,1));title('after detrend');
+time_series1_trials_detrend=zeros(size(time_series1_trials_baselinecorrected));
+for i=1:12
+    time_series1_trials_detrend(:,:,i)=ndetrend(time_series1_trials_baselinecorrected(:,:,i),1);
+end
+figure; 
+subplot(2,1,1);plotx(time_series1_trials_baselinecorrected(:,:,1));title('before detrend');
+subplot(2,1,2);plotx(time_series1_trials_detrend(:,:,1));title('after detrend');
 
 %% if not detrend
-time_series1_trials_detrend=time_series1_trials_baselinecorrected;
+% time_series1_trials_detrend=time_series1_trials_baselinecorrected;
 %% baseline normalization
 % baseline_averagesL=mean(mean(abs(time_series1_trialsL(1:trial_length,:,:)),3),1);
 % baseline_averagesR=mean(mean(abs(time_series1_trialsR(1:trial_length,:,:)),3),1);
