@@ -43,6 +43,62 @@ h(2) = plot(NaN,NaN,'b');
 h(3) = plot(NaN,NaN,'go');
 legend(h,'O2Hb channels','HHb Channels','experimental markers');
 
+%% plot of the resting baseline
+signal_resting_baseline=signal_series1(stamp1index_Baseline_Start:stamp1index_Baseline_End,:);
+plot(signal_resting_baseline)
+sgolayfilt_data=sgolayfilt(signal_resting_baseline,1,201);
+plot(sgolayfilt_data)
+
+figure;
+plot(sgolayfilt_data(:,1:2:43),'r');hold on;
+plot(sgolayfilt_data(:,2:2:44),'b');
+h = zeros(2, 1);
+h(1) = plot(NaN,NaN,'r');
+h(2) = plot(NaN,NaN,'b');
+legend(h,'O2Hb channels','HHb Channels');
+
+baseline_averages=mean(mean(sgolayfilt_data(1:75*10,:,:),1),1);
+baseline_averages_mat=baseline_averages.*ones(size(sgolayfilt_data,1),1);
+time_series1_trials_baselinecorrected=sgolayfilt_data-baseline_averages_mat;
+plot(time_series1_trials_baselinecorrected)
+
+abs_baseline_averages=mean(mean(abs(time_series1_trials_baselinecorrected(1:75*10,:,:)),1),1);
+abs_baseline_averages_mat=abs_baseline_averages.*ones(size(time_series1_trials_baselinecorrected,1),1);
+time_series1_trials_baselinenormalization=time_series1_trials_baselinecorrected./abs_baseline_averages_mat;
+plot(time_series1_trials_baselinenormalization)
+
+figure;
+plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,1:2:43),'r');
+hold on;
+plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,2:2:44),'b');
+h = zeros(2, 1);
+h(1) = plot(NaN,NaN,'r');
+h(2) = plot(NaN,NaN,'b');
+legend(h,'O2Hb channels','HHb Channels');
+xlabel('time (sec)')
+
+figure;
+subplot(2,1,1);
+plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,O2HbChansL),'r');
+hold on;
+plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,HHbChansL),'b');
+h = zeros(2, 1);
+h(1) = plot(NaN,NaN,'r');
+h(2) = plot(NaN,NaN,'b');
+legend(h,'O2Hb channels on the Left hemisphere','HHb Channels on the Left hemisphere');
+xlabel('time (sec)')
+subplot(2,1,2);
+plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,O2HbChansR),'r');
+hold on;
+plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,HHbChansL),'b');
+h = zeros(2, 1);
+h(1) = plot(NaN,NaN,'r');
+h(2) = plot(NaN,NaN,'b');
+legend(h,'O2Hb channels on the Left hemisphere','HHb Channels on the Left hemisphere');
+xlabel('time (sec)')
+
+
+
 %% do not detrend, artiface at the beginning make it even more slanted
 % cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\EEGanalysis\20211102
 % before_detrend_data=time_series1(:,1000:end);
@@ -58,7 +114,7 @@ legend(h,'O2Hb channels','HHb Channels','experimental markers');
 
 sgolayfilt_data=sgolayfilt(double(time_series1'),1,201);
 
-sgolayfilt_data=
+% sgolayfilt_data=time_series1';
 %%
 % organized time_series1 into trials
 % time_series1_baseline=time_series1(:,stamp1index_Baseline_Start:stamp1index_Baseline_End);
@@ -79,7 +135,16 @@ end
 % subplot(2,1,2);plot(ndetrend(time_series1_trials(:,:,1),1));
 
 figure;
-plotx(time_series1_trials(:,:,1));
+plot(time_series1_trials(:,1:2:43,1),'r');
+hold on;
+plot(time_series1_trials(:,2:2:44,1),'b');
+
+h = zeros(2, 1);
+h(1) = plot(NaN,NaN,'r');
+h(2) = plot(NaN,NaN,'b');
+legend(h,'O2Hb channels','HHb Channels');
+xlabel('time');
+
 
 %% baseline correction
 % baseline_averagesL=mean(mean(time_series1_trials(1:trial_length,:,trialsL),3),1);
