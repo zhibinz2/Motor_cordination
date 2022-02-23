@@ -2,6 +2,7 @@
 
 % addpath  C:\Users\zhibi\Documents\GitHub\xdf-Matlab
 % addpath /home/zhibin/Documents/GitHub/xdf-Matlab
+% addpath D:\360MoveData\Users\alienware\Documents\GitHub\xdf-Matlab
 % cd /home/zhibin/Documents/Artinis NIRS/zhibin/20220213fNIRS_LSL
 % 
 % cd C:\Users\NIRS\Documents\GitHub\xdf-Matlab
@@ -12,7 +13,7 @@
 % cd F:\UCI_dataset\fNIR\20220215\2022021508
 cd F:\UCI_dataset\fNIR\20220215\
 %%
-clear
+clear;close all;
 fileList = dir('*.xdf');
 fileList.name
 [streams,fileheader] = load_xdf(fileList.name);
@@ -52,7 +53,7 @@ time_stamps2=streams{1,2}.time_stamps; % noting here
 % plot(time_stamps2(4:2:26),2.5, 'ro');trials_durations=num2str(time_stamps2(4:2:26)-time_stamps2(3:2:25));
 
 index_Baseline_Start = find(strcmp(horzcat({time_series2{:}}),'Baseline-Start')==1); % index_Baseline_Start(1)=[];
-index_Baseline_End = find(strcmp(horzcat({time_series2{:}}),'Baseline-End')==1); %(1)=[];
+index_Baseline_End = find(strcmp(horzcat({time_series2{:}}),'Baseline-End')==1); % index_Baseline_End(1)=[];
 index_Trial_Start = find(strcmp(horzcat({time_series2{:}}),'Trial-Start')==1); % index_Trial_Start(1)=[];
 index_Trial_End = find(strcmp(horzcat({time_series2{:}}),'Trial-End')==1);
 index_Screen_Flip = find(strcmp(horzcat({time_series2{:}}),'Screen_Flip')==1);
@@ -64,8 +65,9 @@ baseline_duration=num2str(time_stamps2(index_Baseline_End(1))-time_stamps2(index
 plot(time_stamps2(index_Trial_Start),2, 'bo'); 
 plot(time_stamps2(index_Trial_End),2.5, 'ro');
 trials_durations=num2str(time_stamps2(index_Trial_End(1:end))-time_stamps2(index_Trial_Start(1:end)))
+trials_intervals=num2str(time_stamps2(index_Trial_End(1:end-1))-time_stamps2(index_Trial_Start(2:end)))
 
-% plot(time_stamps2(index_Screen_Flip),3, 'go');
+% plot(time_stamps2(index_Screen_Flip),30, 'go');
 % 
 % figure; plot(diff(time_stamps2(index_Screen_Flip)),'ro');
 % diff(time_stamps2(index_Screen_Flip))
@@ -74,9 +76,10 @@ cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\fNIR_test
 % map index in time_stamps2 to time_stamps1
 [stamp1index_Baseline_Start,stamp1index_Baseline_End,stamp1index_Trial_Start,stamp1index_Trial_End] = getStamp1indices(time_stamps1,time_stamps2,time_series2);
 
+%%
 % load behaviral
 open xdfchannels.m
-
+%%
 % repmat_stamp1=repmat(time_stamps1',[1,length(time_stamps2)]);
 % [minValue,closestIndex_stamp1] = min(abs(repmat_stamp1-time_stamps2));
 % closestValue = time_stamps1(closestIndex_stamp1) 
@@ -86,10 +89,10 @@ open xdfchannels.m
 % time_stamps2(index_Trial_Start)
 % time_stamps2(index_Trial_End)
 
-stamp1index_Baseline_Start
-stamp1index_Baseline_End
-stamp1index_Trial_Start
-stamp1index_Trial_End
+% stamp1index_Baseline_Start
+% stamp1index_Baseline_End
+% stamp1index_Trial_Start
+% stamp1index_Trial_End
 
 % find(ismember(time_stamps1,time_stamps2(index_Baseline_Start)))
 % find(ismember(time_stamps1,time_stamps2(index_Baseline_End)))
@@ -135,3 +138,4 @@ stamp1index_Trial_End
 % num2str(time_stamps1(end))
 % num2str(time_stamps3(end))
 % num2str(time_stamps4(end))
+

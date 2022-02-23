@@ -28,6 +28,21 @@ HHbChansR=24:2:44;
 % time_series1(HHbChansL);
 % time_series1(HHbChansR);
 
+%% some plots of the raw data
+figure('units','normalized','outerposition',[0 0 0.8 0.4]);
+signal_series1=time_series1';
+time_series=time_stamps1;
+plot(time_stamps1,signal_series1(:,1:2:43),'r');
+hold on;
+plot(time_stamps1,signal_series1(:,2:2:44),'b');
+plot(time_stamps2(index_Screen_Flip),30, 'go');
+
+h = zeros(3, 1);
+h(1) = plot(NaN,NaN,'r');
+h(2) = plot(NaN,NaN,'b');
+h(3) = plot(NaN,NaN,'go');
+legend(h,'O2Hb channels','HHb Channels','experimental markers');
+
 %% do not detrend, artiface at the beginning make it even more slanted
 % cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\EEGanalysis\20211102
 % before_detrend_data=time_series1(:,1000:end);
@@ -43,6 +58,7 @@ HHbChansR=24:2:44;
 
 sgolayfilt_data=sgolayfilt(double(time_series1'),1,201);
 
+% sgolayfilt_data=time_series1';
 %%
 % organized time_series1 into trials
 % time_series1_baseline=time_series1(:,stamp1index_Baseline_Start:stamp1index_Baseline_End);
@@ -63,7 +79,16 @@ end
 % subplot(2,1,2);plot(ndetrend(time_series1_trials(:,:,1),1));
 
 figure;
-plotx(time_series1_trials(:,:,1));
+plot(time_series1_trials(:,1:2:43,1),'r');
+hold on;
+plot(time_series1_trials(:,2:2:44,1),'b');
+
+h = zeros(2, 1);
+h(1) = plot(NaN,NaN,'r');
+h(2) = plot(NaN,NaN,'b');
+legend(h,'O2Hb channels','HHb Channels');
+xlabel('time');
+
 
 %% baseline correction
 % baseline_averagesL=mean(mean(time_series1_trials(1:trial_length,:,trialsL),3),1);

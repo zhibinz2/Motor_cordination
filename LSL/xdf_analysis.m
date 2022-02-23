@@ -2,6 +2,7 @@
 
 % addpath  C:\Users\zhibi\Documents\GitHub\xdf-Matlab
 % addpath /home/zhibin/Documents/GitHub/xdf-Matlab
+% addpath D:\360MoveData\Users\alienware\Documents\GitHub\xdf-Matlab
 % cd /home/zhibin/Documents/Artinis NIRS/zhibin/20220213fNIRS_LSL
 % 
 % cd C:\Users\NIRS\Documents\GitHub\xdf-Matlab
@@ -64,8 +65,9 @@ baseline_duration=num2str(time_stamps2(index_Baseline_End(1))-time_stamps2(index
 plot(time_stamps2(index_Trial_Start),2, 'bo'); 
 plot(time_stamps2(index_Trial_End),2.5, 'ro');
 trials_durations=num2str(time_stamps2(index_Trial_End(1:end))-time_stamps2(index_Trial_Start(1:end)))
+trials_intervals=num2str(time_stamps2(index_Trial_End(1:end-1))-time_stamps2(index_Trial_Start(2:end)))
 
-% plot(time_stamps2(index_Screen_Flip),3, 'go');
+% plot(time_stamps2(index_Screen_Flip),30, 'go');
 % 
 % figure; plot(diff(time_stamps2(index_Screen_Flip)),'ro');
 % diff(time_stamps2(index_Screen_Flip))
@@ -136,3 +138,4 @@ open xdfchannels.m
 % num2str(time_stamps1(end))
 % num2str(time_stamps3(end))
 % num2str(time_stamps4(end))
+
