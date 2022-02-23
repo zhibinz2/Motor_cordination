@@ -175,10 +175,29 @@ try
     waitframes = (1/8)/ifi;
     
     % Setting time variables**********************************************
+    % Length of one minute baseline
+    BaselineLength = 60; %4; % 4 s to move
+    numFramesBaseline = round(BaselineLength / ifi / waitframes);
+
     % total number of frames per trial
-    numFrames=round(1/ifi)*10; % 10 seconds 
+    numFrames=round(10/ifi/waitframes); % 10 seconds 
     % **********************************************Setting time variables
     
+    % Hide Mice:****************************************************************
+    % Get handles for all virtual pointing devices, aka cursors:
+    typeOnly='masterPointer'; 
+    mice = GetMouseIndices(typeOnly);  
+    % DuoMice: ***************************************************************
+    % Hide the system-generated cursors. We do this, because only the
+    % first mouse cursor is hardware-accelerated, HideCursorie., a GPU created
+    % hardware cursor. All other cursors are software-cursors, created
+    % by the Windowing system. These tend to flicker badly in our use
+    % case. Therefore we disable all system cursor images and draw our
+    % cursors ourselves for a more beautiful look:
+    % Hide the cursor
+    HideCursor(windowPtr,mice);
+    %HideCursor(windowPtr,mice(1));
+
     % Baseline taking 60s  **********************************************
     instructionStart=['Hit any key and then look at the center of the screen for 1 min'];
     DrawFormattedText2(instructionStart,'win',windowPtr,...
@@ -196,10 +215,16 @@ try
     % send markers into the outlet
     mrk = markers{1};
     outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+    
+    tic
+%     startTime = now;
+%     numberOfSecondsElapsed = 0;
+%     while numberOfSecondsElapsed < 60
 
-    startTime = now;
-    numberOfSecondsElapsed = 0;
-    while numberOfSecondsElapsed < 60
+    % get a timestamp and begin the baseline 
+    vbl = Screen('Flip', windowPtr);
+    n=1;
+    while n < numFramesBaseline
         % If esc is press, break out of the while loop and close the screen
         [keyIsDown, keysecs, keyCode] = KbCheck;
         if keyCode(KbName('escape'))
@@ -208,20 +233,24 @@ try
         end
 
         % Update the while loop with time
-        numberOfSecondsElapsed = (now - startTime) * 10 ^ 5;
+%         numberOfSecondsElapsed = (now - startTime) * 10 ^ 5;
         
         % Show the fixation cross
         Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/300, white, [0 0], 2);
-        Screen('Flip', windowPtr);
+        vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
 
         % LSL marker to check screen flip frequency
         % send markers into the outlet
         mrk = markers{5};
         outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+
+        n=n+1
     end
     % send markers into the outlet
     mrk = markers{2};
     outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+    BaselineDuration=toc
+    
 
     pause(5);% to separate baseline markers and trial markers
     instructionStart=['OK. Press a key to start!']; % Tell subject to open eye and start
@@ -232,7 +261,8 @@ try
     KbStrokeWait;
     % ************************************************ Baseline taking 60s 
 
-    HideCursor;
+    % initialize some variables
+    TrialDurations=[]
 
     %############################### Loop through block
     %*******************************Loop through block

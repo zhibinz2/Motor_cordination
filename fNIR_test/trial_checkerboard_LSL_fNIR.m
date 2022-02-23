@@ -1,7 +1,8 @@
-startTime = now;
-numberOfSecondsElapsed = 0;
-
-while numberOfSecondsElapsed < 10;
+% startTime = now;
+% numberOfSecondsElapsed = 0;
+tic 
+% while numberOfSecondsElapsed < 10;
+while n <  numFrames 
     % If esc is press, break out of the while loop and close the screen
     [keyIsDown, keysecs, keyCode] = KbCheck;
     if keyCode(KbName('escape'));
@@ -44,3 +45,5 @@ while numberOfSecondsElapsed < 10;
     % update n
     n = n+1;
 end
+TrialDuration=toc
+TrialDurations=[TrialDurations;TrialDuration];
