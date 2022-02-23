@@ -201,3 +201,7 @@ subplot(2,1,2);plotx(time_series1_trials_baselinenormalization(:,:,1));title('af
 %% Separate left and right stimulus
 time_series1_trialsL=time_series1_trials_baselinenormalization(:,:,trialsL);
 time_series1_trialsR=time_series1_trials_baselinenormalization(:,:,trialsR);
+
+%%
+cd C:\Users\zhibi\Documents\GitHub\Motor_cordination\fNIR_test\
+open combine_sessions.m
