@@ -16,7 +16,7 @@ addpath C:\Users\zhibi\Documents\GitHub\xdf-Matlab
 % cd C:\Users\NIRS\Desktop\Acquisition\zhibin
 % cd F:\UCI_dataset\fNIR\20220215\2022021508
 % cd F:\UCI_dataset\fNIR\20220215\
-cd C:\Users\zhibi\Desktop\Artinis_NIRS\zhibin\20220215
+cd C:\Users\zhibi\Desktop\Artinis_NIRS\zhibin\
 %%
 clear;close all;
 fileList = dir('*.xdf');
@@ -81,7 +81,7 @@ inter_trials_intervals=num2str(time_stamps2(index_Trial_Start(2:end))-time_stamp
 % figure; plot(diff(time_stamps2(index_Screen_Flip)),'ro');
 % diff(time_stamps2(index_Screen_Flip))
 
-cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\fNIR_test
+% cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\fNIR_test
 cd C:\Users\zhibi\Documents\GitHub\Motor_cordination\fNIR_test
 % map index in time_stamps2 to time_stamps1
 [stamp1index_Baseline_Start,stamp1index_Baseline_End,stamp1index_Trial_Start,stamp1index_Trial_End] = getStamp1indices(time_stamps1,time_stamps2,time_series2);

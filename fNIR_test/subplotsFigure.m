@@ -1,8 +1,9 @@
-TrialTime=1/srate*[1:1:size(time_series1_trialsL_sessions,1)]-8.82;
+TrialTime=1/srate*[1:1:size(time_series1_trialsL_sessions,1)]-10.5;
 Ylim=5;
-Chanselected=[1:5];
+Chanselected=[1:3];
 
-cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\fNIR_test
+% cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\fNIR_test
+cd C:\Users\zhibi\Documents\GitHub\Motor_cordination\fNIR_test\
 
 figure;
 subplot(2,2,1);
@@ -51,3 +52,26 @@ title('Right cortex - Right stim');
 % patch([x, fliplr(x)], [yCI95(1,:) fliplr(yCI95(2,:))], 'b', 'EdgeColor','none', 'FaceAlpha',0.25)
 % hold off
 % grid
+
+%%
+TrialTime=1/srate*[1:1:size(time_series1_baseline_sessions,1)]-10.5;
+Ylim=5;
+Chanselected=[1:11];
+
+% cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\fNIR_test
+cd C:\Users\zhibi\Documents\GitHub\Motor_cordination\fNIR_test
+
+figure;
+subplot(2,1,1);
+BaselineO2ChansL=squeeze(mean(time_series1_baseline_sessions(:,O2HbChansL(Chanselected),:),2))'; % keep all trials, but average across all right oxy channels 
+BaselineHHChansL=squeeze(mean(time_series1_baseline_sessions(:,HHbChansL(Chanselected),:),2))';
+plotSEM(TrialTime,BaselineO2ChansL,'r');hold on;
+plotSEM(TrialTime,BaselineHHChansL,'b');hold off;grid;ylim([-Ylim Ylim]);
+title('Left cortex');
+
+subplot(2,1,2);
+BaselineO2ChansR=squeeze(mean(time_series1_baseline_sessions(:,O2HbChansR(Chanselected),:),2))'; % keep all trials, but average across all right oxy channels 
+BaselineHHChansR=squeeze(mean(time_series1_baseline_sessions(:,HHbChansR(Chanselected),:),2))';
+plotSEM(TrialTime,BaselineO2ChansR,'r');hold on;
+plotSEM(TrialTime,BaselineHHChansR,'b');hold off;grid;ylim([-Ylim Ylim]);
+title('Right cortex');

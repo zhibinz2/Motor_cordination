@@ -29,76 +29,86 @@ HHbChansR=24:2:44;
 % time_series1(HHbChansR);
 
 %% some plots of the raw data
-figure('units','normalized','outerposition',[0 0 0.8 0.4]);
-signal_series1=time_series1';
-time_series=time_stamps1;
-plot(time_stamps1,signal_series1(:,1:2:43),'r');
-hold on;
-plot(time_stamps1,signal_series1(:,2:2:44),'b');
-plot(time_stamps2(index_Screen_Flip),30, 'go');
-
-h = zeros(3, 1);
-h(1) = plot(NaN,NaN,'r');
-h(2) = plot(NaN,NaN,'b');
-h(3) = plot(NaN,NaN,'go');
-legend(h,'O2Hb channels','HHb Channels','experimental markers');
+% figure('units','normalized','outerposition',[0 0 0.8 0.4]);
+signal_series1=double(time_series1');
+% time_series=time_stamps1;
+% plot(time_stamps1,signal_series1(:,1:2:43),'r');
+% hold on;
+% plot(time_stamps1,signal_series1(:,2:2:44),'b');
+% plot(time_stamps2(index_Screen_Flip),30, 'go');
+% 
+% h = zeros(3, 1);
+% h(1) = plot(NaN,NaN,'r');
+% h(2) = plot(NaN,NaN,'b');
+% h(3) = plot(NaN,NaN,'go');
+% legend(h,'O2Hb channels','HHb Channels','experimental markers');
 
 %% plot of the resting baseline
 signal_resting_baseline=signal_series1(stamp1index_Baseline_Start:stamp1index_Baseline_End,:);
-plot(signal_resting_baseline)
+% plot(signal_resting_baseline)
 sgolayfilt_data=sgolayfilt(signal_resting_baseline,1,201);
-plot(sgolayfilt_data)
+% plot(sgolayfilt_data)
 
-figure;
-plot(sgolayfilt_data(:,1:2:43),'r');hold on;
-plot(sgolayfilt_data(:,2:2:44),'b');
-h = zeros(2, 1);
-h(1) = plot(NaN,NaN,'r');
-h(2) = plot(NaN,NaN,'b');
-legend(h,'O2Hb channels','HHb Channels');
+% figure;
+% plot(sgolayfilt_data(:,1:2:43),'r');hold on;
+% plot(sgolayfilt_data(:,2:2:44),'b');
+% h = zeros(2, 1);
+% h(1) = plot(NaN,NaN,'r');
+% h(2) = plot(NaN,NaN,'b');
+% legend(h,'O2Hb channels','HHb Channels');
 
 baseline_averages=mean(mean(sgolayfilt_data(1:75*10,:,:),1),1);
 baseline_averages_mat=baseline_averages.*ones(size(sgolayfilt_data,1),1);
 time_series1_trials_baselinecorrected=sgolayfilt_data-baseline_averages_mat;
-plot(time_series1_trials_baselinecorrected)
+% plot(time_series1_trials_baselinecorrected)
 
 abs_baseline_averages=mean(mean(abs(time_series1_trials_baselinecorrected(1:75*10,:,:)),1),1);
 abs_baseline_averages_mat=abs_baseline_averages.*ones(size(time_series1_trials_baselinecorrected,1),1);
 time_series1_trials_baselinenormalization=time_series1_trials_baselinecorrected./abs_baseline_averages_mat;
-plot(time_series1_trials_baselinenormalization)
+% plot(time_series1_trials_baselinenormalization)
 
-figure;
-plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,1:2:43),'r');
-hold on;
-plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,2:2:44),'b');
-h = zeros(2, 1);
-h(1) = plot(NaN,NaN,'r');
-h(2) = plot(NaN,NaN,'b');
-legend(h,'O2Hb channels','HHb Channels');
-xlabel('time (sec)')
+% figure;
+% plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,1:2:43),'r');
+% hold on;
+% plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,2:2:44),'b');
+% h = zeros(2, 1);
+% h(1) = plot(NaN,NaN,'r');
+% h(2) = plot(NaN,NaN,'b');
+% legend(h,'O2Hb channels','HHb Channels');
+% xlabel('time (sec)')
 
-figure;
-subplot(2,1,1);
-plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,O2HbChansL),'r');
-hold on;
-plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,HHbChansL),'b');
-h = zeros(2, 1);
-h(1) = plot(NaN,NaN,'r');
-h(2) = plot(NaN,NaN,'b');
-legend(h,'O2Hb channels on the Left hemisphere','HHb Channels on the Left hemisphere');
-xlabel('time (sec)')
-subplot(2,1,2);
-plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,O2HbChansR),'r');
-hold on;
-plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,HHbChansR),'b');
-h = zeros(2, 1);
-h(1) = plot(NaN,NaN,'r');
-h(2) = plot(NaN,NaN,'b');
-legend(h,'O2Hb channels on the Right hemisphere','HHb Channels on the Right hemisphere');
-xlabel('time (sec)')
+% figure;
+% subplot(2,1,1);
+% plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,O2HbChansL),'r');
+% hold on;
+% plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,HHbChansL),'b');
+% h = zeros(2, 1);
+% h(1) = plot(NaN,NaN,'r');
+% h(2) = plot(NaN,NaN,'b');
+% legend(h,'O2Hb channels on the Left hemisphere','HHb Channels on the Left hemisphere');
+% xlabel('time (sec)')
+% subplot(2,1,2);
+% plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,O2HbChansR),'r');
+% hold on;
+% plot(1/75*[1:3891],time_series1_trials_baselinenormalization(:,HHbChansR),'b');
+% h = zeros(2, 1);
+% h(1) = plot(NaN,NaN,'r');
+% h(2) = plot(NaN,NaN,'b');
+% legend(h,'O2Hb channels on the Right hemisphere','HHb Channels on the Right hemisphere');
+% xlabel('time (sec)')
 
 
+%% combine baseline sessions
+% time_series1_baseline_sessions=time_series1_trials_baselinenormalization;
 
+% cd C:\Users\zhibi\Desktop\Artinis_NIRS\zhibin\20220223
+% save('20220215baseline_sessions.mat','time_series1_baseline_sessions');
+% time_series1_baseline_sessions=time_series1_baseline_sessions(1:3850,:);
+time_series1_trials_baselinenormalization=time_series1_trials_baselinenormalization(1:3100,:);
+cd C:\Users\zhibi\Desktop\Artinis_NIRS\zhibin\20220223
+load 20220215baseline_sessions.mat
+time_series1_baseline_sessions=cat(3,time_series1_baseline_sessions,time_series1_trials_baselinenormalization);
+save('20220223baseline_sessions.mat','time_series1_baseline_sessions');
 %% do not detrend, artiface at the beginning make it even more slanted
 % cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\EEGanalysis\20211102
 % before_detrend_data=time_series1(:,1000:end);
@@ -116,11 +126,14 @@ sgolayfilt_data=sgolayfilt(double(time_series1'),1,201);
 
 % sgolayfilt_data=time_series1';
 %%
+cd C:\Users\zhibi\Documents\GitHub\Motor_cordination\fNIR_test
+
 % organized time_series1 into trials
 % time_series1_baseline=time_series1(:,stamp1index_Baseline_Start:stamp1index_Baseline_End);
 
+
 trial_length=max(stamp1index_Trial_End-stamp1index_Trial_Start)
-trial_length=634;
+trial_length=528;
 NumTrials=length(stamp1index_Trial_Start);
 NumChans=size(sgolayfilt_data,2);
 
@@ -147,6 +160,7 @@ xlabel('time');
 
 
 %% baseline correction
+addpath C:\Users\zhibi\Documents\GitHub\matlab
 % baseline_averagesL=mean(mean(time_series1_trials(1:trial_length,:,trialsL),3),1);
 % baseline_averagesR=mean(mean(time_series1_trials(1:trial_length,:,trialsR),3),1);
 % 
@@ -170,16 +184,16 @@ subplot(2,1,2);plotx(time_series1_trials_baselinecorrected(:,:,1));title('after'
 % time_series1_trialsR=time_series1_trials_baselinecorrected(:,:,trialsR);
 
 %% detrend
-time_series1_trials_detrend=zeros(size(time_series1_trials_baselinecorrected));
-for i=1:12
-    time_series1_trials_detrend(:,:,i)=ndetrend(time_series1_trials_baselinecorrected(:,:,i),1);
-end
-figure; 
-subplot(2,1,1);plotx(time_series1_trials_baselinecorrected(:,:,1));title('before detrend');
-subplot(2,1,2);plotx(time_series1_trials_detrend(:,:,1));title('after detrend');
+% time_series1_trials_detrend=zeros(size(time_series1_trials_baselinecorrected));
+% for i=1:12
+%     time_series1_trials_detrend(:,:,i)=ndetrend(time_series1_trials_baselinecorrected(:,:,i),1);
+% end
+% figure; 
+% subplot(2,1,1);plotx(time_series1_trials_baselinecorrected(:,:,1));title('before detrend');
+% subplot(2,1,2);plotx(time_series1_trials_detrend(:,:,1));title('after detrend');
 
 %% if not detrend
-% time_series1_trials_detrend=time_series1_trials_baselinecorrected;
+time_series1_trials_detrend=time_series1_trials_baselinecorrected;
 %% baseline normalization
 % baseline_averagesL=mean(mean(abs(time_series1_trialsL(1:trial_length,:,:)),3),1);
 % baseline_averagesR=mean(mean(abs(time_series1_trialsR(1:trial_length,:,:)),3),1);
