@@ -16,7 +16,7 @@ addpath C:\Users\zhibi\Documents\GitHub\xdf-Matlab
 % cd C:\Users\NIRS\Desktop\Acquisition\zhibin
 % cd F:\UCI_dataset\fNIR\20220215\2022021508
 % cd F:\UCI_dataset\fNIR\20220215\
-cd C:\Users\zhibi\Desktop\Artinis_NIRS\zhibin\
+cd C:\Users\zhibi\Desktop\Artinis_NIRS\zhibin\20220223
 %%
 clear;close all;
 fileList = dir('*.xdf');

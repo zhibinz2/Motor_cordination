@@ -1,6 +1,6 @@
 TrialTime=1/srate*[1:1:size(time_series1_trialsL_sessions,1)]-10.5;
 Ylim=5;
-Chanselected=[1:3];
+Chanselected=[1:5];
 
 % cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\fNIR_test
 cd C:\Users\zhibi\Documents\GitHub\Motor_cordination\fNIR_test\
@@ -53,10 +53,10 @@ title('Right cortex - Right stim');
 % hold off
 % grid
 
-%%
+%% More than one session combine
 TrialTime=1/srate*[1:1:size(time_series1_baseline_sessions,1)]-10.5;
 Ylim=5;
-Chanselected=[1:11];
+Chanselected=[1:5];
 
 % cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\fNIR_test
 cd C:\Users\zhibi\Documents\GitHub\Motor_cordination\fNIR_test
