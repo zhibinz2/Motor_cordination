@@ -125,6 +125,20 @@ save('20220223baseline_sessions.mat','time_series1_baseline_sessions');
 sgolayfilt_data=sgolayfilt(double(time_series1'),1,201);
 
 % sgolayfilt_data=time_series1';
+
+%% baseline correction for detrending (with the 1 min resting baseline)
+baseline_averages=mean(mean(sgolayfilt_data(stamp1index_Baseline_Start:stamp1index_Baseline_End,:),1),1);
+baseline_averages_mat=ones(size(sgolayfilt_data,1),1).*baseline_averages;
+
+% figure; imagesc(baseline_averages_mat(:,:,1));
+% figure; imagesc(squeeze(baseline_averages_mat(1,:,:)));
+
+sgolayfilt_data=sgolayfilt_data-baseline_averages_mat;
+
+figure; plotx(sgolayfilt_data);title('after baseline correct over the whole block');
+
+
+
 %%
 cd C:\Users\zhibi\Documents\GitHub\Motor_cordination\fNIR_test
 

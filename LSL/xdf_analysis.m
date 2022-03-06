@@ -3,7 +3,7 @@
 % addpath  C:\Users\zhibi\Documents\GitHub\xdf-Matlab
 % addpath /home/zhibin/Documents/GitHub/xdf-Matlab
 % addpath D:\360MoveData\Users\alienware\Documents\GitHub\xdf-Matlab
-addpath C:\Users\zhibi\Documents\GitHub\xdf-Matlab
+addpath(genpath('C:\Users\zhibi\Documents\GitHub\xdf-Matlab')); 
 
 % addpath C:\Users\NIRS\Documents\GitHub\xdf-Matlab
 

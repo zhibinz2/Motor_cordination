@@ -106,7 +106,7 @@ time_series1_trials_baselinenormalization=time_series1_trials_baselinecorrected.
 % time_series1_baseline_sessions=time_series1_baseline_sessions(1:3850,:);
 time_series1_trials_baselinenormalization=time_series1_trials_baselinenormalization(1:3100,:);
 cd C:\Users\zhibi\Desktop\Artinis_NIRS\zhibin\20220223
-load 20220215baseline_sessions.mat
+load 20220223baseline_sessions.mat
 time_series1_baseline_sessions=cat(3,time_series1_baseline_sessions,time_series1_trials_baselinenormalization);
 save('20220223baseline_sessions.mat','time_series1_baseline_sessions');
 %% do not detrend, artiface at the beginning make it even more slanted
@@ -125,6 +125,21 @@ save('20220223baseline_sessions.mat','time_series1_baseline_sessions');
 sgolayfilt_data=sgolayfilt(double(time_series1'),1,201);
 
 % sgolayfilt_data=time_series1';
+
+%% baseline correction for detrending (with the 1 min resting baseline)
+baseline_averages=mean(mean(sgolayfilt_data(stamp1index_Baseline_Start:stamp1index_Baseline_End,:),1),1);
+baseline_averages_mat=ones(size(sgolayfilt_data,1),1).*baseline_averages;
+
+% figure; imagesc(baseline_averages_mat(:,:,1));
+% figure; imagesc(squeeze(baseline_averages_mat(1,:,:)));
+
+sgolayfilt_data=sgolayfilt_data-baseline_averages_mat;
+
+figure; 
+subplot(2,1,1);plotx(sgolayfilt_data);title('after baseline correct over the ');
+subplot(2,1,2);plotx(time_series1_trials_baselinecorrected(:,:,1));title('after');
+
+
 %%
 cd C:\Users\zhibi\Documents\GitHub\Motor_cordination\fNIR_test
 
