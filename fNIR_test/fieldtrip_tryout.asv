@@ -1,4 +1,4 @@
-clear
+
 
 %% https://www.fieldtriptoolbox.org/faq/should_i_add_fieldtrip_with_all_subdirectories_to_my_matlab_path/
 % addpath C:\Users\zhibi\Downloads\fieldtrip-lite-20220304\fieldtrip-20220304 %not working
@@ -9,9 +9,7 @@ restoredefaultpath
 addpath C:\Users\zhibi\Downloads\fieldtrip-20201229\fieldtrip-20201229
 ft_defaults
 
-restoredefaultpath
-addpath C:\Users\zhibi\Downloads\fieldtrip-20220304\fieldtrip-20220304 % this version is better
-ft_defaults
+
 %%  https://www.fieldtriptoolbox.org/tutorial/nirs_singlechannel/
 help ft_preprocessing
 edit ft_preprocessing
