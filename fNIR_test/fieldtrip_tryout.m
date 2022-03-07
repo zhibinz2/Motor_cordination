@@ -32,11 +32,130 @@ cfg.ylim = 'maxmin';
 cfg.channel = {'Rx4b-Tx5*'}; 
 ft_databrowser(cfg, data);
 
+% Exercise 1
+cfg = [];
+cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};
+cfg.artfctdef.zvalue.cutoff = 5;
+cfg.artfctdef.zvalue.hpfilter = 'yes';
+cfg.artfctdef.zvalue.hpfreq = 0.1;
+cfg.artfctdef.zvalue.rectify = 'yes';
+cfg.artfctdef.zvalue.artpadding = 2;
+% cfg.artfctdef.zvalue.interactive = 'yes'; % the interactive display makes more sense after segmentating data in trials
+[cfg, artifact] = ft_artifact_zvalue(cfg, data);
+
+% Exercise 2
+cfg = [];
+cfg.dpf = 5.9;
+cfg.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};
+data_conc = ft_nirs_transform_ODs(cfg, data);
+
+% Exercise 3
+cfg = [];
+cfg.ylim = 'maxmin';
+% cfg.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};  % you can also use wildcards like 'Rx4b-Tx5*'
+cfg.channel = {'Rx4b-Tx5*'}; 
+ft_databrowser(cfg, data_conc);
+
+cfg = [];
+cfg.bpfilter = 'yes';
+cfg.bpfreq = [0.01 0.1];
+data_filtered = ft_preprocessing(cfg, data_conc);
+
+% Define epochs of interest
+help ft_definetrial
+
+cfg = [];
+cfg.dataset = 'motor_cortex.oxy3';
+cfg.trialdef.eventtype = '?';
+
+ft_definetrial(cfg);
+
+cfg.trialdef.eventtype  = 'event';
+cfg.trialdef.eventvalue = 'A';
+cfg.trialdef.prestim    = 10;
+cfg.trialdef.poststim   = 35;
+
+cfg = ft_definetrial(cfg);
+
+cfg.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};
+data_epoch = ft_redefinetrial(cfg, data_filtered);
+
+cfg = [];
+cfg.ylim = [-1 1];
+cfg.viewmode = 'vertical';
+cfg.artfctdef.zvalue.artifact = artifact;
+
+ft_databrowser(cfg, data_epoch); % inconsistent number of samples in trial 1 ?
+
+cfg = [];
+cfg.artfctdef.zvalue.artifact = artifact;
+cfg.artfctdef.reject = 'complete';
+data_epoch = ft_rejectartifact(cfg, data_epoch);
+
+% Exercise 4
+
+% Exercise 5
+cfg = [];
+data_timelock = ft_timelockanalysis(cfg, data_epoch);
+
+time = data_timelock.time;
+O2Hb = data_timelock.avg(1,:);
+HHb  = data_timelock.avg(2,:);
+figure;
+plot(time,O2Hb,'r'); hold on;
+plot(time,HHb,'b');
+legend('O2Hb','HHb'); ylabel('\DeltaHb (\muM)'); xlabel('time (s)');
+
 %% https://www.fieldtriptoolbox.org/tutorial/nirs_multichannel/
+clear
 cd C:\Users\zhibi\Downloads\nirs_multichannel
 cfg             = [];
 cfg.dataset     = 'LR-01-2015-06-01-0002.oxy3';
 data_raw        = ft_preprocessing(cfg);
+
+cfg           = [];
+cfg.opto      = 'LR-01-2015-06-01-0002.oxy3';
+ft_layoutplot(cfg);
+
+find(strcmp(data_raw.label,'ADC001'))
+find(strcmp(data_raw.label,'ADC002'))
+
+figure; hold on
+% plot the voltage of ADC001 and ADC002
+% increase the scale of ADC002 a little bit to make it more clear in the figure
+plot(data_raw.time{1}, data_raw.trial{1}(97,:)*1.0, 'b-')
+plot(data_raw.time{1}, data_raw.trial{1}(98,:)*1.1, 'r:')
+
+% Exercise 1
+event = ft_read_event('LR-01-2015-06-01-0002.oxy3')
+
+% Exercise 2
+data_raw.fsample
+
+cfg                   = [];
+cfg.resamplefs        = 10;
+data_down             = ft_resampledata(cfg, data_raw);
+
+cfg                = [];
+cfg.preproc.demean = 'yes';
+cfg.viewmode       = 'vertical';
+cfg.continuous     = 'no';
+cfg.ylim           = [ -0.003   0.003 ];
+cfg.channel        = 'Rx*'; % only show channels starting with Rx
+ft_databrowser(cfg, data_down);
+
+cfg                 = [];
+cfg.hpfilter        = 'yes';
+cfg.hpfreq          = 0.01;
+data_flt            = ft_preprocessing(cfg,data_down);
+
+cfg                = [];
+cfg.preproc.demean = 'yes';
+cfg.viewmode       = 'vertical';
+cfg.continuous     = 'no';
+cfg.ylim           = [ -0.003   0.003 ];
+cfg.channel        = 'Rx*'; % only show channels starting with Rx
+ft_databrowser(cfg, data_flt);
 
 %% my data
 cfg = [];
