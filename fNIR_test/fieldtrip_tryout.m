@@ -157,6 +157,126 @@ cfg.ylim           = [ -0.003   0.003 ];
 cfg.channel        = 'Rx*'; % only show channels starting with Rx
 ft_databrowser(cfg, data_flt);
 
+event = ft_read_event('LR-01-2015-06-01-0002.oxy3');
+
+adc001 = find(strcmp({event.type}, 'ADC001'));
+adc002 = find(strcmp({event.type}, 'ADC002'));
+
+% get the sample number in the original data
+% note that we transpose them to get columns
+smp001 = [event(adc001).sample]';
+smp002 = [event(adc002).sample]';
+
+factor = data_raw.fsample / data_down.fsample
+
+% get the sample number after downsampling
+smp001 = round((smp001-1)/factor + 1);
+smp002 = round((smp002-1)/factor + 1);
+
+pre    =  round( 5*data_down.fsample);
+post   =  round(20*data_down.fsample);
+offset = -pre; % see ft_definetrial
+
+trl001 = [smp001-pre smp001+post];
+trl002 = [smp002-pre smp002+post];
+
+% add the offset
+trl001(:,3) = offset;
+trl002(:,3) = offset;
+
+trl001(:,4) = 1; % add a column with the condition number
+trl002(:,4) = 2; % add a column with the condition number
+
+% concatenate the two conditions and sort them
+trl = sortrows([trl001; trl002])
+
+% remove trials that stretch beyond the end of the recording
+sel = trl(:,2)<size(data_down.trial{1},2);
+trl = trl(sel,:);
+
+cfg     = [];
+cfg.trl = trl;
+data_epoch = ft_redefinetrial(cfg,data_down);
+
+idx = find(data_epoch.trialinfo==2, 1, 'first') % the first deviant:
+
+cfg          = [];
+cfg.channel  = 'Rx*';
+cfg.trials   = 8;
+cfg.baseline = 'yes';
+ft_singleplotER(cfg, data_epoch)
+
+% Exercise 3
+cfg      = [];
+data_sci = ft_nirs_scalpcouplingindex(cfg, data_epoch);
+
+% Exercise 4
+cfg                 = [];
+cfg.target          = {'O2Hb', 'HHb'};
+cfg.channel         = 'nirs'; % e.g., one channel incl. wildcards, you can also use ?all? to select all NIRS channels
+data_conc           = ft_nirs_transform_ODs(cfg, data_sci);
+
+cfg          = [];
+cfg.channel  = 'Rx*';
+cfg.trials   = 8;
+cfg.baseline = 'yes';
+ft_singleplotER(cfg, data_conc)
+
+cfg                   = [];
+cfg.lpfilter          = 'yes';
+cfg.lpfreq            = 0.8;
+data_lpf              = ft_preprocessing(cfg, data_conc);
+
+cfg          = [];
+cfg.channel  = 'Rx*';
+cfg.trials   = 8;
+cfg.baseline = 'yes';
+ft_singleplotER(cfg, data_lpf)
+
+cfg               = [];
+cfg.trials        = find(data_lpf.trialinfo(:,1) == 1);
+timelockSTD       = ft_timelockanalysis(cfg, data_lpf);
+
+cfg                 = [];
+cfg.baseline        = [-5 0];
+timelockSTD         = ft_timelockbaseline(cfg, timelockSTD);
+
+cfg           = [];
+cfg.trials    = find(data_lpf.trialinfo(:,1) == 2);
+timelockDEV   = ft_timelockanalysis(cfg, data_lpf);
+
+cfg           = [];
+cfg.baseline  = [-5 0];
+timelockDEV   = ft_timelockbaseline(cfg, timelockDEV);
+
+load('nirs_48ch_layout.mat')
+figure; ft_plot_layout(lay) % note that O2Hb and HHb channels fall on top of each other
+
+cfg                   = [];
+cfg.showlabels        = 'yes';
+cfg.layout            = lay;      % you could also specify the name of the mat file
+cfg.interactive       = 'yes';
+cfg.linecolor         = 'rb';
+cfg.colorgroups(contains(timelockDEV.label, 'O2Hb')) = 1; % these will be red
+cfg.colorgroups(contains(timelockDEV.label, 'HHb'))  = 2; % these will be blue
+ft_multiplotER(cfg, timelockDEV);
+
+cfg          = [];
+cfg.layout   = lay;      % you could also specify the name of the mat file
+cfg.marker   = 'labels';
+cfg.xlim     = [5 7];
+cfg.zlim     = [-0.2 0.2];
+
+cfg.channel  = '* [O2Hb]';
+figure; 
+ft_topoplotER(cfg, timelockDEV);
+title('[O2Hb]');
+
+cfg.channel  = '* [HHb]';
+figure; 
+ft_topoplotER(cfg, timelockDEV);
+title('[HHb]');
+
 %% my data
 cfg = [];
 cd C:\Users\zhibi\Desktop\Artinis_NIRS\zhibin
