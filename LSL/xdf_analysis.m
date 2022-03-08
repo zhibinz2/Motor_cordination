@@ -27,7 +27,12 @@ fileList.name
 % [streams,fileheader] = load_xdf('sub-P001_ses-S001_task-Default_run-001_eeg2022021503.xdf');
 % [streams,fileheader] = load_xdf('202202150*.xdf');
 
-% load behaviral data
+
+% cfg = [];
+% cfg.dataset = '2022022301.oxy5';
+% [data]=ft_preprocessing(cfg);
+
+%% load behaviral data
 fileList = dir('*.mat');
 fileList.name
 load(fileList.name);
@@ -43,7 +48,7 @@ srate=info1.effective_srate;
 clock_offsets=info1.clock_offsets;
 
 figure('units','normalized','outerposition',[0 0 0.8 0.4]);
-plot(time_stamps1,time_series1(1,:));
+plot(time_stamps1,time_series1');
 hold on;
 % plotx(time_stamps1,time_series1');
 %%

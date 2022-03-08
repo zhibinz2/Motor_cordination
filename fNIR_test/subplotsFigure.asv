@@ -1,6 +1,6 @@
 TrialTime=1/srate*[1:1:size(time_series1_trialsL_sessions,1)]-10.5;
 Ylim=5;
-Chanselected=[5];
+Chanselected=[2];
 
 % cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\fNIR_test
 cd C:\Users\zhibi\Documents\GitHub\Motor_cordination\fNIR_test\
@@ -38,12 +38,12 @@ title('Right cortex - Right stim');
 %% plot with 95 interval
 
 % x = 1:100;                                          % Create Independent Variable
-% y = randn(50,100);                                  % Create Dependent Variable ‘Experiments’ Data
-% N = size(y,1);                                      % Number of ‘Experiments’ In Data Set
-% yMean = mean(y);                                    % Mean Of All Experiments At Each Value Of ‘x’
-% ySEM = std(y)/sqrt(N);                              % Compute ‘Standard Error Of The Mean’ Of All Experiments At Each Value Of ‘x’
+% y = randn(50,100);                                  % Create Dependent Variable â€˜Experimentsâ€™ Data
+% N = size(y,1);                                      % Number of â€˜Experimentsâ€™ In Data Set
+% yMean = mean(y);                                    % Mean Of All Experiments At Each Value Of â€˜xâ€™
+% ySEM = std(y)/sqrt(N);                              % Compute â€˜Standard Error Of The Meanâ€™ Of All Experiments At Each Value Of â€˜xâ€™
 % CI95 = tinv([0.025 0.975], N-1);                    % Calculate 95% Probability Intervals Of t-Distribution
-% yCI95 = bsxfun(@times, ySEM, CI95(:));              % Calculate 95% Confidence Intervals Of All Experiments At Each Value Of ‘x’
+% yCI95 = bsxfun(@times, ySEM, CI95(:));              % Calculate 95% Confidence Intervals Of All Experiments At Each Value Of â€˜xâ€™
 % figure
 % plot(x, yMean,'p')                                  % Plot Mean Of All Experiments
 % hold on

@@ -46,6 +46,9 @@ signal_series1=double(time_series1');
 %% plot of the resting baseline
 signal_resting_baseline=signal_series1(stamp1index_Baseline_Start:stamp1index_Baseline_End,:);
 % plot(signal_resting_baseline)
+% plot(mean(signal_resting_baseline,2))
+
+%% sgolay filter
 sgolayfilt_data=sgolayfilt(signal_resting_baseline,1,201);
 % plot(sgolayfilt_data)
 
@@ -97,7 +100,19 @@ time_series1_trials_baselinenormalization=time_series1_trials_baselinecorrected.
 % legend(h,'O2Hb channels on the Right hemisphere','HHb Channels on the Right hemisphere');
 % xlabel('time (sec)')
 
+%% bandpass filter 0.01Hz-0.1Hz
+eeglab;
+close all;
+Fs=75;
+Hd = makefilter(Fs,0.01,0.005,3,20,0); % Astop 6 or 20;
+filtered_data=filtfilthd(Hd,signal_series1);
+% apply low pass filter to filter out frequencies higher than 50;
+Hd = makefilter(Fs,0.1,0.105,3,20,0);
+filtered_data=filtfilthd(Hd,filtered_data);
 
+% plot(signal_series1)
+% plot(filtered_data)
+% plot(mean(filtered_data,2))
 %% combine baseline sessions
 % time_series1_baseline_sessions=time_series1_trials_baselinenormalization;
 
@@ -135,9 +150,8 @@ baseline_averages_mat=ones(size(sgolayfilt_data,1),1).*baseline_averages;
 
 sgolayfilt_data=sgolayfilt_data-baseline_averages_mat;
 
-figure; 
-subplot(2,1,1);plotx(sgolayfilt_data);title('after baseline correct over the ');
-subplot(2,1,2);plotx(time_series1_trials_baselinecorrected(:,:,1));title('after');
+figure; plotx(sgolayfilt_data);title('after baseline correct over the whole block');
+
 
 
 %%
