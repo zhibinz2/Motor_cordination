@@ -17,7 +17,12 @@ addpath(genpath('C:\Users\zhibi\Documents\GitHub\xdf-Matlab'));
 % cd F:\UCI_dataset\fNIR\20220215\2022021508
 % cd F:\UCI_dataset\fNIR\20220215\
 cd C:\Users\zhibi\Desktop\Artinis_NIRS\zhibin\20220223
-%%
+%% load data
+
+% Load with toolbox format
+oxysoft2matlab
+
+% load LSL streams
 clear;close all;
 fileList = dir('*.xdf');
 fileList.name
