@@ -244,7 +244,7 @@ try
         mrk = markers{5};
         outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
 
-        n=n+1
+        n=n+1;
     end
     % send markers into the outlet
     mrk = markers{2};

@@ -11,7 +11,7 @@ while n <  numFrames
     end
 
     % Update the while loop with time
-    numberOfSecondsElapsed = (now - startTime) * 10 ^ 5;
+%     numberOfSecondsElapsed = (now - startTime) * 10 ^ 5;
     
     if conditionSelected ==1;
         if mod(n,2) == 1; % if n is odd number
