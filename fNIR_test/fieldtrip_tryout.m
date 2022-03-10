@@ -128,6 +128,7 @@ plot(data_raw.time{1}, data_raw.trial{1}(98,:)*1.1, 'r:')
 
 % Exercise 1
 event = ft_read_event('LR-01-2015-06-01-0002.oxy3')
+% ADC001 and ADC002 are the trigger channels for events
 
 % Exercise 2
 data_raw.fsample
