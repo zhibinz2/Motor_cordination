@@ -11,12 +11,15 @@ ft_defaults
 
 restoredefaultpath
 addpath C:\Users\zhibi\Downloads\fieldtrip-20220304\fieldtrip-20220304 % this version is better
+addpath D:\360MoveData\Users\alienware\Documents\GitHub\fieldtrip\fieldtrip-20220304\fieldtrip-20220304
 ft_defaults
 %%  https://www.fieldtriptoolbox.org/tutorial/nirs_singlechannel/
 help ft_preprocessing
 edit ft_preprocessing
 
 cfg = [];
+cd F:\UCI_dataset\fNIR\20220215
+cd D:\360MoveData\Users\alienware\Documents\GitHub\fieldtrip\nirs_singlechannel
 cd C:\Users\zhibi\Downloads\nirs_singlechannel\
 cfg.dataset = 'motor_cortex.oxy3';
 
@@ -24,6 +27,7 @@ cfg.dataset = 'motor_cortex.oxy3';
 
 cfg = [];
 cfg.ylim = 'maxabs';
+% cfg.ylim = 'maxmin';
 ft_databrowser(cfg, data);
 
 cfg = [];
@@ -34,14 +38,18 @@ ft_databrowser(cfg, data);
 
 % Exercise 1
 cfg = [];
-cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};
+% cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};
+cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [764nm]'};
+% cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [860nm]'};
 cfg.artfctdef.zvalue.cutoff = 5;
 cfg.artfctdef.zvalue.hpfilter = 'yes';
 cfg.artfctdef.zvalue.hpfreq = 0.1;
 cfg.artfctdef.zvalue.rectify = 'yes';
 cfg.artfctdef.zvalue.artpadding = 2;
-% cfg.artfctdef.zvalue.interactive = 'yes'; % the interactive display makes more sense after segmentating data in trials
+cfg.artfctdef.zvalue.interactive = 'yes'; % the interactive display makes more sense after segmentating data in trials
 [cfg, artifact] = ft_artifact_zvalue(cfg, data);
+% detected 8 artifacts, call ft_refectartifact to remove after filtering
+% and segmenting the data into epochs
 
 % Exercise 2
 cfg = [];
@@ -70,11 +78,12 @@ cfg.trialdef.eventtype = '?';
 
 ft_definetrial(cfg);
 
+% [trl, event] = ft_trialfun_general(cfg) 
+
 cfg.trialdef.eventtype  = 'event';
 cfg.trialdef.eventvalue = 'A';
 cfg.trialdef.prestim    = 10;
 cfg.trialdef.poststim   = 35;
-
 cfg = ft_definetrial(cfg);
 
 cfg.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};
@@ -84,7 +93,6 @@ cfg = [];
 cfg.ylim = [-1 1];
 cfg.viewmode = 'vertical';
 cfg.artfctdef.zvalue.artifact = artifact;
-
 ft_databrowser(cfg, data_epoch); % inconsistent number of samples in trial 1 ?
 
 cfg = [];
@@ -109,6 +117,7 @@ legend('O2Hb','HHb'); ylabel('\DeltaHb (\muM)'); xlabel('time (s)');
 %% https://www.fieldtriptoolbox.org/tutorial/nirs_multichannel/
 clear
 cd C:\Users\zhibi\Downloads\nirs_multichannel
+cd D:\360MoveData\Users\alienware\Documents\GitHub\fieldtrip\nirs_multichannel
 cfg             = [];
 cfg.dataset     = 'LR-01-2015-06-01-0002.oxy3';
 data_raw        = ft_preprocessing(cfg);
