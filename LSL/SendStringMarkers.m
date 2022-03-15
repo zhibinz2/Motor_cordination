@@ -18,10 +18,28 @@ outlet = lsl_outlet(info);
 
 % send markers into the outlet
 disp('Now transmitting data...');
-markers = {'Test', 'Blah', 'Marker', 'XXX', 'Testtest', 'Test-1-2-3'};
+% markers = {'Start', 'Go', 'Stop', 'End'};
+% markers = {'Go', 'Stop'};
+markers = {'A'};
+% while true
+%     pause(rand()*3);
+%     mrk = markers{min(length(markers), 1+floor(rand()*(length(markers))))};
+%     disp(['now sending ' mrk]);
+%     outlet.push_sample({mrk});   % note that the string is wrapped into a cell-array
+% end
+
+% n=3;
+% while true
+%     pause(2);
+%     mrk = markers{rem(n,2)+1};
+%     disp(['now sending ' mrk]);
+%     outlet.push_sample({mrk});   % note that the string is wrapped into a cell-array
+%     n=n+1;
+% end
+
 while true
-    pause(rand()*3);
-    mrk = markers{min(length(markers), 1+floor(rand()*(length(markers))))};
+    pause(2);
+    mrk = markers{1};
     disp(['now sending ' mrk]);
     outlet.push_sample({mrk});   % note that the string is wrapped into a cell-array
 end
