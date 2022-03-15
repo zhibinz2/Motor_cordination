@@ -2,30 +2,6 @@
 % to the fNIRS laptop
 sca; clc; close all; clear all; clearvars; 
 
-% LSL #####################################################################
-% Addpath
-addpath(genpath('/home/hnl/Documents/GitHub/labstreaminglayer/LSL/liblsl-Matlab')); % for LSL
-% instantiate the library for LSL
-lib = lsl_loadlib();
-% make new stream outlets
-% info1 = lsl_streaminfo(lib,'BioSemi','EEG',8,100,'cf_float32','sdfwerr32432');
-% the name (here MyMarkerStream) is visible to the experimenter and should be chosen so that 
-% it is clearly recognizable as your MATLAB software's marker stream
-% The content-type should be Markers by convention, and the next three arguments indicate the 
-% data format (1 channel, irregular rate, string-formatted).
-% The so-called source id is an optional string that allows for uniquely identifying your 
-% marker stream across re-starts (or crashes) of your script (i.e., after a crash of your script 
-% other programs could continue to record from the stream with only a minor interruption).
-info2 = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','myuniquesourceid23443');
-% open the outlets
-% outlet1 = lsl_outlet(info1);
-outlet2 = lsl_outlet(info2);
-% Set markers
-markers = {'Baseline-Start', 'Baseline-End', 'Trial-Start', 'Trial-End','Screen_Flip'};
-
-% ##################################################################### LSL
-
-
 % Break and issue an error message if the installed Psychtoolbox is not
 % based on OpenGL or Screen() is not working properly.
 AssertOpenGL;
@@ -35,16 +11,16 @@ if ~IsLinux
 end
 
 % Set trial conditions ****************************************************
-conditions = [1 2];
-conditionNames={'L' 'R'};  % conditionNames{1}
+conditions = [1 2 3];
+conditionNames={'Synchronization' 'Syncopation' 'Randomization'};  % conditionNames{1}
 
 
 % Block & Trial number of the experiment **********************************
 % % number of trials per block
-numTrials=4;
+numTrials=3;
 % number of blocks
 
-numBlock=3;
+numBlock=5;
 % total trial number
 numtotal=numTrials*numBlock; 
 % num of conditions in the experiment
@@ -107,8 +83,8 @@ try
     % For help see: Screen Openwindow?
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
-%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 600 400]); 
-    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 600 400]); 
+%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
     % For help see: Screen windowSize?
@@ -117,28 +93,9 @@ try
     % Get the centre coordinate of the window in pixels
     % For help see: help RectCenter
     [xCenter, yCenter] = RectCenter(windowRect); 
-
-    % Checkerboard Design****************************************
-    % Black and white
-%     K1 = (checkerboard > 0.5);
-%     K2 = ~K1;
-    % Green and white
-    greenSquare=repmat(cat(3,0,1,0),10,10);
-    whiteSquare=repmat(cat(3,1,1,1),10,10);
-    QuadraSquare1=[greenSquare whiteSquare;whiteSquare greenSquare];
-    QuadraSquare2=[whiteSquare greenSquare;greenSquare whiteSquare];
-    K1=repmat(QuadraSquare1,5,5);
-    K2=repmat(QuadraSquare2,5,5);
-    % MakeTexture
-%     textureIndex1=Screen('MakeTexture',windowPtr,double(K1));
-%     textureIndex2=Screen('MakeTexture',windowPtr,double(K2));
-    textureIndex1=Screen('MakeTexture',windowPtr,K1);
-    textureIndex2=Screen('MakeTexture',windowPtr,K2);
-    % Position of the checkerboard
-    xLcenter=xCenter/2;xRcenter=xCenter/2*3;
-    posL = [xLcenter-screenXpixels/6,yCenter-screenXpixels/6,xLcenter+screenXpixels/6,yCenter+screenXpixels/6];
-    posR = [xRcenter-screenXpixels/6,yCenter-screenXpixels/6,xRcenter+screenXpixels/6,yCenter+screenXpixels/6];
-    % ****************************************Checkerboard Design
+    
+    % Stimulus design ***********************************************
+    % Just a dot
     
     % Enable alpha blending for anti-aliasing
     % For help see: Screen BlendFunction?
@@ -158,14 +115,17 @@ try
     % topPriorityLevel0 = MaxPriority(windowPtr0); 
     % set Priority once at the start of a script after setting up onscreen window.
     Priority(topPriorityLevel);
-
-    % Measure the vertical refresh rate of the monitor
+    
+    % set 120 Hz Screen rate??????????????????????????????????????????????????
+    % Measure the vertical refresh rate of the monitor ???????????????????
     ifi = Screen('GetFlipInterval', windowPtr);
     % Check if ifi=0.0167
     if round(1/ifi)~=60
       error('Error: Screen flash frequency is not set at 60Hz.');    
     end
-
+    % ????????????????????????????????????????????????????????????????????????????
+    
+    
     % Numer of frames to wait when specifying good timing. Note: the use of
     % wait frames is to show a generalisable coding. For example, by using
     % waitframes = 2 one would flip on every other frame. See the PTB
