@@ -84,7 +84,7 @@ try
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 600 400]); 
-%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
+    %[windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
     % For help see: Screen windowSize?
@@ -132,7 +132,7 @@ try
     % documentation for details. In what follows we flip every frame. 
     % In order to reverse the checkerboard at 8Hz
     % We have to reverse the checkerboard every (1/8)/ifi frames
-    waitframes = (1/8)/ifi;
+    waitframes = 1;
     
     % Setting time variables**********************************************
     % Length of one minute baseline
@@ -140,8 +140,8 @@ try
     numFramesBaseline = round(BaselineLength / ifi / waitframes);
 
     % total number of frames per trial
-    numFrames=round(10/ifi/waitframes); % 10 seconds 
-    % **********************************************Setting time variables
+    numFrames=round(62.5/ifi/waitframes); % 125 buttom presses = about 62.5 seconds 
+    % ********************************************** Setting time variables
     
     % Hide Mice:****************************************************************
     % Get handles for all virtual pointing devices, aka cursors:
