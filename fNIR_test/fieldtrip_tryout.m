@@ -10,6 +10,7 @@ addpath C:\Users\zhibi\Downloads\fieldtrip-20201229\fieldtrip-20201229
 ft_defaults
 
 restoredefaultpath
+addpath /home/zhibin/Documents/GitHub/fieldtrip/fieldtrip-20220304
 addpath C:\Users\zhibi\Downloads\fieldtrip-20220304\fieldtrip-20220304 % this version is better
 addpath D:\360MoveData\Users\alienware\Documents\GitHub\fieldtrip\fieldtrip-20220304\fieldtrip-20220304
 ft_defaults
