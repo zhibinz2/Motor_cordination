@@ -36,7 +36,7 @@ while n < numFrames
     
     % *****OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
     % Flash photocell every other second during the whole trial (bottom left)
-    if (~isempty(find(([1:2:numFrames]==n)))) % every two frames
+    if (~isempty(find([1:2:numFrames]==n))) % every two frames
     Screen('FillRect', windowPtr, white, LeftBottomSquare);
     end
     

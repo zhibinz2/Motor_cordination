@@ -13,8 +13,7 @@ AssertOpenGL;
 % Set trial conditions ****************************************************
 conditions = [1 2 3];
 conditionNames={'Synchronization' 'Syncopation' 'Randomization'};  % conditionNames{1}
-ConditionInstructions={'Press buttom when cross appear' 'Press buttom in between crosses' 'Press buttom whenever cross appear'}; 
-
+ConditionInstructions={'Press buttom when cross appear' 'Press buttom in between crosses' 'P'}; 
 % Block & Trial number of the experiment **********************************
 % number of taps per trial/condition
 numTaps=240;
@@ -83,8 +82,8 @@ try
     % For help see: Screen Openwindow?
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
-%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 600 400]); 
-    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 600 400]); 
+    %[windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
     % For help see: Screen windowSize?
@@ -153,19 +152,6 @@ try
     Showframes=[Showframes1;Showframes2;Showframes3];
     % ***************************************** Randomization of the conditions 
     
-    % Set size of the squares for photocell ###############################
-    PhotosensorSize=30;
-    % Positions of the four corners
-    % RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels];
-    % RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2];
-    % LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels];
-    % LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
-    RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+230-PhotosensorSize screenXpixels screenYpixels/2+230+PhotosensorSize];
-    RightUpperSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+110-PhotosensorSize screenXpixels screenYpixels/2+110+PhotosensorSize];
-    LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 screenYpixels/2+230+PhotosensorSize];
-    LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
-    % ############################### Set size of the squares for photocell 
-
         
     % Numer of frames to wait when specifying good timing. Note: the use of
     % wait frames is to show a generalisable coding. For example, by using
@@ -295,7 +281,8 @@ try
             Showframeselected=Showframes(conditionSelected,:);
 
             % show instruction for each trial / condition
-            DrawFormattedText2(ConditionInstructions{conditionSelected},'win',windowPtr,...
+            ConditionInstructions=['Press the blue buttom ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
+            DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
 
             % LSL markers to the local network
