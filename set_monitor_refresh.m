@@ -9,8 +9,10 @@
 % for BenQ in SBSG1507 (hnlstim1)
 !xrandr --output DVI-D-1 --mode 1920x1080 --rate 144.00 
 !xrandr --output DP-1 --mode 1920x1080 --rate 144.00
-% set BenQ to 60Hz
+% set BenQ to 60Hz  (hnlstim1)
 !xrandr --output DP-1 --mode 1920x1080 --rate 60.00 --output DVI-D-1 --mode 1920x1080 --rate 60.00
+% for BenQ in SBSG1503 (hnlstim2)
+!xrandr --output DP-0 --mode 1920x1080 --rate 143.98
 
 % to Manage Dual Monitor Setups
 !xrandr --output DisplayPort-0 --mode 1920x1080 --rate 144.00 --output DVI-D-0 --mode 1920x1080 --rate 60.00
