@@ -319,12 +319,12 @@ try
 
             if block ~= numBlock | t ~= numTrials % only bypass the last trial
                 % Show Resting
-                Resting = ['Rest for 20s'];
+                Resting = ['Rest for 2s'];
                 DrawFormattedText2(Resting,'win',windowPtr,...
                     'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
                 vbl=Screen('Flip',windowPtr);
                 % Rest 20 sec
-                pause(20);
+                pause(2);
             end
 
         end
