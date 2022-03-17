@@ -1,0 +1,43 @@
+% Set screen flash 100HZ
+% 0.01s per flash, 0.02 per frame (flip every other flash / every 20 ms)
+ifi;
+
+% Mean interval
+MeanTapInterval=0.5; % second , or 500 ms
+NumFramesInterval=MeanTapInterval/ifi*2; % let's say NumFramesInterval=25 frames
+
+
+% 3 trials/conditions 5 blocks
+% estimated about 2 min (240 taps) per trial/condition, total 30 min of tapping
+
+%% Total time Condition 1:
+TotalTimeCondition1=0.5*240 % in seconds
+
+nr=[1:NumFramesInterval:NumFramesInterval*numTaps] 
+% total time
+nr(end)
+
+%% Total time Condition 2:
+% Same as condition 1 except the instruction
+
+%% Total time Condition 3:
+% TotalTimeCondition2=0.5*240;
+r = round(normrnd(NumFramesInterval,NumFramesInterval/5,[1,numTaps]))
+mean(r) % mean interval 
+plot(r,'ro');
+% in case some interval are negative
+if any(r<0)
+    r(find(r<0))=1;
+end
+r
+nr=cumsum(r)
+nr(end)
+sum(r)*20/1000/60 % total time
+nr % total time
+
+
+
+%%
+A = floor(rand(100, 100) * 1000);
+contains5 = any(A(:) == 5);
+

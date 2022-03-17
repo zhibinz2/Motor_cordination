@@ -6,20 +6,20 @@ sca; clc; close all; clear all; clearvars;
 % based on OpenGL or Screen() is not working properly.
 AssertOpenGL;
 
-if ~IsLinux
-  error('Sorry, this demo currently only works on a Linux.');    
-end
+% if ~IsLinux
+%   error('Sorry, this demo currently only works on a Linux.');    
+% end
 
 % Set trial conditions ****************************************************
 conditions = [1 2 3];
 conditionNames={'Synchronization' 'Syncopation' 'Randomization'};  % conditionNames{1}
 
-
 % Block & Trial number of the experiment **********************************
-% % number of trials per block
+% number of taps per trial/condition
+numTaps=240;
+% number of trials per block
 numTrials=3;
 % number of blocks
-
 numBlock=5;
 % total trial number
 numtotal=numTrials*numBlock; 
@@ -31,6 +31,7 @@ numconditions=length(conditions);
 % set the random number seed as the date of today in formate such as 20210809
 seed=input('enter the date in format YYYYMMDD:');
 rng(seed);
+
 % how many semirandom permutation set in the experiment 
 numPerm=numtotal/numconditions;
 % create the whole set of random conditions for the experiment
