@@ -49,4 +49,7 @@ Showframes=Showframes1;
 for n=1:max(Showframes)+NumFramesInterval
     if any(Showframes(:) == n);
         Screen('flip'...
+        
+    end
+end
 
