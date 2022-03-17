@@ -44,7 +44,7 @@ Showframes3(end)*ifi % in seconds
 
 % select a condition
 
-Showframes=Showframes1;
+Showframes=[Showframes1;Showframes2;Showframes3];
 
 for n=1:max(Showframes)+NumFramesInterval
     if any(Showframes(:) == n);

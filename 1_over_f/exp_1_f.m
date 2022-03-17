@@ -144,7 +144,7 @@ try
     numFramesBaseline = round(BaselineLength / ifi / waitframes);
 
     % total number of frames per trial
-    numFrames=round(62.5/ifi/waitframes); % 125 buttom presses = about 62.5 seconds 
+%     numFrames=round(62.5/ifi/waitframes); % 125 buttom presses = about 62.5 seconds 
     % ********************************************** Setting time variables
     
     % Hide Mice:****************************************************************
@@ -177,10 +177,10 @@ try
     % send data into the outlet, sample by sample
 %         outlet1.push_sample(1); % send data number 1
     % send markers into the outlet
-    mrk = markers{1};
-    outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+%     mrk = markers{1};
+%     outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
     
-    tic
+%     tic
 %     startTime = now;
 %     numberOfSecondsElapsed = 0;
 %     while numberOfSecondsElapsed < 60
@@ -211,9 +211,9 @@ try
         n=n+1;
     end
     % send markers into the outlet
-    mrk = markers{2};
-    outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-    BaselineDuration=toc
+%     mrk = markers{2};
+%     outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+%     BaselineDuration=toc
     
 
     pause(5);% to separate baseline markers and trial markers
@@ -255,13 +255,14 @@ try
 
             % pick a condition from randomized set allPerm
             conditionSelected = allPerm(numTrials*(block-1)+t);
-            
+            Showframes=Showframes(conditionSelected,:);
+
             % LSL markers to the local network
             % send data into the outlet, sample by sample
         %     outlet1.push_sample(1); % send data number 1
             % send markers into the outlet
-            mrk = markers{3};
-            outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+%             mrk = markers{3};
+%             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
 
             % initial or reset trial frame number
             n=1;
@@ -272,8 +273,8 @@ try
             run trial_checkerboard_LSL_fNIR.m
 
             % send markers into the outlet
-            mrk = markers{4};
-            outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+%             mrk = markers{4};
+%             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
 
             if block ~= numBlock | t ~= numTrials % only bypass the last trial
                 % Show Resting
