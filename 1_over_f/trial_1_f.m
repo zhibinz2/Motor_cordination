@@ -42,7 +42,7 @@ while n < numFrames
     
     % ******#################################
     % Flash photocells at start&end of each trial/condition (upper left)
-    if n == 1 | numFrames
+    if n == 1 | n == numFrames
     Screen('FillRect', windowPtr, white, LeftUpperSquare); % event type = 1200002
     end
 

@@ -26,14 +26,14 @@ Showframes2=Showframes1;
 %% Total time Condition 3:
 % TotalTimeCondition2=0.5*240;
 % RandomIntervals = round(normrnd(NumFramesInterval,NumFramesInterval/5,[1,numTaps]));% require statistic and machine learning toolbox
-% RandomIntervals = NumFramesInterval + (NumFramesInterval/5).*randn(1,numTaps); % normal distribution
-RandomIntervals = NumFramesInterval + (NumFramesInterval/2).*(rand(1,numTaps)-0.5); % uniform distribution
+% RandomIntervals = round(NumFramesInterval + (NumFramesInterval/5).*randn(1,numTaps)); % normal distribution
+RandomIntervals = round(NumFramesInterval + (NumFramesInterval/2).*(rand(1,numTaps)-0.5)); % uniform distribution
 mean(RandomIntervals) % mean interval , should be about equal to NumFramesInterval, which is 72 (Screen Refresh 144Hz)
 plot(RandomIntervals,'ro');
 % in case some interval are negative (for normal distribution)
-if any(RandomIntervals<0)
-    RandomIntervals(find(RandomIntervals<0))=1;
-end
+% if any(RandomIntervals<0)
+%     RandomIntervals(find(RandomIntervals<0))=1;
+% end
 % RandomIntervals
 Showframes3=cumsum(RandomIntervals);
 Showframes3(end)
