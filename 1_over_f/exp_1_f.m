@@ -142,11 +142,7 @@ try
     Showframes2=Showframes1;
     
     % condition 3
-    RandomIntervals = round(normrnd(NumFramesInterval,NumFramesInterval/5,[1,numTaps]));
-    % in case some intervals are negative, replace them with 1 frame
-    if any(RandomIntervals<0)
-        RandomIntervals(find(RandomIntervals<0))=1;
-    end
+    RandomIntervals = NumFramesInterval + (NumFramesInterval/2).*(rand(1,numTaps)-0.5); % uniform distribution
     Showframes3=cumsum(RandomIntervals);
     
     % combine all 3 conditions
