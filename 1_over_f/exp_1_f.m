@@ -124,15 +124,15 @@ try
 %       error('Error: Screen flash frequency is not set at 60Hz.');    
 %     end
 
-    % Check if ifi=0.0069
-%     if round(1/ifi)~=144
+    % Check if ifi=0.0083
+%     if round(1/ifi)~=120
 %       error('Error: Screen flash frequency is not set at 144Hz.');    
 %     end
 
     % Check if ifi=0.0069
-%     if round(1/ifi)~=144
-%       error('Error: Screen flash frequency is not set at 144Hz.');    
-%     end
+    if round(1/ifi)~=144
+      error('Error: Screen flash frequency is not set at 144Hz.');    
+    end
     % ?????????????????????????????????????????????????????????????????????
     
     %  Randomization of the conditions ****************************************
@@ -147,7 +147,7 @@ try
     Showframes2=Showframes1;
     
     % condition 3
-    RandomIntervals = round(NumFramesInterval + (NumFramesInterval/2).*(rand(1,numTaps)-0.5)); % uniform distribution
+    RandomIntervals = round(NumFramesInterval + NumFramesInterval.*(rand(1,numTaps)-0.5)); % uniform distribution
     Showframes3=cumsum(RandomIntervals);
     
     % combine all 3 conditions
@@ -298,6 +298,7 @@ try
             % show instruction for each trial / condition
             DrawFormattedText2(ConditionInstructions{conditionSelected},'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+            pause(3); % for subject to read instruction
 
             % LSL markers to the local network
             % send data into the outlet, sample by sample
