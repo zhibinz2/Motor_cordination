@@ -296,8 +296,9 @@ try
             Showframeselected=Showframes(conditionSelected,:);
 
             % show instruction for each trial / condition
-            DrawFormattedText2(ConditionInstructions{conditionSelected},'win',windowPtr,...
+            DrawFormattedText2(conditionNames{conditionSelected},'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+            Screen('Flip', windowPtr);
             pause(3); % for subject to read instruction
 
             % LSL markers to the local network
