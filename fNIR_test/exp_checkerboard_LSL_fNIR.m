@@ -43,8 +43,7 @@ conditionNames={'L' 'R'};  % conditionNames{1}
 % % number of trials per block
 numTrials=4;
 % number of blocks
-
-numBlock=3;
+numBlock=18; % 3 blocks per session,6 subject
 % total trial number
 numtotal=numTrials*numBlock; 
 % num of conditions in the experiment
@@ -176,7 +175,7 @@ try
     
     % Setting time variables**********************************************
     % Length of one minute baseline
-    BaselineLength = 60; %4; % 4 s to move
+    BaselineLength = 6; %4; % 4 s to move
     numFramesBaseline = round(BaselineLength / ifi / waitframes);
 
     % total number of frames per trial

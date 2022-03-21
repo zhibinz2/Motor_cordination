@@ -120,9 +120,9 @@ try
     % Measure the vertical refresh rate of the monitor ????????????????????
     ifi = Screen('GetFlipInterval', windowPtr);
     % Check if ifi=0.0167
-%     if round(1/ifi)~=60
-%       error('Error: Screen flash frequency is not set at 60Hz.');    
-%     end
+    if round(1/ifi)~=60
+      error('Error: Screen flash frequency is not set at 60Hz.');    
+    end
 
     % Check if ifi=0.0083
 %     if round(1/ifi)~=120
@@ -130,14 +130,14 @@ try
 %     end
 
     % Check if ifi=0.0069
-    if round(1/ifi)~=144
-      error('Error: Screen flash frequency is not set at 144Hz.');    
-    end
+%     if round(1/ifi)~=144
+%       error('Error: Screen flash frequency is not set at 144Hz.');    
+%     end
     % ?????????????????????????????????????????????????????????????????????
     
     %  Randomization of the conditions ****************************************
     % Mean stimulus interval
-    MeanTapInterval=0.5; % second , or 500 ms
+    MeanTapInterval=1; % second , or 500 ms
     NumFramesInterval=round(MeanTapInterval/ifi);  % on average 72 frames per stimulus 
     
     % condition 1
@@ -157,14 +157,14 @@ try
     % Set size of the squares for photocell ###############################
     PhotosensorSize=30;
     % Positions of the four corners
-    % RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels];
-    % RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2];
-    % LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels];
-    % LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
-    RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+230-PhotosensorSize screenXpixels screenYpixels/2+230+PhotosensorSize];
-    RightUpperSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+110-PhotosensorSize screenXpixels screenYpixels/2+110+PhotosensorSize];
-    LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 screenYpixels/2+230+PhotosensorSize];
-    LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
+    RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels];
+    RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2];
+    LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels];
+    LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
+%     RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+230-PhotosensorSize screenXpixels screenYpixels/2+230+PhotosensorSize];
+%     RightUpperSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+110-PhotosensorSize screenXpixels screenYpixels/2+110+PhotosensorSize];
+%     LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 screenYpixels/2+230+PhotosensorSize];
+%     LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
     % ############################### Set size of the squares for photocell 
 
         
