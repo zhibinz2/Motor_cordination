@@ -1,7 +1,7 @@
 cd C:\Users\NIRS\Desktop\USB documents\Matlab\matlab file converter
 
-cd F:\UCI_dataset\fNIR\USB documents\Matlab
-addpath F:\UCI_dataset\fNIR\USB documents\Matlab
+cd F:\UCI_dataset\fNIR\USB_documents\Matlab
+addpath F:\UCI_dataset\fNIR\USB_documents\Matlab
 addpath Matlab
 
 oxysoft2matlab
