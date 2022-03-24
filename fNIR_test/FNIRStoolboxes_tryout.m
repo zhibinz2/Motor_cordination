@@ -101,7 +101,7 @@ cfg.ylim = 'maxmin';
 cfg.channel = {'Rx1-Tx1*'}; 
 ft_databrowser(cfg, data_raw);
 
-% Exercise 1
+% Exercise 1 (View Artifact detection)
 cfg = [];
 cfg.artfctdef.zvalue.channel = {'Rx1-Tx1 [760nm]', 'Rx1-Tx1 [842nm]'};
 cfg.artfctdef.zvalue.cutoff = 5;
@@ -109,10 +109,10 @@ cfg.artfctdef.zvalue.hpfilter = 'yes';
 cfg.artfctdef.zvalue.hpfreq = 0.1;
 cfg.artfctdef.zvalue.rectify = 'yes';
 cfg.artfctdef.zvalue.artpadding = 2;
-% cfg.artfctdef.zvalue.interactive = 'yes'; % the interactive display makes more sense after segmentating data in trials
+cfg.artfctdef.zvalue.interactive = 'yes'; % the interactive display makes more sense after segmentating data in trials
 [cfg, artifact] = ft_artifact_zvalue(cfg, data_raw);
 
-% Exercise 2
+% Exercise 2 (Covert OD to concentration)
 cfg = [];
 cfg.dpf = 5.9;
 cfg.channel = {'Rx1-Tx1 [760nm]', 'Rx1-Tx1 [842nm]'};
@@ -130,11 +130,11 @@ cfg.bpfilter = 'yes';
 cfg.bpfreq = [0.01 0.1];
 data_filtered = ft_preprocessing(cfg, data_conc);
 
-% Define epochs of interest
+% (Define epochs of interest)
 help ft_definetrial
 
 cfg = [];
-cfg.dataset = '2022031203.oxy3';
+cfg.dataset = '20220312.oxy5';
 cfg.trialdef.eventtype = '?';
 
 ft_definetrial(cfg);

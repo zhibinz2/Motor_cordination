@@ -19,9 +19,10 @@ help ft_preprocessing
 edit ft_preprocessing
 
 cfg = [];
-cd F:\UCI_dataset\fNIR\20220215
-cd D:\360MoveData\Users\alienware\Documents\GitHub\fieldtrip\nirs_singlechannel
+cd F:\UCI_dataset\fNIR\20220215 % ALIENWARE_HOME
+cd D:\360MoveData\Users\alienware\Documents\GitHub\fieldtrip\nirs_singlechannel % ALIENWARE_HOME
 cd C:\Users\zhibi\Downloads\nirs_singlechannel\
+cd C:\Users\NIRS\Documents\nirs_singlechannel\ % NIRS_BRITE1_HNL
 cfg.dataset = 'motor_cortex.oxy3';
 
 [data]=ft_preprocessing(cfg);
@@ -37,10 +38,10 @@ cfg.ylim = 'maxmin';
 cfg.channel = {'Rx4b-Tx5*'}; 
 ft_databrowser(cfg, data);
 
-% Exercise 1
+% Exercise 1 (View Artifact detection)
 cfg = [];
-% cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};
-cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [764nm]'};
+cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};
+% cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [764nm]'};
 % cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [860nm]'};
 cfg.artfctdef.zvalue.cutoff = 5;
 cfg.artfctdef.zvalue.hpfilter = 'yes';
@@ -52,13 +53,13 @@ cfg.artfctdef.zvalue.interactive = 'yes'; % the interactive display makes more s
 % detected 8 artifacts, call ft_refectartifact to remove after filtering
 % and segmenting the data into epochs
 
-% Exercise 2
+% Exercise 2 (Covert OD to concentration)
 cfg = [];
 cfg.dpf = 5.9;
 cfg.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};
 data_conc = ft_nirs_transform_ODs(cfg, data);
 
-% Exercise 3
+% Exercise 3 (bandpass filter)
 cfg = [];
 cfg.ylim = 'maxmin';
 % cfg.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};  % you can also use wildcards like 'Rx4b-Tx5*'
@@ -67,10 +68,10 @@ ft_databrowser(cfg, data_conc);
 
 cfg = [];
 cfg.bpfilter = 'yes';
-cfg.bpfreq = [0.01 0.1];
+cfg.bpfreq = [0.01 0.1]; % (bandpass filter)
 data_filtered = ft_preprocessing(cfg, data_conc);
 
-% Define epochs of interest
+% (Define epochs of interest)
 help ft_definetrial
 
 cfg = [];
@@ -88,14 +89,17 @@ cfg.trialdef.poststim   = 35;
 cfg = ft_definetrial(cfg);
 
 cfg.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};
-data_epoch = ft_redefinetrial(cfg, data_filtered);
+data_epoch = ft_redefinetrial(cfg, data_filtered); % We have now selected one pair of channels and cut the data in 12 trials. Check them out using the databrowser, but let us use some settings to make the plots look neater and also visualize the artifacts that we identified earlier:
+
+[trl, event] = ft_trialfun_general(cfg) 
 
 cfg = [];
 cfg.ylim = [-1 1];
 cfg.viewmode = 'vertical';
 cfg.artfctdef.zvalue.artifact = artifact;
-ft_databrowser(cfg, data_epoch); % inconsistent number of samples in trial 1 ?
+ft_databrowser(cfg, data_epoch); % not showing, inconsistent number of samples in trial 1 ?
 
+% remove the trials containing the artifacts that we determined earlier.
 cfg = [];
 cfg.artfctdef.zvalue.artifact = artifact;
 cfg.artfctdef.reject = 'complete';
@@ -103,7 +107,7 @@ data_epoch = ft_rejectartifact(cfg, data_epoch);
 
 % Exercise 4
 
-% Exercise 5
+% Exercise 5 (Timelockanalysis)
 cfg = [];
 data_timelock = ft_timelockanalysis(cfg, data_epoch);
 
@@ -119,14 +123,17 @@ legend('O2Hb','HHb'); ylabel('\DeltaHb (\muM)'); xlabel('time (s)');
 clear
 cd C:\Users\zhibi\Downloads\nirs_multichannel
 cd D:\360MoveData\Users\alienware\Documents\GitHub\fieldtrip\nirs_multichannel
+cd C:\Users\NIRS\Documents\nirs_multichannel\ % NIRS_Brite1
 cfg             = [];
 cfg.dataset     = 'LR-01-2015-06-01-0002.oxy3';
 data_raw        = ft_preprocessing(cfg);
 
+% (To retrieve the layout from the data file)
 cfg           = [];
 cfg.opto      = 'LR-01-2015-06-01-0002.oxy3';
 ft_layoutplot(cfg);
 
+% (Detecting triggers)
 find(strcmp(data_raw.label,'ADC001'))
 find(strcmp(data_raw.label,'ADC002'))
 
@@ -135,10 +142,13 @@ figure; hold on
 % increase the scale of ADC002 a little bit to make it more clear in the figure
 plot(data_raw.time{1}, data_raw.trial{1}(97,:)*1.0, 'b-')
 plot(data_raw.time{1}, data_raw.trial{1}(98,:)*1.1, 'r:')
+% plot(data_raw.time{1}, data_raw.trial{1}(97,:)*1.0, 'bo')
+% plot(data_raw.time{1}, data_raw.trial{1}(98,:)*1.1, 'ro')
 
 % Exercise 1
 event = ft_read_event('LR-01-2015-06-01-0002.oxy3')
 % ADC001 and ADC002 are the trigger channels for events
+adc002 = find(strcmp({event.type}, 'ADC002'));
 
 % Exercise 2
 data_raw.fsample
