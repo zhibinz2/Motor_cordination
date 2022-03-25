@@ -128,10 +128,12 @@ cfg             = [];
 cfg.dataset     = 'LR-01-2015-06-01-0002.oxy3';
 data_raw        = ft_preprocessing(cfg);
 
+% (To retrieve the layout from the data file)
 cfg           = [];
 cfg.opto      = 'LR-01-2015-06-01-0002.oxy3';
 ft_layoutplot(cfg);
 
+% (Detecting triggers)
 find(strcmp(data_raw.label,'ADC001'))
 find(strcmp(data_raw.label,'ADC002'))
 
@@ -140,31 +142,38 @@ figure; hold on
 % increase the scale of ADC002 a little bit to make it more clear in the figure
 plot(data_raw.time{1}, data_raw.trial{1}(97,:)*1.0, 'b-')
 plot(data_raw.time{1}, data_raw.trial{1}(98,:)*1.1, 'r:')
+% plot(data_raw.time{1}, data_raw.trial{1}(97,:)*1.0, 'bo')
+% plot(data_raw.time{1}, data_raw.trial{1}(98,:)*1.1, 'ro')
 
-% Exercise 1
+% Exercise 1 (Detect onset in ADC channel by finding upward going flank as event)
 event = ft_read_event('LR-01-2015-06-01-0002.oxy3')
 % ADC001 and ADC002 are the trigger channels for events
+adc002 = find(strcmp({event.type}, 'ADC002'));
 
-% Exercise 2
+% Exercise 2 (check sampling rate)
 data_raw.fsample
 
+% (resample - down sample from 250 to 10 Hz)
 cfg                   = [];
 cfg.resamplefs        = 10;
 data_down             = ft_resampledata(cfg, data_raw);
 
+% (demean and view the data, which is noisy)
 cfg                = [];
-cfg.preproc.demean = 'yes';
+cfg.preproc.demean = 'yes'; % (subtract the mean value only for plotting, data remains the same)
 cfg.viewmode       = 'vertical';
 cfg.continuous     = 'no';
 cfg.ylim           = [ -0.003   0.003 ];
 cfg.channel        = 'Rx*'; % only show channels starting with Rx
 ft_databrowser(cfg, data_down);
 
+% (high pass filtering, throw away very low-frequency)
 cfg                 = [];
 cfg.hpfilter        = 'yes';
 cfg.hpfreq          = 0.01;
 data_flt            = ft_preprocessing(cfg,data_down);
 
+% (plot and see if imporved, DC (offset) has been largely removed)
 cfg                = [];
 cfg.preproc.demean = 'yes';
 cfg.viewmode       = 'vertical';
@@ -173,6 +182,7 @@ cfg.ylim           = [ -0.003   0.003 ];
 cfg.channel        = 'Rx*'; % only show channels starting with Rx
 ft_databrowser(cfg, data_flt);
 
+% (Epoch)
 event = ft_read_event('LR-01-2015-06-01-0002.oxy3');
 
 adc001 = find(strcmp({event.type}, 'ADC001'));
@@ -210,19 +220,22 @@ trl = sortrows([trl001; trl002])
 sel = trl(:,2)<size(data_down.trial{1},2);
 trl = trl(sel,:);
 
+% (epoch)
 cfg     = [];
 cfg.trl = trl;
 data_epoch = ft_redefinetrial(cfg,data_down);
 
+% find the first odd ball
 idx = find(data_epoch.trialinfo==2, 1, 'first') % the first deviant:
 
+% Look at what happens around the first odd ball
 cfg          = [];
 cfg.channel  = 'Rx*';
 cfg.trials   = 8;
 cfg.baseline = 'yes';
-ft_singleplotER(cfg, data_epoch)
+ft_singleplotER(cfg, data_epoch) % plot event-related fields or potentials
 
-% Exercise 3
+% Exercise 3 (remove bad channels)
 cfg      = [];
 data_sci = ft_nirs_scalpcouplingindex(cfg, data_epoch);
 
