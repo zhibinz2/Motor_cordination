@@ -21,7 +21,7 @@ numTaps=240;
 % number of trials per block
 numTrials=3;
 % number of blocks
-numBlock=5;
+numBlock=1;
 % total trial number
 numtotal=numTrials*numBlock; 
 % num of conditions in the experiment
@@ -137,7 +137,7 @@ try
     
     %  Randomization of the conditions ****************************************
     % Mean stimulus interval
-    MeanTapInterval=1; % second , or 500 ms
+    MeanTapInterval=2; % second
     NumFramesInterval=round(MeanTapInterval/ifi);  % on average 72 frames per stimulus 
     
     % condition 1
@@ -178,7 +178,7 @@ try
     
     % Setting time variables**********************************************
     % Length of one minute baseline
-    BaselineLength = 6; 
+    BaselineLength = 2; 
     numFramesBaseline = round(BaselineLength / ifi / waitframes);
 
     % total number of frames per trial
@@ -201,7 +201,7 @@ try
     %HideCursor(windowPtr,mice(1));
 
     % Baseline taking 60s  **********************************************
-    instructionStart=['Hit any key and then look at the center of the screen for 1 min'];
+    instructionStart=['Hit any key and then look at the center of the screen for ' num2str(BaselineLength) ' seconds'];
     DrawFormattedText2(instructionStart,'win',windowPtr,...
         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
     Screen('Flip',windowPtr);
