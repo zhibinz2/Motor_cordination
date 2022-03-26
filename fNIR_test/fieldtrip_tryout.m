@@ -235,52 +235,84 @@ cfg.trials   = 8;
 cfg.baseline = 'yes';
 ft_singleplotER(cfg, data_epoch) % plot event-related fields or potentials
 
-% Exercise 3 (remove bad channels)
+% Exercise 3 (remove bad channels:poor contact with the skin of the scalp)
 cfg      = [];
 data_sci = ft_nirs_scalpcouplingindex(cfg, data_epoch);
+% you can see that we throw away some channels in data_sci.label, it now
+% has 86 instead of 104 channels
 
-% Exercise 4
+% Exercise 4 (Remove artifacts)
+
+% Exercise 1 (View Artifact detection)
+cfg = [];
+cfg.artfctdef.zvalue.channel = {'Rx*'};
+% cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [764nm]'};
+% cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [860nm]'};
+cfg.artfctdef.zvalue.cutoff = 5;
+cfg.artfctdef.zvalue.hpfilter = 'yes';
+cfg.artfctdef.zvalue.hpfreq = 0.1;
+cfg.artfctdef.zvalue.rectify = 'yes';
+cfg.artfctdef.zvalue.artpadding = 2;
+cfg.artfctdef.zvalue.interactive = 'yes'; % the interactive display makes more sense after segmentating data in trials
+[cfg, artifact] = ft_artifact_zvalue(cfg, data_epoch);
+% detected 8? artifacts, call ft_refectartifact to remove after filtering
+% and segmenting the data into epochs
+
+% (transform optical densities to oxy- and deoxy-hemoglobin concentration
+% changes)
 cfg                 = [];
 cfg.target          = {'O2Hb', 'HHb'};
 cfg.channel         = 'nirs'; % e.g., one channel incl. wildcards, you can also use ?all? to select all NIRS channels
 data_conc           = ft_nirs_transform_ODs(cfg, data_sci);
 
+% (check data again)
 cfg          = [];
 cfg.channel  = 'Rx*';
 cfg.trials   = 8;
 cfg.baseline = 'yes';
 ft_singleplotER(cfg, data_conc)
 
+% (separate functional from systemic reponses)
+% (low-pass filtering)
 cfg                   = [];
 cfg.lpfilter          = 'yes';
 cfg.lpfreq            = 0.8;
 data_lpf              = ft_preprocessing(cfg, data_conc);
 
+% (check data again)
 cfg          = [];
 cfg.channel  = 'Rx*';
 cfg.trials   = 8;
 cfg.baseline = 'yes';
 ft_singleplotER(cfg, data_lpf)
 
+% (plot results)
+% 1. compute the average (normal trials)
 cfg               = [];
 cfg.trials        = find(data_lpf.trialinfo(:,1) == 1);
-timelockSTD       = ft_timelockanalysis(cfg, data_lpf);
+timelockSTD       = ft_timelockanalysis(cfg, data_lpf); % just compute the average across all trials
 
+% 2. baseline correction (normal trials)
 cfg                 = [];
-cfg.baseline        = [-5 0];
-timelockSTD         = ft_timelockbaseline(cfg, timelockSTD);
+cfg.baseline        = [-5 0]; % five seconds preceding the stimulus
+timelockSTD         = ft_timelockbaseline(cfg, timelockSTD); % baseline correction
 
+% 1. compute the average (oddball trials)
 cfg           = [];
 cfg.trials    = find(data_lpf.trialinfo(:,1) == 2);
 timelockDEV   = ft_timelockanalysis(cfg, data_lpf);
 
+% 2. baseline correction (oddball trials)
 cfg           = [];
 cfg.baseline  = [-5 0];
 timelockDEV   = ft_timelockbaseline(cfg, timelockDEV);
 
+% (visualize channel layout)
 load('nirs_48ch_layout.mat')
 figure; ft_plot_layout(lay) % note that O2Hb and HHb channels fall on top of each other
 
+% (plot multiple channels on a schematic representation of the head) 
+% not working?
 cfg                   = [];
 cfg.showlabels        = 'yes';
 cfg.layout            = lay;      % you could also specify the name of the mat file
@@ -290,6 +322,7 @@ cfg.colorgroups(contains(timelockDEV.label, 'O2Hb')) = 1; % these will be red
 cfg.colorgroups(contains(timelockDEV.label, 'HHb'))  = 2; % these will be blue
 ft_multiplotER(cfg, timelockDEV);
 
+% (color-coded topoplot)
 cfg          = [];
 cfg.layout   = lay;      % you could also specify the name of the mat file
 cfg.marker   = 'labels';
