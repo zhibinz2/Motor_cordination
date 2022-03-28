@@ -19,9 +19,10 @@ help ft_preprocessing
 edit ft_preprocessing
 
 cfg = [];
-cd F:\UCI_dataset\fNIR\20220215
-cd D:\360MoveData\Users\alienware\Documents\GitHub\fieldtrip\nirs_singlechannel
+cd F:\UCI_dataset\fNIR\20220215 % ALIENWARE_HOME
+cd D:\360MoveData\Users\alienware\Documents\GitHub\fieldtrip\nirs_singlechannel % ALIENWARE_HOME
 cd C:\Users\zhibi\Downloads\nirs_singlechannel\
+cd C:\Users\NIRS\Documents\nirs_singlechannel\ % NIRS_BRITE1_HNL
 cfg.dataset = 'motor_cortex.oxy3';
 
 [data]=ft_preprocessing(cfg);
@@ -37,10 +38,10 @@ cfg.ylim = 'maxmin';
 cfg.channel = {'Rx4b-Tx5*'}; 
 ft_databrowser(cfg, data);
 
-% Exercise 1
+% Exercise 1 (View Artifact detection)
 cfg = [];
-% cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};
-cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [764nm]'};
+cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};
+% cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [764nm]'};
 % cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [860nm]'};
 cfg.artfctdef.zvalue.cutoff = 5;
 cfg.artfctdef.zvalue.hpfilter = 'yes';
@@ -52,13 +53,13 @@ cfg.artfctdef.zvalue.interactive = 'yes'; % the interactive display makes more s
 % detected 8 artifacts, call ft_refectartifact to remove after filtering
 % and segmenting the data into epochs
 
-% Exercise 2
+% Exercise 2 (Covert OD to concentration)
 cfg = [];
 cfg.dpf = 5.9;
 cfg.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};
 data_conc = ft_nirs_transform_ODs(cfg, data);
 
-% Exercise 3
+% Exercise 3 (bandpass filter)
 cfg = [];
 cfg.ylim = 'maxmin';
 % cfg.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};  % you can also use wildcards like 'Rx4b-Tx5*'
@@ -67,10 +68,10 @@ ft_databrowser(cfg, data_conc);
 
 cfg = [];
 cfg.bpfilter = 'yes';
-cfg.bpfreq = [0.01 0.1];
+cfg.bpfreq = [0.01 0.1]; % (bandpass filter)
 data_filtered = ft_preprocessing(cfg, data_conc);
 
-% Define epochs of interest
+% (Define epochs of interest)
 help ft_definetrial
 
 cfg = [];
@@ -88,14 +89,17 @@ cfg.trialdef.poststim   = 35;
 cfg = ft_definetrial(cfg);
 
 cfg.channel = {'Rx4b-Tx5 [860nm]', 'Rx4b-Tx5 [764nm]'};
-data_epoch = ft_redefinetrial(cfg, data_filtered);
+data_epoch = ft_redefinetrial(cfg, data_filtered); % We have now selected one pair of channels and cut the data in 12 trials. Check them out using the databrowser, but let us use some settings to make the plots look neater and also visualize the artifacts that we identified earlier:
+
+[trl, event] = ft_trialfun_general(cfg) 
 
 cfg = [];
 cfg.ylim = [-1 1];
 cfg.viewmode = 'vertical';
 cfg.artfctdef.zvalue.artifact = artifact;
-ft_databrowser(cfg, data_epoch); % inconsistent number of samples in trial 1 ?
+ft_databrowser(cfg, data_epoch); % not showing, inconsistent number of samples in trial 1 ?
 
+% remove the trials containing the artifacts that we determined earlier.
 cfg = [];
 cfg.artfctdef.zvalue.artifact = artifact;
 cfg.artfctdef.reject = 'complete';
@@ -103,7 +107,7 @@ data_epoch = ft_rejectartifact(cfg, data_epoch);
 
 % Exercise 4
 
-% Exercise 5
+% Exercise 5 (Timelockanalysis)
 cfg = [];
 data_timelock = ft_timelockanalysis(cfg, data_epoch);
 
@@ -119,14 +123,17 @@ legend('O2Hb','HHb'); ylabel('\DeltaHb (\muM)'); xlabel('time (s)');
 clear
 cd C:\Users\zhibi\Downloads\nirs_multichannel
 cd D:\360MoveData\Users\alienware\Documents\GitHub\fieldtrip\nirs_multichannel
+cd C:\Users\NIRS\Documents\nirs_multichannel\ % NIRS_Brite1
 cfg             = [];
 cfg.dataset     = 'LR-01-2015-06-01-0002.oxy3';
 data_raw        = ft_preprocessing(cfg);
 
+% (To retrieve the layout from the data file)
 cfg           = [];
 cfg.opto      = 'LR-01-2015-06-01-0002.oxy3';
 ft_layoutplot(cfg);
 
+% (Detecting triggers)
 find(strcmp(data_raw.label,'ADC001'))
 find(strcmp(data_raw.label,'ADC002'))
 
@@ -135,31 +142,38 @@ figure; hold on
 % increase the scale of ADC002 a little bit to make it more clear in the figure
 plot(data_raw.time{1}, data_raw.trial{1}(97,:)*1.0, 'b-')
 plot(data_raw.time{1}, data_raw.trial{1}(98,:)*1.1, 'r:')
+% plot(data_raw.time{1}, data_raw.trial{1}(97,:)*1.0, 'bo')
+% plot(data_raw.time{1}, data_raw.trial{1}(98,:)*1.1, 'ro')
 
-% Exercise 1
+% Exercise 1 (Detect onset in ADC channel by finding upward going flank as event)
 event = ft_read_event('LR-01-2015-06-01-0002.oxy3')
 % ADC001 and ADC002 are the trigger channels for events
+adc002 = find(strcmp({event.type}, 'ADC002'));
 
-% Exercise 2
+% Exercise 2 (check sampling rate)
 data_raw.fsample
 
+% (resample - down sample from 250 to 10 Hz)
 cfg                   = [];
 cfg.resamplefs        = 10;
 data_down             = ft_resampledata(cfg, data_raw);
 
+% (demean and view the data, which is noisy)
 cfg                = [];
-cfg.preproc.demean = 'yes';
+cfg.preproc.demean = 'yes'; % (subtract the mean value only for plotting, data remains the same)
 cfg.viewmode       = 'vertical';
 cfg.continuous     = 'no';
 cfg.ylim           = [ -0.003   0.003 ];
 cfg.channel        = 'Rx*'; % only show channels starting with Rx
 ft_databrowser(cfg, data_down);
 
+% (high pass filtering, throw away very low-frequency)
 cfg                 = [];
 cfg.hpfilter        = 'yes';
 cfg.hpfreq          = 0.01;
 data_flt            = ft_preprocessing(cfg,data_down);
 
+% (plot and see if imporved, DC (offset) has been largely removed)
 cfg                = [];
 cfg.preproc.demean = 'yes';
 cfg.viewmode       = 'vertical';
@@ -168,6 +182,7 @@ cfg.ylim           = [ -0.003   0.003 ];
 cfg.channel        = 'Rx*'; % only show channels starting with Rx
 ft_databrowser(cfg, data_flt);
 
+% (Epoch)
 event = ft_read_event('LR-01-2015-06-01-0002.oxy3');
 
 adc001 = find(strcmp({event.type}, 'ADC001'));
@@ -205,64 +220,99 @@ trl = sortrows([trl001; trl002])
 sel = trl(:,2)<size(data_down.trial{1},2);
 trl = trl(sel,:);
 
+% (epoch)
 cfg     = [];
 cfg.trl = trl;
 data_epoch = ft_redefinetrial(cfg,data_down);
 
+% find the first odd ball
 idx = find(data_epoch.trialinfo==2, 1, 'first') % the first deviant:
 
+% Look at what happens around the first odd ball
 cfg          = [];
 cfg.channel  = 'Rx*';
 cfg.trials   = 8;
 cfg.baseline = 'yes';
-ft_singleplotER(cfg, data_epoch)
+ft_singleplotER(cfg, data_epoch) % plot event-related fields or potentials
 
-% Exercise 3
+% Exercise 3 (remove bad channels:poor contact with the skin of the scalp)
 cfg      = [];
 data_sci = ft_nirs_scalpcouplingindex(cfg, data_epoch);
+% you can see that we throw away some channels in data_sci.label, it now
+% has 86 instead of 104 channels
 
-% Exercise 4
+% Exercise 4 (Remove artifacts)
+
+% Exercise 1 (View Artifact detection)
+cfg = [];
+cfg.artfctdef.zvalue.channel = {'Rx*'};
+% cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [764nm]'};
+% cfg.artfctdef.zvalue.channel = {'Rx4b-Tx5 [860nm]'};
+cfg.artfctdef.zvalue.cutoff = 5;
+cfg.artfctdef.zvalue.hpfilter = 'yes';
+cfg.artfctdef.zvalue.hpfreq = 0.1;
+cfg.artfctdef.zvalue.rectify = 'yes';
+cfg.artfctdef.zvalue.artpadding = 2;
+cfg.artfctdef.zvalue.interactive = 'yes'; % the interactive display makes more sense after segmentating data in trials
+[cfg, artifact] = ft_artifact_zvalue(cfg, data_epoch);
+% detected 8? artifacts, call ft_refectartifact to remove after filtering
+% and segmenting the data into epochs
+
+% (transform optical densities to oxy- and deoxy-hemoglobin concentration
+% changes)
 cfg                 = [];
 cfg.target          = {'O2Hb', 'HHb'};
 cfg.channel         = 'nirs'; % e.g., one channel incl. wildcards, you can also use ?all? to select all NIRS channels
 data_conc           = ft_nirs_transform_ODs(cfg, data_sci);
 
+% (check data again)
 cfg          = [];
 cfg.channel  = 'Rx*';
 cfg.trials   = 8;
 cfg.baseline = 'yes';
 ft_singleplotER(cfg, data_conc)
 
+% (separate functional from systemic reponses)
+% (low-pass filtering)
 cfg                   = [];
 cfg.lpfilter          = 'yes';
 cfg.lpfreq            = 0.8;
 data_lpf              = ft_preprocessing(cfg, data_conc);
 
+% (check data again)
 cfg          = [];
 cfg.channel  = 'Rx*';
 cfg.trials   = 8;
 cfg.baseline = 'yes';
 ft_singleplotER(cfg, data_lpf)
 
+% (plot results)
+% 1. compute the average (normal trials)
 cfg               = [];
 cfg.trials        = find(data_lpf.trialinfo(:,1) == 1);
-timelockSTD       = ft_timelockanalysis(cfg, data_lpf);
+timelockSTD       = ft_timelockanalysis(cfg, data_lpf); % just compute the average across all trials
 
+% 2. baseline correction (normal trials)
 cfg                 = [];
-cfg.baseline        = [-5 0];
-timelockSTD         = ft_timelockbaseline(cfg, timelockSTD);
+cfg.baseline        = [-5 0]; % five seconds preceding the stimulus
+timelockSTD         = ft_timelockbaseline(cfg, timelockSTD); % baseline correction
 
+% 1. compute the average (oddball trials)
 cfg           = [];
 cfg.trials    = find(data_lpf.trialinfo(:,1) == 2);
 timelockDEV   = ft_timelockanalysis(cfg, data_lpf);
 
+% 2. baseline correction (oddball trials)
 cfg           = [];
 cfg.baseline  = [-5 0];
 timelockDEV   = ft_timelockbaseline(cfg, timelockDEV);
 
+% (visualize channel layout)
 load('nirs_48ch_layout.mat')
 figure; ft_plot_layout(lay) % note that O2Hb and HHb channels fall on top of each other
 
+% (plot multiple channels on a schematic representation of the head) 
+% not working?
 cfg                   = [];
 cfg.showlabels        = 'yes';
 cfg.layout            = lay;      % you could also specify the name of the mat file
@@ -272,6 +322,7 @@ cfg.colorgroups(contains(timelockDEV.label, 'O2Hb')) = 1; % these will be red
 cfg.colorgroups(contains(timelockDEV.label, 'HHb'))  = 2; % these will be blue
 ft_multiplotER(cfg, timelockDEV);
 
+% (color-coded topoplot)
 cfg          = [];
 cfg.layout   = lay;      % you could also specify the name of the mat file
 cfg.marker   = 'labels';
