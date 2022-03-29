@@ -8,11 +8,11 @@ addpath /home/zhibin/Documents/GitHub/TMSi_SAGA_matlab % hnlb
 cd /ssd/zhibin/1overf/20220324
 d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220324/20220324.Poly5');
 
-
 samples=d.samples;
 sr=d.sample_rate;
 channels=d.channels;
 
+% Organize the channels
 
 % unit_names=cell(length(channels),1);
 % altertive_names=cell(length(channels),1);
@@ -32,20 +32,24 @@ altertive_names
 unit_names
 channels_info=table(numbers,labels,units)
 
-
+% Create time stamps
 num2str(d.time)
 time=[1/sr:1/sr:d.time];
 
+% Plot channels of Key presses, photocells, EMG
 plot(samples(54,:),'ro'); % trigger = key presses = 223 (255-2^5)
 unique(samples(54,:))
 hold on; 
 plot(samples(38,:),'b'); %  ISO aux = analog
 plot(samples(34,:),'k'); % EMG channel
 
+% Save Channels of presses, photocells, EMG
 BottonPres=samples(54,:);
 Photocell=samples(38,:);
+EMG=samples(34,:);
 
-plot(samples(37,:));
+% View EEG
+plot(time',samples(2:33,:)');
 
 %% load TMSi for EEGLAB
 % open /home/zhibin/Documents/GitHub/TMSi_SAGA_matlab/SAGA_interface/testdatatryout2022.m
