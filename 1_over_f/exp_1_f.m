@@ -95,7 +95,7 @@ try
     [xCenter, yCenter] = RectCenter(windowRect); 
     
     % Stimulus design ***********************************************
-    % Just a dot
+    % Just a cross
     
     % Enable alpha blending for anti-aliasing
     % For help see: Screen BlendFunction?
@@ -148,8 +148,8 @@ try
     
     % condition 3
     RandomIntervals = round(NumFramesInterval + NumFramesInterval.*(rand(1,numTaps)-0.5)); % uniform distribution
-    Showframes3=cumsum(RandomIntervals);
-    
+    Showframes3=cumsum(RandomIntervals); % plot(diff(Showframes3),'ro');
+    '
     % combine all 3 conditions
     Showframes=[Showframes1;Showframes2;Showframes3];
     % ***************************************** Randomization of the conditions 
