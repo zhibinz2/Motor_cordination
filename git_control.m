@@ -1,4 +1,4 @@
-% cd /home/zhibin/Documents/GitHub/Motor_cordination
+% cd /home/zhibin/Documents/GitHub/Motor_cordination % hnlb
 ! git status
 ! git add .
 CommitName=char(datetime('now'));
