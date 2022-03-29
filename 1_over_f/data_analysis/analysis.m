@@ -1,104 +1,96 @@
 %% load TMSi data
+% open /home/zhibin/Documents/GitHub/TMSi_SAGA_matlab/SAGA_interface/testdatatryout2022.m
+
 clear;close all;
+
+% Step 1: Open Poly5 file.
+addpath /home/zhibin/Documents/GitHub/TMSi_SAGA_matlab % hnlb
 cd /ssd/zhibin/1overf/20220324
+d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220324/20220324.Poly5');
 
-[file, pathname] = uigetfile({'*.Poly5';'*.S00';'*.TMS32'},'Pick your file');
-[path,filename,extension] = fileparts(file);5
-
-fn=file;
-addpath C:\Users\zhibi\Desktop\TMSi\SAGA Interface for Matlab (94-2303-0200-0-7)\SAGA_interface
-cd  C:\Users\zhibi\Documents\TMSi\SAGA Interface for Matlab (94-2303-0200-0-7)\SAGA_interface
-Poly5toEEGlab(fn)
-
-cd C:\Users\zhibi\Desktop\TMSi
-cd 'SAGA Interface for Matlab (94-2303-0200-0-7)'\
-cd SAGA_interface
-cd C:\Users\zhibi\Desktop\TMSi\SAGA Interface for Matlab (94-2303-0200-0-7)\SAGA_interface
-d = TMSiSAGA.Poly5.read('C:\Users\HNL\Documents\TEST.DATA.Poly5');
-d = TMSiSAGA.Poly5.read('C:\Users\zhibi\Documents\test2022031520220315T230153.DATA.Poly5');
-d = TMSiSAGA.Poly5.read('C:\Users\HNL\Documents\testCedrus2022031620220316T011004.DATA.Poly5');
-d = TMSiSAGA.Poly5.read('C:\Users\HNL\Documents\testCedrusRB2022032520220316T001249.DATA.Poly5');
-d = TMSiSAGA.Poly5.read('C:\Users\HNL\Documents\20220316test20220316T012740.DATA.poly5');
-d = TMSiSAGA.Poly5.read('C:\Users\zhibi\Documents\EMG_trigger20220320T223459.DATA.Poly5');
-d = TMSiSAGA.Poly5.read('C:\Users\HNL\Documents\button_press2022-20220324T161705.DATA.Poly5');
 
 samples=d.samples;
-plot(samples(53,:),'ro'); % trigger
-plot(samples(37,:),'ro'); hold on; % analog
-plot(samples(38,:),'b'); % analog
-plot(samples(39,:));
-unique(samples(37,:))
-C:\Users\HNL\Documents
+sr=d.sample_rate;
+channels=d.channels;
 
 
-plot(samples(53,:),'ro');
+% unit_names=cell(length(channels),1);
+% altertive_names=cell(length(channels),1);
+% for i=1:length(channels)
+%     altertive_names(i)={channels{i}.alternative_name};
+%     unit_names(i)={channels{i}.unit_name};
+% end
 
-triggerSample=samples(53,:);
+numbers=num2str([1:length(channels)]');
+labels=strings(length(channels),1);
+units=strings(length(channels),1);
+for i=1:length(channels)
+    labels(i)=channels{i}.alternative_name;
+    units(i)=channels{i}.unit_name;
+end
+altertive_names
+unit_names
+channels_info=table(numbers,labels,units)
 
-%% load LSL labrecorder file
-addpath  C:\Users\zhibi\Documents\GitHub\xdf-Matlab
-[streams,fileheader] = load_xdf('sub-P001_ses-S001_task-Default_run-001_eeg.xdf');
 
+num2str(d.time)
+time=[1/sr:1/sr:d.time];
 
-%%
-cd C:\Users\HNL\Desktop\TMSi\SAGA Interface for Matlab (94-2303-0200-0-7)\SAGA_interface
-d = TMSiSAGA.Poly5.read('C:\Users\HNL\Documents\TEST.DATA.Poly5');
-d = TMSiSAGA.Poly5.read('C:\Users\HNL\Documents\testCedrusRB2022032520220316T001249.DATA.Poly5');
-d = TMSiSAGA.Poly5.read('C:\Users\HNL\Documents\TMSimodel-20220316T013831.DATA.Poly5');
-d = TMSiSAGA.Poly5.read('C:\Users\zhibi\Documents\photocell4000RB-20220322T215131.DATA.Poly5');
-
-samples=d.samples;
-plot(samples(53,:));
-plot(samples(53,:),'ro');
-unique(samples(53,:))
-255-ans
-plot(samples(53,:),'ro');
-triggerSample=samples(53,:);
-
-plot(samples(54,:));
+plot(samples(54,:),'ro'); % trigger = key presses = 223 (255-2^5)
 unique(samples(54,:))
+hold on; 
+plot(samples(38,:),'b'); %  ISO aux = analog
+plot(samples(34,:),'k'); % EMG channel
 
+BottonPres=samples(54,:);
+Photocell=samples(38,:);
 
-%-- 1/27/2022 4:11 PM --%
-d = TMSiSAGA.Poly5.read('C:\Users\HNL\Documents\TEST.DATA.Poly5');
-samples=d.samples;
-plot(samples(53,:));
-[file, pathname] = uigetfile({'*.Poly5';'*.S00';'*.TMS32'},'Pick your file');
-clear
-[file, pathname] = uigetfile({'*.Poly5';'*.S00';'*.TMS32'},'Pick your file');
-[path,filename,extension] = fileparts(file);
-[file, pathname] = uigetfile({'*.Poly5';'*.S00';'*.TMS32'},'Pick your file');
-[path,filename,extension] = fileparts(file);
-fn='TEST.DATA.Poly5';
-Poly5toEEGlab(fn)
-fn='TEST.DATA';
-Poly5toEEGlab(fn)
-fn=file;
-Poly5toEEGlab(fn)
-d = TMSiSAGA.Poly5.read('C:\Users\HNL\Documents\TEST.DATA.Poly5');
-samples=d.samples;
-d = TMSiSAGA.Poly5.read('C:\Users\HNL\Documents\TEST.DATA.Poly5');
-clear
-d = TMSiSAGA.Poly5.read('C:\Users\HNL\Documents\TEST.DATA.Poly5');
-cd C:\Users\zhibi\Desktop\TMSi\SAGA Interface for Matlab (94-2303-0200-0-7)\SAGA_interface
-d = TMSiSAGA.Poly5.read('C:\Users\HNL\Documents\TEST.DATA.Poly5');
-cd C:\Users\zhibi\Desktop\TMSi\SAGA Interface for Matlab (94-2303-0200-0-7)\SAGA_interface
-cd C:\Users\HNL\Documents
-cd C:\Users\zhibi\Desktop\TMSi\SAGA Interface for Matlab (94-2303-0200-0-7)\SAGA_interface
-cd C:\Users\zhibi\Desktop\TMSi
-cd SAGA Interface for Matlab (94-2303-0200-0-7)
-cd 'SAGA Interface for Matlab (94-2303-0200-0-7)'\
-cd SAGA_interface
-d = TMSiSAGA.Poly5.read('C:\Users\HNL\Documents\TEST.DATA.Poly5');
-samples=d.samples;
-
-
-d = TMSiSAGA.Poly5.read('C:\Users\zhibi\Documents\default-20220305T214217.DATA.Poly5');
-samples=d.samples;
 plot(samples(37,:));
+
+%% load TMSi for EEGLAB
+% open /home/zhibin/Documents/GitHub/TMSi_SAGA_matlab/SAGA_interface/testdatatryout2022.m
+
+cd /ssd/zhibin/1overf/20220324
+[file, pathname] = uigetfile({'*.Poly5';'*.S00';'*.TMS32'},'Pick your file');
+[path,filename,extension] = fileparts(file);
+open Poly5toEEGlab
+Plot a single channel.
+
+% Step 2: Plot a single channel.
+plot((0:(d.num_samples - 1)) / d.sample_rate, d.samples(2, :));
+
+% Step 3: Save dataset in the same directory as the *.Poly5 file.
+% Open EEGlab
+eeglab
+
+% Load TMSi's channel location file
+load('EEGChannels64TMSi.mat', 'ChanLocs');
+
+% Transform data to eeglab. 
+eegdataset = toEEGLab(d, ChanLocs);
+
+% Save dataset in the same directory as the *.Poly5 file.
+pop_saveset(eegdataset,'filename',filename,'filepath',pathname)
+disp(['Data saved as EEGlab dataset (.set) in this folder: ',pathname])
 
 %% load behaviral data
 cd /home/zhibin/Documents/GitHub/1overf/stimulus_data_storage
 load('20220324.mat')
 
+%% Covert BottonPres and Photocell signals to time points
+BottonPres=samples(54,:);unique(BottonPres) 
+Photocell=samples(38,:);plot(Photocell)
+time;
+
+open /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102/organize_photocells_step2.m
+
+
+
+
+
+
 %% auto correlation and spectrum
+open /ssd/zhibin/1overf/20220324/explore_1_over_f.m
+
+cd /ssd/zhibin/1overf/20220324
+
