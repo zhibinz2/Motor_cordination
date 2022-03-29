@@ -21,7 +21,8 @@ info2 = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','myuniques
 % outlet1 = lsl_outlet(info1);
 outlet2 = lsl_outlet(info2);
 % Set markers
-markers = {'Baseline-Start', 'Baseline-End', 'Trial-Start', 'Trial-End','Screen_Flip'};
+% markers = {'Baseline-Start', 'Baseline-End', 'Trial-Start', 'Trial-End','Screen_Flip'};
+markers = {'C', 'C', 'A', 'B','Screen_Flip'};
 
 % ##################################################################### LSL
 
@@ -138,7 +139,20 @@ try
     posL = [xLcenter-screenXpixels/6,yCenter-screenXpixels/6,xLcenter+screenXpixels/6,yCenter+screenXpixels/6];
     posR = [xRcenter-screenXpixels/6,yCenter-screenXpixels/6,xRcenter+screenXpixels/6,yCenter+screenXpixels/6];
     % ****************************************Checkerboard Design
-    
+
+    % Set size of the squares for photocell ###############################
+    PhotosensorSize=30;
+    % Positions of the four corners
+    RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels];
+    RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2];
+    LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels];
+    LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
+%     RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+230-PhotosensorSize screenXpixels screenYpixels/2+230+PhotosensorSize];
+%     RightUpperSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+110-PhotosensorSize screenXpixels screenYpixels/2+110+PhotosensorSize];
+%     LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 screenYpixels/2+230+PhotosensorSize];
+%     LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
+    % ############################### Set size of the squares for photocell 
+
     % Enable alpha blending for anti-aliasing
     % For help see: Screen BlendFunction?
     % Also see: Chapter 6 of the OpenGL programming guide
@@ -175,7 +189,7 @@ try
     
     % Setting time variables**********************************************
     % Length of one minute baseline
-    BaselineLength = 6; %4; % 4 s to move
+    BaselineLength =60; % in seconds 4; % 4 s to move
     numFramesBaseline = round(BaselineLength / ifi / waitframes);
 
     % total number of frames per trial
@@ -198,7 +212,7 @@ try
     %HideCursor(windowPtr,mice(1));
 
     % Baseline taking 60s  **********************************************
-    instructionStart=['Hit any key and then look at the center of the screen for 1 min'];
+    instructionStart=['Hit any key and then look at the center of the screen for ' num2str(BaselineLength) ' seconds'];
     DrawFormattedText2(instructionStart,'win',windowPtr,...
         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
     Screen('Flip',windowPtr);
@@ -240,8 +254,8 @@ try
 
         % LSL marker to check screen flip frequency
         % send markers into the outlet
-        mrk = markers{5};
-        outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+%         mrk = markers{5};
+%         outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
 
         n=n+1;
     end
@@ -297,11 +311,6 @@ try
             % send markers into the outlet
             mrk = markers{3};
             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-
-            % initial or reset trial frame number
-            n=1;
-            % get a timestamp and begin the trial
-            vbl = Screen('Flip', windowPtr);
             
             % Run the trial #################
             run trial_checkerboard_LSL_fNIR.m
