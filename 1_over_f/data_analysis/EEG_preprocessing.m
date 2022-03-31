@@ -58,7 +58,7 @@ end
 plot(datatimes,filtered_data);
 
 figure(2), clf
-plot(datatimes,squeeze(detrend_data(chan,:)))
+plot(datatimes,squeeze(detrend_data(chani,:)))
 hold on
 plot(datatimes,squeeze(filtered_data(chani,:)),'r','linew',2)
 xlabel('Time (ms)'), ylabel('Voltage (\muV)')
@@ -122,28 +122,70 @@ xline(datatimes(PhotocellInd(480)),'r','end checking power spectrum');
 %% look at power spectrum
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis
 open Powerspetra.m
-cd 
 
 % select a section for power spectrum
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(datatimes(PhotocellInd(241):PhotocellInd(480)),filtered_data2(PhotocellInd(241):PhotocellInd(480),2:33));
 
 % some settings for plotting
+Timeselected=datatimes(PhotocellInd(241):PhotocellInd(480));
+EEGselected=filtered_data2(PhotocellInd(241):PhotocellInd(480),2:33);
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(Timeselected,EEGselected);
 
+% fft
+fcoef=fft(EEGselected);
+N=size(EEGselected,1); % N=length(Timeselected);
+fcoef=fcoef/N;
+halfN=floor(N/2);
+% df=1/T; 
+% fV=[0:df:(halfN-1)*df]; 
+fV=linspace(0,sr/2,halfN+1); % same df
+fcoef=2*fcoef(1:halfN,:);
+amplitude = abs(fcoef);
+% plot one channel 
+plot(fV(1:length(amplitude)),amplitude(:,1));
+xlim([0 25]);
+xlabel('frequency');
+ylabel('amplitude (uV)');
+title('Spetrum');
+% plot all channels
+plot(fV(1:length(amplitude)),amplitude(:,:));
+xlim([0 25]);
+xlabel('frequency');
+ylabel('amplitude (uV)');
+title('Spetra of 32 channels');
+legend(labels);
+% set(gca,'yscale','log')
+% ylabel('log of amplitude (uV)');
+% set(gca,'xscale','log')
 
-% plot power spectra of all chans
+% plot all channels separately
+figure('units','normalized','outerposition',[0 0 1 1]);
 for chan=1:32
-    subplot(8,16,chan);
-    plot(freqs,pow(:,chan));
-    xlabel('freq');ylabel('pow');
-    ylim([0 0.5]);
-    title([AllchanNames{chan}]);
+    subplot(4,8,chan);
+    plot(fV(1:size(amplitude,1)),amplitude(:,chan));
+    xlabel('frequency');ylabel('amplitude (uV)');
+    xlim([0 25]);title([labels{chan}]);ylim([0 50]);
 end
+suptitle('spectra of all channels')
 
-suptitle('session2021111802')
-
-
-
+%% Plot all erp of planning on scalp map 
+figure('units','normalized','outerposition',[0 0 1 1]);
+for chan=1:32
+    subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.05 0.05]); % not showing, why
+    % plot([1 1],[1 1],'ro');
+    plot(fV(1:size(amplitude,1)),amplitude(:,chan));
+    if ~isempty(find([1:30 32]==chan))
+    set(gca,'XTick',[]); set(gca,'YTick',[]); 
+    end
+    if chan==31
+        xlabel('frequency');
+        ylabel('amplitude (uV)');
+    end
+    xlim([0 25]);title([labels{chan}]);ylim([0 50]);
+end
+suptitle('spectra of all channels on scalp map')
 %% baseline normalization 
 
 
