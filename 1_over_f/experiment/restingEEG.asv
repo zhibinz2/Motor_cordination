@@ -30,7 +30,7 @@ while i<numFramesRestEye
         break;
     end
     % Show the fixation cross
-    Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/400, white, [0 0], 2);
+    Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/30, white, [0 0], 2);
     % Show the central dot
     % Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
     % Flip the black screen
@@ -45,7 +45,7 @@ Screen('FillRect', windowPtr, white, RightBottomSquare);
 Screen('Flip',windowPtr);
 
 %****************************************************************************
-instructionStart=['Hit a key and then close your eyes to rest for ' num2str(TimeRestingEEG/60) ' min before I tell you to continue.']
+instructionStart=['Hit a key and then close your eyes to rest for 3 min before I tell you to continue.']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
@@ -54,9 +54,18 @@ KbStrokeWait;
 
 % Flash photocells to mark the start and end of eye closed period 
 % Flash once to start ###### (upper left and bottom right)
-Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-Screen('FillRect', windowPtr, white, RightBottomSquare);
+% i=1;
+% while i < 2;
+    Screen('FillRect', windowPtr, white, LeftUpperSquare);
+    Screen('FillRect', windowPtr, white, RightBottomSquare);
+    Screen('Flip',windowPtr);
+%     i=i+1;
+% end
+
+
+% Black Screen
 Screen('Flip',windowPtr);
+% WaitSecs(TimeRestingEEG);
 
 % get a timestamp and begin taking resting EEG
 vbl = Screen('Flip', windowPtr);
@@ -78,7 +87,7 @@ end
 % Flash photocells again to end ###### (upper left and bottom right)
 i=1;
 while i < 2;
-    Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
+    Screen('FillRect', windowPtr, white, LeftUpperSquare);
     Screen('FillRect', windowPtr, white, RightBottomSquare);
     Screen('Flip',windowPtr);
     i=i+1;

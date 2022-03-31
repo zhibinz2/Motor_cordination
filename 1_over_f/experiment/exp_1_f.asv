@@ -156,9 +156,9 @@ try
         Noiseframes3=[Noiseframes3 NumsInBetween];
     end
     % plot to examine
-%     plot(Showframes3,ones(1,length(Showframes3)),'ro');hold on;
-%     plot(Noiseframes3,ones(1,length(Noiseframes3)),'bo');
-%     legend({'Go','No-Go'});xlabel('time');title('randomized RT stimulus');
+    plot(Showframes3,ones(1,length(Showframes3)),'ro');hold on;
+    plot(Noiseframes3,ones(1,length(Noiseframes3)),'bo');
+    legend({'Go','No-Go'});xlabel('time');title('randomized RT s');
     
     % combine all 3 conditions
     Showframes=[Showframes1;Showframes2;Showframes3];
