@@ -11,6 +11,10 @@ while n < numFrames
         Screen('CloseAll');
         break;
     end
+    
+    % show instruction for each trial / condition
+    DrawFormattedText2(conditionNames{conditionSelected},'win',windowPtr,...
+    'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
 
     % Update the while loop with time
 %     numberOfSecondsElapsed = (now - startTime) * 10 ^ 5;

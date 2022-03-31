@@ -149,7 +149,7 @@ try
     % condition 3
     RandomIntervals = round(NumFramesInterval + NumFramesInterval.*(rand(1,numTaps)-0.5)); % uniform distribution
     Showframes3=cumsum(RandomIntervals); % plot(diff(Showframes3),'ro');
-    '
+    
     % combine all 3 conditions
     Showframes=[Showframes1;Showframes2;Showframes3];
     % ***************************************** Randomization of the conditions 
@@ -178,7 +178,7 @@ try
     
     % Setting time variables**********************************************
     % Length of one minute baseline
-    BaselineLength = 2; 
+    BaselineLength = 2; % in seconds
     numFramesBaseline = round(BaselineLength / ifi / waitframes);
 
     % total number of frames per trial
