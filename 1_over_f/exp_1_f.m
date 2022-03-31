@@ -294,10 +294,19 @@ try
             % pick a condition from randomized set allPerm
             conditionSelected = allPerm(numTrials*(block-1)+t);
             Showframeselected=Showframes(conditionSelected,:);
+            
+            % select color
+            if conditionSelected == 1
+                color = green;
+            elseif conditionSelected == 2
+                color = red;
+            else
+                color =yellow;
+            end
 
             % show instruction for each trial / condition
             DrawFormattedText2(conditionNames{conditionSelected},'win',windowPtr,...
-            'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+            'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
             Screen('Flip', windowPtr);
             pause(3); % for subject to read instruction
 

@@ -11,10 +11,12 @@ while n < numFrames
         Screen('CloseAll');
         break;
     end
-    
-    % show instruction for each trial / condition
+        
+    % show instruction for each trial / condition with different color
     DrawFormattedText2(conditionNames{conditionSelected},'win',windowPtr,...
-    'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+    'sx','center','sy', 'bottom','xalign','center','yalign','top','baseColor',color);
+    % show cross with different color
+    Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/300, color, [0 0], 2);
 
     % Update the while loop with time
 %     numberOfSecondsElapsed = (now - startTime) * 10 ^ 5;
@@ -54,7 +56,7 @@ while n < numFrames
     % show stimulus and photocells on the right at the same time
     if any(Showframeselected(:) == n)
         % Show the fixation cross
-        Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/300, white, [0 0], 2);
+        Screen('DrawDots', windowPtr, [xCenter;yCenter], screenXpixels/30, color, [0 0], 2);
         Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
         Screen('FillRect', windowPtr, white, RightBottomSquare);
     end
