@@ -375,3 +375,8 @@ catch
     sca;
     psychrethrow(psychlasterror);
 end  
+
+
+% save data
+% /home/hnl/Documents/GitHub/1overf/stimulus_data_storage
+% seed.mat
