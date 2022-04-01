@@ -5,8 +5,10 @@ clear;close all;
 
 % Step 1: Open Poly5 file.
 addpath /home/zhibin/Documents/GitHub/TMSi_SAGA_matlab % hnlb
-cd /ssd/zhibin/1overf/20220324
-d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220324/20220324.Poly5');
+% cd /ssd/zhibin/1overf/20220324
+cd /ssd/zhibin/1overf/20220331
+% d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220324/20220324.Poly5');
+d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220331/experiment_PILOT-20220331T162236.DATA.Poly5');
 
 samples=d.samples;
 sr=d.sample_rate;
@@ -35,27 +37,35 @@ num2str(d.time)
 time=[1/sr:1/sr:d.time];
 
 % Plot channels of Key presses, photocells, EMG
-plot(samples(54,:),'ro'); % trigger = key presses = 223 (255-2^5)
-unique(samples(54,:))
+% plot(samples(54,:),'ro'); % trigger = key presses = 223 (255-2^5)
+plot(samples(53,:),'ro'); % trigger = key presses = 223 (255-2^5)
+% unique(samples(54,:))
+unique(samples(53,:))
 hold on; 
 plot(samples(38,:),'b'); %  ISO aux = analog
-plot(samples(34,:),'k'); % EMG channel
+% plot(samples(34,:),'k'); % EMG channel
+plot(samples(33,:),'k'); % EMG channel
+
 
 % Save Channels of presses, photocells, EMG
-BottonPres=samples(54,:);
+% BottonPres=samples(54,:);
+BottonPres=samples(53,:);
 Photocell=samples(38,:);
-EMG=samples(34,:);
+% EMG=samples(34,:);
+EMG=samples(33,:);
 
 % View EEG
-plot(time',samples(2:33,:)');
+% plot(time',samples(2:33,:)');
+plot(time',samples(1:32,:)');
 
 %% load TMSi for EEGLAB
 % open /home/zhibin/Documents/GitHub/TMSi_SAGA_matlab/SAGA_interface/testdatatryout2022.m
 
-cd /ssd/zhibin/1overf/20220324
+% cd /ssd/zhibin/1overf/20220324
+cd /ssd/zhibin/1overf/20220331
 [file, pathname] = uigetfile({'*.Poly5';'*.S00';'*.TMS32'},'Pick your file');
 [path,filename,extension] = fileparts(file);
-open Poly5toEEGlab
+% open Poly5toEEGlab
 
 % Step 2: Plot a single channel.
 plot((0:(d.num_samples - 1)) / d.sample_rate, d.samples(2, :));
@@ -76,16 +86,16 @@ disp(['Data saved as EEGlab dataset (.set) in this folder: ',pathname])
 
 %% load stimulus data
 cd /home/zhibin/Documents/GitHub/1overf/stimulus_data_storage
-load('20220324.mat')
-
+% load('20220324.mat')
+load('20220331.mat')
 %% Covert BottonPres and Photocell signals to time points
-Photocell=samples(38,:);
-BottonPres=samples(54,:);
-unique(BottonPres) 
+% Photocell=samples(38,:);
+% BottonPres=samples(54,:);
+% unique(BottonPres) 
 
 time;
 
-open /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102/organize_photocells_step2.m
+% open /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102/organize_photocells_step2.m
 
 % for photocell
 % view the time course of photocell signals
@@ -96,6 +106,7 @@ plot(Photocell');xlabel('time');ylabel('photocell signal');
 % click and select the start and end point for peak extraction
 [x, y] = ginput(2); % read two mouse clicks on the plot % x were index, y were real values
 Startpoint=round(x(1));Endpoint=round(x(2)); % Startpoint and Endpoint are sample number or index in time
+hold on;xline(x(1),'r');xline(x(2),'r');hold off;
 
 % replace the beginning and end with baseline value
 Photocell(1:Startpoint)=mean(y);Photocell(Endpoint:end)=mean(y); % plot(Photocell');
@@ -138,10 +149,11 @@ yline(Halfhigh1,'m','MinPeakProminence');
 % hold on; yline(Highcutoff,'m--','highcut');hold off;
 
 % for botton presses
-botton1data=BottonPres(Startpoint:Endpoint);
+% botton1data=BottonPres(Startpoint:Endpoint);
+botton1data=BottonPres;
 % look for values other than 0 and 255
 plot(datatimes,botton1data,'bo'); % view time course of botton press values
-PresInd=find(botton1data~=255); % extract Index of real key presses in the values
+PresInd=find(botton1data ~= 255 & botton1data ~= 0); % extract Index of real key presses in the values
 plot(PresInd,ones(1,length(PresInd)),'ro'); % look at the above Index
 threshold = NumFramesInterval*ifi*sr/4; % determine a threshold of key press interval
 BottonPresTimeInd=PresInd(find([1 diff(PresInd)>threshold])); % exact index of key press onset in datatimes
