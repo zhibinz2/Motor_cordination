@@ -346,12 +346,14 @@ try
 
             if block ~= numBlock | t ~= numTrials % only bypass the last trial
                 % Show Resting
-                Resting = ['Rest for 2s'];
+                Resting = ['Take a rest and press any key to contiue'];
                 DrawFormattedText2(Resting,'win',windowPtr,...
                     'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
                 vbl=Screen('Flip',windowPtr);
-                % Rest 20 sec
-                pause(2);
+                % Rest 1 sec
+                pause(1);
+                % hit a key to continue
+                KbStrokeWait;   
             end
 
         end
