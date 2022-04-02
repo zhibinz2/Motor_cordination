@@ -26,6 +26,7 @@ datatimes; %
 
 
 %% detrend the data
+% detrend_data=ndetrend(samples(2:33,:)',1); 
 detrend_data=ndetrend(samples(1:32,:)',1); 
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 % plot(detrend_data(ind1:ind2,2:33));
@@ -144,7 +145,7 @@ hold on;
 plot(BottonPresTimeInd,ones(1,length(BottonPresTimeInd)),'r.'); title('botton press');
 legend({'photocell signal','botton press'});
 subplot(3,1,2);
-plot(EMG,'k'); title('EMG'); % EMG channel
+plot(EMG,'k'); title('EMG'); ylim([-5000 5000]);% EMG channel
 subplot(3,1,3);
 plot(filtered_data2);
 xlabel('time (sample)');title('EEG');ylim([-500 500]);
