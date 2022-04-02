@@ -154,9 +154,9 @@ botton1data=BottonPres;
 % look for values other than 0 and 255
 plot(datatimes,botton1data,'bo'); % view time course of botton press values
 PresInd=find(botton1data ~= 255 & botton1data ~= 0); % extract Index of real key presses in the values
-plot(PresInd,ones(1,length(PresInd)),'ro'); % look at the above Index
+plot(PresInd,ones(1,length(PresInd)),'ro'); % look at the above Index (one press produced several indices)
 threshold = NumFramesInterval*ifi*sr/4; % determine a threshold of key press interval
-BottonPresTimeInd=PresInd(find([1 diff(PresInd)>threshold])); % exact index of key press onset in datatimes
+BottonPresTimeInd=PresInd(find([1 diff(PresInd)>threshold])); % exact index of key press onset in datatimes (reduce several indices into one)
 % examine key press interval
 figure;
 plot(1:length(diff(BottonPresTimeInd)), diff(BottonPresTimeInd),'ro'); 

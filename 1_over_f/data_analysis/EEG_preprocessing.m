@@ -133,7 +133,48 @@ xline(datatimes(PhotocellInd(end)),'r','last photocell');
 % xline(datatimes(PhotocellInd(241)),'r','start checking power spectrum');
 % xline(datatimes(PhotocellInd(480)),'r','end checking power spectrum');
 
-%% add paddings
+%% Remove paddings
+
+%% plot Photocell, button presses, EMG, EEG together
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(3,1,1);
+plot(Photocell);
+ylabel('photocell signal');title('photocell signal');
+hold on;
+plot(BottonPresTimeInd,ones(1,length(BottonPresTimeInd)),'r.'); title('botton press');
+legend({'photocell signal','botton press'});
+subplot(3,1,2);
+plot(EMG,'k'); title('EMG'); % EMG channel
+subplot(3,1,3);
+plot(filtered_data2);
+xlabel('time (sample)');title('EEG');ylim([-500 500]);
+
+[x, y] = ginput(2); % read two mouse clicks on the plot % x were index, y were real values
+% get the proximate index
+string(x)
+ind1=round(x(1))
+ind2=round(x(2))
+hold on; xline(ind1,'r');xline(ind2,'r');hold off;
+
+% close;
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(3,1,1);
+plot(Photocell');
+ylabel('photocell signal');title('photocell signal');
+hold on;
+plot(BottonPresTimeInd,ones(1,length(BottonPresTimeInd)),'r.'); title('botton press');
+legend({'photocell signal','botton press'});
+xlim([ind1 ind2]);
+
+subplot(3,1,2);
+plot(EMG,'k'); title('EMG'); % EMG channel
+xlim([ind1 ind2]);
+
+subplot(3,1,3);
+plotx(filtered_data2);
+xlabel('time (sample)');title('EEG');
+ylim([-500 500]);
+xlim([ind1 ind2]);
 
 
 %% look at power spectrum
