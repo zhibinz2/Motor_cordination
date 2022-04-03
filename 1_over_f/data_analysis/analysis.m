@@ -8,6 +8,7 @@ addpath /home/zhibin/Documents/GitHub/TMSi_SAGA_matlab % hnlb
 % cd /ssd/zhibin/1overf/20220324
 cd /ssd/zhibin/1overf/20220331
 % d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220324/20220324.Poly5');
+d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220331/RESTING_ec_2mim-20220331T161816.DATA.Poly5');
 d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220331/experiment_PILOT-20220331T162236.DATA.Poly5');
 
 samples=d.samples;
@@ -53,10 +54,12 @@ BottonPres=samples(53,:);
 Photocell=samples(38,:);
 % EMG=samples(34,:);
 EMG=samples(33,:);
+EEG=samples(1:32,:);
 
 % View EEG
 % plot(time',samples(2:33,:)');
-plot(time',samples(1:32,:)');
+% plot(time',samples(1:32,:)');
+plot(time',EEG');
 
 %% load TMSi for EEGLAB
 % open /home/zhibin/Documents/GitHub/TMSi_SAGA_matlab/SAGA_interface/testdatatryout2022.m
@@ -158,8 +161,8 @@ plot(PresInd,ones(1,length(PresInd)),'ro'); % look at the above Index (one press
 threshold = NumFramesInterval*ifi*sr/4; % determine a threshold of key press interval
 BottonPresTimeInd=PresInd(find([1 diff(PresInd)>threshold])); % exact index of key press onset in datatimes (reduce several indices into one)
 % examine key press interval
-figure;
-plot(1:length(diff(BottonPresTimeInd)), diff(BottonPresTimeInd),'ro'); 
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(1:length(diff(BottonPresTimeInd)), diff(BottonPresTimeInd),'r.'); 
 xlabel('key press');ylabel('Intervals (ms)');
 
 %% Compare photocell amd botton presses timing
@@ -167,10 +170,10 @@ PhotocellTime=locs; % locs are values in datatimes
 BottonPressTime=datatimes(BottonPresTimeInd);
 
 % view and compare
-close;figure;
+close;figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PhotocellTime',ones(length(PhotocellTime),1),'bo');
 hold on;
-plot(BottonPressTime',ones(length(BottonPressTime),1),'ro');
+plot(BottonPressTime',ones(length(BottonPressTime),1),'r.');
 xlabel('time');title('Photocell / Botton press indicator');
 hold off;
 legend('Photocell','Botton press');

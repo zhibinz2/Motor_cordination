@@ -2,7 +2,7 @@
 % plot(time(Startpoint:Endpoint)',samples(2:33,Startpoint:Endpoint)');
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 % plot(samples(2:33,:)');
-plot(samples(1:32,:)');hold on; xline(x(1),'r');xline(x(2),'r');
+plot(samples(1:32,:)');% hold on; xline(x(1),'r');xline(x(2),'r');
 [x, y] = ginput(2); % read two mouse clicks on the plot % x were index, y were real values
 % get the proximate index
 string(x)
@@ -15,22 +15,43 @@ hold off;
 
 % plot the section
 % plot(samples(2:33,ind1:ind2)');
-figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(samples(1:32,ind1:ind2)');
+% figure('units','normalized','outerposition',[0 0 1 0.3]);
+% plot(samples(1:32,ind1:ind2)');
 
-time';
-datatimes; % 
+% time';
+% datatimes; % 
 % EEGdata=samples(2:33,Startpoint:Endpoint)';
 
-%% add paddings
+%% cut off artifact at the beginning and end
+EEG=EEG(:,ind1:ind2)';
+time=time(ind1:ind2)';
+EMG=EMG(:,ind1:ind2)';
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(EEG);
 
-
-%% detrend the data
+%% detrend the data (no padding needed)
+% lab's detrend function
 % detrend_data=ndetrend(samples(2:33,:)',1); 
-detrend_data=ndetrend(samples(1:32,:)',1); 
+% detrend_data=ndetrend(samples(1:32,:)',1); 
+% detrend_data=ndetrend(EEG,1); 
+% % mathwork's detrend function
+% detrend_data=detrend(EEG,0); % not good
+% detrend_data=detrend(EEG,1); % similar to ndetrend
+detrend_data=detrend(EEG,2); % even better
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 % plot(detrend_data(ind1:ind2,2:33));
-plot(detrend_data(ind1:ind2,:));
+plot(detrend_data);
+% plot(detrend_data(ind1:ind2,:));
+
+% [x, y] = ginput(2); % read two mouse clicks on the plot % x were index, y were real values
+% get the proximate index
+% string(x)
+% ind1=round(x(1))
+% ind2=round(x(2))
+% hold on;
+% xline(ind1,'b');xline(ind2,'b');
+% xlim(round([x(1) x(2)]));ylim(round([y(1) y(2)]));
+% hold off;
 %% Broadband filter method 1 (run very slow and might crash) (skip)
 % https://mikexcohen.com/lectures.html
 
@@ -85,11 +106,14 @@ d = designfilt("lowpassfir", ...
 filtered_data = filtfilt(d,detrend_data);
 plot(datatimes,filtered_data);
 
-%% filtfilthd method (hnl)
+%% filtfilthd method (hnl) low pass first (skip)
 % this method seem to be dependent on EEGLAB. because EELAB reset the path for filtfilt
 % eeglab; 
 % which -all filtfilt.m
 rmpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/external/fieldtrip-20141007
+cd  /home/zhibin/Documents/GitHub/matlab-archive
+cd /usr/local/MATLAB/R2019a/toolbox/signal/signal
+which filtfilt.m
 
 % cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
 % open EEG_filter_step2b.m
@@ -100,22 +124,71 @@ rmpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/external/fieldtrip-2
 % open makefilter
 % Hd = makefilter(sr,Fpass,Fstop,Apass,Astop,doplot)
 
-% low pass
-Hd = makefilter(sr,50,51,6,20,1); 
+% low pass 
+% (this will create short edge artifact )
+Hd = makefilter(sr,50,51,6,20,0);  % Hd = makefilter(sr,50,51,6,20,1); 
 filtered_data=filtfilthd(Hd,detrend_data);% after calling EEGLAB filtfilt reset to matlab default
 % open /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/external/fieldtrip-20141007/external/signal/filtfilt.m % this not work
 % /usr/local/MATLAB/R2019a/toolbox/signal/signal/filtfilt.m % this works
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 % plot(filtered_data(ind1:ind2,2:33));
-plot(filtered_data(ind1:ind2,:));
+% plot(filtered_data(ind1:ind2,:));
+plot(filtered_data(:,:));
+ylim([-500 500]);
 
-% high pass
-Hd = makefilter(sr,0.2,0.15,6,20,1); % Fpass/Fstop does not seem to work under 1 Hz
+% cut off artifact at the beginning and end
+[x, y] = ginput(2); % read two mouse clicks on the plot % x were index, y were real values
+% get the proximate index
+ind1=round(x(1));
+ind2=round(x(2));
+filtered_data=filtered_data(ind1:ind2,:);
+time=time(ind1:ind2);
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(filtered_data(:,:));
+ylim([y(1) y(2)]);;
+
+% add padding
+% padding=zeros(size(filtered_data));
+% filtered_data=cat(1,padding,filtered_data,padding);
+
+% high pass 
+% (very large artifact if not cut off edges after low pass filter, even padding won't slove it)
+% (no edge artifact if cut off edges after low pass filter, no padding needed)
+Hd = makefilter(sr,0.2,0.15,6,20,0); % Hd = makefilter(sr,0.2,0.15,6,20,1); xlim([0 2]);% Fpass/Fstop does not seem to work under 1 Hz
 filtered_data2=filtfilthd(Hd,double(filtered_data));
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 % plot(filtered_data2(ind1:ind2,2:33));
-plot(filtered_data2(ind1:ind2,:));
+% plot(filtered_data2(ind1:ind2,:));
+plot(filtered_data2(:,:));ylim([-5000 5000]);
 hold on;xline(x(1),'r');xline(x(2),'r');hold off;
+
+%% filtfilthd method (hnl) high pass first
+% high pass (no paddings needed)
+Hd = makefilter(sr,0.2,0.15,6,20,0); 
+filtered_data=filtfilthd(Hd,detrend_data);
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(filtered_data);
+
+% add padding
+padding=zeros(size(filtered_data));
+filtered_data=cat(1,padding,filtered_data,padding);
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(filtered_data);
+
+% low pass 
+% (this will create short edge artifact)
+% (if added zero paddings, edge artifact disappear)
+Hd = makefilter(sr,50,51,6,20,0);  
+filtered_data2=filtfilthd(Hd,filtered_data);
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(filtered_data2);
+ylim([-100 100]);
+
+% remove padding
+filtered_data2=filtered_data2((size(detrend_data,1)+1):2*(size(detrend_data,1)),:);
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plotx(filtered_data2);
+ylim([-100 100]);
 
 %% examine EEG quality 
 cd /home/zhibin/Documents/GitHub/Motor_cordination/Data_processing_streamline
@@ -134,7 +207,6 @@ xline(datatimes(PhotocellInd(end)),'r','last photocell');
 % xline(datatimes(PhotocellInd(241)),'r','start checking power spectrum');
 % xline(datatimes(PhotocellInd(480)),'r','end checking power spectrum');
 
-%% Remove paddings
 
 %% plot Photocell, button presses, EMG, EEG together
 figure('units','normalized','outerposition',[0 0 1 0.6]);
@@ -225,11 +297,11 @@ for chan=1:32
     subplot(4,8,chan);
     plot(fV(1:size(amplitude,1)),amplitude(:,chan));
     xlabel('frequency');ylabel('amplitude (uV)');
-    xlim([0 25]);title([labels{chan}]);%ylim([0 50]);
+    xlim([0 25]);title([labels{chan}]);ylim([0 15]);
 end
 suptitle('spectra of all channels')
 
-%% Plot all erp of planning on scalp map 
+%% Plot all erp of planning on scalp map (for my own examing)
 figure('units','normalized','outerposition',[0 0 1 1]);
 for chan=1:32
     subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.05 0.05]); % not showing, why
@@ -242,7 +314,7 @@ for chan=1:32
         xlabel('frequency');
         ylabel('amplitude (uV)');
     end
-    xlim([0 25]);title([labels{chan}]);ylim([0 50]);
+    xlim([0 25]);title([labels{chan}]);ylim([0 15]);
 end
 suptitle('spectra of all channels on scalp map')
 %% baseline normalization 

@@ -66,7 +66,7 @@ legend([p1 p2],'fl = 12','fl = 30')
 xlim([0 0.04])
 title('Analytic Envelope')
 
-%******
+%****************
 wl1 = 3;
 [up1,lo1] = envelope(x,wl1,'rms');
 wl2 = 5;
@@ -91,7 +91,21 @@ title('RMS Envelope')
 
 
 %% https://www.mathworks.com/help/signal/ref/envelope.html
+clear;
+t = 0:1/2000:2-1/2000;
+q = chirp(t-2,4,1/2,6,'quadratic',100,'convex').*exp(-4*(t-1).^2);
+plot(t,q)
 
+[up,lo] = envelope(q);
+hold on
+plot(t,up,t,lo,'linewidth',1.5)
+legend('q','up','lo')
+hold off
+%***
+clear;
+t = 0:1/2000:2-1/2000;
+q = chirp(t-2,4,1/2,6,'quadratic',100,'convex').*exp(-4*(t-1).^2);
+envelope(q)
 
 
 
