@@ -2,6 +2,8 @@
 clear; close all;
 t = 0:1/1024:1;
 x = sin(2*pi*60*t);
+
+%********
 figure;
 plot(t(1:50),x(1:50),'r');hold on;
 
@@ -44,7 +46,7 @@ hold off
 xlim([0 0.04])
 title('Hilbert Envelope')
 
-%****************
+%**************** adjust Hilbert filter length
 clear;
 
 fl1 = 12;
@@ -66,7 +68,7 @@ legend([p1 p2],'fl = 12','fl = 30')
 xlim([0 0.04])
 title('Analytic Envelope')
 
-%****************
+%**************** adjust length of window
 wl1 = 3;
 [up1,lo1] = envelope(x,wl1,'rms');
 wl2 = 5;
@@ -88,7 +90,23 @@ legend([p1 p2 p3],'wl = 3','wl = 5','wl = 300')
 xlim([0 0.04])
 title('RMS Envelope')
 
+%********** spline interpolation over local maxima
+np1 = 5;
+[up1,lo1] = envelope(x,np1,'peak');
+np2 = 50;
+[up2,lo2] = envelope(x,np2,'peak');
 
+plot(t,x)
+hold on
+p1 = plot(t,up1,param_small{:});
+plot(t,lo1,param_small{:})
+p2 = plot(t,up2,param_large{:});
+plot(t,lo2,param_large{:})
+hold off
+
+legend([p1 p2],'np = 5','np = 50')
+xlim([0 0.04])
+title('Peak Envelope')
 
 %% https://www.mathworks.com/help/signal/ref/envelope.html
 clear;

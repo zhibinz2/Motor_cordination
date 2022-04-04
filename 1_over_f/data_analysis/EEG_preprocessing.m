@@ -317,6 +317,8 @@ for chan=1:32
     xlim([0 25]);title([labels{chan}]);ylim([0 15]);
 end
 suptitle('spectra of all channels on scalp map')
+%% ICA to remove eye blinds
+
 %% baseline normalization 
 
 
