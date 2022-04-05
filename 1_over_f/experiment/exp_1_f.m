@@ -298,7 +298,8 @@ try
             end
 
             % Show trial and block number at the bottom
-            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
+            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)...
+                 ' Hit a key to continue'];
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx','center','sy', screenYpixels*0.9,'xalign','center','yalign','top','baseColor',white);
 
@@ -320,7 +321,8 @@ try
             end
 
             % show instruction for each trial / condition
-            DrawFormattedText2(conditionNames{conditionSelected},'win',windowPtr,...
+            ShowCondition=['Beginig ' conditionNames{conditionSelected} ' condition'];
+            DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
             Screen('Flip', windowPtr);
             pause(3); % for subject to read instruction
