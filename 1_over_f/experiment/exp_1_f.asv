@@ -156,9 +156,9 @@ try
         Noiseframes3=[Noiseframes3 NumsInBetween];
     end
     % plot to examine
-    plot(Showframes3,ones(1,length(Showframes3)),'ro');hold on;
-    plot(Noiseframes3,ones(1,length(Noiseframes3)),'bo');
-    legend({'Go','No-Go'});xlabel('time');title('randomized RT s');
+%     plot(Showframes3,ones(1,length(Showframes3)),'ro');hold on;
+%     plot(Noiseframes3,ones(1,length(Noiseframes3)),'bo');
+%     legend({'Go','No-Go'});xlabel('time');title('randomized RT stimulus');
     
     % combine all 3 conditions
     Showframes=[Showframes1;Showframes2;Showframes3];
@@ -300,11 +300,11 @@ try
             % Show trial and block number at the bottom
             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
             DrawFormattedText2(Showtrial,'win',windowPtr,...
-            'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+            'sx','center','sy', screenYpixels*0.9,'xalign','center','yalign','top','baseColor',white);
 
             % flip to screen and pause for 1 sec
-            vbl=Screen('Flip', windowPtr);
-            pause(2); % or WaitSecs(1);
+%             vbl=Screen('Flip', windowPtr);
+%             pause(2); % or WaitSecs(1);
 
             % pick a condition from randomized set allPerm
             conditionSelected = allPerm(numTrials*(block-1)+t);
@@ -346,12 +346,15 @@ try
 
             if block ~= numBlock | t ~= numTrials % only bypass the last trial
                 % Show Resting
-                Resting = ['Rest for 2s'];
+                between_block_rest= 5; % in seconds
+                Resting = ['Rest for at least' num2str(between_block_rest) ' s. \n Then hit a key to continue.'];
                 DrawFormattedText2(Resting,'win',windowPtr,...
                     'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
                 vbl=Screen('Flip',windowPtr);
-                % Rest 20 sec
-                pause(2);
+                % Rest 1 sec
+                pause(between_block_rest);
+                % hit a key to continue
+                KbStrokeWait;   
             end
 
         end
@@ -375,3 +378,8 @@ catch
     sca;
     psychrethrow(psychlasterror);
 end  
+
+
+% save data
+% cd /home/hnl/Documents/GitHub/1overf/stimulus_data_storage
+% seed.mat

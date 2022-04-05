@@ -300,11 +300,11 @@ try
             % Show trial and block number at the bottom
             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
             DrawFormattedText2(Showtrial,'win',windowPtr,...
-            'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+            'sx','center','sy', screenYpixels*0.9,'xalign','center','yalign','top','baseColor',white);
 
             % flip to screen and pause for 1 sec
-            vbl=Screen('Flip', windowPtr);
-            pause(2); % or WaitSecs(1);
+%             vbl=Screen('Flip', windowPtr);
+%             pause(2); % or WaitSecs(1);
 
             % pick a condition from randomized set allPerm
             conditionSelected = allPerm(numTrials*(block-1)+t);
