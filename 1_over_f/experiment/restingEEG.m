@@ -52,7 +52,7 @@ DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
 % play a beep sound to signal subject to open eyes
-Beeper(400,0.4,1)
+Beeper(400,0.9,1.5);
 % hit a key to continue
 KbStrokeWait;
 pause(2); % given time to return the position of arm after key press 
