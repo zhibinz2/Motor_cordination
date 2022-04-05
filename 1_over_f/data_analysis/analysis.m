@@ -8,7 +8,7 @@ addpath /home/zhibin/Documents/GitHub/TMSi_SAGA_matlab % hnlb
 % cd /ssd/zhibin/1overf/20220324
 cd /ssd/zhibin/1overf/20220331
 % d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220324/20220324.Poly5');
-d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220331/RESTING_ec_2mim-20220331T161816.DATA.Poly5');
+% d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220331/RESTING_ec_2mim-20220331T161816.DATA.Poly5');
 d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220331/experiment_PILOT-20220331T162236.DATA.Poly5');
 
 samples=d.samples;
@@ -60,7 +60,7 @@ numChan=32;
 % View EEG
 % plot(time',samples(2:33,:)');
 % plot(time',samples(1:32,:)');
-plot(time',EEG');
+plot(time,EEG);
 
 %% load TMSi for EEGLAB
 % open /home/zhibin/Documents/GitHub/TMSi_SAGA_matlab/SAGA_interface/testdatatryout2022.m
@@ -128,7 +128,7 @@ yline(Halfhigh1,'m','MinPeakProminence');
 
 % examine pks and locs (both are values of analog1data and datatimes, not indices)
 % i=1;
-% find(analog1data==pks(i)) % return the index of peak in analog1data
+% find(Photocell==pks(i)) % return the index of peak in time
 % find(datatimes==locs(i)) % return the same "index" in datatimes (ie, i=1, index=4226)
 % so, infer from above, beacause the above "find values" for the same "index" works
 % pks are values in analog1data
@@ -157,7 +157,7 @@ plot(time,botton1data,'bo'); % view time course of botton press values
 PresInd=find(botton1data ~= 255 & botton1data ~= 0); % extract Index of real key presses in the values
 plot(PresInd,ones(1,length(PresInd)),'ro'); % look at the above Index (one press produced several indices)
 threshold = NumFramesInterval*ifi*sr/4; % determine a threshold of key press interval
-BottonPresTimeInd=PresInd(find([1 diff(PresInd)>threshold])); % exact index of key press onset in datatimes (reduce several indices into one)
+BottonPresTimeInd=PresInd(find([1 diff(PresInd')>threshold])); % exact index of key press onset in datatimes (reduce several indices into one)
 % examine key press interval
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(1:length(diff(BottonPresTimeInd)), diff(BottonPresTimeInd),'r.'); 
@@ -166,9 +166,16 @@ title('Differences of Time indices for botton presses');
 
 % use a threshold to segment conditions
 threshold2=max(diff(BottonPresTimeInd))/2; hold on; yline(threshold2,'m'); % show on top of previous plot
-separations=find(diff(BottonPresTimeInd)>threshold2); % indices of the first button press from the second condition
-separations=[BottonPresTimeInd(1) BottonPresTimeInd(separations)]; % time indices from the first button press in each condition
+separationsInd=find(diff(BottonPresTimeInd)>threshold2); % indices of the first button press from the second condition in BottonPresTimeInd
+separationsInd=[1;separationsInd+1]; %  indices from the first button press in each condition in BottonPresTimeInd
+separationsTimeInd=BottonPresTimeInd(separationsInd);% indices in time 
 
+% plot to examine
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(time,Photocell);xlabel('time');ylabel('photocell signal');
+hold on; xline(time(separationsTimeInd(1)),'r');
+xline(time(separationsTimeInd(2)),'r');
+xline(time(separationsTimeInd(3)),'r');hold off;
 
 %% Compare photocell amd botton presses timing
 PhotocellTime=locs; % locs are values in datatimes

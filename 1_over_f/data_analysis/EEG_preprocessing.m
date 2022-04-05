@@ -274,33 +274,37 @@ Hd = makefilter(sr,50,51,6,20,0);
 filtered_data3=filtfilthd(Hd,filtered_data2);
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(filtered_data3);
-ylim([-100 100]);
+% ylim([-100 100]);
 toc
 
 % remove padding
 filtered_data4=filtered_data3((size(padding,1)+1):(size(padding,1)+size(detrend_data,1)),:);
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plotx(filtered_data4);
-ylim([-100 100]);
+% ylim([-100 100]);
 
  
 clearvars samples filtered_data1 filtered_data2 filtered_data3
-clear samples filtered_data1 filtered_data2 filtered_data3
-clear samples
+% clear samples filtered_data1 filtered_data2 filtered_data3
+% clear samples
 %% select a section to examine EEG quality 
 cd /home/zhibin/Documents/GitHub/Motor_cordination/Data_processing_streamline
 
 % find index of each photocell for stimulus
 for i=1:length(locs)
-    PhotocellInd(i)=find(time==locs(i)); % locs are values in time 
+    PhotocellTimeInd(i)=find(time==locs(i)); % locs are values in time 
 end
+
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(time,filtered_data2);
-ylim([-1000 1000]);
-xlim([ind1 ind2]);
-hold on;xline(x(1),'r');xline(x(2),'r');
-xline(datatimes(PhotocellInd(1)),'r','first photocell');
-xline(datatimes(PhotocellInd(end)),'r','last photocell');
+plot(time,Photocell);
+hold on; xline(time(PhotocellTimeInd(5)),'m');
+xline(time(PhotocellTimeInd(245)),'m');
+xline(time(PhotocellTimeInd(485)),'m');
+% ylim([-1000 1000]);
+% xlim([ind1 ind2]);
+% hold on;xline(x(1),'r');xline(x(2),'r');
+% xline(time(PhotocellInd(1)),'r','first photocell');
+% xline(time(PhotocellInd(end)),'r','last photocell');
 % xline(datatimes(PhotocellInd(241)),'r','start checking power spectrum');
 % xline(datatimes(PhotocellInd(480)),'r','end checking power spectrum');
 
@@ -413,11 +417,180 @@ for chan=1:32
     xlim([0 25]);title([labels{chan}]);ylim([0 15]);
 end
 suptitle('spectra of all channels on scalp map')
-%% ICA to remove eye blinds
+%% run ICA to remove eye blinds
+% look at data before ICA
+plot(filtered_data4);
+% previous code for ICA
+cd /home/zhibin/Documents/GitHub/Motor_cordination/Data_processing_streamline
+open combine_sessions.m
+cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
+open RunICA_step6b.m
 
+% run ICA
+tic
+[icasig, A, W] = fastica(filtered_data4');
+toc
+
+% Plot ICA component
+for i=1:size(A,2)
+    SqA(i)=sumsqr(A(:,i));
+end
+figure;
+plot(1:size(A,2),SqA,'ro');ylabel('sum of square of column in A');xlabel('ICs');
+[B,I]=sort(SqA,'descend');
+
+% topoplot to examine them
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info
+load('chaninfo.mat')
+ComponentsExam=I(1:10);
+figure;
+for i=1:length(ComponentsExam)
+    subplot(5,2,i);
+    topoplot(A(:,ComponentsExam(i)),chaninfo,'nosedir','+X');title(['component' num2str(ComponentsExam(i))]);colorbar;
+end
+
+% Display signal before ICA 
+figure('units','normalized','outerposition',[0 0 1 0.5]);
+plot(time,filtered_data4);
+hold on; hold off;
+title('EEG Singal Before ICA');
+
+% Display ICA signals
+figure('units','normalized','outerposition',[0 0 1 1]);
+subplot(2,1,1);
+plot(time,icasig');
+hold on;hold off;
+title('all IC time series');ylabel('uV');
+subplot(2,1,2);
+plot(time,icasig(ComponentsExam,:)');
+hold on;hold off;
+legend(strsplit(num2str(ComponentsExam)));
+title('first 10 IC time series');xlabel('time samples');ylabel('uV');
+
+% Calculate Correlation
+% FP1 and FP2 are channel 1 and 3;
+% compute correlation between FP1 and FP2;
+[RHO1,PVAL1] = corr(filtered_data4(:,1),icasig');
+figure
+subplot(1,2,1);
+plot(1:length(RHO1),RHO1,'bo');hold on;
+yyaxis left;ylabel('correlation coefficient','color','b');set(gca,'ycolor','b');
+plot(1:length(RHO1),PVAL1,'ro');
+yyaxis right; ylabel('p value','color','r');set(gca,'ycolor','r'); xlabel('ICs');
+legend({'correlation coefficient','p-values '});title('correlation with FP1');hold off;
+subplot(1,2,2);
+[RHO3,PVAL3] = corr(filtered_data4(:,3),icasig');
+plot(1:length(RHO1),RHO3,'bo');hold on;
+yyaxis left;ylabel('correlation coefficient','color','b');set(gca,'ycolor','b');
+plot(1:length(RHO1),PVAL3,'ro');
+yyaxis right; ylabel('p value','color','r');set(gca,'ycolor','r'); xlabel('ICs');
+legend({'correlation coefficient','p-values '});title('correlation with FP2');hold off;
+
+[B1,I1]=sort(abs(RHO1),'descend');[B3,I3]=sort(abs(RHO3),'descend');
+ComponentsExam=unique([I1(1) I3(1)]);
+
+figure;
+for i=1:length(ComponentsExam)
+    subplot(length(ComponentsExam),1,i);
+    topoplot(A(:,ComponentsExam(i)),chaninfo,'nosedir','+X');title(['component' num2str(ComponentsExam(i))]);colorbar;
+end
+
+%% Plot ICs Topoplot Spetrogram ERP AND Power spectra,  (Similar to EEGLAB) (skip)
+ComponentsExam=I(1);
+
+for i=1:length(ComponentsExam)
+    ComponentPick=ComponentsExam(i);
+    
+    % Put together trial matrics
+    icasig_trials=[];
+    for i=1:length(goodepochs)
+        icasig_trials(:,1,i)=icasig(ComponentPick,IndStart(i):IndEnds(i))';
+    end
+
+    % Just to check
+    goodchans;
+
+    figure('units','normalized','outerposition',[0 0 0.38 0.85]);
+    % Topoplot
+    subplot('Position',[0.05 0.55 0.4 0.4]);
+    topoplot(A(:,ComponentPick),test,'nosedir','+Y');
+    title(['component' num2str(ComponentPick)]);
+    colorbar;
+
+    % Plot Spectrogram
+    subplot('Position',[0.55 0.65 0.4 0.3]);
+    ColorLim=5;
+    imagesc(squeeze(icasig_trials)');colormap jet; colorbar ; ylabel('Shorted Trials'); 
+    caxis([-1*ColorLim ColorLim]);
+    xline(500,'k');xline(1000,'k');
+    title(['Component ' num2str(ComponentPick)]);
+
+    % Plot IC ERP
+    subplot('Position',[0.55 0.55 0.3 0.07]);
+    plot(1:size(icasig_trials,1),mean(icasig_trials,3)); 
+    xline(500,'k');xline(1000,'k');xlabel('time');
+
+    % Plot Powerspetra
+    subplot('Position',[0.1 0.05 0.8 0.4]);
+    rate=Fs;maxfreq=50;
+    [pow,freqs,df,eppow,corr,cprod,fcoef] = allspectra(icasig_trials,rate,maxfreq);
+    plot(freqs,pow);xlabel('frequecy (Hz)');ylabel('Magnitude');
+end
+
+%% Deside which components to remove and mix back the signal and display
+ComponentRemove=I(1);
+
+A(:,ComponentRemove)=0; icasig(ComponentRemove,:)=0;
+
+mixedsig=A*icasig;
+
+% Plot before and after
+figure('units','normalized','outerposition',[0 0 1 1]);
+subplot(2,1,1);
+% before ICA
+plotx(time,filtered_data4);
+hold on;hold off;
+title('EEG Singal Before ICA');
+% after ICA
+subplot(2,1,2);
+plotx(time,mixedsig);
+hold on;hold off;
+title('Mixed Signal with ICs removed');
 
 %% segment EEG according to conditions
-separations; % indices of frist press in each condition in time
+separationsTimeInd; % indices of frist press in each condition in time
+
+PhotocellTimeInd;
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(time,Photocell);
+hold on; xline(time(PhotocellTimeInd(5)),'m');
+xline(time(PhotocellTimeInd(245)),'m');
+xline(time(PhotocellTimeInd(485)),'m');
+xline(time(PhotocellTimeInd(724)),'m');
+
+% segment EEG into trials
+EEG_eye_open_resting=mixedsig(:,PhotocellTimeInd(1):PhotocellTimeInd(2))';
+EEG_eye_close_resting=mixedsig(:,PhotocellTimeInd(3):PhotocellTimeInd(4))';
+allPerm
+EEG_syncopation=mixedsig(:,PhotocellTimeInd(5):PhotocellTimeInd(244))';
+EEG_randomization=mixedsig(:,PhotocellTimeInd(245):PhotocellTimeInd(484))';
+EEG_synchronization=mixedsig(:,PhotocellTimeInd(485):PhotocellTimeInd(724))';
+
+cd /ssd/zhibin/1overf/20220331
+save('segmented_clean_Data.mat','EEG_eye_open_resting','EEG_eye_close_resting',...
+    'EEG_syncopation','EEG_randomization','EEG_synchronization');
+
+
+
+EEG_trials=zeros(size(mixedsig'));
+events=[];
+for i=1:3
+    eventstoadd=[PhotocellTimeInd(5+240*(i-1)) PhotocellTimeInd(5+240*i-1)];
+    events=[events;eventstoadd];
+end
+events(:,2)-events(:,1)
+EEG_trials=zeros(size(mixedsig'));
+EEG
 
 %% baseline normalization 
 
