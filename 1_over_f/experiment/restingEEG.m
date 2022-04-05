@@ -10,6 +10,7 @@ DrawFormattedText2(instructionStart,'win',windowPtr,...
 Screen('Flip',windowPtr);
 % hit a key to continue
 KbStrokeWait;
+pause(2); % given time to return the position of arm after key press 
 
 % Flash photocells once at the start and end of eye open period 
 % Flash photocells once at the start of eye open period ###### (upper left and bottom right)
@@ -45,12 +46,18 @@ Screen('FillRect', windowPtr, white, RightBottomSquare);
 Screen('Flip',windowPtr);
 
 %****************************************************************************
-instructionStart=['Hit a key and then close your eyes to rest for ' num2str(TimeRestingEEG/60) ' min before I tell you to continue.']
+instructionStart=['Hit a key and then close your eyes to rest for ' num2str(TimeRestingEEG/60) ...
+    ' min. %\n Open your eye when you hear a beep.']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
+% play a beep sound
+beep on
+pause (2)
+beep off
 % hit a key to continue
 KbStrokeWait;
+pause(2); % given time to return the position of arm after key press 
 
 % Flash photocells to mark the start and end of eye closed period 
 % Flash once to start ###### (upper left and bottom right)

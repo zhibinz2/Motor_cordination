@@ -35,7 +35,7 @@ channels_info=table(numbers,labels,units)
 
 % Create time stamps
 num2str(d.time)
-time=[1/sr:1/sr:d.time];
+time=[1/sr:1/sr:d.time]';
 
 % Plot channels of Key presses, photocells, EMG
 % plot(samples(54,:),'ro'); % trigger = key presses = 223 (255-2^5)
@@ -50,11 +50,12 @@ plot(samples(33,:),'k'); % EMG channel
 
 % Save Channels of presses, photocells, EMG
 % BottonPres=samples(54,:);
-BottonPres=samples(53,:);
-Photocell=samples(38,:);
+BottonPres=samples(53,:)';
+Photocell=samples(38,:)';
 % EMG=samples(34,:);
-EMG=samples(33,:);
-EEG=samples(1:32,:);
+EMG=samples(33,:)';
+EEG=samples(1:32,:)';
+numChan=32;
 
 % View EEG
 % plot(time',samples(2:33,:)');
@@ -103,9 +104,9 @@ time;
 % for photocell
 % view the time course of photocell signals
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(Photocell');xlabel('time');ylabel('photocell signal');
+plot(Photocell);xlabel('time');ylabel('photocell signal');
 % plot EEG on top
-% hold on; plot(time',samples(2:33,:)'); % it zoom out the phtocell amplitude, too small to see
+% hold on; plot(time,samples(2:33,:)'); % it zoom out the phtocell amplitude, too small to see
 % click and select the start and end point for peak extraction
 [x, y] = ginput(2); % read two mouse clicks on the plot % x were index, y were real values
 Startpoint=round(x(1));Endpoint=round(x(2)); % Startpoint and Endpoint are sample number or index in time
@@ -113,20 +114,17 @@ hold on;xline(x(1),'r');xline(x(2),'r');hold off;
 
 % replace the beginning and end with baseline value
 Photocell(1:Startpoint)=mean(y);Photocell(Endpoint:end)=mean(y); % plot(Photocell');
-
-analog1data=Photocell; 
-datatimes=time;
-plot(datatimes,analog1data,'b'); 
+plot(time,Photocell,'b'); 
 
 % Examine peaks detection in analog1
-Halfhigh1=3/4*(max(analog1data)-min(analog1data)); % value for 'MinPeakProminence'
+Halfhigh1=3/4*(max(Photocell)-min(Photocell)); % value for 'MinPeakProminence'
 % Check if need to adjust the Halfhigh cutoff
 close;figure;
-findpeaks(analog1data,datatimes,'MinPeakProminence',Halfhigh1,'Annotate','extents');
+findpeaks(Photocell,time,'MinPeakProminence',Halfhigh1,'Annotate','extents');
 yline(Halfhigh1,'m','MinPeakProminence');
 
 % locate the trial sessions % pks=value of the peak % locs=time of the peak
-[pks,locs] = findpeaks(analog1data,datatimes,'MinPeakProminence',Halfhigh1,'Annotate','extents');
+[pks,locs] = findpeaks(Photocell,time,'MinPeakProminence',Halfhigh1,'Annotate','extents');
 
 % examine pks and locs (both are values of analog1data and datatimes, not indices)
 % i=1;
@@ -155,7 +153,7 @@ yline(Halfhigh1,'m','MinPeakProminence');
 % botton1data=BottonPres(Startpoint:Endpoint);
 botton1data=BottonPres;
 % look for values other than 0 and 255
-plot(datatimes,botton1data,'bo'); % view time course of botton press values
+plot(time,botton1data,'bo'); % view time course of botton press values
 PresInd=find(botton1data ~= 255 & botton1data ~= 0); % extract Index of real key presses in the values
 plot(PresInd,ones(1,length(PresInd)),'ro'); % look at the above Index (one press produced several indices)
 threshold = NumFramesInterval*ifi*sr/4; % determine a threshold of key press interval
@@ -164,6 +162,13 @@ BottonPresTimeInd=PresInd(find([1 diff(PresInd)>threshold])); % exact index of k
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(1:length(diff(BottonPresTimeInd)), diff(BottonPresTimeInd),'r.'); 
 xlabel('key press');ylabel('Intervals (ms)');
+title('Differences of Time indices for botton presses');
+
+% use a threshold to segment conditions
+threshold2=max(diff(BottonPresTimeInd))/2; hold on; yline(threshold2,'m'); % show on top of previous plot
+separations=find(diff(BottonPresTimeInd)>threshold2); % indices of the first button press from the second condition
+separations=[BottonPresTimeInd(1) BottonPresTimeInd(separations)]; % time indices from the first button press in each condition
+
 
 %% Compare photocell amd botton presses timing
 PhotocellTime=locs; % locs are values in datatimes

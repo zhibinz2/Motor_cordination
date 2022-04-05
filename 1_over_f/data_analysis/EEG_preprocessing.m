@@ -1,4 +1,4 @@
-% View raw EEG
+%% View raw EEG (skip, let's look at Photocell,reponses, EMG and EEG all together)
 % plot(time(Startpoint:Endpoint)',samples(2:33,Startpoint:Endpoint)');
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 % plot(samples(2:33,:)');
@@ -22,12 +22,101 @@ hold off;
 % datatimes; % 
 % EEGdata=samples(2:33,Startpoint:Endpoint)';
 
-%% cut off artifact at the beginning and end
-EEG=EEG(:,ind1:ind2)';
-time=time(ind1:ind2)';
-EMG=EMG(:,ind1:ind2)';
-figure('units','normalized','outerposition',[0 0 1 0.3]);
+%% View Photocell, button presses, EMG, EEG together
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(3,1,1);
+plot(Photocell);
+ylabel('photocell signal');title('photocell signal');
+hold on;
+plot(BottonPresTimeInd,ones(1,length(BottonPresTimeInd)),'r.'); title('botton press');
+legend({'photocell signal','botton press'});
+subplot(3,1,2);
+plot(EMG,'k'); title('EMG'); % EMG channel
+subplot(3,1,3);
 plot(EEG);
+xlabel('time (sample)');title('EEG');
+
+[x, ~] = ginput(2); % read two mouse clicks on the plot % x were index, y were real values
+% get the proximate index
+string(x)
+ind1=round(x(1))
+ind2=round(x(2))
+
+close;
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(3,1,1);
+plot(Photocell);
+ylabel('photocell signal');title('photocell signal');
+hold on;
+plot(BottonPresTimeInd,ones(1,length(BottonPresTimeInd)),'r.'); title('botton press');
+legend({'photocell signal','botton press'});
+hold on; xline(ind1,'r');xline(ind2,'r');hold off;
+
+subplot(3,1,2);
+plot(EMG,'k'); title('EMG'); % EMG channel
+hold on; xline(ind1,'r');xline(ind2,'r');hold off;
+
+subplot(3,1,3);
+plotx(EEG);
+xlabel('time (sample)');title('EEG');
+hold on; xline(ind1,'r');xline(ind2,'r');hold off;
+
+
+%% cut off artifact at the beginning and end, then extended the two sides to the original length
+EEG2=[repmat(EEG(ind1,:),ind1-1,1); EEG(ind1:ind2,:); repmat(EEG(ind2,:),length(time)-ind2,1)];
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(EEG2);
+
+EMG2=[repmat(EMG(ind1),ind1-1,1); EMG(ind1:ind2); repmat(EMG(ind2),length(time)-ind2,1)];
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(EMG2);
+
+%% %% View all together again
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(3,1,1);
+plot(Photocell);
+ylabel('photocell signal');title('photocell signal');
+hold on;
+plot(BottonPresTimeInd,ones(1,length(BottonPresTimeInd)),'r.'); title('botton press');
+legend({'photocell signal','botton press'});
+hold on; xline(ind1,'r');xline(ind2,'r');hold off;
+
+subplot(3,1,2);
+plot(EMG2,'k'); title('EMG'); % EMG channel
+hold on; xline(ind1,'r');xline(ind2,'r');hold off;
+
+subplot(3,1,3);
+plotx(EEG2);
+xlabel('time (sample)');title('EEG');
+hold on; xline(ind1,'r');xline(ind2,'r');hold off;
+
+%% %% select a section and Zoom in all together again
+[x, y] = ginput(2); % read two mouse clicks on the plot % x were index, y were real values
+% get the proximate index
+ind1=round(x(1))
+ind2=round(x(2))
+
+close;
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(3,1,1);
+plot(Photocell);
+ylabel('photocell signal');title('photocell signal');
+hold on;
+plot(BottonPresTimeInd,ones(1,length(BottonPresTimeInd)),'r.'); title('botton press');
+legend({'photocell signal','botton press'});
+hold on; xline(ind1,'r');xline(ind2,'r');hold off;
+xlim([ind1 ind2]);
+
+subplot(3,1,2);
+plot(EMG2,'k'); title('EMG'); % EMG channel
+hold on; xline(ind1,'r');xline(ind2,'r');hold off;
+xlim([ind1 ind2]);
+
+subplot(3,1,3);
+plotx(EEG2);
+xlabel('time (sample)');title('EEG');
+hold on; xline(ind1,'r');xline(ind2,'r');hold off;
+xlim([ind1 ind2]);
 
 %% detrend the data (no padding needed)
 % lab's detrend function
@@ -37,7 +126,7 @@ plot(EEG);
 % % mathwork's detrend function
 % detrend_data=detrend(EEG,0); % not good
 % detrend_data=detrend(EEG,1); % similar to ndetrend
-detrend_data=detrend(EEG,2); % even better
+detrend_data=detrend(EEG2,2); % even better
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 % plot(detrend_data(ind1:ind2,2:33));
 plot(detrend_data);
@@ -165,40 +254,45 @@ hold on;xline(x(1),'r');xline(x(2),'r');hold off;
 %% filtfilthd method (hnl) high pass first
 % high pass (no paddings needed)
 Hd = makefilter(sr,0.2,0.15,6,20,0); 
-filtered_data=filtfilthd(Hd,detrend_data);
+filtered_data1=filtfilthd(Hd,detrend_data);
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(filtered_data);
+plot(filtered_data1);
 
 % add padding
-padding=zeros(size(filtered_data));
-filtered_data=cat(1,padding,filtered_data,padding);
+padding=zeros(round(size(filtered_data1,1)/10), size(filtered_data1,2));
+filtered_data2=cat(1,padding,filtered_data1,padding);
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(filtered_data);
+plot(filtered_data2);
 
 % low pass 
 % (this will create short edge artifact)
 % (if added zero paddings, edge artifact disappear)
+% (remove existing filtered_data variable from workspace might fasten)
+tic
+filtered_data3=[];
 Hd = makefilter(sr,50,51,6,20,0);  
-filtered_data2=filtfilthd(Hd,filtered_data);
+filtered_data3=filtfilthd(Hd,filtered_data2);
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(filtered_data2);
+plot(filtered_data3);
 ylim([-100 100]);
+toc
 
 % remove padding
-filtered_data2=filtered_data2((size(detrend_data,1)+1):2*(size(detrend_data,1)),:);
+filtered_data4=filtered_data3((size(padding,1)+1):(size(padding,1)+size(detrend_data,1)),:);
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plotx(filtered_data2);
+plotx(filtered_data4);
 ylim([-100 100]);
 
-%% examine EEG quality 
+clearvars samples filtered_data1 filtered_data2 filtered_data3
+%% select a section to examine EEG quality 
 cd /home/zhibin/Documents/GitHub/Motor_cordination/Data_processing_streamline
 
 % find index of each photocell for stimulus
 for i=1:length(locs)
-    PhotocellInd(i)=find(datatimes==locs(i)); % locs are values in datatimes 
+    PhotocellInd(i)=find(time==locs(i)); % locs are values in time 
 end
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(datatimes,filtered_data2);
+plot(time,filtered_data2);
 ylim([-1000 1000]);
 xlim([ind1 ind2]);
 hold on;xline(x(1),'r');xline(x(2),'r');
@@ -207,8 +301,7 @@ xline(datatimes(PhotocellInd(end)),'r','last photocell');
 % xline(datatimes(PhotocellInd(241)),'r','start checking power spectrum');
 % xline(datatimes(PhotocellInd(480)),'r','end checking power spectrum');
 
-
-%% plot Photocell, button presses, EMG, EEG together
+%% plot Photocell, button presses, EMG, EEG together and zoom in together
 figure('units','normalized','outerposition',[0 0 1 0.6]);
 subplot(3,1,1);
 plot(Photocell);
@@ -217,10 +310,10 @@ hold on;
 plot(BottonPresTimeInd,ones(1,length(BottonPresTimeInd)),'r.'); title('botton press');
 legend({'photocell signal','botton press'});
 subplot(3,1,2);
-plot(EMG,'k'); title('EMG'); ylim([-5000 5000]);% EMG channel
+plot(EMG2,'k'); title('EMG'); % ylim([-5000 5000]);% EMG channel
 subplot(3,1,3);
-plot(filtered_data2);
-xlabel('time (sample)');title('EEG');ylim([-500 500]);
+plot(filtered_data4);
+xlabel('time (sample)');title('EEG');% ylim([-500 500]);
 
 [x, y] = ginput(2); % read two mouse clicks on the plot % x were index, y were real values
 % get the proximate index
@@ -240,11 +333,11 @@ legend({'photocell signal','botton press'});
 xlim([ind1 ind2]);
 
 subplot(3,1,2);
-plot(EMG,'k'); title('EMG'); % EMG channel
+plot(EMG2,'k'); title('EMG'); % EMG channel
 xlim([ind1 ind2]);
 
 subplot(3,1,3);
-plotx(filtered_data2);
+plotx(filtered_data4);
 xlabel('time (sample)');title('EEG');
 ylim([-500 500]);
 xlim([ind1 ind2]);
@@ -301,7 +394,7 @@ for chan=1:32
 end
 suptitle('spectra of all channels')
 
-%% Plot all erp of planning on scalp map (for my own examing)
+%% Plot on scalp map for the spectra (for my own examing)
 figure('units','normalized','outerposition',[0 0 1 1]);
 for chan=1:32
     subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.05 0.05]); % not showing, why
@@ -318,6 +411,10 @@ for chan=1:32
 end
 suptitle('spectra of all channels on scalp map')
 %% ICA to remove eye blinds
+
+
+%% segment EEG according to conditions
+separations; % indices of frist press in each condition in time
 
 %% baseline normalization 
 
