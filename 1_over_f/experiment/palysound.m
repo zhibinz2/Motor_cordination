@@ -6,4 +6,6 @@ PsychPortAudio('RunMode')
 
 open BasicSoundOutputDemo
 
-devie=
+BasicSoundOutputDemo(1)
+
+Beeper(400,0.4,1)

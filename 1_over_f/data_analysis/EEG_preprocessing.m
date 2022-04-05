@@ -283,7 +283,10 @@ figure('units','normalized','outerposition',[0 0 1 0.3]);
 plotx(filtered_data4);
 ylim([-100 100]);
 
+ 
 clearvars samples filtered_data1 filtered_data2 filtered_data3
+clear samples filtered_data1 filtered_data2 filtered_data3
+clear samples
 %% select a section to examine EEG quality 
 cd /home/zhibin/Documents/GitHub/Motor_cordination/Data_processing_streamline
 
