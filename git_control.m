@@ -1,4 +1,5 @@
-% cd /home/zhibin/Documents/GitHub/Motor_cordination
+% cd /home/zhibin/Documents/GitHub/Motor_cordination % hnlb
+% cd /home/hnl/Documents/GitHub/Motor_cordination % hnlstim2
 ! git status
 ! git add .
 CommitName=char(datetime('now'));
@@ -6,7 +7,7 @@ CommitName=char(datetime('now'));
 % https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git
 % https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git
 % My zhibin bash script — repo token: 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
-!git push https://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@github.com/zhibinz2/Motor_cordination.git
+% !git push https://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@github.com/zhibinz2/Motor_cordination.git
 
 %%
 % undo all current changes

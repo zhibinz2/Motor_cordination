@@ -95,7 +95,7 @@ try
     [xCenter, yCenter] = RectCenter(windowRect); 
     
     % Stimulus design ***********************************************
-    % Just a dot
+    % Just a cross
     
     % Enable alpha blending for anti-aliasing
     % For help see: Screen BlendFunction?
@@ -148,7 +148,17 @@ try
     
     % condition 3
     RandomIntervals = round(NumFramesInterval + NumFramesInterval.*(rand(1,numTaps)-0.5)); % uniform distribution
-    Showframes3=cumsum(RandomIntervals);
+    Showframes3=cumsum(RandomIntervals); % plot(diff(Showframes3),'ro');
+    % generate noise frames
+    Noiseframes3=[];
+    for i=1:(length(Showframes3)-1)
+        NumsInBetween=Showframes3(i)+randi([0 Showframes3(i+1)-Showframes3(i)-1],1,randi([0 2]));
+        Noiseframes3=[Noiseframes3 NumsInBetween];
+    end
+    % plot to examine
+%     plot(Showframes3,ones(1,length(Showframes3)),'ro');hold on;
+%     plot(Noiseframes3,ones(1,length(Noiseframes3)),'bo');
+%     legend({'Go','No-Go'});xlabel('time');title('randomized RT stimulus');
     
     % combine all 3 conditions
     Showframes=[Showframes1;Showframes2;Showframes3];
@@ -178,7 +188,7 @@ try
     
     % Setting time variables**********************************************
     % Length of one minute baseline
-    BaselineLength = 2; 
+    BaselineLength = 2; % in seconds
     numFramesBaseline = round(BaselineLength / ifi / waitframes);
 
     % total number of frames per trial
@@ -200,16 +210,17 @@ try
     HideCursor(windowPtr,mice);
     %HideCursor(windowPtr,mice(1));
 
-    % Baseline taking 60s  **********************************************
-    instructionStart=['Hit any key and then look at the center of the screen for ' num2str(BaselineLength) ' seconds'];
-    DrawFormattedText2(instructionStart,'win',windowPtr,...
-        'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-    Screen('Flip',windowPtr);
-    % hit a key to continue
-    KbStrokeWait;
+%     % Baseline taking 60s  **********************************************
+%     instructionStart=['Hit any key and then look at the center of the screen for ' num2str(BaselineLength) ' seconds'];
+%     DrawFormattedText2(instructionStart,'win',windowPtr,...
+%         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+%     Screen('Flip',windowPtr);
+%     % hit a key to continue
+%     KbStrokeWait;
+
     % Create a fixation cross
-    FixCrX=[xCenter-round(screenXpixels/100):xCenter+round(screenXpixels/100) repmat(xCenter,1,round(screenXpixels/50)+1)];
-    FixCrY=[repmat(yCenter,1,round(screenXpixels/50)+1) yCenter-round(screenXpixels/100):yCenter+round(screenXpixels/100)];
+    FixCrX=[xCenter-round(screenXpixels/200):xCenter+round(screenXpixels/200)-1 repmat(xCenter,1,round(screenXpixels/100)+1)];
+    FixCrY=[repmat(yCenter,1,round(screenXpixels/100)+1) yCenter-round(screenXpixels/200)+1:yCenter+round(screenXpixels/200)];
     
     % LSL markers to the local network
     % send data into the outlet, sample by sample
@@ -223,45 +234,49 @@ try
 %     numberOfSecondsElapsed = 0;
 %     while numberOfSecondsElapsed < 60
 
-    % get a timestamp and begin the baseline 
-    vbl = Screen('Flip', windowPtr);
-    n=1;
-    while n < numFramesBaseline
-        % If esc is press, break out of the while loop and close the screen
-        [keyIsDown, keysecs, keyCode] = KbCheck;
-        if keyCode(KbName('escape'))
-            Screen('CloseAll');
-            break;
-        end
-
-        % Update the while loop with time
-%         numberOfSecondsElapsed = (now - startTime) * 10 ^ 5;
-        
-        % Show the fixation cross
-        Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/300, white, [0 0], 2);
-        vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-
-        % LSL marker to check screen flip frequency
-%         % send markers into the outlet
-%         mrk = markers{5};
-%         outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-
-        n=n+1;
-    end
-    % send markers into the outlet
-%     mrk = markers{2};
-%     outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-%     BaselineDuration=toc
+%     % get a timestamp and begin the baseline 
+%     vbl = Screen('Flip', windowPtr);
+%     n=1;
+%     while n < numFramesBaseline
+%         % If esc is press, break out of the while loop and close the screen
+%         [keyIsDown, keysecs, keyCode] = KbCheck;
+%         if keyCode(KbName('escape'))
+%             Screen('CloseAll');
+%             break;
+%         end
+% 
+%         % Update the while loop with time
+% %         numberOfSecondsElapsed = (now - startTime) * 10 ^ 5;
+%         
+%         % Show the fixation cross
+%         Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/400, white, [0 0], 2);
+%         vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+% 
+%         % LSL marker to check screen flip frequency
+% %         % send markers into the outlet
+% %         mrk = markers{5};
+% %         outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+% 
+%         n=n+1;
+%     end
+%     % send markers into the outlet
+% %     mrk = markers{2};
+% %     outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+% %     BaselineDuration=toc
+%     
+% 
+%     pause(5);% to separate baseline markers and trial markers
+%     instructionStart=['OK. Press a key to start!']; % Tell subject to open eye and start
+%     DrawFormattedText2(instructionStart,'win',windowPtr,...
+%         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
+%     Screen('Flip',windowPtr);
+%     % hit a key to continue
+%     KbStrokeWait;
+%     % ************************************************ Baseline taking 60s 
     
-
-    pause(5);% to separate baseline markers and trial markers
-    instructionStart=['OK. Press a key to start!']; % Tell subject to open eye and start
-    DrawFormattedText2(instructionStart,'win',windowPtr,...
-        'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-    Screen('Flip',windowPtr);
-    % hit a key to continue
-    KbStrokeWait;
-    % ************************************************ Baseline taking 60s 
+    % ************************************************ Baseline taking
+    run restingEEG.m
+    % ************************************************ Baseline taking
 
     % initialize some variables
     TrialDurations=[]
@@ -283,21 +298,32 @@ try
             end
 
             % Show trial and block number at the bottom
-            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
+            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)...
+                 ' Hit a key to continue'];
             DrawFormattedText2(Showtrial,'win',windowPtr,...
-            'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+            'sx','center','sy', screenYpixels*0.9,'xalign','center','yalign','top','baseColor',white);
 
             % flip to screen and pause for 1 sec
-            vbl=Screen('Flip', windowPtr);
-            pause(2); % or WaitSecs(1);
+%             vbl=Screen('Flip', windowPtr);
+%             pause(2); % or WaitSecs(1);
 
             % pick a condition from randomized set allPerm
             conditionSelected = allPerm(numTrials*(block-1)+t);
             Showframeselected=Showframes(conditionSelected,:);
+            
+            % select color
+            if conditionSelected == 1
+                color = green;
+            elseif conditionSelected == 2
+                color = red;
+            else
+                color =yellow;
+            end
 
             % show instruction for each trial / condition
-            DrawFormattedText2(conditionNames{conditionSelected},'win',windowPtr,...
-            'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+            ShowCondition=['Beginig ' conditionNames{conditionSelected} ' condition'];
+            DrawFormattedText2(ShowCondition,'win',windowPtr,...
+            'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
             Screen('Flip', windowPtr);
             pause(3); % for subject to read instruction
 
@@ -322,12 +348,15 @@ try
 
             if block ~= numBlock | t ~= numTrials % only bypass the last trial
                 % Show Resting
-                Resting = ['Rest for 2s'];
+                between_block_rest= 5; % in seconds
+                Resting = ['Rest for at least' num2str(between_block_rest) ' s. \n Then hit a key to continue.'];
                 DrawFormattedText2(Resting,'win',windowPtr,...
                     'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
                 vbl=Screen('Flip',windowPtr);
-                % Rest 20 sec
-                pause(2);
+                % Rest 1 sec
+                pause(between_block_rest);
+                % hit a key to continue
+                KbStrokeWait;   
             end
 
         end
@@ -351,3 +380,8 @@ catch
     sca;
     psychrethrow(psychlasterror);
 end  
+
+
+% save data
+% cd /home/hnl/Documents/GitHub/1overf/stimulus_data_storage
+% seed.mat

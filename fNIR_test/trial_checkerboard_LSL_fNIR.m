@@ -1,3 +1,8 @@
+% initial or reset trial frame number
+n=1;
+% get a timestamp and begin the trial
+vbl = Screen('Flip', windowPtr);
+            
 % startTime = now;
 % numberOfSecondsElapsed = 0;
 tic 
@@ -12,6 +17,13 @@ while n <  numFrames
 
     % Update the while loop with time
 %     numberOfSecondsElapsed = (now - startTime) * 10 ^ 5;
+    
+    % photocell at beginning and end
+    if n < 2 | n > numFrames-3; % flash for the frist 2 video frames (at least 75/2 Hz), because fNIRS sampled at 75Hz
+        Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
+        Screen('FillRect', windowPtr, white, RightBottomSquare);
+    end
+     
     
     if conditionSelected ==1;
         if mod(n,2) == 1; % if n is odd number
@@ -37,10 +49,10 @@ while n <  numFrames
     % Flip to the screen
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
 
-     % LSL marker to check screen flip frequency
-    % send markers into the outlet
-    mrk = markers{5};
-    outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+%      % LSL marker to check screen flip frequency
+%     % send markers into the outlet
+%     mrk = markers{5};
+%     outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
 
     % update n
     n = n+1;
