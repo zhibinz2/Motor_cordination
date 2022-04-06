@@ -32,7 +32,7 @@ chanPos=DataFNIR.chanPos;
 transPos=DataFNIR.transPos;
 receiPos=DataFNIR.receiPos;
 ADlabel=DataFNIR.ADlabel;
-ADvalues=DataFNIR.ADvalues;
+ADvalues=DataFNIR.ADvalues; plot(ADvalues(:,14));
 events=DataFNIR.events;
 %% DataFNIR
 oxyvalsR=DataFNIR.oxyvals;
