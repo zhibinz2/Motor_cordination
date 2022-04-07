@@ -247,6 +247,11 @@ for i=StartStim3:StartStim3+238 % i=StartStim3 % syncopation has one press less 
 end
 plot(Error3,'r.');title('randomization error');xlabel('taps');ylabel('timing error (s)');
 % large errors are misses
+% remove error > 1 s or 2 s and see what happens
+% indices=find(Error3>2);
+% Error3(indices)=NaN;
+% Error3(indices)=[];
+
 
 %% auto correlation and spectrum
 open /ssd/zhibin/1overf/20220324/explore_1_over_f.m
@@ -284,7 +289,7 @@ for i=1:3 % i=2;
     xlabel('Trial');ylabel('Error(sec.)');title('A. Time Series');
     
     subplot(1,3,2);
-    autocorr(y,'NumLags',238,'NumSTD',2);
+    autocorr(y,'NumLags',200,'NumSTD',2);
     % [acf,lags,bounds] = autocorr(RTs(ConditionExplore),'NumLags',25,'NumSTD',2);
     xlabel('Lag');ylabel('Corr.');title('B. Autocorr.');
     
@@ -301,7 +306,7 @@ for i=1:3 % i=2;
 %     ax(i,1)=gca;
  
 %     % save as .fig file
-%     saveas(gcf,[char(SupTitles(i)) '.fig'])
+%     saveas(gcf,[char(SupTitles(i)) '.jpg'])
 end
 
 % % Put all 3 picutre together
