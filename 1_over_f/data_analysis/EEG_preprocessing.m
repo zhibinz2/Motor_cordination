@@ -123,10 +123,12 @@ xlim([ind1 ind2]);
 % detrend_data=ndetrend(samples(2:33,:)',1); 
 % detrend_data=ndetrend(samples(1:32,:)',1); 
 % detrend_data=ndetrend(EEG,1); 
+
 % % mathwork's detrend function
+% (https://www.mathworks.com/help/matlab/ref/detrend.html#mw_0d82eb90-ffea-457b-9f4c-7e2d00794dce)
 % detrend_data=detrend(EEG,0); % not good
 % detrend_data=detrend(EEG,1); % similar to ndetrend
-detrend_data=detrend(EEG2,2); % even better
+detrend_data=detrend(EEG2,2); % even better (When n = 2, detrend removes the quadratic trend.)
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 % plot(detrend_data(ind1:ind2,2:33));
 plot(detrend_data);
