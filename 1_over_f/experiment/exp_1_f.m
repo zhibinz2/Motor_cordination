@@ -162,6 +162,9 @@ try
     
     % combine all 3 conditions
     Showframes=[Showframes1;Showframes2;Showframes3];
+    % need to shift the Showframes forward 1 second ( 60 frames) so that the first stimulus won't come up too suddenly
+    Showframes=Showframes+round(1/ifi);
+    
     % ***************************************** Randomization of the conditions 
     
     % Set size of the squares for photocell ###############################
@@ -315,13 +318,13 @@ try
             if conditionSelected == 1
                 color = green;
             elseif conditionSelected == 2
-                color = red;
+                color = blue;
             else
-                color =yellow;
+                color =red;
             end
 
             % show instruction for each trial / condition
-            ShowCondition=['Beginig ' conditionNames{conditionSelected} ' condition'];
+            ShowCondition=['Begining the ' conditionNames{conditionSelected} ' condition'];
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
             Screen('Flip', windowPtr);

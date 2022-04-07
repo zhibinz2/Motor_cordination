@@ -3,7 +3,8 @@
 tic 
 % while numberOfSecondsElapsed < 10;
 % while n <  numFrames 
-numFrames = max(Showframeselected)+NumFramesInterval;
+numFrames = max(Showframeselected)+NumFramesInterval; 
+
 while n < numFrames
     % If esc is press, break out of the while loop and close the screen
     [keyIsDown, keysecs, keyCode] = KbCheck;
