@@ -163,12 +163,9 @@ figure; plotx(sgolayfilt_data);title('after baseline correct over the whole bloc
 
 
 
-%%
+%% organized time_series1 into trials
 cd C:\Users\zhibi\Documents\GitHub\Motor_cordination\fNIR_test
-
-% organized time_series1 into trials
 % time_series1_baseline=time_series1(:,stamp1index_Baseline_Start:stamp1index_Baseline_End);
-
 
 trial_length=max(stamp1index_Trial_End-stamp1index_Trial_Start)
 trial_length=528;

@@ -30,7 +30,7 @@ while n <  numFrames
             Screen('DrawTexture', windowPtr, textureIndex1, [],posL);
         end
         if mod(n,2) == 0; % if n is even number
-        Screen('DrawTexture', windowPtr, textureIndex2, [],posL);
+            Screen('DrawTexture', windowPtr, textureIndex2, [],posL);
         end
     end
 
