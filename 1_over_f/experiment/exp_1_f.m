@@ -144,7 +144,7 @@ try
     Showframes1=[1:NumFramesInterval:NumFramesInterval*numTaps];
     
     % condition 2
-    Showframes2=[1:NumFramesInterval:NumFramesInterval*(numTaps+1)]; % need one more stimulus for the last tap for error calculation
+    Showframes2=[1:NumFramesInterval:NumFramesInterval*numTaps]; % need one more stimulus for the last tap for error calculation
     
     % condition 3
     RandomIntervals = round(NumFramesInterval + NumFramesInterval.*(rand(1,numTaps)-0.5)); % uniform distribution
