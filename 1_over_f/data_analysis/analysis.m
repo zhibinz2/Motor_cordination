@@ -257,6 +257,13 @@ for i=StartStim2:StartStim2+238 % i=StartStim2 % syncopation has one press less 
     Error2(i-StartStim2+1)=BottonPressTime(closetIndex)-Midpoints;
 end
 plot(Error2,'r.');title('syncopation error');xlabel('taps');ylabel('timing error (s)');
+% remove error > 1 s and < -1 s
+indices=find(Error2>1);
+Error2(indices)=NaN;
+Error2(indices)=[];
+indices=find(Error2<-1);
+Error2(indices)=NaN;
+Error2(indices)=[];
 
 % compute the error for condition 3
 clear Error3
