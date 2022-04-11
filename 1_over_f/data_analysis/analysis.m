@@ -10,6 +10,7 @@ cd /ssd/zhibin/1overf/20220331
 % d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220324/20220324.Poly5');
 % d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220331/RESTING_ec_2mim-20220331T161816.DATA.Poly5');
 d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220331/experiment_PILOT-20220331T162236.DATA.Poly5');
+d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220408/JACK20220408-20220408T160904.DATA.Poly5');
 
 samples=d.samples;
 sr=d.sample_rate;
@@ -38,19 +39,30 @@ num2str(d.time)
 time=[1/sr:1/sr:d.time]';
 
 % Plot channels of Key presses, photocells, EMG
+% look for TRIGGERS channel;
+TRIGGERind=find(labels=='TRIGGERS');
 % plot(samples(54,:),'ro'); % trigger = key presses = 223 (255-2^5)
-plot(samples(53,:),'ro'); % trigger = key presses = 223 (255-2^5)
+% plot(samples(53,:),'ro'); % trigger = key presses = 223 (255-2^5)
+% plot(samples(46,:),'ro'); % trigger = key presses = 223 (255-2^5)
+plot(TRIGGERind(46,:),'ro'); % trigger = key presses = 223 (255-2^5)
 % unique(samples(54,:))
-unique(samples(53,:))
+% unique(samples(53,:))
+% unique(samples(46,:))
+unique(samples(TRIGGERind,:))
 hold on; 
-plot(samples(38,:),'b'); %  ISO aux = analog
+% look for the second ISO aux channel for the photocell 
+ISOauxind=find(labels=='ISO aux');
+ISOauxind=ISOauxind(2);
+% plot(samples(38,:),'b'); %  ISO aux = analog
+plot(samples(ISOauxind,:),'b'); %  ISO aux = analog
+
 % plot(samples(34,:),'k'); % EMG channel
 plot(samples(33,:),'k'); % EMG channel
 
 
 % Save Channels of presses, photocells, EMG
 % BottonPres=samples(54,:);
-BottonPres=samples(53,:)';
+BottonPres=samples(TRIGGERind,:)';
 Photocell=samples(38,:)';
 % EMG=samples(34,:);
 EMG=samples(33,:)';
