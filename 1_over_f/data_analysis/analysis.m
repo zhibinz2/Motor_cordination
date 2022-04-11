@@ -55,17 +55,18 @@ ISOauxind=find(labels=='ISO aux');
 ISOauxind=ISOauxind(2);
 % plot(samples(38,:),'b'); %  ISO aux = analog
 plot(samples(ISOauxind,:),'b'); %  ISO aux = analog
-
+% look for BIP 01 channel for the EMG channel
+BIP01ind=find(labels=='BIP 01');
 % plot(samples(34,:),'k'); % EMG channel
-plot(samples(33,:),'k'); % EMG channel
-
+% plot(samples(33,:),'k'); % EMG channel
+plot(samples(BIP01ind,:),'k'); % EMG channel
 
 % Save Channels of presses, photocells, EMG
 % BottonPres=samples(54,:);
 BottonPres=samples(TRIGGERind,:)';
-Photocell=samples(38,:)';
+Photocell=samples(ISOauxind,:)';
 % EMG=samples(34,:);
-EMG=samples(33,:)';
+EMG=samples(BIP01ind,:)';
 EEG=samples(1:32,:)';
 numChan=32;
 
@@ -79,6 +80,7 @@ plot(time,EEG);
 
 % cd /ssd/zhibin/1overf/20220324
 cd /ssd/zhibin/1overf/20220331
+cd /ssd/zhibin/1overf/
 [file, pathname] = uigetfile({'*.Poly5';'*.S00';'*.TMS32'},'Pick your file');
 [path,filename,extension] = fileparts(file);
 % open Poly5toEEGlab
@@ -101,9 +103,12 @@ pop_saveset(eegdataset,'filename',filename,'filepath',pathname)
 disp(['Data saved as EEGlab dataset (.set) in this folder: ',pathname])
 
 %% load stimulus data
-cd /home/zhibin/Documents/GitHub/1overf/stimulus_data_storage
+% cd /home/zhibin/Documents/GitHub/1overf/stimulus_data_storage % hnlb
 % load('20220324.mat')
-load('20220331.mat')
+% load('20220331.mat')
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/stimulus_data_storage
+load('20220408.mat')
+
 %% Covert BottonPres and Photocell signals to time points
 % Photocell=samples(38,:);
 % BottonPres=samples(54,:);
@@ -170,26 +175,8 @@ PresInd=find(botton1data ~= 255 & botton1data ~= 0); % extract Index of real key
 plot(PresInd,ones(1,length(PresInd)),'ro'); % look at the above Index (one press produced several indices)
 threshold = NumFramesInterval*ifi*sr/4; % determine a threshold of key press interval
 BottonPresTimeInd=PresInd(find([1 diff(PresInd')>threshold])); % exact index of key press onset in datatimes (reduce several indices into one)
-% examine key press interval
-figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(1:length(diff(BottonPresTimeInd)), diff(BottonPresTimeInd),'r.'); 
-xlabel('key press');ylabel('Intervals (ms)');
-title('Differences of Time indices for botton presses');
 
-% use a threshold to segment conditions
-threshold2=max(diff(BottonPresTimeInd))/2; hold on; yline(threshold2,'m'); % show on top of previous plot
-separationsInd=find(diff(BottonPresTimeInd)>threshold2); % indices of the first button press from the second condition in BottonPresTimeInd
-separationsInd=[1;separationsInd+1]; %  indices from the first button press in each condition in BottonPresTimeInd
-separationsTimeInd=BottonPresTimeInd(separationsInd);% indices in time 
-
-% plot to examine
-figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(time,Photocell);xlabel('time');ylabel('photocell signal');
-hold on; xline(time(separationsTimeInd(1)),'r');
-xline(time(separationsTimeInd(2)),'r');
-xline(time(separationsTimeInd(3)),'r');hold off;
-
-%% Compare photocell amd botton presses timing
+%% Examine photocell amd botton presses timing
 PhotocellTime=locs; % locs are values in time
 BottonPressTime=time(BottonPresTimeInd);
 
@@ -202,6 +189,28 @@ xlabel('time');title('Photocell / Botton press indicator');
 hold off;
 legend('Photocell','Botton press');
 % I ended up doing synchronization all the time
+
+
+% examine key press interval
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(1:length(diff(BottonPresTimeInd)), diff(BottonPresTimeInd)/sr,'r.'); 
+xlabel('key press');ylabel('Intervals (s)');
+title('Differences of Time indices for botton presses');
+
+% use a threshold to segment conditions
+threshold2=max(diff(BottonPresTimeInd)/sr)/2; % automatic 
+threshold2=8; % manual inspection
+hold on; yline(threshold2,'m'); % show on top of previous plot
+separationsInd=find((diff(BottonPresTimeInd)/sr)>threshold2); % indices of the first button press from the second condition in BottonPresTimeInd
+separationsInd=[1;separationsInd+1]; %  indices from the first button press in each condition in BottonPresTimeInd
+separationsTimeInd=BottonPresTimeInd(separationsInd);% indices in time 
+
+% plot to examine
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(time,Photocell);xlabel('time');ylabel('photocell signal');
+hold on; xline(time(separationsTimeInd(1)),'r');
+xline(time(separationsTimeInd(2)),'r');
+xline(time(separationsTimeInd(3)),'r');hold off;
 
 
 %% Compute errors
@@ -225,6 +234,7 @@ legend('Photocell','Botton press');
 % plot(RanError,'ro'); title('randomization error');xlabel('taps');ylabel('timing error (s)');
 
 cd /ssd/zhibin/1overf/20220331
+cd /ssd/zhibin/1overf/20220408
 % compute the error for condition 1
 clear Error1
 Error1=[]; % for synchronization (condition 1)
@@ -259,14 +269,14 @@ for i=StartStim3:StartStim3+238 % i=StartStim3 % syncopation has one press less 
 end
 plot(Error3,'r.');title('randomization error');xlabel('taps');ylabel('timing error (s)');
 % large errors are misses
-% remove error > 1 s or 2 s and see what happens
-% indices=find(Error3>2);
-% Error3(indices)=NaN;
-% Error3(indices)=[];
+% remove error > 1 s (In a simple RT task, anything longer than 1 second should be thrown out.)
+indices=find(Error3>1);
+Error3(indices)=NaN;
+Error3(indices)=[];
 
 
 %% auto correlation and spectrum
-open /ssd/zhibin/1overf/20220324/explore_1_over_f.m
+% open /ssd/zhibin/1overf/20220324/explore_1_over_f.m
 
 SupTitles={'Synchronization' 'Syncopation' 'Randomization'};
 

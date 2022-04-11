@@ -302,7 +302,7 @@ try
 
             % Show trial and block number at the bottom
             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)...
-                 ' Hit a key to continue'];
+                 ' \n Hit a key to continue'];
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx','center','sy', screenYpixels*0.9,'xalign','center','yalign','top','baseColor',white);
 
@@ -351,8 +351,8 @@ try
 
             if block ~= numBlock | t ~= numTrials % only bypass the last trial
                 % Show Resting
-                between_block_rest= 5; % in seconds
-                Resting = ['Rest for at least' num2str(between_block_rest) ' s. \n Then hit a key to continue.'];
+                between_block_rest= 10; % in seconds
+                Resting = ['Take a rest for at least ' num2str(between_block_rest) ' s. \n Then hit a key to continue.'];
                 DrawFormattedText2(Resting,'win',windowPtr,...
                     'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
                 vbl=Screen('Flip',windowPtr);

@@ -89,14 +89,15 @@ end
 
 
 % ************************************************************************
-% play a beep sound to signal subject to open eyes
-Beeper(400,0.9,1.5);
 % show the end
-instructionStart=['OK. Press a key to start!'] % Tell subject to open eye and start
+instructionStart=['Press a key to start after 3 second!'] % Tell subject to open eye and start
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
+% play a beep sound to signal subject to open eyes
+Beeper(400,0.9,1.5);
+pause(1.5); 
 % hit a key to continue
 KbStrokeWait;
-pause(2); % given time to return the position of arm after key press 
+% given time to return the position of arm after key press 
 %*************************************************************************
