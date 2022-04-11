@@ -1,0 +1,70 @@
+# Auto generated xorg.conf - Created by Psychtoolbox XOrgConfCreator.
+
+Section "ServerFlags"
+  Option "AutoAddGPU"     "false"
+EndSection
+
+Section "ServerLayout"
+  Identifier    "PTB-Hydra"
+  Screen 0      "Screen0" 0 0
+  Screen 1      "Screen1" RightOf "Screen0"
+  Screen 2      "Screen2" RightOf "Screen1"
+EndSection
+
+Section "Monitor"
+  Identifier    "DP-0"
+EndSection
+
+Section "Monitor"
+  Identifier    "DP-2"
+EndSection
+
+Section "Monitor"
+  Identifier    "DP-6"
+EndSection
+
+Section "Device"
+  Identifier  "Card0"
+  Driver      "nvidia"
+  Option      "UseDisplayDevice" "DP-0"
+  Option      "Monitor-DP-0" "DP-0"
+  Screen 0
+EndSection
+
+Section "Device"
+  Identifier  "Card1"
+  Driver      "nvidia"
+  Option      "UseDisplayDevice" "DP-2"
+  Option      "Monitor-DP-2" "DP-2"
+  Screen 1
+EndSection
+
+Section "Device"
+  Identifier  "Card2"
+  Driver      "nvidia"
+  Option      "UseDisplayDevice" "DP-6"
+  Option      "Monitor-DP-6" "DP-6"
+  Screen 2
+EndSection
+
+Section "Screen"
+  Identifier    "Screen0"
+  Device        "Card0"
+  Monitor       "DP-0"
+  Option "AllowHMD"         "yes"
+EndSection
+
+Section "Screen"
+  Identifier    "Screen1"
+  Device        "Card1"
+  Monitor       "DP-2"
+  Option "AllowHMD"         "yes"
+EndSection
+
+Section "Screen"
+  Identifier    "Screen2"
+  Device        "Card2"
+  Monitor       "DP-6"
+  Option "AllowHMD"         "yes"
+EndSection
+
