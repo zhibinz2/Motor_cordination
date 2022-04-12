@@ -44,7 +44,7 @@ TRIGGERind=find(labels=='TRIGGERS');
 % plot(samples(54,:),'ro'); % trigger = key presses = 223 (255-2^5)
 % plot(samples(53,:),'ro'); % trigger = key presses = 223 (255-2^5)
 % plot(samples(46,:),'ro'); % trigger = key presses = 223 (255-2^5)
-plot(TRIGGERind(46,:),'ro'); % trigger = key presses = 223 (255-2^5)
+plot(samples(TRIGGERind,:),'ro'); % trigger = key presses = 223 (255-2^5)
 % unique(samples(54,:))
 % unique(samples(53,:))
 % unique(samples(46,:))
@@ -245,6 +245,15 @@ for i=StartStim1:StartStim1+239 % i=StartStim1
     Error1(i-StartStim1+1)=BottonPressTime(closetIndex)-PhotocellTime(i);
 end
 plot(Error1,'r.');title('synchronization error');xlabel('taps');ylabel('timing error (s)');
+% remove error > 2 s
+indices=find(Error1>1);
+Error1(indices)=NaN;
+Error1(indices)=[];
+% remove error < -2 s
+indices=find(Error1<-1);
+Error1(indices)=NaN;
+Error1(indices)=[];
+% Error1(indices)=2;
 
 % compute the error for condition 2
 clear Error2
@@ -261,9 +270,11 @@ plot(Error2,'r.');title('syncopation error');xlabel('taps');ylabel('timing error
 indices=find(Error2>1);
 Error2(indices)=NaN;
 Error2(indices)=[];
+% Error2(indices)=2;
 indices=find(Error2<-1);
 Error2(indices)=NaN;
 Error2(indices)=[];
+% Error2(indices)=2;
 
 % compute the error for condition 3
 clear Error3
@@ -280,26 +291,38 @@ plot(Error3,'r.');title('randomization error');xlabel('taps');ylabel('timing err
 indices=find(Error3>1);
 Error3(indices)=NaN;
 Error3(indices)=[];
-
+% Error3(indices)=3;
 
 %% auto correlation and spectrum
 % open /ssd/zhibin/1overf/20220324/explore_1_over_f.m
 
-SupTitles={'Synchronization' 'Syncopation' 'Randomization'};
+SupTitles={'Synchronization' 'Syncopation' 'RT condition'};
 
 for i=1:3 % i=2;
     if i==1
         y=Error1;
     elseif i==2
-        y=Error2
+        y=Error2;
     else
         y=Error3;
     end
     
-    F=fft(y);
-    p=abs(F).^2;
+    % New FFT
+    fcoef=fft(y);
+    N=length(y);
+    fcoef=fcoef/N;
+    halfN=floor(N/2);
     Fs=1/2;% assuming a sampling frequency of 0.5Hz (2 second per sample)
-    freqs=linspace(0,Fs/2,length(y)/2+1);
+    freqs=linspace(0,Fs/2,halfN+1); % same df
+    fcoef=2*fcoef(1:halfN);
+    amplitude = abs(fcoef);
+    p=amplitude.^2;
+    
+    % Old FFT 
+%     F=fft(y);
+%     p1=abs(F).^2; % plot(p1)
+%     Fs=1/2;% assuming a sampling frequency of 0.5Hz (2 second per sample)
+%     freqs1=linspace(0,Fs/2,length(y)/2+1);
 
     % plot(log10(freqs),log10(p(1:length(freqs))));
     % xlabel('log of frequency(Hz)');
@@ -323,14 +346,18 @@ for i=1:3 % i=2;
     xlabel('Lag');ylabel('Corr.');title('B. Autocorr.');
     
     subplot(1,3,3);
-    xx=log10(freqs(2:end));yy=log10(p(2:length(freqs)));
+    %xx=log10(freqs(2:end));yy=log10(p(2:length(freqs)));
+    xx=log10(freqs(2:end));yy=log10(p(1:length(p)));
     plot(xx,yy);hold on;
     tbl=table(xx',yy');
     mdl=fitlm(tbl,'linear');
     plotAdded(mdl);
     xlabel('Log(f)');ylabel('Log(power)');title('C. Spectrum');
+    %ylim([-3 3]);
+    ylim([-7 0]);
     
-    suptitle(char(SupTitles(i)));
+    suptitle([char(SupTitles(i)) ' in subject ' num2str(seed)]);
+    
 %     % save figure handles
 %     ax(i,1)=gca;
  

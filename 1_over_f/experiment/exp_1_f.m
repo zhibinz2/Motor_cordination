@@ -148,7 +148,9 @@ try
     
     % condition 3
     RandomIntervals = round(NumFramesInterval + NumFramesInterval.*(rand(1,numTaps)-0.5)); % uniform distribution
-    Showframes3=cumsum(RandomIntervals); % plot(diff(Showframes3),'ro');
+    Showframes3=cumsum(RandomIntervals); 
+    % plot(diff(Showframes3)*ifi,'ro');ylabel('tap Interval (second)');xlabel('tap');title('RT condition');
+    
     % generate noise frames
     Noiseframes3=[];
     for i=1:(length(Showframes3)-1)
