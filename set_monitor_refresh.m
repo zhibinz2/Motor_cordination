@@ -21,5 +21,5 @@
 !xrandr --output DisplayPort-0 --primary --mode 1920x1080 --rate 144.00 --output DVI-D-0 --mode 1920x1080 --rate 60.00 --right-of DisplayPort-0
 
 %% Set 3 monitors in mirror mode
-!xrandr --output DP-0 --same-as DP-2
-!xrandr --output DP-6 --same-as DP-2
+!xrandr --output DP-0 --same-as DP-6
+!xrandr --output DP-2 --same-as DP-6
