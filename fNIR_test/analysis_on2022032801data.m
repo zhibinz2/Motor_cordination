@@ -1,6 +1,7 @@
 clear
 cd C:\Users\NIRS\Documents\zhibin\2022032801
 cd /home/zhibin/Documents/Artinis_NIRS/zhibin/20220410
+addpath /home/zhibin/Documents/GitHub/fieldtrip/fieldtrip-20220304
 %% single channel demo: load data with fieldtrip
 cfg = [];
 cfg.dataset = '2022032801.oxy3'; % only oxy3 save the events 

@@ -598,5 +598,15 @@ EEG
 %% baseline normalization 
 
 
+%% Save data after preprosesing
+cd /ssd/zhibin/1overf/20220408
+save('EMG2.mat','EMG2','-v7.3');
+save('filtered_data4.mat','filtered_data4','-v7.3');
+Photocell
+BottonPres
 
-
+% save all variables from the workspace in a matfile named with the date
+clear EEG EEG2 padding samples
+filename=[num2str(seed) '.mat'];
+cd /ssd/zhibin/1overf/20220408
+save(filename);
