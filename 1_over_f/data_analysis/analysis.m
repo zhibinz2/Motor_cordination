@@ -344,6 +344,7 @@ for i=1:3 % i=2;
     autocorr(y,'NumLags',200,'NumSTD',2);
     % [acf,lags,bounds] = autocorr(RTs(ConditionExplore),'NumLags',25,'NumSTD',2);
     xlabel('Lag');ylabel('Corr.');title('B. Autocorr.');
+    ylim([-0.4 1]);
     
     subplot(1,3,3);
     %xx=log10(freqs(2:end));yy=log10(p(2:length(freqs)));

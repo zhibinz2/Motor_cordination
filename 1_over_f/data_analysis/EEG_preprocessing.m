@@ -90,7 +90,7 @@ plotx(EEG2);
 xlabel('time (sample)');title('EEG');
 hold on; xline(ind1,'r');xline(ind2,'r');hold off;
 
-%% %% select a section and Zoom in all together again
+% select a section and Zoom in all together again
 [x, y] = ginput(2); % read two mouse clicks on the plot % x were index, y were real values
 % get the proximate index
 ind1=round(x(1))
@@ -118,7 +118,7 @@ xlabel('time (sample)');title('EEG');
 hold on; xline(ind1,'r');xline(ind2,'r');hold off;
 xlim([ind1 ind2]);
 
-%% detrend the data (no padding needed)
+%% detrend the EEG data (no padding needed)
 % lab's detrend function
 % detrend_data=ndetrend(samples(2:33,:)',1); 
 % detrend_data=ndetrend(samples(1:32,:)',1); 
@@ -227,7 +227,7 @@ figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(filtered_data(:,:));
 ylim([-500 500]);
 
-% cut off artifact at the beginning and end
+% cut off artifact at the beginning and end (Not neccesarrily needed)
 [x, y] = ginput(2); % read two mouse clicks on the plot % x were index, y were real values
 % get the proximate index
 ind1=round(x(1));
@@ -289,7 +289,7 @@ plotx(filtered_data4);
 clearvars samples filtered_data1 filtered_data2 filtered_data3
 % clear samples filtered_data1 filtered_data2 filtered_data3
 % clear samples
-%% select a section to examine EEG quality 
+%% Get photocell time indices
 cd /home/zhibin/Documents/GitHub/Motor_cordination/Data_processing_streamline
 
 % find index of each photocell for stimulus
@@ -351,6 +351,7 @@ xlabel('time (sample)');title('EEG');
 ylim([-500 500]);
 xlim([ind1 ind2]);
 
+suptitle(num2str(seed));
 
 %% look at power spectrum
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis
