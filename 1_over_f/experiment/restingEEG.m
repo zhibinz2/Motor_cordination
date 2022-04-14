@@ -10,6 +10,7 @@ DrawFormattedText2(instructionStart,'win',windowPtr,...
 Screen('Flip',windowPtr);
 % hit a key to continue
 KbStrokeWait;
+Screen('Flip',windowPtr);% Reponse with a black screen
 pause(2); % given time to return the position of arm after key press 
 
 % Flash photocells once at the start and end of eye open period 
@@ -53,6 +54,7 @@ DrawFormattedText2(instructionStart,'win',windowPtr,...
 Screen('Flip',windowPtr);
 % hit a key to continue
 KbStrokeWait;
+Screen('Flip',windowPtr);% Response with a black screen
 pause(2); % given time to return the position of arm after key press 
 
 % Flash photocells to mark the start and end of eye closed period 
@@ -96,8 +98,10 @@ DrawFormattedText2(instructionStart,'win',windowPtr,...
 Screen('Flip',windowPtr);
 % play a beep sound to signal subject to open eyes
 Beeper(400,0.9,1.5);
-pause(1.5); 
+
 % hit a key to continue
 KbStrokeWait;
-% given time to return the position of arm after key press 
+Screen('Flip',windowPtr);% Response with a black screen
+pause(1.5); % given time to return the position of arm after key press 
+
 %*************************************************************************

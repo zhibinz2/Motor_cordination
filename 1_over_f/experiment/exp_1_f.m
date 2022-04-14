@@ -302,16 +302,6 @@ try
             break;
             end
 
-            % Show trial and block number at the bottom
-            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)...
-                 ' \n Hit a key to continue'];
-            DrawFormattedText2(Showtrial,'win',windowPtr,...
-            'sx','center','sy', screenYpixels*0.9,'xalign','center','yalign','top','baseColor',white);
-
-            % flip to screen and pause for 1 sec
-%             vbl=Screen('Flip', windowPtr);
-%             pause(2); % or WaitSecs(1);
-
             % pick a condition from randomized set allPerm
             conditionSelected = allPerm(numTrials*(block-1)+t);
             Showframeselected=Showframes(conditionSelected,:);
@@ -329,8 +319,24 @@ try
             ShowCondition=['Begining the ' conditionNames{conditionSelected} ' condition'];
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
+
+            % Show trial and block number at the bottom
+            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)...
+                 ' \n Hit a key to continue'];
+            DrawFormattedText2(Showtrial,'win',windowPtr,...
+            'sx','center','sy', screenYpixels*0.9,'xalign','center','yalign','top','baseColor',white);
+
             Screen('Flip', windowPtr);
-            pause(3); % for subject to read instruction
+            pause(1); 
+            % hit a key to continue
+            KbStrokeWait;
+            Screen('Flip',windowPtr);% Reponse with a black screen
+            pause(3); % given time to return the position of arm after key press 
+
+
+            % flip to screen and pause for 1 sec
+%             vbl=Screen('Flip', windowPtr);
+%             pause(2); % or WaitSecs(1);
 
             % LSL markers to the local network
             % send data into the outlet, sample by sample
