@@ -1,10 +1,10 @@
 clear
-cd C:\Users\NIRS\Documents\zhibin\2022032801
+% cd C:\Users\NIRS\Documents\zhibin\2022032801
 cd /home/zhibin/Documents/Artinis_NIRS/zhibin/20220410
-addpath /home/zhibin/Documents/GitHub/fieldtrip/fieldtrip-20220304
+% addpath /home/zhibin/Documents/GitHub/fieldtrip/fieldtrip-20220304
 %% single channel demo: load data with fieldtrip
 cfg = [];
-cfg.dataset = '2022032801.oxy3'; % only oxy3 save the events 
+% cfg.dataset = '2022032801.oxy3'; % only oxy3 save the events 
 cfg.dataset = '2022041001.oxy3'; % only oxy3 save the events 
 [data]=ft_preprocessing(cfg);
 
@@ -179,7 +179,7 @@ cfg.artfctdef.zvalue.interactive = 'yes'; % the interactive display makes more s
 
 %% % Exercise 2 (Covert OD to concentration) (work!)
 cfg = [];
-cfg.dpf = 5.9;
+cfg.dpf = 6.2;
 cfg.channel = {'Rx*'};
 data_conc = ft_nirs_transform_ODs(cfg, data);
     % examine data_conc
@@ -218,7 +218,8 @@ data_epoch = ft_redefinetrial(cfg, data_filtered); % We have now selected one pa
 %% multi channels demo: load data with fieldtrip
 clear;
 cfg             = [];
-cfg.dataset = '2022032801.oxy3';
+% cfg.dataset = '2022032801.oxy3';
+cfg.dataset = '2022041001.oxy3';
 data_raw        = ft_preprocessing(cfg);
 
 % % (To retrieve the layout from the data file)
@@ -335,6 +336,9 @@ cfg.ylim           = [ -0.3   0.3 ];
 ft_databrowser(cfg, data_flt);
 
 %% plot singal from oxy3.mat to examine ylim
+oxysoft2matlab % select oxy3 and oxyproj files
+load('2022041001oxy3.mat')
+
 % signal 
 oxyvals=nirs_data.oxyvals;
 dxyvals=nirs_data.dxyvals;
@@ -350,7 +354,8 @@ ylim([-10 10]);
 % high pass (no paddings needed? for now)
 Hd = makefilter(Fs,0.05,0.04,6,20,1); xlim([0 1]);
 which filtfilt.m -all
-cd 'C:\Program Files\MATLAB\R2021b\toolbox\signal\signal\'
+% cd 'C:\Program Files\MATLAB\R2021b\toolbox\signal\signal\'
+cd /usr/local/MATLAB/R2022a/toolbox/signal/signal/
 which filtfilt.m
 filtered_oxyvals1=filtfilthd(Hd,detrend_oxyvals);
 filtered_dxyvals1=filtfilthd(Hd,detrend_dxyvals);
@@ -396,17 +401,17 @@ hold off;
 % AD channel
 ADvalues=nirs_data.ADvalues;
 ADlabel=nirs_data.ADlabel;
-for i=1:15
+for i=1:size(ADvalues,2)
     subplot(4,4,i);
     plot(time, ADvalues(:,i));
     title(ADlabel{i});
-end
+end 
 %% use event onset in nirs_data from oxy3.mat
 events=nirs_data.events;
 onsets=events.onsets{1,1};
 
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(time, ADvalues(:,15),'b');
+plot(time, ADvalues(:,14),'b');
 hold on;
 for i=1:length(onsets)
     plot(time(onsets(i)),10000*ones(length(onsets),1),'r.');
@@ -598,7 +603,8 @@ title('Right cortex - Right stim');
 
 
 %% load xdf from LSL
-cd C:\Users\NIRS\Documents\zhibin\2022032801
+% cd C:\Users\NIRS\Documents\zhibin\2022032801
+cd /home/zhibin/Documents/Artinis_NIRS/zhibin/20220410
 fileList = dir('*.xdf');
 fileList.name
 [streams,fileheader] = load_xdf(fileList.name);

@@ -1,9 +1,11 @@
 clear
-cd C:\Users\NIRS\Documents\zhibin\2022032801
-
+% cd C:\Users\NIRS\Documents\zhibin\2022032801
+cd /home/zhibin/Documents/Artinis_NIRS/zhibin/20220410
+% addpath /home/zhibin/Documents/GitHub/fieldtrip/fieldtrip-20220304
 %% single channel demo: load data with fieldtrip
 cfg = [];
-cfg.dataset = '2022032801.oxy3'; % only oxy3 save the events 
+% cfg.dataset = '2022032801.oxy3'; % only oxy3 save the events 
+cfg.dataset = '2022041001.oxy3'; % only oxy3 save the events 
 [data]=ft_preprocessing(cfg);
 
 cfg = [];
@@ -177,7 +179,7 @@ cfg.artfctdef.zvalue.interactive = 'yes'; % the interactive display makes more s
 
 %% % Exercise 2 (Covert OD to concentration) (work!)
 cfg = [];
-cfg.dpf = 5.9;
+cfg.dpf = 6.2;
 cfg.channel = {'Rx*'};
 data_conc = ft_nirs_transform_ODs(cfg, data);
     % examine data_conc
@@ -216,7 +218,8 @@ data_epoch = ft_redefinetrial(cfg, data_filtered); % We have now selected one pa
 %% multi channels demo: load data with fieldtrip
 clear;
 cfg             = [];
-cfg.dataset = '2022032801.oxy3';
+% cfg.dataset = '2022032801.oxy3';
+cfg.dataset = '2022041001.oxy3';
 data_raw        = ft_preprocessing(cfg);
 
 % % (To retrieve the layout from the data file)
@@ -333,6 +336,9 @@ cfg.ylim           = [ -0.3   0.3 ];
 ft_databrowser(cfg, data_flt);
 
 %% plot singal from oxy3.mat to examine ylim
+oxysoft2matlab % select oxy3 and oxyproj files
+load('2022041001oxy3.mat')
+
 % signal 
 oxyvals=nirs_data.oxyvals;
 dxyvals=nirs_data.dxyvals;
@@ -348,7 +354,8 @@ ylim([-10 10]);
 % high pass (no paddings needed? for now)
 Hd = makefilter(Fs,0.05,0.04,6,20,1); xlim([0 1]);
 which filtfilt.m -all
-cd 'C:\Program Files\MATLAB\R2021b\toolbox\signal\signal\'
+% cd 'C:\Program Files\MATLAB\R2021b\toolbox\signal\signal\'
+cd /usr/local/MATLAB/R2022a/toolbox/signal/signal/
 which filtfilt.m
 filtered_oxyvals1=filtfilthd(Hd,detrend_oxyvals);
 filtered_dxyvals1=filtfilthd(Hd,detrend_dxyvals);
@@ -394,7 +401,7 @@ hold off;
 % AD channel
 ADvalues=nirs_data.ADvalues;
 ADlabel=nirs_data.ADlabel;
-for i=1:15
+for i=1:length(ADvalues)
     subplot(4,4,i);
     plot(time, ADvalues(:,i));
     title(ADlabel{i});
@@ -488,8 +495,10 @@ load('2022032801.mat'); allPerm
 Ylim=1.5;Xlim=[100 300];
 figure('units','normalized','outerposition',[0 0 1 0.6]);
 subplot(2,1,1);% left channels
-plot(time,filtered_data(:,1:2:21),'r');hold on;
-plot(time,filtered_data(:,2:2:22),'b');
+% plot(time,filtered_data(:,1:2:21),'r');hold on;
+% plot(time,filtered_data(:,2:2:22),'b');
+plot(time,filtered_oxyvals2(:,1:11),'r');hold on;
+plot(time,filtered_dxyvals2(:,1:11),'b');
 for i=1:length(allPerm)
     if allPerm(i)==1
         xline(time(onsets(2*i-1)),'r',{'L'})
@@ -499,8 +508,10 @@ for i=1:length(allPerm)
 end
 title('Left occ. cortex');hold off;ylim([-Ylim Ylim]);xlim(Xlim);
 subplot(2,1,2);% right channels
-plot(time,filtered_data(:,23:2:43),'r');hold on;
-plot(time,filtered_data(:,24:2:44),'b');
+% plot(time,filtered_data(:,23:2:43),'r');hold on;
+% plot(time,filtered_data(:,24:2:44),'b');
+plot(time,filtered_oxyvals2(:,12:22),'r');hold on;
+plot(time,filtered_dxyvals2(:,12:22),'b');
 for i=1:length(allPerm)
     if allPerm(i)==1
         xline(time(onsets(2*i-1)),'r',{'L'})
