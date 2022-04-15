@@ -137,9 +137,9 @@ try
     % Position of the checkerboard
     xLcenter=xCenter/2;xRcenter=xCenter/2*3;Shift=screenXpixels/12;
     posL = [xLcenter-screenXpixels/12,yCenter-screenXpixels/12,xLcenter+screenXpixels/12,yCenter+screenXpixels/12];
-    posL = posL + [-Shift +Shift*1.5 -Shift +Shift*1.5]; % shift to the lower left corner
+    posL = posL + [-Shift +Shift -Shift +Shift]; % shift to the lower left corner
     posR = [xRcenter-screenXpixels/12,yCenter-screenXpixels/12,xRcenter+screenXpixels/12,yCenter+screenXpixels/12];
-    posR = posR + [+Shift +Shift*1.5 +Shift +Shift*1.5]; % shift to the lower right corner
+    posR = posR + [+Shift +Shift +Shift +Shift]; % shift to the lower right corner
     % ****************************************Checkerboard Design
 
     % Set size of the squares for photocell ###############################
