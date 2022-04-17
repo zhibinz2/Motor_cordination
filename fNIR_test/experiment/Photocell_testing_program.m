@@ -1,9 +1,11 @@
+
 % This version shows checkerboard on two hemi-fields and sends LSL markers
 % to the fNIRS laptop
 sca; clc; close all; clear all; clearvars; 
 
 % LSL #####################################################################
 % Addpath
+
 addpath(genpath('/home/hnl/Documents/GitHub/labstreaminglayer/LSL/liblsl-Matlab')); % for LSL
 % instantiate the library for LSL
 lib = lsl_loadlib();
@@ -44,27 +46,10 @@ conditionNames={'L' 'R'};  % conditionNames{1}
 % % number of trials per block
 numTrials=4;
 % number of blocks
-numBlock=3; % 3 blocks per session,6 subject
+numBlock=9; % 3 blocks per session,6 subject
 % total trial number
 numtotal=numTrials*numBlock; 
-% num of conditions in the experiment
-numconditions=length(conditions);
 % **********************************Block & Trial number of the experiment
-
-% Randomization of the experiment #########################################
-% set the random number seed as the date of today in formate such as 20210809
-seed=input('enter the date in format YYYYMMDD:');
-rng(seed);
-% how many semirandom permutation set in the experiment 
-numPerm=numtotal/numconditions;
-% create the whole set of random conditions for the experiment
-allPerm=[];
-for p=1:numPerm
-    allPerm=[allPerm randperm(numconditions)];
-end
-% ######################################### Randomization of the experiment 
-% ***************************************** Randomization of the experiment 
-
 
 
 % ########################################################################
@@ -118,30 +103,7 @@ try
     % For help see: help RectCenter
     [xCenter, yCenter] = RectCenter(windowRect); 
 
-    % Checkerboard Design****************************************
-    % Black and white
-%     K1 = (checkerboard > 0.5);
-%     K2 = ~K1;
-    % Green and white
-    greenSquare=repmat(cat(3,0,1,0),10,10);
-    whiteSquare=repmat(cat(3,1,1,1),10,10);
-    QuadraSquare1=[greenSquare whiteSquare;whiteSquare greenSquare];
-    QuadraSquare2=[whiteSquare greenSquare;greenSquare whiteSquare];
-    K1=repmat(QuadraSquare1,5,5);
-    K2=repmat(QuadraSquare2,5,5);
-    % MakeTexture
-%     textureIndex1=Screen('MakeTexture',windowPtr,double(K1));
-%     textureIndex2=Screen('MakeTexture',windowPtr,double(K2));
-    textureIndex1=Screen('MakeTexture',windowPtr,K1);
-    textureIndex2=Screen('MakeTexture',windowPtr,K2);
-    % Position of the checkerboard
-    xLcenter=xCenter/2;xRcenter=xCenter/2*3;Shift=screenXpixels/12;
-    posL = [xLcenter-screenXpixels/12,yCenter-screenXpixels/12,xLcenter+screenXpixels/12,yCenter+screenXpixels/12];
-    posL = posL + [-Shift +Shift*1.5 -Shift +Shift*1.5]; % shift to the lower left corner
-    posR = [xRcenter-screenXpixels/12,yCenter-screenXpixels/12,xRcenter+screenXpixels/12,yCenter+screenXpixels/12];
-    posR = posR + [+Shift +Shift*1.5 +Shift +Shift*1.5]; % shift to the lower right corner
-    % ****************************************Checkerboard Design
-
+  
     % Set size of the squares for photocell ###############################
     PhotosensorSize=30; % 30;
     % Positions of the four corners
@@ -149,11 +111,6 @@ try
     RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2];
     LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels];
     LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
-%     RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+230-PhotosensorSize screenXpixels screenYpixels/2+230+PhotosensorSize];
-%     RightUpperSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+110-PhotosensorSize screenXpixels screenYpixels/2+110+PhotosensorSize];
-%     LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 screenYpixels/2+230+PhotosensorSize];
-%     LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
-    % ############################### Set size of the squares for photocell 
 
     % Enable alpha blending for anti-aliasing
     % For help see: Screen BlendFunction?
@@ -190,10 +147,6 @@ try
     waitframes = (1/8)/ifi;
     
     % Setting time variables**********************************************
-    % Length of one minute baseline
-    BaselineLength =10; % in seconds 4; % 4 s to move
-    numFramesBaseline = round(BaselineLength / ifi / waitframes);
-
     % total number of frames per trial
     numFrames=round(10/ifi/waitframes); % 10 seconds 
     % **********************************************Setting time variables
@@ -213,101 +166,13 @@ try
     HideCursor(windowPtr,mice);
     %HideCursor(windowPtr,mice(1));
 
-    % Baseline taking 60s  *******************************  % Checkerboard Design****************************************
-    % Black and white
-%     K1 = (checkerboard > 0.5);
-%     K2 = ~K1;
-    % Green and white
-    greenSquare=repmat(cat(3,0,1,0),10,10);
-    whiteSquare=repmat(cat(3,1,1,1),10,10);
-    QuadraSquare1=[greenSquare whiteSquare;whiteSquare greenSquare];
-    QuadraSquare2=[whiteSquare greenSquare;greenSquare whiteSquare];
-    K1=repmat(QuadraSquare1,5,5);
-    K2=repmat(QuadraSquare2,5,5);
-    % MakeTexture
-%     textureIndex1=Screen('MakeTexture',windowPtr,double(K1));
-%     textureIndex2=Screen('MakeTexture',windowPtr,double(K2));
-    textureIndex1=Screen('MakeTexture',windowPtr,K1);
-    textureIndex2=Screen('MakeTexture',windowPtr,K2);
-    % Position of the checkerboard
-    xLcenter=xCenter/2;xRcenter=xCenter/2*3;Shift=screenXpixels/12;
-    posL = [xLcenter-screenXpixels/12,yCenter-screenXpixels/12,xLcenter+screenXpixels/12,yCenter+screenXpixels/12];
-    posL = posL + [-Shift +Shift*1.5 -Shift +Shift*1.5]; % shift to the lower left corner
-    posR = [xRcenter-screenXpixels/12,yCenter-screenXpixels/12,xRcenter+screenXpixels/12,yCenter+screenXpixels/12];
-    posR = posR + [+Shift +Shift*1.5 +Shift +Shift*1.5]; % shift to the lower right corner
-    % ****************************************Checkerboard Design
-
-    instructionStart=['Hit any key and then look at the center of the screen for ' num2str(BaselineLength) ' seconds'];
-    DrawFormattedText2(instructionStart,'win',windowPtr,...
-        'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-    Screen('Flip',windowPtr);
-    % hit a key to continue
-%     pause(0.5);
-    KbStrokeWait;Screen('Flip',windowPtr);pause(2);
-    % Create a fixation cross
-    FixCrX=[xCenter-round(screenXpixels/500):xCenter+round(screenXpixels/500) repmat(xCenter,1,round(screenXpixels/250)+1)];
-    FixCrY=[repmat(yCenter,1,round(screenXpixels/250)+1) yCenter-round(screenXpixels/500):yCenter+round(screenXpixels/500)];
-    
-    % LSL markers to the local network
-    % send data into the outlet, sample by sample
-%         outlet1.push_sample(1); % send data number 1
-    % send markers into the outlet
-    mrk = markers{1};
-    outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-    
-    tic
-%     startTime = now;
-%     numberOfSecondsElapsed = 0;
-%     while numberOfSecondsElapsed < 60
-
-    % flash a photocell to mark the beginning of baseline taking
-    Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip', windowPtr);
-
-    % get a timestamp and begin the baseline 
-    vbl = Screen('Flip', windowPtr);
-    n=1;
-    while n < numFramesBaseline
-        % If esc is press, break out of the while loop and close the screen
-        [keyIsDown, keysecs, keyCode] = KbCheck;
-        if keyCode(KbName('escape'))
-            Screen('CloseAll');
-            break;
-        end
-
-        % Update the while loop with time
-%         numberOfSecondsElapsed = (now - startTime) * 10 ^ 5;
-        
-        % Show the fixation cross
-        Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/700, white, [0 0], 2);
-        vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-
-        % LSL marker to check screen flip frequency
-        % send markers into the outlet
-%         mrk = markers{5};
-%         outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-
-        n=n+1;
-    end
-    % send markers into the outlet
-    mrk = markers{2};
-    outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-    BaselineDuration=toc
-    % flash a photocell to mark the end of baseline taking
-    Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip',windowPtr);
-    Screen('Flip',windowPtr);
-
-    
     instructionStart=['OK. Press a key to start!']; % Tell subject to open eye and start
     DrawFormattedText2(instructionStart,'win',windowPtr,...
         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
     Screen('Flip',windowPtr);
     % hit a key to continue
     %pause(1); 
-    KbStrokeWait;Screen('Flip',windowPtr);pause(5);% to separate baseline markers and trial markers
+    KbStrokeWait;Screen('Flip',windowPtr);pause(2);
     % ************************************************ Baseline taking 60s 
 
     % initialize some variables
@@ -328,18 +193,6 @@ try
             Screen('CloseAll');
             break;
             end
-
-            % Show trial and block number at the bottom
-%             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)];
-%             DrawFormattedText2(Showtrial,'win',windowPtr,...
-%             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
-% 
-%             % flip to screen and pause for 1 sec
-%             vbl=Screen('Flip', windowPtr);
-%             pause(2); % or WaitSecs(1);
-
-            % pick a condition from randomized set allPerm
-            conditionSelected = allPerm(numTrials*(block-1)+t);
             
             % LSL markers to the local network
             % send data into the outlet, sample by sample
@@ -349,22 +202,36 @@ try
             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
             
             % Run the trial #################
-            run trial_checkerboard_LSL_fNIR.m
+            % initial or reset trial frame number
+            n=1;
+            % get a timestamp and begin the trial
+            vbl = Screen('Flip', windowPtr);
+                        
+            
+            % while numberOfSecondsElapsed < 10;
+            while n <  numFrames 
+                % If esc is press, break out of the while loop and close the screen
+                [keyIsDown, keysecs, keyCode] = KbCheck;
+                if keyCode(KbName('escape'));
+                    Screen('CloseAll');
+                    break;
+                end
 
-            % send markers into the outlet
+                % Flash photocell every other second during the whole trial (bottom left)
+                if (~isempty(find([1:2:numFrames]==n))) % every two frames
+                    Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
+                    Screen('FillRect', windowPtr, white, RightBottomSquare);
+                end
+        
+                % Flip to the screen
+                vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+            
+                n = n+1;
+            end
+
+            %% send markers into the outlet
             mrk = markers{4};
             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-
-%             if block ~= numBlock | t ~= numTrials % only bypass the last trial
-                % Show Resting
-%                 Resting = ['Rest for 20s'];
-%                 DrawFormattedText2(Resting,'win',windowPtr,...
-%                     'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
-%                 vbl=Screen('Flip',windowPtr);
-                % Rest 20 sec
-                Screen('Flip',windowPtr);
-                pause(20);
-%             end
 
         end
         

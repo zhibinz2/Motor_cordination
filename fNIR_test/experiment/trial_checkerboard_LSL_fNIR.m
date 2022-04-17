@@ -44,7 +44,7 @@ while n <  numFrames
     end
     
     % Show the fixation cross
-    Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/300, white, [0 0], 2);
+    Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/700, white, [0 0], 2);
 
     % Flip to the screen
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
