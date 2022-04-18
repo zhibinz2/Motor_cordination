@@ -7,10 +7,13 @@ clear;close all;
 addpath /home/zhibin/Documents/GitHub/TMSi_SAGA_matlab % hnlb
 % cd /ssd/zhibin/1overf/20220324
 cd /ssd/zhibin/1overf/20220331
+cd /ssd/zhibin/1overf/2022041401/
 % d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220324/20220324.Poly5');
 % d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220331/RESTING_ec_2mim-20220331T161816.DATA.Poly5');
 d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220331/experiment_PILOT-20220331T162236.DATA.Poly5');
 d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220408/JACK20220408-20220408T160904.DATA.Poly5');
+d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/2022041401/2020041401Patty-20220414T145516.DATA.Poly5');
+d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/2022041402/Shane2022041402-20220414T160550.DATA.Poly5');
 
 samples=d.samples;
 sr=d.sample_rate;
@@ -52,6 +55,7 @@ unique(samples(TRIGGERind,:))
 hold on; 
 % look for the second ISO aux channel for the photocell 
 ISOauxind=find(labels=='ISO aux');
+ISOauxind=ISOauxind(1);
 ISOauxind=ISOauxind(2);
 % plot(samples(38,:),'b'); %  ISO aux = analog
 plot(samples(ISOauxind,:),'b'); %  ISO aux = analog
@@ -241,6 +245,7 @@ Error1=[]; % for synchronization (condition 1)
 StartStim1=4+240*(find(allPerm==1)-1)+1; % the starting photocell of condition 1
 % find the time difference with the closest botton press 
 for i=StartStim1:StartStim1+239 % i=StartStim1
+% for i=StartStim1:length(locs) % i=StartStim1
     [minValue,closetIndex]=min(abs(BottonPressTime-PhotocellTime(i))); % closetIndex in BottonPressTime
     Error1(i-StartStim1+1)=BottonPressTime(closetIndex)-PhotocellTime(i);
 end
@@ -334,7 +339,7 @@ for i=1:3 % i=2;
 
 
     % 3 plots
-    figure('units','normalized','outerposition',[0 0 1 1]);
+    figure('units','normalized','outerposition',[0 0 1 0.3]);
     
     subplot(1,3,1);
     plot(y,'k.');
