@@ -222,7 +222,7 @@ cfg             = [];
 cd /home/zhibin/Documents/Artinis_NIRS/zhibin/
 % cfg.dataset = '2022032801.oxy3';
 % cfg.dataset = '2022041001.oxy3';
-cfg.dataset = '2022041701.oxy3';
+cfg.dataset = '2022041702.oxy3';
 data_raw        = ft_preprocessing(cfg);
 
 % % (To retrieve the layout from the data file)
@@ -410,9 +410,11 @@ end
 %% use event onset in nirs_data from oxy3.mat
 events=nirs_data.events;
 onsets=events.onsets{1,1};
+ADlabel=nirs_data.ADlabel;
+ADvalues=nirs_data.ADvalues;
 
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(time, ADvalues(:,14),'b');
+plot(time, ADvalues(:,15),'b');
 hold on;
 for i=1:length(onsets)
     plot(time(onsets(i)),10000*ones(length(onsets),1),'r.');
@@ -433,30 +435,67 @@ for i=1:16
     plot(ADvalues(:,i));
     title(num2str(i));
 end
-photocell=ADvalues(:,15);plot(photocell);
-photocell=ADvalues(:,16);plot(photocell);% this channel is better
+Photocell=ADvalues(:,15);plot(Photocell);
+Photocell=ADvalues(:,16);plot(Photocell);% this channel is better
 
 % find peaks
+% view the time course of photocell signals
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(Photocell);xlabel('time');ylabel('photocell signal');
+% click and select the start and end point for peak extraction
+[x, y] = ginput(2); % read two mouse clicks on the plot % x were index, y were real values
+Startpoint=round(x(1));Endpoint=round(x(2)); % Startpoint and Endpoint are sample number or index in time
+hold on;xline(x(1),'r');xline(x(2),'r');hold off;
+
+% replace the beginning and end with baseline value
+Photocell(1:Startpoint)=mean(y);Photocell(Endpoint:end)=mean(y); % plot(Photocell');
+plot(time,Photocell,'b'); 
+
 % Examine peaks detection in analog1
-Halfhigh1=3/4*(max(photocell)-min(photocell)); % value for 'MinPeakProminence'
+Halfhigh1=1/4*(max(Photocell)-min(Photocell));% +min(Photocell); % value for 'MinPeakProminence'
 % Check if need to adjust the Halfhigh cutoff
 close;figure;
-findpeaks(photocell,datatimes,'MinPeakProminence',Halfhigh1,'Annotate','extents');
+findpeaks(Photocell,time,'MinPeakProminence',Halfhigh1,'Annotate','extents');
 yline(Halfhigh1,'m','MinPeakProminence');
+ylim([0 max(Photocell)+1000]);
 
 % locate the trial sessions % pks=value of the peak % locs=time of the peak
-[pks,locs] = findpeaks(photocell,time,'MinPeakProminence',Halfhigh1,'Annotate','extents');
+[pks,locs] = findpeaks(Photocell,time,'MinPeakProminence',Halfhigh1,'Annotate','extents');
 
+% examine locs on top of signal plot
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(time,filtered_oxyvals2,'r',time,filtered_dxyvals2,'b');title('oxyval & dxyval 0.05~0.8 Hz'); 
+% ylim([-20 20]);ylim([-1.5 1.5]);
+hold on;
+for i=1:length(locs)
+    xline(locs(i),'m');
+end
 
+find(time==locs(2)) % has a return value
+% find the event indices in time
+EventIndices=zeros(length(locs),1);
+for i=1:length(locs)
+    EventIndices(i)=find(time==locs(i));
+end
 
-%% Organize into time x chans x trials
-% Pick the signal from fieldtrip result
+% examine EventIndices on top of signal
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(filtered_oxyvals2,'r');
+hold on;
+plot(filtered_dxyvals2,'b');
+title('oxyval & dxyval 0.05~0.8 Hz'); 
+hold on;
+for i=1:length(EventIndices)
+    xline(EventIndices(i),'m');
+end
+
+%% Pick the signal from fieldtrip result
 filtered_data=cell2mat(data_flt.trial);
 filtered_data=filtered_data(1:44,:)';
 Fs=data_flt.fsample;
 time=cell2mat(data_flt.time);
 
-% Pick the event onset from oxy3.mat
+%% Use the event onset from oxy3.mat to organize data into time x chan x trials
 numTrials=length(onsets)/2;
 numChans=44;
 trial_length=round(Fs*40); % 10s baseline + 10s stimulus + 20 s rest
@@ -474,7 +513,19 @@ for i=1:numTrials
 end
 hold off;
 
-% baseline normalization 
+%% Use photocell detection generated EventIndices to organize data into time x chan x trials
+numTrials=12;
+numChans=44;
+trial_length=round(Fs*40); % 10s baseline + 10s stimulus + 20 s rest
+time(EventIndices(1))
+TrialTime=1/Fs*[1:trial_length]-10;
+data_trials=zeros(trial_length,numChans,numTrials);
+for i=1:numTrials % i=numTrials
+    data_trials(:,:,i)=filtered_data((EventIndices(2+2*i-1)-round(Fs*10)):(EventIndices(2+2*i-1)+round(Fs*30)-1),:);
+end
+
+
+%% baseline normalization (skip)
 normalized_trials=zeros(trial_length,numChans,numTrials);
 for i=1:numTrials
     baselineMean=mean(abs(data_trials(1:round(Fs*10),:,i)),1);
@@ -495,17 +546,19 @@ hold off;
 split_data = num2cell(normalized_trials, [1 2]); %split A keeping dimension 1 and 2 intact
 Combined_norm_data=vertcat(split_data{:});
 
-%% plot the conditions
+%% extract the conditions and channels
 % load stimulus data
 cd C:\Users\NIRS\Documents\zhibin\2022032801
+cd /home/zhibin/Documents/Artinis_NIRS/zhibin/20220415
 load('2022032801.mat'); allPerm;
+numTrials=12;
 allPerm=allPerm(1:numTrials);
 trialsL=find(allPerm==1);
 trialsR=find(allPerm==2);
 
 % separate left and right stimulus condition
-data_trialsL=normalized_trials(:,:,trialsL);
-data_trialsR=normalized_trials(:,:,trialsR);
+data_trialsL=data_trials(:,:,trialsL);
+data_trialsR=data_trials(:,:,trialsR);
 
 % channels
 oxychanL=1:2:21;
@@ -519,9 +572,23 @@ dxychanL=[2 6 8 10 12 18];
 oxychanR=[23 27 29 31 33 35];
 dxychanR=[24 28 30 32 34 36];
 
+%% 2 subplots trial by trial
+% examine trial to trial
+figure;
+Ylim=3;
+for i=1:numTrials
+    subplot(2,1,1); 
+    plot(TrialTime,data_trials(:,oxychanL,i),'r',TrialTime,data_trials(:,dxychanL,i),'b');
+    title(['Left Hemisphere condition ' num2str(allPerm(i))]);xline(0,'m');ylim([-1*Ylim Ylim]);
+    subplot(2,1,2); 
+    plot(TrialTime,data_trials(:,oxychanR,i),'r',TrialTime,data_trials(:,dxychanR,i),'b');
+    title(['Right Hemisphere condition ' num2str(allPerm(i))]);xline(0,'m');ylim([-1*Ylim Ylim]);
+    pause(2);
+end
 
-%******************************************************************
-% Plot combined_normalized data
+
+
+%% 2 subplots based on a combined time series
 % filtered_data;filtered_oxyvals2;filtered_dxyvals2;
 Fs=data_flt.fsample;
 time=cell2mat(data_flt.time);
@@ -590,7 +657,8 @@ title('Right cortex');hold off;
  xlim(Xlim);
 
 
-%******************************************************************
+%% Four subplots
+% ******************************************************************
 cd C:\Users\NIRS\Documents\GitHub\Motor_cordination\fNIR_test
 % plot 
 figure;% keep all channels, but average across all trials
