@@ -111,6 +111,7 @@ plot(time_stamps2(index_Trial_Start),2.2, 'go');
 plot(time_stamps2(index_Trial_End),2.5, 'ro');
 %%
 % load behaviral
+cd /home/zhibin/Documents/GitHub/Motor_cordination/fNIR_test
 open xdfchannels.m
 %%
 % repmat_stamp1=repmat(time_stamps1',[1,length(time_stamps2)]);
