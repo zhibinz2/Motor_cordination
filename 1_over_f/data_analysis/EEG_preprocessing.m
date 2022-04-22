@@ -560,7 +560,7 @@ plotx(time,mixedsig);
 hold on;hold off;
 title('Mixed Signal with ICs removed');
 
-%% segment EEG according to conditions
+%% segment EEG according to conditions (time locked to stimulus)
 separationsTimeInd; % indices of frist press in each condition in time
 
 PhotocellTimeInd;
