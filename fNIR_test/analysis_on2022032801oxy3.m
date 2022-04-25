@@ -222,7 +222,8 @@ cfg             = [];
 cd /home/zhibin/Documents/Artinis_NIRS/zhibin/
 % cfg.dataset = '2022032801.oxy3';
 % cfg.dataset = '2022041001.oxy3';
-cfg.dataset = '2022041702.oxy3';
+% cfg.dataset = '2022041702.oxy3';
+cfg.dataset = '2022042104.oxy3';
 data_raw        = ft_preprocessing(cfg);
 
 % % (To retrieve the layout from the data file)
@@ -295,6 +296,7 @@ ft_databrowser(cfg, data_raw);
 
 % (transform optical densities to oxy- and deoxy-hemoglobin concentration changes) (work!)
 cfg                 = [];
+cfg.dpf             = 5.8;
 cfg.target          = {'O2Hb', 'HHb'};
 cfg.channel         = 'nirs'; % e.g., one channel incl. wildcards, you can also use ?all? to select all NIRS channels
 data_conc           = ft_nirs_transform_ODs(cfg, data_raw);
@@ -414,7 +416,7 @@ ADlabel=nirs_data.ADlabel;
 ADvalues=nirs_data.ADvalues;
 
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(time, ADvalues(:,15),'b');
+plot(time, ADvalues(:,16),'b');
 hold on;
 for i=1:length(onsets)
     plot(time(onsets(i)),10000*ones(length(onsets),1),'r.');
@@ -497,10 +499,13 @@ time=cell2mat(data_flt.time);
 
 %% Use the event onset from oxy3.mat to organize data into time x chan x trials
 numTrials=length(onsets)/2;
+% numTrials=12;
 numChans=44;
 trial_length=round(Fs*40); % 10s baseline + 10s stimulus + 20 s rest
+% trial_length=round(Fs*30); % 10s stimulus + 20 s rest
 time(onsets(i))
 TrialTime=1/Fs*[1:trial_length]-10;
+% TrialTime=1/Fs*[1:trial_length];
 data_trials=zeros(trial_length,numChans,numTrials);
 for i=1:numTrials % i=numTrials
     data_trials(:,:,i)=filtered_data((onsets(2*i-1)-round(Fs*10)):(onsets(2*i-1)+round(Fs*30)-1),:);
@@ -516,12 +521,16 @@ hold off;
 %% Use photocell detection generated EventIndices to organize data into time x chan x trials
 numTrials=12;
 numChans=44;
-trial_length=round(Fs*40); % 10s baseline + 10s stimulus + 20 s rest
+% trial_length=round(Fs*40); % 10s baseline + 10s stimulus + 20 s rest
+trial_length=round(Fs*30); % 10s stimulus + 20 s rest
 time(EventIndices(1))
-TrialTime=1/Fs*[1:trial_length]-10;
+% TrialTime=1/Fs*[1:trial_length]-10;
 data_trials=zeros(trial_length,numChans,numTrials);
+% for i=1:numTrials % i=numTrials
+%     data_trials(:,:,i)=filtered_data((EventIndices(2+2*i-1)-round(Fs*10)):(EventIndices(2+2*i-1)+round(Fs*30)-1),:);
+% end
 for i=1:numTrials % i=numTrials
-    data_trials(:,:,i)=filtered_data((EventIndices(2+2*i-1)-round(Fs*10)):(EventIndices(2+2*i-1)+round(Fs*30)-1),:);
+    data_trials(:,:,i)=filtered_data(EventIndices(2*i-1):(EventIndices(2*i-1)+round(Fs*30)-1),:);
 end
 
 
@@ -586,6 +595,31 @@ for i=1:numTrials
     pause(2);
 end
 
+%% 2 subplots of all trials
+figure;
+Ylim=3;
+subplot(2,1,1); 
+plot(time,filtered_data(:,oxychanL),'r',time,filtered_data(:,dxychanL),'b');
+title('Left Hemisphere condition ');ylim([-1*Ylim Ylim]);
+subplot(2,1,2); 
+plot(time,filtered_data(:,oxychanR),'r',time,filtered_data(:,dxychanR),'b');
+title('Right Hemisphere condition ');ylim([-1*Ylim Ylim]);
+for i=1:numTrials
+    subplot(2,1,1); 
+    hold on;xline(time(EventIndices(2*i-1)),'m',{allPerm(i)});xline(time(EventIndices(2*i)),'k');hold off;
+    subplot(2,1,2); 
+    hold on;xline(time(EventIndices(2*i-1)),'m',{allPerm(i)});xline(time(EventIndices(2*i)),'k');hold off;
+end
+
+%% average across the middle 10 trials
+data_trials10=data_trials(:,:,2:11);
+data_trials10m=mean(data_trials10,3);
+figure;
+plot(TrialTime,data_trials10m(:,1:2:43),'r',TrialTime,data_trials10m(:,2:2:44),'b');
+xline(10,'k','stimulus end');
+xlabel('time (s)')
+
+allPerm10=allPerm(2:11);
 
 
 %% 2 subplots based on a combined time series
