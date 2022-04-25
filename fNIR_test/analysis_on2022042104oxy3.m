@@ -165,24 +165,92 @@ ylim([-1 1])
 title('2022032801 only low pass filt')
 
 %% organized into trials based on photocells
-data_trials=zeros(round(fsample*30),44,length(locs)/2);
+data_trials=zeros(round(fsample*40),44,length(locs)/2);
 for i=1:length(locs)/2
     ind1=EventIndices(2*i-1);
-    data_trials(:,:,i)=filtered_data(ind1:ind1+round(fsample*30)-1,:);
+    data_trials(:,:,i)=filtered_data((ind1-round(fsample*10)):ind1+(round(fsample*30)-1),:);
 end
 % deduct the avagerage from trial
 data_trials=data_trials-mean(data_trials,1).*ones(size(data_trials,1),1);
-% plot all trials average
-timeTrials=[0:1:round(fsample*30)-1]*1/fsample;
+% deduct the baseline average 
+data_trials=data_trials-mean(data_trials(1:round(fsample*10),:,:),1).*ones(size(data_trials,1),1);
+% divided by the baseline average 
+data_trials=data_trials./(mean(data_trials(1:round(fsample*10),:,:),1).*ones(size(data_trials,1),1));
+
+% channels
+oxychanL=1:2:21;
+dxychanL=2:2:22;
+oxychanR=23:2:43;
+dxychanR=24:2:44;
+
+% Only the occipital lobe
+oxychanL=[1 5 7 9 11 17];
+dxychanL=[2 6 8 10 12 18];
+oxychanR=[23 27 29 31 33 35];
+dxychanR=[24 28 30 32 34 36];
+
+% Only the most likely visual cortex
+oxychanL=[7 9 11];
+dxychanL=[8 10 12];
+oxychanR=[29 31 33];
+dxychanR=[30 32 34];
+
+% plot all trials as subplots
+timeTrials=[0:1:round(fsample*40)-1]*1/fsample-10;
 figure('units','normalized','outerposition',[0 0 1 1]);
 for i=1:72
     subplot(8,9,i)
     plot(timeTrials,data_trials(:,1:2:43,i),'r');hold on;
     plot(timeTrials,data_trials(:,2:2:44,i),'b');hold off;
     xlabel('time (s)');
-    ylim([-2.5 2.5]);title('i');
+%     ylim([-2.5 2.5]);
+    title('i');
 end
 suptitle('recording 2022032801')
+% plot the average
+data_trials_m=mean(data_trials,3);
+figure;
+subplot
+plotx(timeTrials,data_trials_m(:,oxychanL),'r');hold on;
+plotx(timeTrials,data_trials_m(:,dxychanL),'b');hold off;
+xlabel('time (s)');
+% ylim([-2.5 2.5]);
+title('average across 72 trials');
+% plot 2 conditions
+trialsL=find(allPerm==1);
+trialsR=find(allPerm==2);
+data_trials_mL=mean(data_trials(:,:,trialsL),3);
+data_trials_mR=mean(data_trials(:,:,trialsR),3);
+figure;
+subplot(2,2,1);
+plotx(timeTrials,data_trials_mL(:,oxychanL),'r');hold on;
+plotx(timeTrials,data_trials_mL(:,dxychanL),'b');hold off;
+title('Left stim, Left Brain');
+hold on;xline(0,'m',{'stim onset'});xline(10,'m',{'stim end'});hold off;
+ylabel('concentration of oxygenated (red) and deoxygenated (blue) Hb');
+xlabel('time (s)');ylim([-0.3 0.5]);
+subplot(2,2,2);
+plotx(timeTrials,data_trials_mL(:,oxychanR),'r');hold on;
+plotx(timeTrials,data_trials_mL(:,dxychanR),'b');hold off;
+title('Left stim, Right Brain');
+hold on;xline(0,'m',{'stim onset'});xline(10,'m',{'stim end'});hold off;
+ylabel('concentration of oxygenated (red) and deoxygenated (blue) Hb');
+xlabel('time (s)');ylim([-0.3 0.5]);
+subplot(2,2,3);
+plotx(timeTrials,data_trials_mR(:,oxychanL),'r');hold on;
+plotx(timeTrials,data_trials_mR(:,dxychanL),'b');hold off;
+title('Right stim, Left Brain');
+hold on;xline(0,'m',{'stim onset'});xline(10,'m',{'stim end'});hold off;
+ylabel('concentration of oxygenated (red) and deoxygenated (blue) Hb');
+xlabel('time (s)');ylim([-0.3 0.5]);
+subplot(2,2,4);
+plotx(timeTrials,data_trials_mR(:,oxychanR),'r');hold on;
+plotx(timeTrials,data_trials_mR(:,dxychanR),'b');hold off;
+title('Right stim, Right Brain');
+hold on;xline(0,'m',{'stim onset'});xline(10,'m',{'stim end'});hold off;
+ylabel('concentration of oxygenated (red) and deoxygenated (blue) Hb');
+xlabel('time (s)');ylim([-0.3 0.5]);
+suptitle('Recording2022032801')
 
 
 %% 2 subplots of all trials

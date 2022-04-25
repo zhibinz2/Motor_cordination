@@ -169,4 +169,6 @@ open arfima_gof.m
 
 [pval,Tn] = arfima_gof(Z,params,arma_part,wn_var,'DISP')
 
-%%
+%% R: fitting
+% https://www.rdocumentation.org/packages/forecast/versions/8.16/topics/arfima
+% https://app.datacamp.com/workspace/w/a9af2003-7159-4eb4-a6d6-96d1c66ef5c0/edit
