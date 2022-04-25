@@ -279,9 +279,9 @@ end
 %  organize EEG into trials using EventIndices
 numTrials=12;
 numChans=32;
-trial_length=round(sr*3); % 2 rest + 2s stimulus + 2 rest 
+trial_length=round(sr*6); % 2 rest + 2s stimulus + 2 rest 
 
-TrialTime=1/sr*[1:trial_length];
+TrialTime=1/sr*[1:trial_length]-2;
 data_trials=zeros(trial_length,numChans,numTrials);
 for i=1:numTrials % i=numTrials
     data_trials(:,:,i)=filtered_data4(EventIndices(2+2*i-1):(EventIndices(2+2*i-1)+round(sr*3)-1),:);
@@ -383,7 +383,7 @@ numTrials=12;
 numChans=32;
 % trial_length=round(sr*13); % 3s baseline + 10s stimulus 
 % trial_length=round(sr*30); % 10s stimulus + 20 rest 
-trial_length=round(sr*6); % 2 rest + 2s stimulus + 2 rest 
+trial_length=round(sr*14); % 2 rest + 2s stimulus + 10 rest 
 
 time(EventIndices(1))
 % TrialTime=1/sr*[1:trial_length];
@@ -392,7 +392,7 @@ data_trials=zeros(trial_length,numChans,numTrials);
 for i=1:numTrials % i=numTrials
 %     data_trials(:,:,i)=mixedsig((EventIndices(2+2*i-1):(EventIndices(2+2*i-1)+round(sr*30)-1),:);
 %     data_trials(:,:,i)=mixedsig(EventIndices(2+2*i-1):(EventIndices(2+2*i-1)+round(sr*30)-1),:);
-    data_trials(:,:,i)=mixedsig((EventIndices(2+2*i-1)-round(sr*2)):(EventIndices(2+2*i-1)+round(sr*4)-1),:);
+    data_trials(:,:,i)=mixedsig((EventIndices(2+2*i-1)-round(sr*2)):(EventIndices(2+2*i-1)+round(sr*12)-1),:);
 end
 % examine
 for i=1:numTrials % i=numTrials
@@ -542,7 +542,7 @@ UniCondi=unique(allPerm);
 
 %% ERP
 maxfreq=30;
-win=sr*2:sr*2.5;
+win=1:sr*14;
 Ymax=15;
 
 allPermGood=allPerm(goodepochs);
@@ -580,8 +580,8 @@ end
 
 %% Get average spectra and Plot on scalp map 
 maxfreq=30;
-win=sr*2:sr*2.3;
-Ymax=8;
+win=sr*4:sr*5;
+Ymax=2;
 
 allPermGood=allPerm(goodepochs);
 
@@ -619,13 +619,13 @@ end
 % wavelet settings
 % frequency(s) of interest
 wfreq = [2 4 6 8 10 14 18 24 30 40]; % wfreq = list of frequencies to obtain wavelet coefficients. 
-wfreq = [6 7 8 9 10]; % wfreq = list of frequencies to obtain wavelet coefficients. 
+% wfreq = [6 7 8 9 10]; % wfreq = list of frequencies to obtain wavelet coefficients. 
 wfc = 1.5;  % wfc = wavelet parameter - # of cycles to use, typically 1.5
 
 % Padding 500 samples of zeros before and after baselinecorrected_trial
-basenormalized_trial;
-padding=zeros(500,size(basenormalized_trial,2),size(basenormalized_trial,3));
-baselinecorrected_trial_paddings=cat(1,padding,basenormalized_trial,padding);
+data_trials;
+padding=zeros(500,size(data_trials,2),size(data_trials,3));
+baselinecorrected_trial_paddings=cat(1,padding,data_trials,padding);
 
 for u=[1 2]; % sp=1:2
     indtemp=find(allPermGood==UniCondi(u));
@@ -639,7 +639,7 @@ for u=[1 2]; % sp=1:2
 
     % Power normalization
     logPowcorm=log10(Powcnorm);
-    baselineMean=log10(mean(Powcnorm(:,baselinesamps,:),2));
+    baselineMean=log10(mean(Powcnorm(:,baselinesamps+500,:),2));
     % one way
     % normPowcnorm = 10* (logPowcorm./baselineMean);
     % second way
@@ -658,10 +658,10 @@ for u=[1 2]; % sp=1:2
         caxis([-1*ColorLim ColorLim]);
         set(gca,'ydir','normal');
         hold on;xline(2500,'k','linewidth',2);hold off;
-        xlim([2500 3000]);
         if any(goodchans(:) == chan) % Display good chan in green
             title([labels{chan}],'Color','green');
         else
+            
             title([labels{chan}],'Color','red'); % Display bad chan in red
         end
         if ~isempty(find([1:30 32]==chan))
