@@ -58,9 +58,10 @@ ISOauxind=find(labels=='ISO aux');
 % plot(samples(38,:),'b'); %  ISO aux = analog
 % examine
 figure;subplot(2,1,1);
-plot(samples(ISOauxind(1),:),'r'); title('ISOauxind(1)')%  ISO aux = analog
-subplot(2,1,2);
-plot(samples(ISOauxind(2),:),'b'); title('ISOauxind(2)')
+plot(samples(ISOauxind(1),:),'r'); %  ISO aux = analog
+subplot(2)
+plot(samples(ISOauxind(2),:),'b'); 
+
 % select a good one
 ISOauxind=ISOauxind(1);
 ISOauxind=ISOauxind(2);
@@ -255,11 +256,11 @@ for i=StartStim1:StartStim1+239 % i=StartStim1
     Error1(i-StartStim1+1)=BottonPressTime(closetIndex)-PhotocellTime(i);
 end
 plot(Error1,'r.');title('synchronization error');xlabel('taps');ylabel('timing error (s)');
-% remove error > 1 s
+% remove error > 2 s
 indices=find(Error1>1);
 Error1(indices)=NaN;
 Error1(indices)=[];
-% remove error < -1 s
+% remove error < -2 s
 indices=find(Error1<-1);
 Error1(indices)=NaN;
 Error1(indices)=[];
