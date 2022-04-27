@@ -3,7 +3,8 @@
 tic 
 % while numberOfSecondsElapsed < 10;
 % while n <  numFrames 
-numFrames = max(Showframeselected)+NumFramesInterval;
+numFrames = max(Showframeselected)+NumFramesInterval; 
+
 while n < numFrames
     % If esc is press, break out of the while loop and close the screen
     [keyIsDown, keysecs, keyCode] = KbCheck;
@@ -17,6 +18,8 @@ while n < numFrames
     'sx','center','sy', screenYpixels*0.9,'xalign','center','yalign','top','baseColor',color);
     % show cross with different color
     Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/400, color, [0 0], 2);
+    Screen('DrawDots', windowPtr, [FixCrX-screenXpixels/3;FixCrY], screenXpixels/400, color, [0 0], 2);
+    Screen('DrawDots', windowPtr, [FixCrX+screenXpixels/3;FixCrY], screenXpixels/400, color, [0 0], 2);
 
     % Update the while loop with time
 %     numberOfSecondsElapsed = (now - startTime) * 10 ^ 5;
@@ -44,7 +47,7 @@ while n < numFrames
     % Flash photocell every other second during the whole trial (bottom left)
     if (~isempty(find(([1:2:numFrames]==n)))) % every two frames
     Screen('FillRect', windowPtr, white, LeftBottomSquare);
-    Screen('FillRect', windowPtr, white, LeftUpperSquare); % event type = 1200002
+    Screen('FillRect', windowPtr, white, RightBottomSquare); % event type = 1200002
     end
     
     % ******#################################
@@ -53,20 +56,23 @@ while n < numFrames
 %     Screen('FillRect', windowPtr, white, LeftUpperSquare); % event type = 1200002
 %     end
 
-    % show stimulus and photocells on the right at the same time
+    % show stimulus and photocells on the top at the same time
     if any(Showframeselected(:) == n)
         % Show the fixation cross
         Screen('DrawDots', windowPtr, [xCenter;yCenter], screenXpixels/30, color, [0 0], 2);
+        Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenXpixels/30, white, [0 0], 2);
+        Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenXpixels/30, white, [0 0], 2);
+
         Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-        Screen('FillRect', windowPtr, white, RightBottomSquare);
+        Screen('FillRect', windowPtr, white, LeftUpperSquare);
     end
     % show noise stimulus
     if conditionSelected ==3
-        if any(Showframeselected(:) == n)
-            % Show the fixation cross
-            Screen('DrawDots', windowPtr, [xCenter;yCenter], screenXpixels/30, color, [0 0], 2);
-            Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-            Screen('FillRect', windowPtr, white, RightBottomSquare);
+        if any(Noiseframes3(:) == n)
+            % Show the stimuli
+            Screen('DrawDots', windowPtr, [xCenter;yCenter], screenXpixels/30, white, [0 0], 2);
+            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenXpixels/30, white, [0 0], 2);
+            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenXpixels/30, white, [0 0], 2);
         end
     end
 

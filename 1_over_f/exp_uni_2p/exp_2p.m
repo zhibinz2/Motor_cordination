@@ -83,8 +83,8 @@ try
     % For help see: Screen Openwindow?
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
-%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 600 400]); 
-    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 1800 400]); 
+%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
     % For help see: Screen windowSize?
@@ -93,6 +93,9 @@ try
     % Get the centre coordinate of the window in pixels
     % For help see: help RectCenter
     [xCenter, yCenter] = RectCenter(windowRect); 
+
+    % Get centre coordinate of the left and right monitors in the display  window in pixels
+    xCenterL=screenXpixels/6; xCenterR=5*screenXpixels/6;
     
     % Stimulus design ***********************************************
     % Just a cross
@@ -351,7 +354,7 @@ try
             vbl = Screen('Flip', windowPtr);
             
             % Run the trial #################
-            run trial_1_f.m
+            run trial_2p.m
 
             % send markers into the outlet
 %             mrk = markers{4};

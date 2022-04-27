@@ -25,7 +25,6 @@
 !xrandr --output DP-2 --same-as DP-6
 
 %% Set 3 monitors as one in extended mode
-% !xrandr --output DP-0 --same-as DP-6
-% !xrandr --output DP-2 --same-as DP-6
-!xrandr --output DP-6 --auto --output DP-0 --auto --left-of DP-6
-!xrandr --output DP-6 --auto --output DP-2 --auto --right-of DP-6
+!xrandr --output DP-0 --same-as DP-6
+!xrandr --output DP-2 --same-as DP-6
+!xrandr --output Laptop1 --auto --output HDMI1 --auto --left-of Laptop1
