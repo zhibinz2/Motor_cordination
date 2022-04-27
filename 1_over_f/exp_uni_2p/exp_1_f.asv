@@ -144,13 +144,11 @@ try
     Showframes1=[1:NumFramesInterval:NumFramesInterval*numTaps];
     
     % condition 2
-    Showframes2=[1:NumFramesInterval:NumFramesInterval*numTaps]; % need one more stimulus for the last tap for error calculation
+    Showframes2=Showframes1;
     
     % condition 3
     RandomIntervals = round(NumFramesInterval + NumFramesInterval.*(rand(1,numTaps)-0.5)); % uniform distribution
-    Showframes3=cumsum(RandomIntervals); 
-    % plot(diff(Showframes3)*ifi,'ro');ylabel('tap Interval (second)');xlabel('tap');title('RT condition');
-    
+    Showframes3=cumsum(RandomIntervals); % plot(diff(Showframes3),'ro');
     % generate noise frames
     Noiseframes3=[];
     for i=1:(length(Showframes3)-1)
@@ -164,9 +162,6 @@ try
     
     % combine all 3 conditions
     Showframes=[Showframes1;Showframes2;Showframes3];
-    % need to shift the Showframes forward 1 second ( 60 frames) so that the first stimulus won't come up too suddenly
-    Showframes=Showframes+round(1/ifi);
-    
     % ***************************************** Randomization of the conditions 
     
     % Set size of the squares for photocell ###############################
@@ -302,6 +297,16 @@ try
             break;
             end
 
+            % Show trial and block number at the bottom
+            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)...
+                 ' Hit a key to continue'];
+            DrawFormattedText2(Showtrial,'win',windowPtr,...
+            'sx','center','sy', screenYpixels*0.9,'xalign','center','yalign','top','baseColor',white);
+
+            % flip to screen and pause for 1 sec
+%             vbl=Screen('Flip', windowPtr);
+%             pause(2); % or WaitSecs(1);
+
             % pick a condition from randomized set allPerm
             conditionSelected = allPerm(numTrials*(block-1)+t);
             Showframeselected=Showframes(conditionSelected,:);
@@ -310,33 +315,17 @@ try
             if conditionSelected == 1
                 color = green;
             elseif conditionSelected == 2
-                color = blue;
+                color = red;
             else
-                color =red;
+                color =yellow;
             end
 
             % show instruction for each trial / condition
-            ShowCondition=['Begining the ' conditionNames{conditionSelected} ' condition'];
+            ShowCondition=[conditionNames{conditionSelected}];
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
-
-            % Show trial and block number at the bottom
-            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)...
-                 ' \n Hit a key to continue'];
-            DrawFormattedText2(Showtrial,'win',windowPtr,...
-            'sx','center','sy', screenYpixels*0.9,'xalign','center','yalign','top','baseColor',white);
-
             Screen('Flip', windowPtr);
-            pause(1); 
-            % hit a key to continue
-            KbStrokeWait;
-            Screen('Flip',windowPtr);% Reponse with a black screen
-            pause(3); % given time to return the position of arm after key press 
-
-
-            % flip to screen and pause for 1 sec
-%             vbl=Screen('Flip', windowPtr);
-%             pause(2); % or WaitSecs(1);
+            pause(3); % for subject to read instruction
 
             % LSL markers to the local network
             % send data into the outlet, sample by sample
@@ -359,8 +348,8 @@ try
 
             if block ~= numBlock | t ~= numTrials % only bypass the last trial
                 % Show Resting
-                between_block_rest= 10; % in seconds
-                Resting = ['Take a rest for at least ' num2str(between_block_rest) ' s. \n Then hit a key to continue.'];
+                between_block_rest= 5; % in seconds
+                Resting = ['Rest for at least' num2str(between_block_rest) ' s. \n Then hit a key to continue.'];
                 DrawFormattedText2(Resting,'win',windowPtr,...
                     'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
                 vbl=Screen('Flip',windowPtr);

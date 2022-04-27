@@ -136,10 +136,10 @@ try
     textureIndex2=Screen('MakeTexture',windowPtr,K2);
     % Position of the checkerboard
     xLcenter=xCenter/2;xRcenter=xCenter/2*3;Shift=screenXpixels/12;
-    posL = [xLcenter-screenXpixels/12,yCenter-screenXpixels/12,xLcenter+screenXpixels/12,yCenter+screenXpixels/12];
-    posL = posL + [-Shift +Shift*1.5 -Shift +Shift*1.5]; % shift to the lower left corner
-    posR = [xRcenter-screenXpixels/12,yCenter-screenXpixels/12,xRcenter+screenXpixels/12,yCenter+screenXpixels/12];
-    posR = posR + [+Shift +Shift*1.5 +Shift +Shift*1.5]; % shift to the lower right corner
+    posL = [xLcenter-screenXpixels/20,yCenter-screenXpixels/20,xLcenter+screenXpixels/20,yCenter+screenXpixels/20];
+    posL = posL + [-Shift +Shift*2 -Shift +Shift*2]; % shift to the lower left corner
+    posR = [xRcenter-screenXpixels/20,yCenter-screenXpixels/20,xRcenter+screenXpixels/20,yCenter+screenXpixels/20];
+    posR = posR + [+Shift +Shift*2 +Shift +Shift*2]; % shift to the lower right corner
     % ****************************************Checkerboard Design
 
     % Set size of the squares for photocell ###############################
@@ -191,11 +191,12 @@ try
     
     % Setting time variables**********************************************
     % Length of one minute baseline
-    BaselineLength =10; % in seconds 4; % 4 s to move
+    BaselineLength =60; % in seconds 4; % 4 s to move
     numFramesBaseline = round(BaselineLength / ifi / waitframes);
 
     % total number of frames per trial
-    numFrames=round(10/ifi/waitframes); % 10 seconds 
+    StimulusDuration=2; % in seconds  % 10 seconds 
+    numFrames=round(StimulusDuration/ifi/waitframes);
     % **********************************************Setting time variables
     
     % Hide Mice:****************************************************************
@@ -341,29 +342,16 @@ try
             % pick a condition from randomized set allPerm
             conditionSelected = allPerm(numTrials*(block-1)+t);
             
-            % LSL markers to the local network
-            % send data into the outlet, sample by sample
-        %     outlet1.push_sample(1); % send data number 1
-            % send markers into the outlet
-            mrk = markers{3};
-            outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-            
             % Run the trial #################
             run trial_checkerboard_LSL_fNIR.m
-
-            % send markers into the outlet
-            mrk = markers{4};
-            outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-
+            
 %             if block ~= numBlock | t ~= numTrials % only bypass the last trial
                 % Show Resting
 %                 Resting = ['Rest for 20s'];
 %                 DrawFormattedText2(Resting,'win',windowPtr,...
 %                     'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
 %                 vbl=Screen('Flip',windowPtr);
-                % Rest 20 sec
-                Screen('Flip',windowPtr);
-                pause(20);
+                
 %             end
 
         end

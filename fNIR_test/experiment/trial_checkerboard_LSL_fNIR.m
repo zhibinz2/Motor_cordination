@@ -1,3 +1,11 @@
+% LSL markers to the local network
+% send data into the outlet, sample by sample
+% outlet1.push_sample(1); % send data number 1
+
+% send markers into the outlet
+mrk = markers{3};
+outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+            
 % initial or reset trial frame number
 n=1;
 % get a timestamp and begin the trial
@@ -56,6 +64,32 @@ while n <  numFrames
 
     % update n
     n = n+1;
+
 end
 TrialDuration=toc
 TrialDurations=[TrialDurations;TrialDuration];
+
+% return to black screen;
+Screen('Flip', windowPtr);
+
+% send markers into the outlet
+mrk = markers{4};
+outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+
+% Rest 20 sec
+pause(20); % to exit, use "ctrl+0" to go to comand window and then "cca" 
+
+% rest=1;
+% while rest < 21
+%     % If esc is press, break out of the while loop and close the screen
+%     [keyIsDown, keysecs, keyCode] = KbCheck;
+%     if keyCode(KbName('escape'));
+%         Screen('CloseAll');
+%         break;
+%     end
+%     Screen('Flip',windowPtr);
+%     pause(1);
+%     rest = rest+1;
+% end
+% WaitSecs(20);
+
