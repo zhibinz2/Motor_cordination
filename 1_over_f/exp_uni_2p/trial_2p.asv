@@ -15,6 +15,7 @@ k1=[];k2=[];
 numFrames = max(Showframeselected)+NumFramesInterval; 
 
 while n < numFrames
+    tic
     % If esc is press, break out of the while loop and close the screen
     [keyIsDown, keysecs, keyCode] = KbCheck;
     if keyCode(KbName('escape'));
@@ -96,11 +97,12 @@ while n < numFrames
     % left player (read button press)
     tic
     k1 = read(deviceL,6,"char"); % if no key pressed or release, k will be empty
-    k2 = read(deviceL,6,"char");
-    k1
-    k2
+    k2 = read(deviceL,6,"char"); % if k is not empty, then a least a key was pressed or relesed
     toc
-    if  ~isempty(k1) | ~isempty(k2) % if k is not empty, then a least a key was pressed or relesed
+    % read function takes about 30 ms if nothing in the buffer for the
+    % device, takes about 2 ms if a key pressed or release is in the
+    % buffer.
+    if  ~isempty(k1) | ~isempty(k2) % only when the key press and release both detected in the same loop
         Screen('DrawDots', windowPtr, [xCenter;yCenter], screenXpixels/30, megenta, [0 0], 2); % center monitor
         Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenXpixels/30, megenta, [0 0], 2); % Right monitor
         % flash photocell on the bottom at the buttom press
@@ -152,13 +154,6 @@ while n < numFrames
 %         end
 %     end
 
-    %% reset
-%     pressedL1=[]; RBkeyL1=[]; %portL1=[]; stampL1=[];
-%     pressedL2=[]; RBkeyL2=[]; %portL2=[]; stampL2=[];
-%     pressedR1=[]; RBkeyR1=[]; %portR1=[]; stampR1=[];
-%     pressedR2=[]; RBkeyR2=[]; %portR2=[]; stampR2=[];
-    k1=[];k2=[];
-
     %% Flip to the screen
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
 
@@ -167,8 +162,16 @@ while n < numFrames
 %     mrk = markers{5};
 %     outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
 
+    %% reset
+%     pressedL1=[]; RBkeyL1=[]; %portL1=[]; stampL1=[];
+%     pressedL2=[]; RBkeyL2=[]; %portL2=[]; stampL2=[];
+%     pressedR1=[]; RBkeyR1=[]; %portR1=[]; stampR1=[];
+%     pressedR2=[]; RBkeyR2=[]; %portR2=[]; stampR2=[];
+    k1=[];k2=[];
+
     % update n
     n = n+1;
+    toc
 end
 
 % TrialDuration=toc

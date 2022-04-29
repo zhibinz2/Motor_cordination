@@ -95,8 +95,10 @@ while n < numFrames
 
     %% Left Player
     % left player (read button press)
+    tic
     k1 = read(deviceL,6,"char"); % if no key pressed or release, k will be empty
     k2 = read(deviceL,6,"char"); % if k is not empty, then a least a key was pressed or relesed
+    toc
     % read function takes about 30 ms if nothing in the buffer for the
     % device, takes about 2 ms if a key pressed or release is in the
     % buffer.
