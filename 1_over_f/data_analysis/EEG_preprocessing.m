@@ -51,11 +51,9 @@ hold on;
 plot(BottonPresTimeInd,ones(1,length(BottonPresTimeInd)),'r.'); title('botton press');
 legend({'photocell signal','botton press'});
 hold on; xline(ind1,'r');xline(ind2,'r');hold off;
-
 subplot(3,1,2);
 plot(EMG,'k'); title('EMG'); % EMG channel
 hold on; xline(ind1,'r');xline(ind2,'r');hold off;
-
 subplot(3,1,3);
 plotx(EEG);
 xlabel('time (sample)');title('EEG');
@@ -80,11 +78,9 @@ hold on;
 plot(BottonPresTimeInd,ones(1,length(BottonPresTimeInd)),'r.'); title('botton press');
 legend({'photocell signal','botton press'});
 hold on; xline(ind1,'r');xline(ind2,'r');hold off;
-
 subplot(3,1,2);
 plot(EMG2,'k'); title('EMG'); % EMG channel
 hold on; xline(ind1,'r');xline(ind2,'r');hold off;
-
 subplot(3,1,3);
 plotx(EEG2);
 xlabel('time (sample)');title('EEG');
@@ -106,12 +102,10 @@ plot(BottonPresTimeInd,ones(1,length(BottonPresTimeInd)),'r.'); title('botton pr
 legend({'photocell signal','botton press'});
 hold on; xline(ind1,'r');xline(ind2,'r');hold off;
 xlim([ind1 ind2]);
-
 subplot(3,1,2);
 plot(EMG2,'k'); title('EMG'); % EMG channel
 hold on; xline(ind1,'r');xline(ind2,'r');hold off;
 xlim([ind1 ind2]);
-
 subplot(3,1,3);
 plotx(EEG2);
 xlabel('time (sample)');title('EEG');
@@ -254,6 +248,7 @@ plot(filtered_data2(:,:));ylim([-5000 5000]);
 hold on;xline(x(1),'r');xline(x(2),'r');hold off;
 
 %% filtfilthd method (hnl) high pass first
+cd /usr/local/MATLAB/R2019a/toolbox/signal/signal
 % high pass (no paddings needed)
 Hd = makefilter(sr,0.2,0.15,6,20,0); 
 filtered_data1=filtfilthd(Hd,detrend_data);
@@ -290,7 +285,7 @@ clearvars samples filtered_data1 filtered_data2 filtered_data3
 % clear samples filtered_data1 filtered_data2 filtered_data3
 % clear samples
 %% Get photocell time indices
-cd /home/zhibin/Documents/GitHub/Motor_cordination/Data_processing_streamline
+% cd /home/zhibin/Documents/GitHub/Motor_cordination/Data_processing_streamline
 
 % find index of each photocell for stimulus
 for i=1:length(locs)
@@ -331,6 +326,7 @@ ind1=round(x(1))
 ind2=round(x(2))
 hold on; xline(ind1,'r');xline(ind2,'r');hold off;
 
+% Zoom in view
 % close;
 % figure('units','normalized','outerposition',[0 0 1 0.6]);
 subplot(3,1,1);
@@ -340,11 +336,9 @@ hold on;
 plot(BottonPresTimeInd,ones(1,length(BottonPresTimeInd)),'r.'); title('botton press');
 legend({'photocell signal','botton press'});
 xlim([ind1 ind2]);
-
 subplot(3,1,2);
 plot(EMG2,'k'); title('EMG'); % EMG channel
 xlim([ind1 ind2]);
-
 subplot(3,1,3);
 plotx(filtered_data4);
 xlabel('time (sample)');title('EEG');
@@ -353,7 +347,7 @@ xlim([ind1 ind2]);
 
 suptitle(num2str(seed));
 
-%% look at power spectrum
+%% examine power spectrum (skip)
 cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis
 open Powerspetra.m
 
@@ -422,12 +416,13 @@ end
 suptitle('spectra of all channels on scalp map')
 %% run ICA to remove eye blinds
 % look at data before ICA
-plot(filtered_data4);
+% plot(filtered_data4);
+
 % previous code for ICA
-cd /home/zhibin/Documents/GitHub/Motor_cordination/Data_processing_streamline
-open combine_sessions.m
-cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
-open RunICA_step6b.m
+% cd /home/zhibin/Documents/GitHub/Motor_cordination/Data_processing_streamline
+% open combine_sessions.m
+% cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
+% open RunICA_step6b.m
 
 % run ICA
 tic
@@ -491,7 +486,6 @@ legend({'correlation coefficient','p-values '});title('correlation with FP2');ho
 
 [B1,I1]=sort(abs(RHO1),'descend');[B3,I3]=sort(abs(RHO3),'descend');
 ComponentsExam=unique([I1(1) I3(1)]);
-
 figure;
 for i=1:length(ComponentsExam)
     subplot(length(ComponentsExam),1,i);
@@ -560,7 +554,7 @@ plotx(time,mixedsig);
 hold on;hold off;
 title('Mixed Signal with ICs removed');
 
-%% segment EEG according to conditions (time locked to stimulus)
+%% segment EEG into 3 parts according to the 3 conditions (time locked to stimulus)
 separationsTimeInd; % indices of frist press in each condition in time
 
 PhotocellTimeInd;
@@ -584,7 +578,6 @@ save('segmented_clean_Data.mat','EEG_eye_open_resting','EEG_eye_close_resting',.
     'EEG_syncopation','EEG_randomization','EEG_synchronization');
 
 
-
 EEG_trials=zeros(size(mixedsig'));
 events=[];
 for i=1:3
@@ -595,18 +588,178 @@ events(:,2)-events(:,1)
 EEG_trials=zeros(size(mixedsig'));
 EEG
 
+%% segment EEG into trials according to photocells/mid-points
+allPerm;
+PhotocellTimeInd;
+mixedsig;
+PhotocellTimeInd(5)
+Trial_Length=2*sr; % 1s baseline + 1s after stimulus
+numTrial=240;
+
+% synchronization condition
+ind1=4+240*(find(allPerm==1)-1)+1; % first stimulus in time
+ind2=4+240*(find(allPerm==1)-1)+240; % last stimulus in time
+stimTrials_synchronization=zeros(Trial_Length,size(mixedsig,1),numTrial);
+for i=1:240
+    ind=PhotocellTimeInd(ind1+i-1);% index for the stimulus
+    stimTrials_synchronization(:,:,i)=mixedsig(:,(ind-sr):(ind+sr-1))';
+end
+stimTrials_synchronization;
+
+% syncopation condition
+ind1=4+240*(find(allPerm==2)-1)+1; % first stimulus in time
+ind2=4+240*(find(allPerm==2)-1)+240; % last stimulus in time
+stimTrials_syncopation=zeros(Trial_Length,size(mixedsig,1),numTrial);
+for i=1:240
+    ind=PhotocellTimeInd(ind1+i-1)+sr;% mid-point
+    stimTrials_syncopation(:,:,i)=mixedsig(:,(ind-sr):(ind+sr-1))';
+end
+stimTrials_syncopation;
+
+% RT condition
+ind1=4+240*(find(allPerm==3)-1)+1; % first stimulus in time
+ind2=4+240*(find(allPerm==3)-1)+240; % last stimulus in time
+stimTrials_rt=zeros(Trial_Length,size(mixedsig,1),numTrial); 
+for i=1:240
+    ind=PhotocellTimeInd(ind1+i-1);% index for the GO stimulus
+    stimTrials_rt(:,:,i)=mixedsig(:,(ind-sr):(ind+sr-1))'; % interval range 1~3s in rt condition
+end
+stimTrials_rt;
+
+%% segment EEG into trials according to the tapping response
+allPerm;
+BottonPresTimeInd; % indices of tapping in time
+Total_numTaps=length(BottonPresTimeInd);
+separationsInd; % indices of the first tap in each condition in BottonPresTimeInd
+separationsTimeInd; % indices of the first tap in each condition in time
+mixedsig;
+Trial_Length=2*sr; % 1s baseline + 1s after tapping
+% get the indices of the frist and last tap in the each condition
+IndTaps=[separationsInd(1) separationsInd(2)-1; separationsInd(2) separationsInd(3)-1; separationsInd(3) Total_numTaps];
+% get the number of taps in each condition
+numTaps=[separationsInd(2); separationsInd(3)-separationsInd(2); Total_numTaps-separationsInd(3)];
+
+% synchronization condition
+ind1=IndTaps(find(allPerm==1),1); % index for the first tap in BottonPresTimeInd
+ind2=IndTaps(find(allPerm==1),2); % index for the last tap in BottonPresTimeInd
+numTap=numTaps(find(allPerm==1));
+tapTrials_synchronization=zeros(Trial_Length,size(mixedsig,1),numTap);
+for i=1:numTap
+    ind=BottonPresTimeInd(ind1+i-1);
+    tapTrials_synchronization(:,:,i)=mixedsig(:,(ind-sr):(ind+sr-1))';
+end
+tapTrials_synchronization;
+
+% syncopation condition
+ind1=IndTaps(find(allPerm==2),1); % index for the first tap in BottonPresTimeInd
+ind2=IndTaps(find(allPerm==2),2); % index for the last tap in BottonPresTimeInd
+numTap=numTaps(find(allPerm==2));
+tapTrials_syncopation=zeros(Trial_Length,size(mixedsig,1),numTap);
+for i=1:numTap
+    ind=PhotocellTimeInd(ind1+i-1);
+    tapTrials_syncopation(:,:,i)=mixedsig(:,(ind-sr):(ind+sr-1))';
+end
+tapTrials_syncopation;
+
+% RT condition
+ind1=IndTaps(find(allPerm==3),1); % index for the first tap in BottonPresTimeInd
+ind2=IndTaps(find(allPerm==3),2); % index for the last tap in BottonPresTimeInd
+numTap=numTaps(find(allPerm==3));
+tapTrials_rt=zeros(Trial_Length,size(mixedsig,1),numTap);
+for i=1:numTap
+    ind=PhotocellTimeInd(ind1+i-1);% index for the GO stimulus
+    tapTrials_rt(:,:,i)=mixedsig(:,(ind-sr):(ind+sr-1))'; % interval range 1~3s in rt condition
+end
+tapTrials_rt;
+
+%% baseline correction
+% These are the trials data
+stimTrials_synchronization;
+stimTrials_syncopation;
+stimTrials_rt;
+tapTrials_synchronization;
+tapTrials_syncopation;
+tapTrials_rt;
+
+% cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/EEG
+stimTrials_synchronization_b=dc_baselinecorrect(stimTrials_synchronization,sr);
+stimTrials_syncopation_b=dc_baselinecorrect(stimTrials_syncopation,sr);
+stimTrials_rt_b=dc_baselinecorrect(stimTrials_rt,sr);
+tapTrials_synchronization_b=dc_baselinecorrect(tapTrials_synchronization,sr);
+tapTrials_syncopation_b=dc_baselinecorrect(tapTrials_syncopation,sr);
+tapTrials_rt_b=dc_baselinecorrect(tapTrials_rt,sr);
+% plotx(mean(stimTrials_synchronization_b,3));
+
+%% artifact extraction (skip for now)
+artifact = artifact_extraction(stimTrials_synchronization_b) 
+
+%% Re reference (skip for now)
+cd /home/zhibin/Documents/GitHub/Motor_cordination/EEGanalysis/20211102
+goodchans=1:32; % assume all good chan for now
+stimTrials_synchronization_r=reRef(stimTrials_synchronization_b,goodchans);
+stimTrials_syncopation_r=reRef(stimTrials_syncopation_b,goodchans);
+stimTrials_rt_r=reRef(stimTrials_rt_b,goodchans);
+tapTrials_synchronization_r=reRef(tapTrials_synchronization_b,goodchans);
+tapTrials_syncopation_r=reRef(tapTrials_syncopation_b,goodchans);
+tapTrials_rt_r=reRef(tapTrials_rt_b,goodchans);
+% plotx(mean(stimTrials_synchronization_r,3));
+
+%% view the channel locations
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis
+open channels_info.m
+
+%% plot ERP in scalp map (stimulus-locked, visual evoked potential+motor)
+% conditions
+allPerm;
+UniCondi=unique(allPerm);
+
+TrialTime=[1:2*sr]*(1/sr)-1;
+
+tapTrials_r={stimTrials_synchronization_r,stimTrials_syncopation_r,stimTrials_rt_r,tapTrials_synchronization_r,tapTrials_syncopation_r,tapTrials_rt_r};
+titlenames={'stimTrials-synchronization-r','stimTrials-syncopation-r','stimTrials-rt-r','tapTrials-synchronization-r','tapTrials-syncopation-r','tapTrials-rt-r'};
+
+for u=1:6
+    ERP=mean(cell2mat(tapTrials_r(u)),3);
+    
+        figure('units','normalized','outerposition',[0 0 0.8 0.4]);
+        for chan=1:32
+            subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.06 0.08]);
+            plot(TrialTime,ERP(:,chan));
+            hold on
+            if chan==31
+                xlabel('time (s)');ylabel('uV');
+            end
+            if any(goodchans(:) == chan) % Display good chan in green
+                title([labels{chan}],'Color','blue');
+            else
+                title([labels{chan}],'Color','red'); % Display bad chan in red
+            end
+            ylim([-3 6]);
+            xline(0,'m');yline(0,'m');
+        end
+        %  sgtitle(['condition ' num2str(u)],'Color','red');
+        % suptitle(['condition ' num2str(u)]);
+    suptitle(titlenames{u});
+end
+
+%% plot ERP in scalp map (response-locked, RP + beta deci)
+
+
 %% baseline normalization 
 
-
 %% Save data after preprosesing
-cd /ssd/zhibin/1overf/20220408
-save('EMG2.mat','EMG2','-v7.3');
-save('filtered_data4.mat','filtered_data4','-v7.3');
-Photocell
-BottonPres
+% cd /ssd/zhibin/1overf/20220408
+% save('EMG2.mat','EMG2','-v7.3');
+% save('filtered_data4.mat','filtered_data4','-v7.3');
+% Photocell
+% BottonPres
 
 % save all variables from the workspace in a matfile named with the date
-clear EEG EEG2 padding samples
-filename=[num2str(seed) '.mat'];
-cd /ssd/zhibin/1overf/20220408
+clear EEG EEG2 padding samples tapTrials_r
+% clear stimTrials_synchronization stimTrials_syncopation stimTrials_rt tapTrials_synchronization tapTrials_syncopation tapTrials_rt
+clear stimTrials_synchronization_b stimTrials_syncopation_b stimTrials_rt_b tapTrials_synchronization_b tapTrials_syncopation_b tapTrials_rt_b
+clear stimTrials_synchronization_f stimTrials_syncopation_f stimTrials_rt_f tapTrials_synchronization_f tapTrials_syncopation_f tapTrials_rt_f
+cd /ssd/zhibin/1overf/
+filename=[num2str(seed) 'workspace.mat'];
 save(filename);

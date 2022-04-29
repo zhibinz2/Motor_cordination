@@ -1,36 +1,51 @@
-%% matlab example 1
-% https://www.mathworks.com/matlabcentral/fileexchange/19795-detrended-fluctuation-analysis
 Error1
 Error2
 Error3
 
+%% matlab example 1
+% https://www.mathworks.com/matlabcentral/fileexchange/19795-detrended-fluctuation-analysis
+
 DATA=Error1;
 win_length=10;
-orger=1;
+order=1;
 
 function output1=DFA(DATA,win_length,order)
       
-N=length(DATA);   
-n=floor(N/win_length);
-N1=n*win_length;
-y=zeros(N1,1);
+N=length(DATA);   % length of the data
+n=floor(N/win_length); % the number of windows
+N1=n*win_length; % length ot the data again
+
+y=zeros(N1,1); % initialize y 
 Yn=zeros(N1,1);
 
-fitcoef=zeros(n,order+1);
-    mean1=mean(DATA(1:N1));
+fitcoef=zeros(n,order+1); % initialize fitcoef
+
+mean1=mean(DATA(1:N1)); % mean of the data
+
+% deviations from the mean in all data points
 for i=1:N1      
-    y(i)=sum(DATA(1:i)-mean1);
+    y(i)=sum(DATA(1:i)-mean1); 
 end
 y=y';
+% use cumsum instead
 
 for j=1:n
     fitcoef(j,:)=polyfit(1:win_length,y(((j-1)*win_length+1):j*win_length),order);
 end
+%  [P] = POLYFIT(X,Y,N) returns the polynomial coefficients P for use with POLYVAL to obtain error estimates for
+%   predictions.  
 
 for j=1:n
     Yn(((j-1)*win_length+1):j*win_length)=polyval(fitcoef(j,:),1:win_length);
 end
+%   Y = POLYVAL(P,X) returns the value of a polynomial P evaluated at X. P
+%   is a vector of length N+1 whose elements are the coefficients of the
+%   polynomial in descending powers: Y = P(1)*X^N + P(2)*X^(N-1) + ... + P(N)*X + P(N+1)
 
 sum1=sum((y'-Yn).^2)/N1;
 sum1=sqrt(sum1);
 output1=sum1;
+
+%%
+
+%%
