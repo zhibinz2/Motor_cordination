@@ -1,8 +1,11 @@
 % function [pressed, RBkey, port, stamp]=readCedrusRB(dev, keymap)
 function [pressed, RBkey]=readCedrusRB(dev, keymap)
 % This is my version of Cedrus's readKeypress
+% dev=deviceL; keymap=keymapL;
+    
     k = read(dev,6,"char");
     if isempty(k)
+        % pressed=[];RBkey=[];
         return
     end
     

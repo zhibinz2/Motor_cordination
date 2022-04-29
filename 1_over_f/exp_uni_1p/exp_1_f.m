@@ -120,9 +120,9 @@ try
     % Measure the vertical refresh rate of the monitor ????????????????????
     ifi = Screen('GetFlipInterval', windowPtr);
     % Check if ifi=0.0167
-    if round(1/ifi)~=60
-      error('Error: Screen flash frequency is not set at 60Hz.');    
-    end
+%     if round(1/ifi)~=60
+%       error('Error: Screen flash frequency is not set at 60Hz.');    
+%     end
 
     % Check if ifi=0.0083
 %     if round(1/ifi)~=120

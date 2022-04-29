@@ -1,7 +1,18 @@
-% This version shows checkerboard on two hemi-fields and sends LSL markers
-% to the fNIRS laptop
+%% This version is 1 over f tapping for 2 person over an extended 3 monitors-window
+
 sca; clc; close all; clear all; clearvars; 
 
+%% set keyboards
+mydir  = pwd;% or cd
+idcs   = strfind(mydir,'/');
+newdir = mydir(1:idcs(end-1)-1);
+cd (newdir);
+addpath Cedrus_Keyboard/
+run setCedrusRB.m % plug in the left RB pad first then the right RB pad
+run SuppressWarning.m 
+cd (mydir);
+
+%% Check OpenGL
 % Break and issue an error message if the installed Psychtoolbox is not
 % based on OpenGL or Screen() is not working properly.
 AssertOpenGL;
@@ -10,7 +21,7 @@ AssertOpenGL;
 %   error('Sorry, this demo currently only works on a Linux.');    
 % end
 
-% Set trial conditions ****************************************************
+%% Set trial conditions ****************************************************
 conditions = [1 2 3];
 conditionNames={'Synchronization' 'Syncopation' 'Randomization'};  % conditionNames{1}
 ConditionInstructions={'Press buttom when cross appear' 'Press buttom in between crosses' 'Press buttom whenever cross appear'}; 
@@ -43,10 +54,10 @@ end
 % ######################################### Randomization of the experiment 
 
 
-% ########################################################################
+%% ########################################################################
 try      
-    
-    % Here we call some default settings for setting up Psychtoolbox 
+ 
+    %% Here we call some default settings for setting up Psychtoolbox 
     PsychDefaultSetup(2);
 
     % Start with black screen
@@ -83,7 +94,7 @@ try
     % For help see: Screen Openwindow?
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
-    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 1800 400]); 
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3 330]); 
 %     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
@@ -123,9 +134,9 @@ try
     % Measure the vertical refresh rate of the monitor ????????????????????
     ifi = Screen('GetFlipInterval', windowPtr);
     % Check if ifi=0.0167
-    if round(1/ifi)~=60
-      error('Error: Screen flash frequency is not set at 60Hz.');    
-    end
+%     if round(1/ifi)~=60
+%       error('Error: Screen flash frequency is not set at 60Hz.');    
+%     end
 
     % Check if ifi=0.0083
 %     if round(1/ifi)~=120
@@ -138,7 +149,7 @@ try
 %     end
     % ?????????????????????????????????????????????????????????????????????
     
-    %  Randomization of the conditions ****************************************
+    %% Randomization of the conditions ****************************************
     % Mean stimulus interval
     MeanTapInterval=2; % second
     NumFramesInterval=round(MeanTapInterval/ifi);  % on average 72 frames per stimulus 
@@ -172,7 +183,7 @@ try
     
     % ***************************************** Randomization of the conditions 
     
-    % Set size of the squares for photocell ###############################
+    %% Set size of the squares for photocell ###############################
     PhotosensorSize=30;
     % Positions of the four corners
     RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels];
@@ -186,15 +197,50 @@ try
     % ############################### Set size of the squares for photocell 
 
         
-    % Numer of frames to wait when specifying good timing. Note: the use of
-    % wait frames is to show a generalisable coding. For example, by using
-    % waitframes = 2 one would flip on every other frame. See the PTB
+    %% Numer of frames to wait when specifying good timing. 
+    % Note: the use of wait frames is to show a generalisable coding. 
+    % For example, by using waitframes = 2 one would flip on every other frame. See the PTB
     % documentation for details. In what follows we flip every frame. 
-    % In order to reverse the checkerboard at 8Hz
-    % We have to reverse the checkerboard every (1/8)/ifi frames
-    waitframes = 1;
+    % In order to flip with feedback at 10 Hz
+    % We have to filp every (1/10)/ifi frames
+    waitframes = (1/10)/ifi;
+    ifi2=ifi*waitframes;
+
+    %% Randomization of the conditions again ****************************************
+    % Mean stimulus interval
+    MeanTapInterval=2; % second
+    NumFramesInterval=round(MeanTapInterval/ifi2);  % on average 72 frames per stimulus 
     
-    % Setting time variables**********************************************
+    % condition 1
+    Showframes1=[1:NumFramesInterval:NumFramesInterval*numTaps];
+    
+    % condition 2
+    Showframes2=[1:NumFramesInterval:NumFramesInterval*numTaps]; % need one more stimulus for the last tap for error calculation
+    
+    % condition 3
+    RandomIntervals = round(NumFramesInterval + NumFramesInterval.*(rand(1,numTaps)-0.5)); % uniform distribution
+    Showframes3=cumsum(RandomIntervals); 
+    % plot(diff(Showframes3)*ifi,'ro');ylabel('tap Interval (second)');xlabel('tap');title('RT condition');
+    
+    % generate noise frames
+    Noiseframes3=[];
+    for i=1:(length(Showframes3)-1)
+        NumsInBetween=Showframes3(i)+randi([0 Showframes3(i+1)-Showframes3(i)-1],1,randi([0 2]));
+        Noiseframes3=[Noiseframes3 NumsInBetween];
+    end
+    % plot to examine
+%     plot(Showframes3,ones(1,length(Showframes3)),'ro');hold on;
+%     plot(Noiseframes3,ones(1,length(Noiseframes3)),'bo');
+%     legend({'Go','No-Go'});xlabel('time');title('randomized RT stimulus');
+    
+    % combine all 3 conditions
+    Showframes=[Showframes1;Showframes2;Showframes3];
+    % need to shift the Showframes forward 1 second ( 60 frames) so that the first stimulus won't come up too suddenly
+    Showframes=Showframes+round(1/ifi);
+    
+    % ***************************************** Randomization of the conditions 
+    
+    %% Setting time variables**********************************************
     % Length of one minute baseline
     BaselineLength = 2; % in seconds
     numFramesBaseline = round(BaselineLength / ifi / waitframes);
@@ -203,7 +249,7 @@ try
 %     numFrames=round(62.5/ifi/waitframes); % 125 buttom presses = about 62.5 seconds 
     % ********************************************** Setting time variables
     
-    % Hide Mice:****************************************************************
+    %% Hide Mice:****************************************************************
     % Get handles for all virtual pointing devices, aka cursors:
     typeOnly='masterPointer'; 
     mice = GetMouseIndices(typeOnly);  
@@ -226,7 +272,7 @@ try
 %     % hit a key to continue
 %     KbStrokeWait;
 
-    % Create a fixation cross
+    %% Create a fixation cross
     FixCrX=[xCenter-round(screenXpixels/200):xCenter+round(screenXpixels/200)-1 repmat(xCenter,1,round(screenXpixels/100)+1)];
     FixCrY=[repmat(yCenter,1,round(screenXpixels/100)+1) yCenter-round(screenXpixels/200)+1:yCenter+round(screenXpixels/200)];
     
@@ -286,11 +332,11 @@ try
 %     run restingEEG.m
     % ************************************************ Baseline taking
 
-    % initialize some variables
-    TrialDurations=[]
+    %% initialize some variables
+    TrialDurations=[];
 
-    %############################### Loop through block
-    %*******************************Loop through block
+    %% ############################### Loop through block
+    % *******************************Loop through block
     for block=1:numBlock
 
         
@@ -322,12 +368,20 @@ try
             ShowCondition=['Begining the ' conditionNames{conditionSelected} ' condition'];
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
+            DrawFormattedText2(ShowCondition,'win',windowPtr,...
+            'sx',xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',color);
+            DrawFormattedText2(ShowCondition,'win',windowPtr,...
+            'sx',xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',color);
 
             % Show trial and block number at the bottom
             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)...
                  ' \n Hit a key to continue'];
             DrawFormattedText2(Showtrial,'win',windowPtr,...
-            'sx','center','sy', screenYpixels*0.9,'xalign','center','yalign','top','baseColor',white);
+            'sx','center','sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
+            DrawFormattedText2(Showtrial,'win',windowPtr,...
+            'sx',xCenterL,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
+            DrawFormattedText2(Showtrial,'win',windowPtr,...
+            'sx',xCenterR,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
 
             Screen('Flip', windowPtr);
             pause(1); 
@@ -365,7 +419,11 @@ try
                 between_block_rest= 10; % in seconds
                 Resting = ['Take a rest for at least ' num2str(between_block_rest) ' s. \n Then hit a key to continue.'];
                 DrawFormattedText2(Resting,'win',windowPtr,...
-                    'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+                    'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+                DrawFormattedText2(Resting,'win',windowPtr,...
+                    'sx', xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
+                DrawFormattedText2(Resting,'win',windowPtr,...
+                    'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
                 vbl=Screen('Flip',windowPtr);
                 % Rest 1 sec
                 pause(between_block_rest);
@@ -381,6 +439,10 @@ try
 TheEnd = ['The End'];
 DrawFormattedText2(TheEnd,'win',windowPtr,...
     'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+DrawFormattedText2(TheEnd,'win',windowPtr,...
+    'sx',xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
+DrawFormattedText2(TheEnd,'win',windowPtr,...
+    'sx',xCenter,'sy', 'center','xalign','center','yalign','top','baseColor',white);
 vbl=Screen('Flip',windowPtr);
 WaitSecs(3)
 % hit a key to continue

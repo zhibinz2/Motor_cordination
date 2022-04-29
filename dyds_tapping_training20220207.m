@@ -3,7 +3,7 @@
 sca;clc;close all;clear all;clearvars; 
 %% set keyboards
 addpath Cedrus_Keyboard/
-run setCedrusRB.m
+run setCedrusRB.m % plug in the left RB pad first then the right RB pad
 run SuppressWarning.m 
 % run setDellKeyboards.m
 %%

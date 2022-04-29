@@ -48,21 +48,21 @@ while numberOfSecondsRemaining > 0
         break;
     end
 
-    
-    % left player
+    %% Left Player
+    % left player (read button press)
     try
         tic
         % Left player
-        [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL);
-        [pressedL2, RBkeyL2]=readCedrusRB(deviceL, keymapL);
+        [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL); % extract first key press
+        [pressedL2, RBkeyL2]=readCedrusRB(deviceL, keymapL); % extract first key release
         toc
     catch
         % do nothing; % if no nothing is pressed or released continue to next loop without throwing error 
     end
     
-    % Left player
-    if pressedL1 ==1 | pressedL2 == 1 % key press detected
-        if RBkeyL1 == 4 | RBkeyL2 == 4
+    % Left player (provide feedback)
+    if pressedL1 ==1 | pressedL2 == 1 % at least one key press detected in the frist two events of the previous buffer
+        if RBkeyL1 == 3 | RBkeyL2 == 3 % confirm it is the middle key on RB740
             if elevationL < screenYpixels - 3*spotDiameter
                 elevationL = elevationL + spotDiameter;
             else
@@ -70,7 +70,9 @@ while numberOfSecondsRemaining > 0
             end
         end
     end
-    % Right player
+    
+    %% Right Player
+    % Right player  (read button press)
     try
         tic
         % Right player
@@ -80,9 +82,10 @@ while numberOfSecondsRemaining > 0
     catch
         % do nothing; 
     end
-    % Right player
-    if pressedR1 ==1 | pressedR2 == 1 % key press detected
-        if RBkeyR1 == 2 | RBkeyR2 == 2
+
+    % Right player (provide feedback)
+    if pressedR1 ==1 | pressedR2 == 1  % at least one key press detected in the frist two events of the previous buffer
+        if RBkeyR1 == 3 | RBkeyR2 == 3  % confirm it is the middle key on RB740
             if elevationR < screenYpixels - 3*spotDiameter
                 elevationR = elevationR + spotDiameter;
             else
@@ -90,7 +93,8 @@ while numberOfSecondsRemaining > 0
             end
         end
     end
-    % reset
+
+    %% reset
     pressedL1=[]; RBkeyL1=[]; %portL1=[]; stampL1=[];
     pressedL2=[]; RBkeyL2=[]; %portL2=[]; stampL2=[];
     pressedR1=[]; RBkeyR1=[]; %portR1=[]; stampR1=[];
