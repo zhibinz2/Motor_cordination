@@ -88,7 +88,8 @@ try
     green = [0 1 0];
     grey  = [0.5 0.5 0.5];
     yellow  = [1 1 0];
-    megenta = [1 0 1];
+    megenta = [1 0 1];% fill([0 1 1 0],[0 0 1 1],megenta)
+    cyan = [0 1 1]; % fill([0 1 1 0],[0 0 1 1],cc)
 
     % Open an on screen window and color it black
     % For help see: Screen Openwindow?
@@ -201,44 +202,45 @@ try
     % Note: the use of wait frames is to show a generalisable coding. 
     % For example, by using waitframes = 2 one would flip on every other frame. See the PTB
     % documentation for details. In what follows we flip every frame. 
-    % In order to flip with feedback at 10 Hz
-    % We have to filp every (1/10)/ifi frames
-    waitframes = (1/10)/ifi;
-    ifi2=ifi*waitframes;
+    % In order to flip with feedback at 50 Hz
+    % We have to filp every (1/50)/ifi frames or 1/50 ms/frame
+    waitframes=1;
+%     waitframes = (1/50)/ifi;
+%     ifi2=ifi*waitframes;
 
-    %% Randomization of the conditions again ****************************************
-    % Mean stimulus interval
-    MeanTapInterval=2; % second
-    NumFramesInterval=round(MeanTapInterval/ifi2);  % on average 72 frames per stimulus 
-    
-    % condition 1
-    Showframes1=[1:NumFramesInterval:NumFramesInterval*numTaps];
-    
-    % condition 2
-    Showframes2=[1:NumFramesInterval:NumFramesInterval*numTaps]; % need one more stimulus for the last tap for error calculation
-    
-    % condition 3
-    RandomIntervals = round(NumFramesInterval + NumFramesInterval.*(rand(1,numTaps)-0.5)); % uniform distribution
-    Showframes3=cumsum(RandomIntervals); 
-    % plot(diff(Showframes3)*ifi,'ro');ylabel('tap Interval (second)');xlabel('tap');title('RT condition');
-    
-    % generate noise frames
-    Noiseframes3=[];
-    for i=1:(length(Showframes3)-1)
-        NumsInBetween=Showframes3(i)+randi([0 Showframes3(i+1)-Showframes3(i)-1],1,randi([0 2]));
-        Noiseframes3=[Noiseframes3 NumsInBetween];
-    end
-    % plot to examine
-%     plot(Showframes3,ones(1,length(Showframes3)),'ro');hold on;
-%     plot(Noiseframes3,ones(1,length(Noiseframes3)),'bo');
-%     legend({'Go','No-Go'});xlabel('time');title('randomized RT stimulus');
-    
-    % combine all 3 conditions
-    Showframes=[Showframes1;Showframes2;Showframes3];
-    % need to shift the Showframes forward 1 second ( 60 frames) so that the first stimulus won't come up too suddenly
-    Showframes=Showframes+round(1/ifi);
-    
-    % ***************************************** Randomization of the conditions 
+%     %% Randomization of the conditions again ****************************************
+%     % Mean stimulus interval
+%     MeanTapInterval=2; % second
+%     NumFramesInterval=round(MeanTapInterval/ifi2);  % on average 72 frames per stimulus 
+%     
+%     % condition 1
+%     Showframes1=[1:NumFramesInterval:NumFramesInterval*numTaps];
+%     
+%     % condition 2
+%     Showframes2=[1:NumFramesInterval:NumFramesInterval*numTaps]; % need one more stimulus for the last tap for error calculation
+%     
+%     % condition 3
+%     RandomIntervals = round(NumFramesInterval + NumFramesInterval.*(rand(1,numTaps)-0.5)); % uniform distribution
+%     Showframes3=cumsum(RandomIntervals); 
+%     % plot(diff(Showframes3)*ifi,'ro');ylabel('tap Interval (second)');xlabel('tap');title('RT condition');
+%     
+%     % generate noise frames
+%     Noiseframes3=[];
+%     for i=1:(length(Showframes3)-1)
+%         NumsInBetween=Showframes3(i)+randi([0 Showframes3(i+1)-Showframes3(i)-1],1,randi([0 2]));
+%         Noiseframes3=[Noiseframes3 NumsInBetween];
+%     end
+%     % plot to examine
+% %     plot(Showframes3,ones(1,length(Showframes3)),'ro');hold on;
+% %     plot(Noiseframes3,ones(1,length(Noiseframes3)),'bo');
+% %     legend({'Go','No-Go'});xlabel('time');title('randomized RT stimulus');
+%     
+%     % combine all 3 conditions
+%     Showframes=[Showframes1;Showframes2;Showframes3];
+%     % need to shift the Showframes forward 1 second ( 60 frames) so that the first stimulus won't come up too suddenly
+%     Showframes=Showframes+round(1/ifi);
+%     
+%     % ***************************************** Randomization of the conditions 
     
     %% Setting time variables**********************************************
     % Length of one minute baseline
@@ -333,7 +335,7 @@ try
     % ************************************************ Baseline taking
 
     %% initialize some variables
-    TrialDurations=[];
+    % TrialDurations=[];
 
     %% ############################### Loop through block
     % *******************************Loop through block

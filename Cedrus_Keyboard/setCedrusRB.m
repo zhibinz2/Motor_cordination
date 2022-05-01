@@ -9,7 +9,9 @@ ports = serialportlist("available")
 % /dev/ttyUSB1 is one that plug in second (no matter which USB port)
 
 %% FOR RB 830/840 on the Left (DeviceL) /dev/ttyUSB0
-deviceL = serialport('/dev/ttyUSB0',115200,"Timeout",0.03);
+deviceL = serialport('/dev/ttyUSB0',115200,"Timeout",0.0001);
+% deviceL = serialport('/dev/ttyUSB0',115200,"Timeout",0.003);
+% deviceL = serialport('/dev/ttyUSB0',921600,"Timeout",0.0001);
 % keymapL=rb_840_keymap;
 keymapL=rb_740_keymap;
 
@@ -38,7 +40,7 @@ write(deviceL,sprintf("mh%c%c", 255, 0), "char")
 
 
 %% FOR RB 834/844 on the Right (DeviceR) /dev/ttyUSB1
-deviceR = serialport('/dev/ttyUSB1',115200,"Timeout",0.03);
+deviceR = serialport('/dev/ttyUSB1',115200,"Timeout",0.0001);
 % keymapR=rb_834_keymap;
 keymapR=rb_740_keymap;
 

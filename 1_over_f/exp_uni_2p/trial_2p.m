@@ -1,11 +1,12 @@
 % run SuppressWarning.m 
 
 %initialize variables
-% pressedL1=[]; RBkeyL1=[]; %portL1=[]; stampL1=[];
-% pressedL2=[]; RBkeyL2=[]; %portL2=[]; stampL2=[];
-% pressedR1=[]; RBkeyR1=[]; %portR1=[]; stampR1=[];
-% pressedR2=[]; RBkeyR2=[]; %portR2=[]; stampR2=[];
-k1=[];k2=[];
+pressedL1=[]; RBkeyL1=[]; %portL1=[]; stampL1=[];
+pressedL2=[]; RBkeyL2=[]; %portL2=[]; stampL2=[];
+pressedR1=[]; RBkeyR1=[]; %portR1=[]; stampR1=[];
+pressedR2=[]; RBkeyR2=[]; %portR2=[]; stampR2=[];
+% k1=[];k2=[];
+fliptimes=[];
 
 % startTime = now;
 % numberOfSecondsElapsed = 0;
@@ -95,64 +96,63 @@ while n < numFrames
 
     %% Left Player
     % left player (read button press)
-    tic
-    k1 = read(deviceL,6,"char"); % if no key pressed or release, k will be empty
-    k2 = read(deviceL,6,"char"); % if k is not empty, then a least a key was pressed or relesed
-    toc
-    % read function takes about 30 ms if nothing in the buffer for the
-    % device, takes about 2 ms if a key pressed or release is in the
-    % buffer.
-    if  ~isempty(k1) | ~isempty(k2) % only when the key press and release both detected in the same loop
-        Screen('DrawDots', windowPtr, [xCenter;yCenter], screenXpixels/30, megenta, [0 0], 2); % center monitor
-        Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenXpixels/30, megenta, [0 0], 2); % Right monitor
-        % flash photocell on the bottom at the buttom press
-        Screen('FillRect', windowPtr, white, LeftBottomSquare);
-        Screen('FillRect', windowPtr, white, RightBottomSquare); % event type = 1200002
+%     tic
+%     k1 = read(deviceL,6,"char") % if no key pressed or release, k will be empty
+%     k2 = read(deviceL,6,"char") % if k is not empty, then a least a key was pressed or relesed
+%     toc
+%     % read function takes about 30 ms if nothing in the buffer for the
+%     % device, takes about 2 ms if a key pressed or release is in the
+%     % buffer.
+%     if  ~isempty(k1) | ~isempty(k2) % only when the key press and release both detected in the same loop
+%         Screen('DrawDots', windowPtr, [xCenter;yCenter], screenXpixels/30, megenta, [0 0], 2); % center monitor
+%         Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenXpixels/30, megenta, [0 0], 2); % Right monitor
+%         % flash photocell on the bottom at the buttom press
+%         Screen('FillRect', windowPtr, white, LeftBottomSquare);
+%         Screen('FillRect', windowPtr, white, RightBottomSquare); % event type = 1200002
+%     end
+
+    try
+        % Left player
+        [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL); % extract first key press
+        % [pressedL2, RBkeyL2]=readCedrusRB(deviceL, keymapL); % extract first key release
+    catch
+        % do nothing; % if no nothing is pressed or released continue to next loop without throwing error 
+    end
+    % read empty buffer and return function is time consuming
+    
+    % Left player (provide feedback)
+    if pressedL1 ==1 %| pressedL2 == 1 % at least one key press detected in the frist two events of the previous buffer
+        if RBkeyL1 == 3 %| RBkeyL2 == 3 % confirm it is the middle key on RB740
+            % show feedback for other paticipants
+            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/30;yCenter], screenXpixels/30, megenta, [0 0], 2); % center monitor
+            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3-screenXpixels/30;yCenter], screenXpixels/30, megenta, [0 0], 2); % Right monitor
+            % flash photocell on the bottom at the buttom press
+            % Screen('FillRect', windowPtr, white, LeftBottomSquare);
+            Screen('FillRect', windowPtr, white, RightBottomSquare); % event type = 1200002
+        end
+    end
+    
+    %% Right Player
+    % Right player  (read button press)
+    try
+        % Right player
+        [pressedR1, RBkeyR1]=readCedrusRB(deviceR, keymapR);
+        % [pressedR2, RBkeyR2]=readCedrusRB(deviceR, keymapR);
+    catch
+        % do nothing; 
     end
 
-%     try
-%         % Left player
-%         [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL); % extract first key press
-%         [pressedL2, RBkeyL2]=readCedrusRB(deviceL, keymapL); % extract first key release
-%     catch
-%         % do nothing; % if no nothing is pressed or released continue to next loop without throwing error 
-%     end
-%     % read empty buffer and return function is time consuming
-%     
-%     % Left player (provide feedback)
-%     if pressedL1 ==1 | pressedL2 == 1 % at least one key press detected in the frist two events of the previous buffer
-%         if RBkeyL1 == 3 | RBkeyL2 == 3 % confirm it is the middle key on RB740
-%             % show feedback for other paticipants
-%             Screen('DrawDots', windowPtr, [xCenter;yCenter], screenXpixels/30, megenta, [0 0], 2); % center monitor
-%             Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenXpixels/30, megenta, [0 0], 2); % Right monitor
-%             % flash photocell on the bottom at the buttom press
-%             Screen('FillRect', windowPtr, white, LeftBottomSquare);
-%             Screen('FillRect', windowPtr, white, RightBottomSquare); % event type = 1200002
-%         end
-%     end
-    
-%     %% Right Player
-%     % Right player  (read button press)
-%     try
-%         tic
-%         % Right player
-%         [pressedR1, RBkeyR1]=readCedrusRB(deviceR, keymapR);
-%         [pressedR2, RBkeyR2]=readCedrusRB(deviceR, keymapR);
-%         toc
-%     catch
-%         % do nothing; 
-%     end
-% 
-%     % Right player (provide feedback)
-%     if pressedR1 ==1 | pressedR2 == 1  % at least one key press detected in the frist two events of the previous buffer
-%         if RBkeyR1 == 3 | RBkeyR2 == 3  % confirm it is the middle key on RB740
-%             if elevationR < screenYpixels - 3*spotDiameter
-%                 elevationR = elevationR + spotDiameter;
-%             else
-% %                 elevationR = elevationR;
-%             end
-%         end
-%     end
+    % Right player (provide feedback)
+    if pressedR1 ==1 %| pressedR2 == 1  % at least one key press detected in the frist two events of the previous buffer
+        if RBkeyR1 == 3 %| RBkeyR2 == 3  % confirm it is the middle key on RB740
+            % show feedback for other paticipants
+            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/30;yCenter], screenXpixels/30, cyan, [0 0], 2); % center monitor
+            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3+screenXpixels/30;yCenter], screenXpixels/30, cyan, [0 0], 2); % Right monitor
+            % flash photocell on the bottom at the buttom press
+            Screen('FillRect', windowPtr, white, LeftBottomSquare);
+            % Screen('FillRect', windowPtr, white, RightBottomSquare); % event type = 1200002
+        end
+    end
 
     %% Flip to the screen
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
@@ -163,15 +163,16 @@ while n < numFrames
 %     outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
 
     %% reset
-%     pressedL1=[]; RBkeyL1=[]; %portL1=[]; stampL1=[];
-%     pressedL2=[]; RBkeyL2=[]; %portL2=[]; stampL2=[];
-%     pressedR1=[]; RBkeyR1=[]; %portR1=[]; stampR1=[];
-%     pressedR2=[]; RBkeyR2=[]; %portR2=[]; stampR2=[];
-    k1=[];k2=[];
+    pressedL1=[]; RBkeyL1=[]; %portL1=[]; stampL1=[];
+    pressedL2=[]; RBkeyL2=[]; %portL2=[]; stampL2=[];
+    pressedR1=[]; RBkeyR1=[]; %portR1=[]; stampR1=[];
+    pressedR2=[]; RBkeyR2=[]; %portR2=[]; stampR2=[];
+%     k1=[];k2=[];
 
     % update n
     n = n+1;
-    toc
+    fliptime=toc;
+    fliptimes=[fliptimes fliptime];
 end
 
 % TrialDuration=toc

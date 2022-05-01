@@ -3,7 +3,7 @@ function [pressed, RBkey]=readCedrusRB(dev, keymap)
 % This is my version of Cedrus's readKeypress
 % dev=deviceL; keymap=keymapL;
     
-    k = read(dev,6,"char");
+    k = read(dev,6,"char");%  read(dev,6,"char") is standard, it reads one key press or one key release each call
     if isempty(k)
         % pressed=[];RBkey=[];
         return

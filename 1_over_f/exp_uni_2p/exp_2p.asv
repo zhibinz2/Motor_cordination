@@ -89,6 +89,7 @@ try
     grey  = [0.5 0.5 0.5];
     yellow  = [1 1 0];
     megenta = [1 0 1];
+    
 
     % Open an on screen window and color it black
     % For help see: Screen Openwindow?
@@ -134,9 +135,9 @@ try
     % Measure the vertical refresh rate of the monitor ????????????????????
     ifi = Screen('GetFlipInterval', windowPtr);
     % Check if ifi=0.0167
-    if round(1/ifi)~=60
-      error('Error: Screen flash frequency is not set at 60Hz.');    
-    end
+%     if round(1/ifi)~=60
+%       error('Error: Screen flash frequency is not set at 60Hz.');    
+%     end
 
     % Check if ifi=0.0083
 %     if round(1/ifi)~=120
@@ -197,13 +198,49 @@ try
     % ############################### Set size of the squares for photocell 
 
         
-    %% Numer of frames to wait when specifying good timing. Note: the use of
-    % wait frames is to show a generalisable coding. For example, by using
-    % waitframes = 2 one would flip on every other frame. See the PTB
+    %% Numer of frames to wait when specifying good timing. 
+    % Note: the use of wait frames is to show a generalisable coding. 
+    % For example, by using waitframes = 2 one would flip on every other frame. See the PTB
     % documentation for details. In what follows we flip every frame. 
-    % In order to reverse the checkerboard at 8Hz
-    % We have to reverse the checkerboard every (1/8)/ifi frames
-    waitframes = 1;
+    % In order to flip with feedback at 50 Hz
+    % We have to filp every (1/50)/ifi frames or 1/50 ms/frame
+    waitframes=1;
+%     waitframes = (1/50)/ifi;
+%     ifi2=ifi*waitframes;
+
+%     %% Randomization of the conditions again ****************************************
+%     % Mean stimulus interval
+%     MeanTapInterval=2; % second
+%     NumFramesInterval=round(MeanTapInterval/ifi2);  % on average 72 frames per stimulus 
+%     
+%     % condition 1
+%     Showframes1=[1:NumFramesInterval:NumFramesInterval*numTaps];
+%     
+%     % condition 2
+%     Showframes2=[1:NumFramesInterval:NumFramesInterval*numTaps]; % need one more stimulus for the last tap for error calculation
+%     
+%     % condition 3
+%     RandomIntervals = round(NumFramesInterval + NumFramesInterval.*(rand(1,numTaps)-0.5)); % uniform distribution
+%     Showframes3=cumsum(RandomIntervals); 
+%     % plot(diff(Showframes3)*ifi,'ro');ylabel('tap Interval (second)');xlabel('tap');title('RT condition');
+%     
+%     % generate noise frames
+%     Noiseframes3=[];
+%     for i=1:(length(Showframes3)-1)
+%         NumsInBetween=Showframes3(i)+randi([0 Showframes3(i+1)-Showframes3(i)-1],1,randi([0 2]));
+%         Noiseframes3=[Noiseframes3 NumsInBetween];
+%     end
+%     % plot to examine
+% %     plot(Showframes3,ones(1,length(Showframes3)),'ro');hold on;
+% %     plot(Noiseframes3,ones(1,length(Noiseframes3)),'bo');
+% %     legend({'Go','No-Go'});xlabel('time');title('randomized RT stimulus');
+%     
+%     % combine all 3 conditions
+%     Showframes=[Showframes1;Showframes2;Showframes3];
+%     % need to shift the Showframes forward 1 second ( 60 frames) so that the first stimulus won't come up too suddenly
+%     Showframes=Showframes+round(1/ifi);
+%     
+%     % ***************************************** Randomization of the conditions 
     
     %% Setting time variables**********************************************
     % Length of one minute baseline
@@ -298,7 +335,7 @@ try
     % ************************************************ Baseline taking
 
     %% initialize some variables
-    TrialDurations=[]
+    % TrialDurations=[];
 
     %% ############################### Loop through block
     % *******************************Loop through block
