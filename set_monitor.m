@@ -34,4 +34,4 @@
 % !xrandr --output DP-0 --same-as DP-6
 % !xrandr --output DP-2 --same-as DP-6
 !xrandr --output DP-6 --auto --output DP-0 --auto --left-of DP-6
-!xrandr --output DP-6 --auto --output DP-2 --auto --right-of DP-6
+% !xrandr --output DP-6 --auto --output DP-2 --auto --right-of DP-6

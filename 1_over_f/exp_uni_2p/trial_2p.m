@@ -33,9 +33,9 @@ while n < numFrames
     'sx',xCenterR,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',color);
 
     %% draw fixation crosses on 3 monitors (different color in each condition)
-    Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/400, color, [0 0], 2); % center monitor
-    Screen('DrawDots', windowPtr, [FixCrX-screenXpixels/3;FixCrY], screenXpixels/400, color, [0 0], 2); % Left monitor
-    Screen('DrawDots', windowPtr, [FixCrX+screenXpixels/3;FixCrY], screenXpixels/400, color, [0 0], 2); % Right monitor
+    Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenYpixels/400, color, [0 0], 2); % center monitor
+    Screen('DrawDots', windowPtr, [FixCrX-screenXpixels/3;FixCrY], screenYpixels/400, color, [0 0], 2); % Left monitor
+    Screen('DrawDots', windowPtr, [FixCrX+screenXpixels/3;FixCrY], screenYpixels/400, color, [0 0], 2); % Right monitor
 
     % Update the while loop with time
 %     numberOfSecondsElapsed = (now - startTime) * 10 ^ 5;
@@ -76,7 +76,7 @@ while n < numFrames
     if any(Showframeselected(:) == n)
         % Show the pacer stimulus
         % Screen('DrawDots', windowPtr, [xCenter;yCenter], screenXpixels/30, color, [0 0], 2); % center monitor
-        Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenXpixels/30, color, [0 0], 2); % Left monitor
+        Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/30, color, [0 0], 2); % Left monitor
         %Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenXpixels/30, color, [0 0], 2); % Right monitor
         % Flash the photocell
         Screen('FillRect', windowPtr, white, LeftUpperSquare);
@@ -88,9 +88,9 @@ while n < numFrames
     if conditionSelected ==3
         if any(Noiseframes3(:) == n)
             % Show the stimuli
-            Screen('DrawDots', windowPtr, [xCenter;yCenter], screenXpixels/30, white, [0 0], 2); % center moniter
-            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenXpixels/30, white, [0 0], 2); % Left
-            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenXpixels/30, white, [0 0], 2); % Right
+            Screen('DrawDots', windowPtr, [xCenter;yCenter], screenYpixels/30, white, [0 0], 2); % center moniter
+            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/30, white, [0 0], 2); % Left
+            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/30, white, [0 0], 2); % Right
         end
     end
 
@@ -124,8 +124,8 @@ while n < numFrames
     if pressedL1 ==1 %| pressedL2 == 1 % at least one key press detected in the frist two events of the previous buffer
         if RBkeyL1 == 3 %| RBkeyL2 == 3 % confirm it is the middle key on RB740
             % show feedback for other paticipants
-            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/30;yCenter], screenXpixels/30, megenta, [0 0], 2); % center monitor
-            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3-screenXpixels/30;yCenter], screenXpixels/30, megenta, [0 0], 2); % Right monitor
+            Screen('DrawDots', windowPtr, [xCenter-screenYpixels/30;yCenter], screenYpixels/30, megenta, [0 0], 2); % center monitor
+            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3-screenYpixels/30;yCenter], screenYpixels/30, megenta, [0 0], 2); % Right monitor
             % flash photocell on the bottom at the buttom press
             % Screen('FillRect', windowPtr, white, LeftBottomSquare);
             Screen('FillRect', windowPtr, white, RightBottomSquare); % event type = 1200002
@@ -146,8 +146,8 @@ while n < numFrames
     if pressedR1 ==1 %| pressedR2 == 1  % at least one key press detected in the frist two events of the previous buffer
         if RBkeyR1 == 3 %| RBkeyR2 == 3  % confirm it is the middle key on RB740
             % show feedback for other paticipants
-            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/30;yCenter], screenXpixels/30, cyan, [0 0], 2); % center monitor
-            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3+screenXpixels/30;yCenter], screenXpixels/30, cyan, [0 0], 2); % Right monitor
+            Screen('DrawDots', windowPtr, [xCenter+screenYpixels/30;yCenter], screenYpixels/30, cyan, [0 0], 2); % center monitor
+            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3+screenYpixels/30;yCenter], screenYpixels/30, cyan, [0 0], 2); % Right monitor
             % flash photocell on the bottom at the buttom press
             Screen('FillRect', windowPtr, white, LeftBottomSquare);
             % Screen('FillRect', windowPtr, white, RightBottomSquare); % event type = 1200002

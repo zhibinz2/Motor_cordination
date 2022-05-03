@@ -124,10 +124,10 @@ while n < numFrames
     if pressedL1 ==1 %| pressedL2 == 1 % at least one key press detected in the frist two events of the previous buffer
         if RBkeyL1 == 3 %| RBkeyL2 == 3 % confirm it is the middle key on RB740
             % show feedback for other paticipants
-            Screen('DrawDots', windowPtr, [xCenter;yCenter], screenXpixels/30, megenta, [0 0], 2); % center monitor
-            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenXpixels/30, megenta, [0 0], 2); % Right monitor
+            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/30;yCenter], screenXpixels/30, megenta, [0 0], 2); % center monitor
+            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3-screenXpixels/30;yCenter], screenXpixels/30, megenta, [0 0], 2); % Right monitor
             % flash photocell on the bottom at the buttom press
-            Screen('FillRect', windowPtr, white, LeftBottomSquare);
+            % Screen('FillRect', windowPtr, white, LeftBottomSquare);
             Screen('FillRect', windowPtr, white, RightBottomSquare); % event type = 1200002
         end
     end
@@ -147,10 +147,10 @@ while n < numFrames
         if RBkeyR1 == 3 %| RBkeyR2 == 3  % confirm it is the middle key on RB740
             % show feedback for other paticipants
             Screen('DrawDots', windowPtr, [xCenter+screenXpixels/30;yCenter], screenXpixels/30, cyan, [0 0], 2); % center monitor
-            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenXpixels/30, cyan, [0 0], 2); % Right monitor
+            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3+screenXpixels/30;yCenter], screenXpixels/30, cyan, [0 0], 2); % Right monitor
             % flash photocell on the bottom at the buttom press
             Screen('FillRect', windowPtr, white, LeftBottomSquare);
-            Screen('FillRect', windowPtr, white, RightBottomSquare); % event type = 1200002
+            % Screen('FillRect', windowPtr, white, RightBottomSquare); % event type = 1200002
         end
     end
 

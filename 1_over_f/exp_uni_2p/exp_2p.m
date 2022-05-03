@@ -95,8 +95,8 @@ try
     % For help see: Screen Openwindow?
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
-    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3 330]); 
-%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
+%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3 330]); 
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
     % For help see: Screen windowSize?
@@ -275,8 +275,8 @@ try
 %     KbStrokeWait;
 
     %% Create a fixation cross
-    FixCrX=[xCenter-round(screenXpixels/200):xCenter+round(screenXpixels/200)-1 repmat(xCenter,1,round(screenXpixels/100)+1)];
-    FixCrY=[repmat(yCenter,1,round(screenXpixels/100)+1) yCenter-round(screenXpixels/200)+1:yCenter+round(screenXpixels/200)];
+    FixCrX=[xCenter-round(screenYpixels/200):xCenter+round(screenYpixels/200)-1 repmat(xCenter,1,round(screenYpixels/100)+1)];
+    FixCrY=[repmat(yCenter,1,round(screenYpixels/100)+1) yCenter-round(screenYpixels/200)+1:yCenter+round(screenYpixels/200)];
     
     % LSL markers to the local network
     % send data into the outlet, sample by sample
