@@ -291,7 +291,7 @@ clear Error3
 Error3=[]; % for syncopation (condition 2)
 StartStim3=4+240*(find(allPerm==3)-1)+1; % the starting photocell of condition 3
 % find the time difference with the next botton press
-for i=StartStim3:StartStim3+238 % i=StartStim3 % syncopation has one press less than condition 1 and 3
+for i=StartStim3:StartStim3+239 % i=StartStim3 % syncopation has one press less than condition 1 and 3
     diffInd=(find((BottonPressTime-PhotocellTime(i))>0));
     Error3(i-StartStim3+1)=BottonPressTime(diffInd(1))-PhotocellTime(i);
 end
