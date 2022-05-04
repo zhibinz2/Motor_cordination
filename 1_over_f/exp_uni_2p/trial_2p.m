@@ -75,9 +75,9 @@ while n < numFrames
     %% show stimulus and photocells on the top at the same time
     if any(Showframeselected(:) == n)
         % Show the pacer stimulus
-        % Screen('DrawDots', windowPtr, [xCenter;yCenter], screenXpixels/30, color, [0 0], 2); % center monitor
+        Screen('DrawDots', windowPtr, [xCenter;yCenter], screenYpixels/30, color, [0 0], 2); % center monitor
         Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/30, color, [0 0], 2); % Left monitor
-        %Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenXpixels/30, color, [0 0], 2); % Right monitor
+        Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/30, color, [0 0], 2); % Right monitor
         % Flash the photocell
         Screen('FillRect', windowPtr, white, LeftUpperSquare);
         Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001 for neuroScan
