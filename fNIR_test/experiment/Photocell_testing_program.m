@@ -1,4 +1,3 @@
-   
 % This version shows checkerboard on two hemi-fields and sends LSL markers
 % to the fNIRS laptop
 sca; clc; close all; clear all; clearvars; 
