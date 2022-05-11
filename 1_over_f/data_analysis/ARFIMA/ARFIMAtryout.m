@@ -1,7 +1,7 @@
-%% simulation function 1 
+%% simulation function 1  (work!)
 % https://www.mathworks.com/matlabcentral/fileexchange/25611-arfima-simulations
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/ARFIMA
-cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/ARFIMA
+addpath(genpath('/home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA'));
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA
 
 % [Z] = ARFIMA_SIM(N,F,O,d,stdx,er)
 %%% INPUTS
@@ -46,7 +46,7 @@ plot(Z,'r.');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% simulation function 2 
+%% simulation function 2  (work!)
 % https://www.mathworks.com/matlabcentral/fileexchange/53301-arfima-p-d-q
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/ARFIMA/dgp_arfima
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/ARFIMA/dgp_arfima
@@ -77,6 +77,17 @@ Results=dgp_arfima(1,[0.5 0.1],[0.2],100,1,0.5,1);
 
 % ARFIMA(0,0.8,0) >>>>  Results=dgp_arfima(0,[],[],100,1,0.8);
 Results=dgp_arfima(0,[],[],100,1,0.8,1);
+
+% Use parameter estimated from Rstudio
+c=0; %?
+d=0.0287; 
+ARo=0.0287;%?p
+MAo=0;%?q
+T=235;
+SD=0.1;%?
+F=1;
+sim=dgp_arfima(c,ARo,MAo,T,SD,d,F);
+
 
 %% model estimation (not work)
 % https://www.mathworks.com/matlabcentral/fileexchange/30238-arfima-p-d-q-estimator?s_tid=srchtitle_arfima_3
