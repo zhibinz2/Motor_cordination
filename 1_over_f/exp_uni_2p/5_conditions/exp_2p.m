@@ -71,9 +71,11 @@ try
 
     % Start with black screen
     % Removes the blue screen flash and minimize extraneous warnings.
-    Screen('Preference', 'VisualDebugLevel', 1); 
-    Screen('Preference', 'SkipSyncTests', 1);
-    Screen('Preference', 'SuppressAllWarnings', 1);
+    Screen('Preference', 'VisualDebugLevel', 0); % disable all visual alerts
+    Screen('Preference', 'SkipSyncTests', 1); %  shorten the maximum duration of the sync tests to 3 seconds worst case
+    Screen('Preference', 'SuppressAllWarnings', 1); %disable all output to the command window 
+    % The use of “mirror mode”, or “clone mode”, where multiple displays show the
+    % same content, will almost always cause timing and performance problems.
 
     % Get the screen numbers. This gives us a number for each of the screens
     % attached to our computer. For help see: Screen Screens?
@@ -146,9 +148,9 @@ try
     ifi = Screen('GetFlipInterval', windowPtr);
 
     % Check if ifi=0.0167
-    if round(1/ifi)~=60
-      error('Error: Screen flash frequency is not set at 60Hz.');    
-    end
+%     if round(1/ifi)~=60
+%       error('Error: Screen flash frequency is not set at 60Hz.');    
+%     end
 
     % Check if ifi=0.0083
 %     if round(1/ifi)~=120
@@ -160,11 +162,27 @@ try
 %       error('Error: Screen flash frequency is not set at 144Hz.');    
 %     end
     % ?????????????????????????????????????????????????????????????????????
-    
+
+    %% Set size of the squares for photocell ###############################
+    PhotosensorSize=30;
+    % Positions of the four corners
+    RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels];
+    RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2];
+    LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels];
+    LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
+
+    %% Numer of frames to wait when specifying good timing. 
+    % Note: the use of wait frames is to show a generalisable coding. 
+    % For example, by using waitframes = 2 one would flip on every other frame. See the PTB
+    % documentation for details. In what follows we flip every frame. 
+    % In order to flip with feedback at 50 Hz
+    % We have to filp every (1/50)/ifi frames or 1/50 ms/frame
+    waitframes=1;
+
     %% Randomization of the pace stimuli in each condition ****************************************
     % Mean stimulus interval for 2Hz pacing
     MeanTapInterval2Hz=0.5; % second
-    NumFramesInterval2Hz=round(MeanTapInterval2Hz/ifi);  % on average 72 frames per stimulus 
+    NumFramesInterval2Hz=round(MeanTapInterval2Hz/(ifi*waitframes));  
     
     % condition 1-4 (paced the frist 60 taps, set the rest of the frames with value zeros)
     Showframes1=[1:NumFramesInterval2Hz:NumFramesInterval2Hz*10 zeros(1,10)]; 
@@ -174,180 +192,28 @@ try
     
     % Mean stimulus interval for 3Hz pacing
     MeanTapInterval3Hz=1/3; % second
-    NumFramesInterval3Hz=round(MeanTapInterval3Hz/ifi);  % on average 72 frames per stimulus 
+    NumFramesInterval3Hz=round(MeanTapInterval3Hz/(ifi*waitframes));  % on average 72 frames per stimulus 
     % condition 5
     Showframes5=[1:NumFramesInterval3Hz:NumFramesInterval3Hz*10 zeros(1,10)]; 
-
-%     % condition 3
-%     RandomIntervals = round(NumFramesInterval + NumFramesInterval.*(rand(1,numTaps)-0.5)); % uniform distribution
-%     Showframes3=cumsum(RandomIntervals); 
-%     % plot(diff(Showframes3)*ifi,'ro');ylabel('tap Interval (second)');xlabel('tap');title('RT condition');
-%     
-%     % generate noise frames
-%     Noiseframes3=[];
-%     for i=1:(length(Showframes3)-1)
-%         NumsInBetween=Showframes3(i)+randi([0 Showframes3(i+1)-Showframes3(i)-1],1,randi([0 2]));
-%         Noiseframes3=[Noiseframes3 NumsInBetween];
-%     end
-    % plot to examine
-%     plot(Showframes3,ones(1,length(Showframes3)),'ro');hold on;
-%     plot(Noiseframes3,ones(1,length(Noiseframes3)),'bo');
-%     legend({'Go','No-Go'});xlabel('time');title('randomized RT stimulus');
     
     % combine all 6 conditions
     Showframes=[Showframes1;Showframes2;Showframes3;Showframes4;Showframes5];
-    % need to shift the Showframes forward 1 second ( 60 frames) so that the first stimulus won't come up too suddenly
-    % Showframes=Showframes+round(1/ifi);
-    
-    % ***************************************** Randomization of the conditions 
-    
-    %% Set size of the squares for photocell ###############################
-    PhotosensorSize=30;
-    % Positions of the four corners
-    RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels-PhotosensorSize*2 screenXpixels screenYpixels];
-    RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2];
-    LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels];
-    LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
-        
-    %% Numer of frames to wait when specifying good timing. 
-    % Note: the use of wait frames is to show a generalisable coding. 
-    % For example, by using waitframes = 2 one would flip on every other frame. See the PTB
-    % documentation for details. In what follows we flip every frame. 
-    % In order to flip with feedback at 50 Hz
-    % We have to filp every (1/50)/ifi frames or 1/50 ms/frame
-    waitframes=1;
-%     waitframes = (1/50)/ifi;
-%     ifi2=ifi*waitframes;
 
-%     %% Randomization of the conditions again ****************************************
-%     % Mean stimulus interval
-%     MeanTapInterval=2; % second
-%     NumFramesInterval=round(MeanTapInterval/ifi2);  % on average 72 frames per stimulus 
-%     
-%     % condition 1
-%     Showframes1=[1:NumFramesInterval:NumFramesInterval*numTaps];
-%     
-%     % condition 2
-%     Showframes2=[1:NumFramesInterval:NumFramesInterval*numTaps]; % need one more stimulus for the last tap for error calculation
-%     
-%     % condition 3
-%     RandomIntervals = round(NumFramesInterval + NumFramesInterval.*(rand(1,numTaps)-0.5)); % uniform distribution
-%     Showframes3=cumsum(RandomIntervals); 
-%     % plot(diff(Showframes3)*ifi,'ro');ylabel('tap Interval (second)');xlabel('tap');title('RT condition');
-%     
-%     % generate noise frames
-%     Noiseframes3=[];
-%     for i=1:(length(Showframes3)-1)
-%         NumsInBetween=Showframes3(i)+randi([0 Showframes3(i+1)-Showframes3(i)-1],1,randi([0 2]));
-%         Noiseframes3=[Noiseframes3 NumsInBetween];
-%     end
-%     % plot to examine
-% %     plot(Showframes3,ones(1,length(Showframes3)),'ro');hold on;
-% %     plot(Noiseframes3,ones(1,length(Noiseframes3)),'bo');
-% %     legend({'Go','No-Go'});xlabel('time');title('randomized RT stimulus');
-%     
-%     % combine all 3 conditions
-%     Showframes=[Showframes1;Showframes2;Showframes3];
-%     % need to shift the Showframes forward 1 second ( 60 frames) so that the first stimulus won't come up too suddenly
-%     Showframes=Showframes+round(1/ifi);
-%     
-%     % ***************************************** Randomization of the conditions 
-    
     %% Setting time variables**********************************************
     % Length of one minute baseline
     BaselineLength = 2; % in seconds
     numFramesBaseline = round(BaselineLength / ifi / waitframes);
-
-    % total number of frames per trial
-%     numFrames=round(62.5/ifi/waitframes); % 125 buttom presses = about 62.5 seconds 
-    % ********************************************** Setting time variables
     
     %% Hide Mice:****************************************************************
     % Get handles for all virtual pointing devices, aka cursors:
     typeOnly='masterPointer'; 
     mice = GetMouseIndices(typeOnly);  
-    % DuoMice: ***************************************************************
-    % Hide the system-generated cursors. We do this, because only the
-    % first mouse cursor is hardware-accelerated, HideCursorie., a GPU created
-    % hardware cursor. All other cursors are software-cursors, created
-    % by the Windowing system. These tend to flicker badly in our use
-    % case. Therefore we disable all system cursor images and draw our
-    % cursors ourselves for a more beautiful look:
-    % Hide the cursor
     HideCursor(windowPtr,mice);
-    %HideCursor(windowPtr,mice(1));
-
-%     % Baseline taking 60s  **********************************************
-%     instructionStart=['Hit any key and then look at the center of the screen for ' num2str(BaselineLength) ' seconds'];
-%     DrawFormattedText2(instructionStart,'win',windowPtr,...
-%         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-%     Screen('Flip',windowPtr);
-%     % hit a key to continue
-%     KbStrokeWait;
 
     %% Create a fixation cross
     FixCrX=[xCenter-round(screenYpixels/200):xCenter+round(screenYpixels/200)-1 repmat(xCenter,1,round(screenYpixels/100)+1)];
     FixCrY=[repmat(yCenter,1,round(screenYpixels/100)+1) yCenter-round(screenYpixels/200)+1:yCenter+round(screenYpixels/200)];
-    
-    % LSL markers to the local network
-    % send data into the outlet, sample by sample
-%         outlet1.push_sample(1); % send data number 1
-    % send markers into the outlet
-%     mrk = markers{1};
-%     outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-    
-%     tic
-%     startTime = now;
-%     numberOfSecondsElapsed = 0;
-%     while numberOfSecondsElapsed < 60
-
-%     % get a timestamp and begin the baseline 
-%     vbl = Screen('Flip', windowPtr);
-%     n=1;
-%     while n < numFramesBaseline
-%         % If esc is press, break out of the while loop and close the screen
-%         [keyIsDown, keysecs, keyCode] = KbCheck;
-%         if keyCode(KbName('escape'))
-%             Screen('CloseAll');
-%             break;
-%         end
-% 
-%         % Update the while loop with time
-% %         numberOfSecondsElapsed = (now - startTime) * 10 ^ 5;
-%         
-%         % Show the fixation cross
-%         Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/400, white, [0 0], 2);
-%         vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-% 
-%         % LSL marker to check screen flip frequency
-% %         % send markers into the outlet
-% %         mrk = markers{5};
-% %         outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-% 
-%         n=n+1;
-%     end
-%     % send markers into the outlet
-% %     mrk = markers{2};
-% %     outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-% %     BaselineDuration=toc
-%     
-% 
-%     pause(5);% to separate baseline markers and trial markers
-%     instructionStart=['OK. Press a key to start!']; % Tell subject to open eye and start
-%     DrawFormattedText2(instructionStart,'win',windowPtr,...
-%         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-%     Screen('Flip',windowPtr);
-%     % hit a key to continue
-%     KbStrokeWait;
-%     % ************************************************ Baseline taking 60s 
-    
-    % ************************************************ Baseline taking
-%     run restingEEG.m
-    % ************************************************ Baseline taking
-
-    %% initialize some variables
-    % TrialDurations=[];
-
+   
     %% ############################### Loop through block
     % *******************************Loop through block
     for block=1:numBlock

@@ -69,9 +69,10 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
         
     end
 
-
+    
     %% Left Player
     % Left player  (read button press)
+    tic
     try
         % Left player
         [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL); % extract first key press
@@ -79,13 +80,13 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
         % do nothing; % if no nothing is pressed or released continue to next loop without throwing error 
     end
     % read empty buffer and return function is time consuming
-    
+    toc
     % Left player (leader, providing feedback)
     if pressedL1 ==1 %| pressedL2 == 1 % at least one key press detected in the frist two events of the previous buffer
         % if RBkeyL1 == 3 %| RBkeyL2 == 3 % confirm it is the middle key on RB740
             % show feedback for the experimentor and the other paticipants
             Screen('DrawDots', windowPtr, [xCenter-screenYpixels/4;yCenter], screenYpixels/20-2, red, [0 0], 2); % center monitor
-            if (conditionSelected == 2) | (conditionSelected == 4) | (conditionSelected == 5) % show feedback
+            if (conditionSelected == 2) | (conditionSelected == 4) | (conditionSelected == 5) | (conditionSelected == 6) % show feedback
                 Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
             end
             % show bottomright photocell on the other side
@@ -114,7 +115,7 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
         % if RBkeyR1 == 3 %| RBkeyR2 == 3  % confirm it is the middle key on RB740
             % show feedback for for the experimentor and the other paticipants
             Screen('DrawDots', windowPtr, [xCenter+screenYpixels/4;yCenter], screenYpixels/20-2, blue, [0 0], 2); % center monitor
-            if (conditionSelected == 3) | (conditionSelected == 4) | (conditionSelected == 5)
+            if (conditionSelected == 3) | (conditionSelected == 4) | (conditionSelected == 5) | (conditionSelected == 6)
                 Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Left monitor
             end
             % show bottomleft photocell on the other side
@@ -129,6 +130,8 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     end
 
     %% Flip to the screen
+%     fliptime=toc;
+%     fliptimes=[fliptimes fliptime];
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
 
     %% reset
