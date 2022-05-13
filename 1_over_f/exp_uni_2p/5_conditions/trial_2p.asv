@@ -38,7 +38,7 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     Screen('DrawDots', windowPtr, [FixCrX-screenXpixels/3;FixCrY], screenYpixels/400, color, [0 0], 2); % Left monitor
     Screen('DrawDots', windowPtr, [FixCrX+screenXpixels/3;FixCrY], screenYpixels/400, color, [0 0], 2); % Right monitor
 
-    %% draw labels for feedback and stimulus only in the center moniter
+    %% draw labels for feedback and stimulus
     % stimulus label
     DrawFormattedText2('pacer','win',windowPtr,...
     'sx',xCenter,'sy',yCenter-screenYpixels/15,'xalign','center','yalign','top','baseColor',color);
@@ -47,13 +47,13 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     DrawFormattedText2('R','win',windowPtr,...
     'sx',xCenter+screenYpixels/4,'sy',yCenter-screenYpixels/15,'xalign','center','yalign','top','baseColor',color);
 
-    %% Flash photocell every other second during the whole trial (bottom right)
+    %% Flash photocell every other second during the whole trial (bottom left)
     if (~isempty(find(([1:2:numFrames]==n)))) % every two frames
-    Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3*2 0 -screenXpixels/3*2 0]); % Left monitor
-    Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3 0 -screenXpixels/3 0]); % Middle monitor
+    Screen('FillRect', windowPtr, white, RightBottomSquare-[-screenXpixels/3*2 0 -screenXpixels/3*2 0]); % Left monitor
+    Screen('FillRect', windowPtr, white, LeftBottomSquare-[-screenXpixels/3 0 -screenXpixels/3 0]); % Middle monitor
     end
     
-    %% show stimulus(pacer) and photocells on the top at the same time
+    %% show stimulus and photocells on the top at the same time
     if any(Showframeselected(:) == n)
         % Show the pacer stimulus
         Screen('DrawDots', windowPtr, [xCenter;yCenter], screenYpixels/20, green, [0 0], 2); % center monitor

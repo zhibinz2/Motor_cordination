@@ -11,4 +11,4 @@ title(['Flip once every ' num2str(waitframes) ' video frame (screen refresh rate
 yline(waitframes*ifi*1000,'m',{['Time to flip every ' num2str(waitframes) ' video frames']})
 ylabel(['Actual flip interval: ' num2str(floor((min(fliptimes))*1000)) ' - ' num2str(ceil((max(fliptimes))*1000)) ' ms'])
 xlabel('Flips')
-ylim([0 max(fliptimes)*1000])
+ylim([0 max(fliptimes)*1000+5])

@@ -107,8 +107,8 @@ try
     % For help see: Screen Openwindow?
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
-    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3*60/59 330*40/33]); 
-%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
+%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3*60/59 330*40/33]); 
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
     % For help see: Screen windowSize?
@@ -149,12 +149,17 @@ try
 
     % Check if ifi=0.0167
 %     if round(1/ifi)~=60
-%       error('Error: Screen flash frequency is not set at 60Hz.');    
+%       error('Error: Screen flash frequency is not set at 60 Hz.');    
 %     end
+
+    % Check if ifi=0.0167
+    if round(1/ifi)~=100
+      error('Error: Screen flash frequency is not set at 100 Hz.');    
+    end
 
     % Check if ifi=0.0083
 %     if round(1/ifi)~=120
-%       error('Error: Screen flash frequency is not set at 144Hz.');    
+%       error('Error: Screen flash frequency is not set at 144 Hz.');    
 %     end
 
     % Check if ifi=0.0069
@@ -185,7 +190,7 @@ try
     NumFramesInterval2Hz=round(MeanTapInterval2Hz/(ifi*waitframes));  
     
     % condition 1-4 (paced the frist 60 taps, set the rest of the frames with value zeros)
-    Showframes1=[1:NumFramesInterval2Hz:NumFramesInterval2Hz*10 zeros(1,10)]; 
+    Showframes1=[1:NumFramesInterval2Hz:NumFramesInterval2Hz*30 zeros(1,570)]; 
     Showframes2=Showframes1;
     Showframes3=Showframes1;
     Showframes4=Showframes1;
@@ -194,7 +199,7 @@ try
     MeanTapInterval3Hz=1/3; % second
     NumFramesInterval3Hz=round(MeanTapInterval3Hz/(ifi*waitframes));  % on average 72 frames per stimulus 
     % condition 5
-    Showframes5=[1:NumFramesInterval3Hz:NumFramesInterval3Hz*10 zeros(1,10)]; 
+    Showframes5=[1:NumFramesInterval3Hz:NumFramesInterval3Hz*30 zeros(1,570)]; 
     
     % combine all 6 conditions
     Showframes=[Showframes1;Showframes2;Showframes3;Showframes4;Showframes5];
