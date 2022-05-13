@@ -177,7 +177,7 @@ try
     % documentation for details. In what follows we flip every frame. 
     % In order to flip with feedback at 50 Hz
     % We have to filp every (1/50)/ifi frames or 1/50 ms/frame
-    waitframes=1;
+    waitframes=2;
 
     %% Randomization of the pace stimuli in each condition ****************************************
     % Mean stimulus interval for 2Hz pacing

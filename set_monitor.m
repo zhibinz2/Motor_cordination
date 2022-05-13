@@ -16,18 +16,27 @@
 !xrandr --output DP-0 --mode 1920x1080 --rate 143.98
 !xrandr --output DP-2 --mode 1920x1080 --rate 143.98
 !xrandr --output DP-6 --mode 1920x1080 --rate 143.98
+!xrandr
 
 !xrandr --output DP-0 --mode 1920x1080 --rate 119.96
 !xrandr --output DP-2 --mode 1920x1080 --rate 119.96
 !xrandr --output DP-6 --mode 1920x1080 --rate 119.96
+!xrandr
+
+!xrandr --output DP-0 --mode 1920x1080 --rate 99.93
+!xrandr --output DP-2 --mode 1920x1080 --rate 99.93
+!xrandr --output DP-6 --mode 1920x1080 --rate 99.93
+!xrandr
 
 !xrandr --output DP-0 --mode 1920x1080 --rate 50.00
 !xrandr --output DP-2 --mode 1920x1080 --rate 50.00
 !xrandr --output DP-6 --mode 1920x1080 --rate 50.00
+!xrandr
 
 !xrandr --output DP-0 --mode 1920x1080 --rate 60.00
 !xrandr --output DP-2 --mode 1920x1080 --rate 60.00
 !xrandr --output DP-6 --mode 1920x1080 --rate 60.00
+!xrandr
 
 % to Manage Dual Monitor Setups
 !xrandr --output DisplayPort-0 --mode 1920x1080 --rate 144.00 --output DVI-D-0 --mode 1920x1080 --rate 60.00
