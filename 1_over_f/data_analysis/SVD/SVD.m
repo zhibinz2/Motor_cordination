@@ -80,6 +80,7 @@ end
 % figure;plot(-1*U(:,4));xlabel('time');title('-1*U(:,4)');xline(2000,'m',{'reponse'});
 
 % topoplot to examine them
+% addpath(genpath('/home/zhibin/Documents/GitHub/eeglab'));
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info
 load('chaninfo.mat')
 % chaninfo29=chaninfo(4:32);
