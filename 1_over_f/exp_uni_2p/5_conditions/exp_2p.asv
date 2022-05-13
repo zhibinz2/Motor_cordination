@@ -6,7 +6,7 @@ sca; clc; close all; clear all; clearvars;
 %% set keyboards
 mydir  = pwd; % or cd
 idcs   = strfind(mydir,'/');
-newdir = mydir(1:idcs(end)-1);
+newdir = mydir(1:idcs(end-2)-1);
 cd (newdir);
 addpath Cedrus_Keyboard/
 run setCedrusRB.m % plug in the left RB pad first then the right RB pad
@@ -24,17 +24,17 @@ AssertOpenGL;
 
 %% Set trial conditions ****************************************************
 conditions = [1 2 3 4 5 6];
-conditionNames={'computer' 'uncoupled' 'uniL' 'uniR' 'biLR2' 'biLR3'};  % conditionNames{1}
-ConditionInstructions={'paced by computer'...
-    'paced then uncouple'...
-    'follow L'...
-    'follow R'...
-    'coordinate 2Hz'...
-    'coordinate 3Hz'}; 
+conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-2Hz' 'mutual-3Hz' 'mutual-fast'};  % conditionNames{1}
+ConditionInstructions={'paced then uncouple'...
+    'paced then follow L'...
+    'paced then follow R'...
+    'paced then coordinate at 2Hz'...
+    'paced then coordinate at 3Hz'...
+    'paced then coordinate as fast as you can'}; 
 
 % Block & Trial number of the experiment **********************************
 % number of taps per trial/condition
-numTaps=10; % 600 @@@@@@@@ 
+numTaps=20; % 600 @@@@@@@@ 
 % number of trials per block
 numTrials=6;
 % number of blocks
@@ -59,7 +59,7 @@ rng(seed);
 % end
 
 % if not randomized
-allPerm=1:6;
+allPerm=[2 1 3 4 5 6];
 % ######################################### Randomization of the experiment 
 
 
@@ -99,12 +99,13 @@ try
     yellow  = [1 1 0];
     megenta = [1 0 1];% fill([0 1 1 0],[0 0 1 1],megenta)
     cyan = [0 1 1]; % fill([0 1 1 0],[0 0 1 1],cc)
+    purple = [0.6 0.1 0.9];
 
     % Open an on screen window and color it black
     % For help see: Screen Openwindow?
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
-    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3 400]); 
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3*60/59 330*40/33]); 
 %     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
@@ -161,19 +162,21 @@ try
     % ?????????????????????????????????????????????????????????????????????
     
     %% Randomization of the pace stimuli in each condition ****************************************
-    % Mean stimulus interval
-    MeanTapInterval=0.5; % second
-    NumFramesInterval=round(MeanTapInterval/ifi);  % on average 72 frames per stimulus 
+    % Mean stimulus interval for 2Hz pacing
+    MeanTapInterval2Hz=0.5; % second
+    NumFramesInterval2Hz=round(MeanTapInterval2Hz/ifi);  % on average 72 frames per stimulus 
     
-    % condition 1 (computer paced all the time)
-    Showframes1=[1:NumFramesInterval:NumFramesInterval*numTaps]; % one tap short at the end,but the total number is just right
+    % condition 1-4 (paced the frist 60 taps, set the rest of the frames with value zeros)
+    Showframes1=[1:NumFramesInterval2Hz:NumFramesInterval2Hz*10 zeros(1,10)]; 
+    Showframes2=Showframes1;
+    Showframes3=Showframes1;
+    Showframes4=Showframes1;
     
-    % condition 2 (paced the frist 60 taps, set the rest of the frames with value zeros)
-    Showframes2=[1:NumFramesInterval:NumFramesInterval*5 zeros(1,5)]; 
-    Showframes3=Showframes2;
-    Showframes4=Showframes2;
-    Showframes5=Showframes2;
-    Showframes6=Showframes2;
+    % Mean stimulus interval for 3Hz pacing
+    MeanTapInterval3Hz=1/3; % second
+    NumFramesInterval3Hz=round(MeanTapInterval3Hz/ifi);  % on average 72 frames per stimulus 
+    % condition 5
+    Showframes5=[1:NumFramesInterval3Hz:NumFramesInterval3Hz*10 zeros(1,10)]; 
 
 %     % condition 3
 %     RandomIntervals = round(NumFramesInterval + NumFramesInterval.*(rand(1,numTaps)-0.5)); % uniform distribution
@@ -192,7 +195,7 @@ try
 %     legend({'Go','No-Go'});xlabel('time');title('randomized RT stimulus');
     
     % combine all 6 conditions
-    Showframes=[Showframes1;Showframes2;Showframes3;Showframes4;Showframes5;Showframes6];
+    Showframes=[Showframes1;Showframes2;Showframes3;Showframes4;Showframes5];
     % need to shift the Showframes forward 1 second ( 60 frames) so that the first stimulus won't come up too suddenly
     % Showframes=Showframes+round(1/ifi);
     
@@ -205,12 +208,6 @@ try
     RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2];
     LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels];
     LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
-%     RightBottomSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+230-PhotosensorSize screenXpixels screenYpixels/2+230+PhotosensorSize];
-%     RightUpperSquare= [screenXpixels-PhotosensorSize*2 screenYpixels/2+110-PhotosensorSize screenXpixels screenYpixels/2+110+PhotosensorSize];
-%     LeftBottomSquare= [0 screenYpixels/2+230-PhotosensorSize PhotosensorSize*2 screenYpixels/2+230+PhotosensorSize];
-%     LeftUpperSquare= [0 screenYpixels/2+110-PhotosensorSize PhotosensorSize*2 screenYpixels/2+110+PhotosensorSize];
-    % ############################### Set size of the squares for photocell 
-
         
     %% Numer of frames to wait when specifying good timing. 
     % Note: the use of wait frames is to show a generalisable coding. 
@@ -372,18 +369,20 @@ try
             Showframeselected=Showframes(conditionSelected,:);
             
             % select color
-            if conditionSelected == 1 | conditionSelected == 2
+            if conditionSelected == 1
                 color = green;
+            elseif conditionSelected == 2
+                color = red;
             elseif conditionSelected == 3
                 color = blue;
             elseif conditionSelected == 4
-                color = red;
-            elseif conditionSelected == 5 | conditionSelected == 6
                 color = megenta;
+            else conditionSelected == 5
+                color = purple;
             end
 
             % show instruction for each trial / condition
-            ShowCondition=['Begining the ' conditionNames{conditionSelected} ' condition'];
+            ShowCondition=[ConditionInstructions{conditionSelected}];
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
@@ -395,7 +394,7 @@ try
 %             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)...
 %                  ' \n Hit a key to continue'];
             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials)  ...
-                 ' \n Hit a key to continue'];
+                 ' \n Hit a key to continue']; 
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx','center','sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
             DrawFormattedText2(Showtrial,'win',windowPtr,...
@@ -408,7 +407,7 @@ try
             % hit a key to continue
             KbStrokeWait;
             Screen('Flip',windowPtr);% Reponse with a black screen
-            pause(3); % given time to return the position of arm after key press 
+            pause(1); % given time to return the position of arm after key press (no need for 2p, experimentor control)
 
 
             % flip to screen and pause for 1 sec
@@ -427,7 +426,7 @@ try
             vbl = Screen('Flip', windowPtr);
             % pause 1 second so that the first condition don't come up
             % too suddenly
-            pause(1)
+            % pause(1)
 
             % Run the trial #################
             run trial_2p.m
@@ -464,7 +463,7 @@ DrawFormattedText2(TheEnd,'win',windowPtr,...
 DrawFormattedText2(TheEnd,'win',windowPtr,...
     'sx',xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
 DrawFormattedText2(TheEnd,'win',windowPtr,...
-    'sx',xCenter,'sy', 'center','xalign','center','yalign','top','baseColor',white);
+    'sx',xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
 vbl=Screen('Flip',windowPtr);
 WaitSecs(3)
 % hit a key to continue
