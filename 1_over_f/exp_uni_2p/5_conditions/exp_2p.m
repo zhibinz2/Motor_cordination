@@ -24,8 +24,8 @@ AssertOpenGL;
 
 %% Set trial conditions ****************************************************
 conditions = [1 2 3 4 5 6];
-conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-2Hz' 'mutual-3Hz' 'mutual-fast'};  % conditionNames{1}
-ConditionInstructions={'paced then uncouple'...
+conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-2Hz' 'mutual-3Hz' 'mutual-faster'};  % conditionNames{1}
+ConditionInstructions={'paced then uncouple'... 
     'paced then follow L'...
     'paced then follow R'...
     'paced then coordinate at 2Hz'...
@@ -34,7 +34,7 @@ ConditionInstructions={'paced then uncouple'...
 
 % Block & Trial number of the experiment **********************************
 % number of taps per trial/condition
-numTaps=20; % 600 @@@@@@@@ 
+numTaps=60; % 600 @@@@@@@@ 
 % number of trials per block
 numTrials=6;
 % number of blocks
@@ -59,7 +59,7 @@ rng(seed);
 % end
 
 % if not randomized
-allPerm=[2 1 3 4 5 6];
+allPerm=[1 2 3 4 5 6];
 % ######################################### Randomization of the experiment 
 
 
@@ -75,7 +75,7 @@ try
     Screen('Preference', 'SkipSyncTests', 1); %  shorten the maximum duration of the sync tests to 3 seconds worst case
     Screen('Preference', 'SuppressAllWarnings', 1); %disable all output to the command window 
     % The use of “mirror mode”, or “clone mode”, where multiple displays show the
-    % same content, will almost always cause timing and performance problems.
+    % same content, will almost always cause  timing and performance problems.
 
     % Get the screen numbers. This gives us a number for each of the screens
     % attached to our computer. For help see: Screen Screens?
@@ -107,8 +107,8 @@ try
     % For help see: Screen Openwindow?
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
-%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3*60/59 330*40/33]); 
-    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3*60/59 330*40/33]); 
+%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
     % For help see: Screen windowSize?
@@ -189,7 +189,7 @@ try
     MeanTapInterval2Hz=0.5; % second
     NumFramesInterval2Hz=round(MeanTapInterval2Hz/(ifi*waitframes));  
     
-    % condition 1-4 (paced the frist 60 taps, set the rest of the frames with value zeros)
+    % condition 1-4 (paced the frist 30 taps, set the rest of the frames with value zeros)
     Showframes1=[1:NumFramesInterval2Hz:NumFramesInterval2Hz*30 zeros(1,570)]; 
     Showframes2=Showframes1;
     Showframes3=Showframes1;
@@ -200,9 +200,10 @@ try
     NumFramesInterval3Hz=round(MeanTapInterval3Hz/(ifi*waitframes));  % on average 72 frames per stimulus 
     % condition 5
     Showframes5=[1:NumFramesInterval3Hz:NumFramesInterval3Hz*30 zeros(1,570)]; 
+    Showframes6=Showframes5;
     
     % combine all 6 conditions
-    Showframes=[Showframes1;Showframes2;Showframes3;Showframes4;Showframes5];
+    Showframes=[Showframes1;Showframes2;Showframes3;Showframes4;Showframes5;Showframes6];
 
     %% Setting time variables**********************************************
     % Length of one minute baseline
@@ -219,6 +220,9 @@ try
     FixCrX=[xCenter-round(screenYpixels/200):xCenter+round(screenYpixels/200)-1 repmat(xCenter,1,round(screenYpixels/100)+1)];
     FixCrY=[repmat(yCenter,1,round(screenYpixels/100)+1) yCenter-round(screenYpixels/200)+1:yCenter+round(screenYpixels/200)];
    
+    %% Take resting EEG
+    run restingEEG.m
+
     %% ############################### Loop through block
     % *******************************Loop through block
     for block=1:numBlock
@@ -264,8 +268,8 @@ try
             % Show trial and block number at the bottom
 %             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)...
 %                  ' \n Hit a key to continue'];
-            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials)  ...
-                 ' \n Hit a key to continue']; 
+            Showtrial=['    Read to tap?'...
+                 ' \n Hit a key to start']; 
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx','center','sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
             DrawFormattedText2(Showtrial,'win',windowPtr,...
@@ -307,20 +311,21 @@ try
 %             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
 
             if block ~= numBlock | t ~= numTrials % only bypass the last trial
-                % Show Resting
-                between_block_rest= 3; % in seconds
-                Resting = ['Take a rest for at least ' num2str(between_block_rest) ' s. \n Then hit a key to continue.'];
-                DrawFormattedText2(Resting,'win',windowPtr,...
-                    'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
-                DrawFormattedText2(Resting,'win',windowPtr,...
-                    'sx', xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
-                DrawFormattedText2(Resting,'win',windowPtr,...
-                    'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
-                vbl=Screen('Flip',windowPtr); 
-                % Rest 1 sec
-                pause(between_block_rest);
-                % hit a key to continue
-                KbStrokeWait;   
+                run IntervalResting.m
+%                 % Show Resting
+%                 between_block_rest= 3; % in seconds
+%                 Resting = ['Take a rest for at least ' num2str(between_block_rest) ' s. \n Experimentor hit a key to continue.'];
+%                 DrawFormattedText2(Resting,'win',windowPtr,...
+%                     'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+%                 DrawFormattedText2(Resting,'win',windowPtr,...
+%                     'sx', xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
+%                 DrawFormattedText2(Resting,'win',windowPtr,...
+%                     'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
+%                 vbl=Screen('Flip',windowPtr); 
+%                 % Rest 1 sec
+%                 pause(between_block_rest);
+%                 % hit a key to continue
+%                 KbStrokeWait;   
             end
 
         end

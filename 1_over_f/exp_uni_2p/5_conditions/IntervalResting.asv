@@ -1,21 +1,17 @@
 % time for resting EEG (EO=eye open; EC= eye close)
-TimeRestingEEG=150; % 2.5 min = 150 seconds 
+TimeRestingEEG=30; % 2.5 min = 150 seconds 
 numFramesRestEye=round (TimeRestingEEG/ifi); 
 
 %*************************************************************************
 % Start taking eye open and eye close resting stage EEG
-instructionStart=['Please look at the center of the screen and rest for ' num2str(TimeRestingEEG/60) ' min' '\n Experimenter hit a key to start'];
+instructionStart=['Take a rest for ' num2str(TimeRestingEEG/60) ' min' '\n Experimenter hit a key to start'];
 DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx', xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
+    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
 % hit a key to continue
 KbStrokeWait;
 Screen('Flip',windowPtr);% Reponse with a black screen
-pause(1); % given time to return the position of arm after key press 
+pause(2); % given time to return the position of arm after key press 
 
 % Flash photocells once at the start and end of eye open period 
 % Flash photocells once at the start of eye open period ###### (upper left and bottom right)
@@ -51,20 +47,14 @@ Screen('FillRect', windowPtr, white, RightBottomSquare);
 Screen('Flip',windowPtr);
 
 %****************************************************************************
-instructionStart=['Now close your eyes to rest for ' num2str(TimeRestingEEG/60) ...
-    ' min. %\n Open your eye when I tap on your shoulder.'...
-    '\n Experimenter hit a key to start']
+instructionStart=['Ready to continue?' '\n Experimenter hit a key to resume']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx', xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
+    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
 % hit a key to continue
 KbStrokeWait;
 Screen('Flip',windowPtr);% Response with a black screen
-pause(1); % given time to return the position of arm after key press 
+pause(2); % given time to return the position of arm after key press 
 
 % Flash photocells to mark the start and end of eye closed period 
 % Flash once to start ###### (upper left and bottom right)
@@ -101,13 +91,9 @@ end
 
 % ************************************************************************
 % show the end
-instructionStart=['Experimentor press a key to start after 3 second!'] % Tell subject to open eye and start
+instructionStart=['Press a key to start after 3 second!'] % Tell subject to open eye and start
 DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx', xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
+    'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
 Screen('Flip',windowPtr);
 % play a beep sound to signal subject to open eyes
 Beeper(400,0.9,1.5);
@@ -115,6 +101,6 @@ Beeper(400,0.9,1.5);
 % hit a key to continue
 KbStrokeWait;
 Screen('Flip',windowPtr);% Response with a black screen
-pause(1); % given time to return the position of arm after key press 
+pause(1.5); % given time to return the position of arm after key press 
 
 %*************************************************************************

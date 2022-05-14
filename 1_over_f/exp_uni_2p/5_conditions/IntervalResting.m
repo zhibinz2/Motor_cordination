@@ -1,10 +1,10 @@
 % time for resting EEG (EO=eye open; EC= eye close)
-TimeRestingEEG=150; % 2.5 min = 150 seconds 
+TimeRestingEEG=30; % 2.5 min = 150 seconds 
 numFramesRestEye=round (TimeRestingEEG/ifi); 
 
 %*************************************************************************
 % Start taking eye open and eye close resting stage EEG
-instructionStart=['Please look at the center of the screen and rest for ' num2str(TimeRestingEEG/60) ' min' '\n Experimenter hit a key to start'];
+instructionStart=['Take a rest for ' num2str(TimeRestingEEG/60) ' min' '\n Experimenter hit a key to start'];
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
 DrawFormattedText2(instructionStart,'win',windowPtr,...
@@ -51,9 +51,7 @@ Screen('FillRect', windowPtr, white, RightBottomSquare);
 Screen('Flip',windowPtr);
 
 %****************************************************************************
-instructionStart=['Now close your eyes to rest for ' num2str(TimeRestingEEG/60) ...
-    ' min. %\n Open your eye when I tap on your shoulder.'...
-    '\n Experimenter hit a key to start']
+instructionStart=['Ready to continue?' '\n Experimenter hit a key to resume']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
 DrawFormattedText2(instructionStart,'win',windowPtr,...
@@ -61,57 +59,6 @@ DrawFormattedText2(instructionStart,'win',windowPtr,...
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
 Screen('Flip',windowPtr);
-% hit a key to continue
-KbStrokeWait;
-Screen('Flip',windowPtr);% Response with a black screen
-pause(1); % given time to return the position of arm after key press 
-
-% Flash photocells to mark the start and end of eye closed period 
-% Flash once to start ###### (upper left and bottom right)
-Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-Screen('FillRect', windowPtr, white, RightBottomSquare);
-Screen('Flip',windowPtr);
-
-% get a timestamp and begin taking resting EEG
-vbl = Screen('Flip', windowPtr);
-i=1;
-while i<numFramesRestEye
-% If esc is press, break out of the while loop and close the screen
-    [keyIsDown, keysecs, keyCode] = KbCheck;
-    if keyCode(KbName('escape'))
-        Screen('CloseAll');
-        break;
-    end
-    % Flip the black screen
-    vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-    % update the while loop
-    i=i+1;
-end
-    
-
-% Flash photocells again to end ###### (upper left and bottom right)
-i=1;
-while i < 2;
-    Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
-    Screen('Flip',windowPtr);
-    i=i+1;
-end
-
-
-% ************************************************************************
-% show the end
-instructionStart=['Experimentor press a key to start after 3 second!'] % Tell subject to open eye and start
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx', xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
-DrawFormattedText2(instructionStart,'win',windowPtr,...
-    'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
-Screen('Flip',windowPtr);
-% play a beep sound to signal subject to open eyes
-Beeper(400,0.9,1.5);
-
 % hit a key to continue
 KbStrokeWait;
 Screen('Flip',windowPtr);% Response with a black screen

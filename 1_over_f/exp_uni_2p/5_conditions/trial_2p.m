@@ -40,12 +40,12 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
 
     %% draw labels for feedback and stimulus only in the center moniter
     % stimulus label
-    DrawFormattedText2('pacer','win',windowPtr,...
-    'sx',xCenter,'sy',yCenter-screenYpixels/15,'xalign','center','yalign','top','baseColor',color);
-    DrawFormattedText2('L','win',windowPtr,...
-    'sx',xCenter-screenYpixels/4,'sy',yCenter-screenYpixels/15,'xalign','center','yalign','top','baseColor',color);
-    DrawFormattedText2('R','win',windowPtr,...
-    'sx',xCenter+screenYpixels/4,'sy',yCenter-screenYpixels/15,'xalign','center','yalign','top','baseColor',color);
+%     DrawFormattedText2('pacer','win',windowPtr,...
+%     'sx',xCenter,'sy',yCenter-screenYpixels/15,'xalign','center','yalign','top','baseColor',color);
+%     DrawFormattedText2('L','win',windowPtr,...
+%     'sx',xCenter-screenYpixels/4,'sy',yCenter-screenYpixels/15,'xalign','center','yalign','top','baseColor',color);
+%     DrawFormattedText2('R','win',windowPtr,...
+%     'sx',xCenter+screenYpixels/4,'sy',yCenter-screenYpixels/15,'xalign','center','yalign','top','baseColor',color);
 
     %% Flash photocell every other second during the whole trial (bottom right)
     if (~isempty(find(([1:2:numFrames]==n)))) % every two frames
@@ -55,45 +55,49 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     
     %% show stimulus(pacer) and photocells on the top at the same time
     if any(Showframeselected(:) == n)
-        % Show the pacer stimulus
-        Screen('DrawDots', windowPtr, [xCenter;yCenter], screenYpixels/20, green, [0 0], 2); % center monitor
-         if (conditionSelected == 1) | (conditionSelected == 2) | (conditionSelected == 4)| (conditionSelected == 5)  
-            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20, green, [0 0], 2); % Left monitor
+        % Show the pacer 
+        Screen('FrameOval', windowPtr,green, [xCenter-screenYpixels/35 yCenter-screenYpixels/35 xCenter+screenYpixels/35 yCenter+screenYpixels/35],1,1); % green pacer
+         if (conditionSelected == 1) | (conditionSelected == 2) | (conditionSelected == 4)| (conditionSelected == 5) | (conditionSelected == 6) % shown on left
+            Screen('FrameOval', windowPtr,green, [xCenter-screenXpixels/3-screenYpixels/35 yCenter-screenYpixels/35 xCenter-screenXpixels/3+screenYpixels/35 yCenter+screenYpixels/35],1,1);
          end
-         if (conditionSelected == 1) | (conditionSelected == 3) | (conditionSelected == 4) | (conditionSelected == 5)  
-            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20, green, [0 0], 2); % Right monitor
+         if (conditionSelected == 1) | (conditionSelected == 3) | (conditionSelected == 4) | (conditionSelected == 5) | (conditionSelected == 6) % shown on right
+            Screen('FrameOval', windowPtr,green, [xCenter+screenXpixels/3-screenYpixels/35 yCenter-screenYpixels/35 xCenter+screenXpixels/3+screenYpixels/35 yCenter+screenYpixels/35],1,1);
          end
-        % Flash the photocell
+        % Flash the photocell to indicate the pacers
         Screen('FillRect', windowPtr, white, LeftUpperSquare);
-        Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001 for neuroScan
-        
+        Screen('FillRect', windowPtr, white, RightUpperSquare);    
     end
 
     
     %% Left Player
     % Left player  (read button press)
-    tic
     try
         % Left player
+        tic
         [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL); % extract first key press
+        toc
     catch
         % do nothing; % if no nothing is pressed or released continue to next loop without throwing error 
     end
     % read empty buffer and return function is time consuming
-    toc
     % Left player (leader, providing feedback)
     if pressedL1 ==1 %| pressedL2 == 1 % at least one key press detected in the frist two events of the previous buffer
+        detect_time=now;% XXXXXX
         % if RBkeyL1 == 3 %| RBkeyL2 == 3 % confirm it is the middle key on RB740
             % show feedback for the experimentor and the other paticipants
-            Screen('DrawDots', windowPtr, [xCenter-screenYpixels/4;yCenter], screenYpixels/20-2, red, [0 0], 2); % center monitor
+            Screen('DrawDots', windowPtr, [xCenter;yCenter], screenYpixels/20-2, red, [0 0], 2); % center monitor (left shift -screenYpixels/4)
             if (conditionSelected == 2) | (conditionSelected == 4) | (conditionSelected == 5) | (conditionSelected == 6) % show feedback
                 Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
+                % Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3*2 0 -screenXpixels/3*2 0]); % Left monitor XXXXX
+                % Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3 0 -screenXpixels/3 0]); % Middle monitor XXXXXX
+                % Screen('FillRect', windowPtr, white, LeftBottomSquare); % Left moniter XXXXXXX
             end
             % show bottomright photocell on the other side
             Screen('FillRect', windowPtr, white, RightBottomSquare); 
             % show leader player's own buttom press
             if (conditionSelected == 1) | (conditionSelected == 2) 
                 Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Left monitor
+                % Screen('FillRect', windowPtr, white, LeftBottomSquare); % Left moniter to check self feedback XXXXXXX
             end
             % update number of taps recorded
             tapsRecordedL=tapsRecordedL+1;
@@ -114,7 +118,7 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     if pressedR1 ==1 %| pressedR2 == 1  % at least one key press detected in the frist two events of the previous buffer
         % if RBkeyR1 == 3 %| RBkeyR2 == 3  % confirm it is the middle key on RB740
             % show feedback for for the experimentor and the other paticipants
-            Screen('DrawDots', windowPtr, [xCenter+screenYpixels/4;yCenter], screenYpixels/20-2, blue, [0 0], 2); % center monitor
+            Screen('DrawDots', windowPtr, [xCenter;yCenter], screenYpixels/20-2, blue, [0 0], 2); % center monitor (right shift +screenYpixels/4)
             if (conditionSelected == 3) | (conditionSelected == 4) | (conditionSelected == 5) | (conditionSelected == 6)
                 Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Left monitor
             end
@@ -133,6 +137,7 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
 %     fliptime=toc;
 %     fliptimes=[fliptimes fliptime];
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
+%     Screen('Flip', windowPtr);
 
     %% reset
     pressedL1=[]; RBkeyL1=[]; %portL1=[]; stampL1=[];
