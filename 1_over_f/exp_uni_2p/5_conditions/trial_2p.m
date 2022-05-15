@@ -58,8 +58,8 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
         % Show the pacer 
         Screen('FrameOval', windowPtr,green, [xCenter-screenYpixels/35 yCenter-screenYpixels/35 xCenter+screenYpixels/35 yCenter+screenYpixels/35],1,1); % green pacer
          if (conditionSelected == 1) | (conditionSelected == 2) | (conditionSelected == 4)| (conditionSelected == 5) | (conditionSelected == 6) % shown on left
-            Screen('FrameOval', windowPtr,green, [xCenter-screenXpixels/3-screenYpixels/35 yCenter-screenYpixels/35 xCenter-screenXpixels/3+screenYpixels/35 yCenter+screenYpixels/35],1,1);
-         end
+            Screen('FrameOval', windowPtr,green, [xCenter-screenXpixels/3-screenYpixels/35 yCenter-screenYpixels/35 xCenter-screenXpixels/3+screenYpixels/35 yCenter+screenYpixels/35],1,1);% mdidle
+            end
          if (conditionSelected == 1) | (conditionSelected == 3) | (conditionSelected == 4) | (conditionSelected == 5) | (conditionSelected == 6) % shown on right
             Screen('FrameOval', windowPtr,green, [xCenter+screenXpixels/3-screenYpixels/35 yCenter-screenYpixels/35 xCenter+screenXpixels/3+screenYpixels/35 yCenter+screenYpixels/35],1,1);
          end
@@ -73,9 +73,7 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     % Left player  (read button press)
     try
         % Left player
-        tic
-        [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL); % extract first key press
-        toc
+        [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL); % extract first key press  
     catch
         % do nothing; % if no nothing is pressed or released continue to next loop without throwing error 
     end
@@ -88,6 +86,7 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
             Screen('DrawDots', windowPtr, [xCenter;yCenter], screenYpixels/20-2, red, [0 0], 2); % center monitor (left shift -screenYpixels/4)
             if (conditionSelected == 2) | (conditionSelected == 4) | (conditionSelected == 5) | (conditionSelected == 6) % show feedback
                 Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
+                Screen('DrawDots', windowPtr, [xCenter-screenXpixels/30;yCenter], screenYpixels/20-2, red, [0 0], 2); % Middle monitor
                 % Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3*2 0 -screenXpixels/3*2 0]); % Left monitor XXXXX
                 % Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3 0 -screenXpixels/3 0]); % Middle monitor XXXXXX
                 % Screen('FillRect', windowPtr, white, LeftBottomSquare); % Left moniter XXXXXXX
@@ -121,6 +120,7 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
             Screen('DrawDots', windowPtr, [xCenter;yCenter], screenYpixels/20-2, blue, [0 0], 2); % center monitor (right shift +screenYpixels/4)
             if (conditionSelected == 3) | (conditionSelected == 4) | (conditionSelected == 5) | (conditionSelected == 6)
                 Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Left monitor
+                Screen('DrawDots', windowPtr, [xCenter+screenXpixels/30;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Middle monitor
             end
             % show bottomleft photocell on the other side
             Screen('FillRect', windowPtr, white, LeftBottomSquare);           

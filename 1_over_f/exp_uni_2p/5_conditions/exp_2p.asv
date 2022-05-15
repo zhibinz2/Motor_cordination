@@ -268,8 +268,8 @@ try
             % Show trial and block number at the bottom
 %             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)...
 %                  ' \n Hit a key to continue'];
-            Showtrial=['    Read to tap?'...
-                 ' \n Hit a key to start']; 
+            Showtrial=['     Read to tap?'...
+                 ' \n Experimenter hit a key to start']; 
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx','center','sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
             DrawFormattedText2(Showtrial,'win',windowPtr,...
@@ -311,20 +311,21 @@ try
 %             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
 
             if block ~= numBlock | t ~= numTrials % only bypass the last trial
-                % Show Resting
-                between_block_rest= 3; % in seconds
-                Resting = ['Take a rest for at least ' num2str(between_block_rest) ' s. \n Experimentor hit a key to continue.'];
-                DrawFormattedText2(Resting,'win',windowPtr,...
-                    'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
-                DrawFormattedText2(Resting,'win',windowPtr,...
-                    'sx', xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
-                DrawFormattedText2(Resting,'win',windowPtr,...
-                    'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
-                vbl=Screen('Flip',windowPtr); 
-                % Rest 1 sec
-                pause(between_block_rest);
-                % hit a key to continue
-                KbStrokeWait;   
+                run IntervalResting.m
+%                 % Show Resting
+%                 between_block_rest= 3; % in seconds
+%                 Resting = ['Take a rest for at least ' num2str(between_block_rest) ' s. \n Experimentor hit a key to continue.'];
+%                 DrawFormattedText2(Resting,'win',windowPtr,...
+%                     'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+%                 DrawFormattedText2(Resting,'win',windowPtr,...
+%                     'sx', xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
+%                 DrawFormattedText2(Resting,'win',windowPtr,...
+%                     'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
+%                 vbl=Screen('Flip',windowPtr); 
+%                 % Rest 1 sec
+%                 pause(between_block_rest);
+%                 % hit a key to continue
+%                 KbStrokeWait;   
             end
 
         end

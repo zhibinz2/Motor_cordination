@@ -1,10 +1,10 @@
 % time for resting EEG (EO=eye open; EC= eye close)
-TimeRestingEEG=150; % 2.5 min = 150 seconds 
-numFramesRestEye=round (TimeRestingEEG/ifi); 
+TimeRestingEEG=10; % 2.5 min = 150 seconds 
+numFramesRestEye=round (TimeRestingEEG/(ifi*waitframes)); 
 
 %*************************************************************************
 % Start taking eye open and eye close resting stage EEG
-instructionStart=['Please look at the center of the screen and rest for ' num2str(TimeRestingEEG/60) ' min' '\n Experimenter hit a key to start'];
+instructionStart=['Eyes open, rest for ' num2str(TimeRestingEEG/60) ' min' '\n Experimenter hit a key to start.'];
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
 DrawFormattedText2(instructionStart,'win',windowPtr,...
@@ -20,7 +20,7 @@ pause(1); % given time to return the position of arm after key press
 % Flash photocells once at the start and end of eye open period 
 % Flash photocells once at the start of eye open period ###### (upper left and bottom right)
 Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-Screen('FillRect', windowPtr, white, RightBottomSquare);
+Screen('FillRect', windowPtr, white, LeftUpperSquare);
 Screen('Flip',windowPtr);
 
 
@@ -37,6 +37,8 @@ while i<numFramesRestEye
     end
     % Show the fixation cross
     Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/400, white, [0 0], 2);
+    Screen('DrawDots', windowPtr, [FixCrX-screenXpixels/3;FixCrY], screenXpixels/400, white, [0 0], 2);
+    Screen('DrawDots', windowPtr, [FixCrX+screenXpixels/3;FixCrY], screenXpixels/400, white, [0 0], 2);
     % Show the central dot
     % Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
     % Flip the black screen
@@ -47,13 +49,13 @@ end
 
 % Flash photocells once to mark the end of open eye resting EEG collection ###### (upper left and bottom right)
 Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-Screen('FillRect', windowPtr, white, RightBottomSquare);
+Screen('FillRect', windowPtr, white, LeftUpperSquare);
 Screen('Flip',windowPtr);
 
 %****************************************************************************
-instructionStart=['Now close your eyes to rest for ' num2str(TimeRestingEEG/60) ...
-    ' min. %\n Open your eye when I tap on your shoulder.'...
-    '\n Experimenter hit a key to start']
+instructionStart=['Eyes closed, rest for ' num2str(TimeRestingEEG/60) ...
+    ' min. \n Eyes open when being tapped on the shoulder.'...
+    '\n Experimenter hit a key to start.']
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
 DrawFormattedText2(instructionStart,'win',windowPtr,...
@@ -69,7 +71,7 @@ pause(1); % given time to return the position of arm after key press
 % Flash photocells to mark the start and end of eye closed period 
 % Flash once to start ###### (upper left and bottom right)
 Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-Screen('FillRect', windowPtr, white, RightBottomSquare);
+Screen('FillRect', windowPtr, white, LeftUpperSquare);
 Screen('Flip',windowPtr);
 
 % get a timestamp and begin taking resting EEG
@@ -93,7 +95,7 @@ end
 i=1;
 while i < 2;
     Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-    Screen('FillRect', windowPtr, white, RightBottomSquare);
+    Screen('FillRect', windowPtr, white, LeftUpperSquare);
     Screen('Flip',windowPtr);
     i=i+1;
 end
@@ -101,7 +103,7 @@ end
 
 % ************************************************************************
 % show the end
-instructionStart=['Experimentor press a key to start after 3 second!'] % Tell subject to open eye and start
+instructionStart=['Experimentor hit a key to start!'] % Tell subject to open eye and start
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
 DrawFormattedText2(instructionStart,'win',windowPtr,...
