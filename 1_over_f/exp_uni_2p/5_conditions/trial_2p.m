@@ -1,9 +1,9 @@
 % run SuppressWarning.m 
 % Empty extra taps in the memory before the trial begin
-for i=1:10
+for i=1:100
     try
      [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL); % extract first key press  
-     [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL); % extract first key press  
+     [pressedR1, RBkeyR1]=readCedrusRB(deviceR, keymapR); % extract first key press  
     catch
         % do nothing
     end
