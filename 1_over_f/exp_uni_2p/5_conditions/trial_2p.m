@@ -1,4 +1,13 @@
 % run SuppressWarning.m 
+% Empty extra taps in the memory before the trial begin
+for i=1:10
+    try
+     [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL); % extract first key press  
+     [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL); % extract first key press  
+    catch
+        % do nothing
+    end
+end
 
 %initialize variables
 pressedL1=[]; RBkeyL1=[]; 
@@ -82,17 +91,18 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     if pressedL1 ==1 %| pressedL2 == 1 % at least one key press detected in the frist two events of the previous buffer
         detect_time=now;% XXXXXX
         % if RBkeyL1 == 3 %| RBkeyL2 == 3 % confirm it is the middle key on RB740
-            % show feedback for the experimentor and the other paticipants
+            % show feedback for the experimentor 
             Screen('DrawDots', windowPtr, [xCenter;yCenter], screenYpixels/20-2, red, [0 0], 2); % center monitor (left shift -screenYpixels/4)
+            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/30;yCenter], screenYpixels/20-2, red, [0 0], 2); % center monitor
+            % show bottomright photocell on the other side undercovered
+            Screen('FillRect', windowPtr, white, RightBottomSquare); 
+            % feedback to the other paticipants
             if (conditionSelected == 2) | (conditionSelected == 4) | (conditionSelected == 5) | (conditionSelected == 6) % show feedback
                 Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
-                Screen('DrawDots', windowPtr, [xCenter-screenXpixels/30;yCenter], screenYpixels/20-2, red, [0 0], 2); % Middle monitor
                 % Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3*2 0 -screenXpixels/3*2 0]); % Left monitor XXXXX
                 % Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3 0 -screenXpixels/3 0]); % Middle monitor XXXXXX
                 % Screen('FillRect', windowPtr, white, LeftBottomSquare); % Left moniter XXXXXXX
             end
-            % show bottomright photocell on the other side
-            Screen('FillRect', windowPtr, white, RightBottomSquare); 
             % show leader player's own buttom press
             if (conditionSelected == 1) | (conditionSelected == 2) 
                 Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Left monitor
@@ -116,14 +126,15 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     % Right player (leader, providing feedback)
     if pressedR1 ==1 %| pressedR2 == 1  % at least one key press detected in the frist two events of the previous buffer
         % if RBkeyR1 == 3 %| RBkeyR2 == 3  % confirm it is the middle key on RB740
-            % show feedback for for the experimentor and the other paticipants
+            % show feedback for the experimentor 
             Screen('DrawDots', windowPtr, [xCenter;yCenter], screenYpixels/20-2, blue, [0 0], 2); % center monitor (right shift +screenYpixels/4)
+            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/30;yCenter], screenYpixels/20-2, blue, [0 0], 2); % center monitor
+            % show bottomleft photocell on the other side undercovered
+            Screen('FillRect', windowPtr, white, LeftBottomSquare); 
+            % provide feedback stim to the left player 
             if (conditionSelected == 3) | (conditionSelected == 4) | (conditionSelected == 5) | (conditionSelected == 6)
                 Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Left monitor
-                Screen('DrawDots', windowPtr, [xCenter+screenXpixels/30;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Middle monitor
             end
-            % show bottomleft photocell on the other side
-            Screen('FillRect', windowPtr, white, LeftBottomSquare);           
             % show leader player's own buttom press
             if (conditionSelected == 1) | (conditionSelected == 3) 
                 Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Right monitor
@@ -150,3 +161,5 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     fliptime=toc;
     fliptimes=[fliptimes fliptime];
 end
+
+

@@ -1,6 +1,6 @@
 %% This version is 1 over f tapping for 2 person over an extended 3 monitors-window
 % There are 5 conditions
-
+cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/5_conditions
 sca; clc; close all; clear all; clearvars; 
 
 %% set keyboards
@@ -34,7 +34,7 @@ ConditionInstructions={'paced then uncouple'...
 
 % Block & Trial number of the experiment **********************************
 % number of taps per trial/condition
-numTaps=60; % 600 @@@@@@@@ 
+numTaps=600; % 600 @@@@@@@@ 
 % number of trials per block
 numTrials=6;
 % number of blocks
@@ -107,8 +107,8 @@ try
     % For help see: Screen Openwindow?
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
-    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3*60/59 330*40/33]); 
-%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
+%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3*60/59 330*40/33]); 
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
     % For help see: Screen windowSize?
@@ -357,4 +357,7 @@ end
 
 % save data
 % cd /home/hnl/Documents/GitHub/1overf/stimulus_data_storage
-% seed.mat
+cd /home/hnl/Acquisition/zhibin
+filename=[num2str(seed) '.mat'];
+save(filename);
+% cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/5_conditions

@@ -1,5 +1,5 @@
 % time for resting EEG (EO=eye open; EC= eye close)
-TimeRestingEEG=10; % 2.5 min = 150 seconds 
+TimeRestingEEG=150; % 2.5 min = 150 seconds @@@@@@@@@@@@@@@@@@@@@@@@@2
 numFramesRestEye=round (TimeRestingEEG/(ifi*waitframes)); 
 
 %*************************************************************************
@@ -36,9 +36,9 @@ while i<numFramesRestEye
         break;
     end
     % Show the fixation cross
-    Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenXpixels/400, white, [0 0], 2);
-    Screen('DrawDots', windowPtr, [FixCrX-screenXpixels/3;FixCrY], screenXpixels/400, white, [0 0], 2);
-    Screen('DrawDots', windowPtr, [FixCrX+screenXpixels/3;FixCrY], screenXpixels/400, white, [0 0], 2);
+    Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenYpixels/400, white, [0 0], 2);
+    Screen('DrawDots', windowPtr, [FixCrX-screenXpixels/3;FixCrY], screenYpixels/400, white, [0 0], 2);
+    Screen('DrawDots', windowPtr, [FixCrX+screenXpixels/3;FixCrY], screenYpixels/400, white, [0 0], 2);
     % Show the central dot
     % Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
     % Flip the black screen
