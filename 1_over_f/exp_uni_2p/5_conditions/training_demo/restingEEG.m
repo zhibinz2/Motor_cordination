@@ -1,5 +1,5 @@
 % time for resting EEG (EO=eye open; EC= eye close)
-TimeRestingEEG=150; % 2.5 min = 150 seconds @@@@@@@@@@@@@@@@@@@@@@@@@2
+TimeRestingEEG=5; % 2.5 min = 150 seconds @@@@@@@@@@@@@@@@@@@@@@@@@2
 numFramesRestEye=round (TimeRestingEEG/(ifi*waitframes)); 
 
 %*************************************************************************
@@ -128,7 +128,7 @@ DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
-Screen('TextSize',windowPtr, 10); % font size
+Screen('TextSize',windowPtr, 10); % reset font size
 instructionStart=['Experimenter hit a key to continue.'];
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', 'center','sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);

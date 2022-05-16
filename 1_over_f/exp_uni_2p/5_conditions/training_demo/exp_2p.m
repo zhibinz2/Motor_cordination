@@ -1,6 +1,6 @@
 %% This version is 1 over f tapping for 2 person over an extended 3 monitors-window
 % There are 5 conditions
-
+cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/5_conditions/training_demo
 sca; clc; close all; clear all; clearvars; 
 
 %% set keyboards
@@ -25,12 +25,13 @@ AssertOpenGL;
 %% Set trial conditions ****************************************************
 conditions = [1 2 3 4 5 6];
 conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-2Hz' 'mutual-3Hz' 'mutual-faster'};  % conditionNames{1}
-ConditionInstructions={'paced then uncouple'... 
-    'paced then follow L'...
-    'paced then follow R'...
-    'paced then coordinate at 2Hz'...
-    'paced then coordinate at 3Hz'...
-    'paced then coordinate as fast as you can'}; 
+%conditionNames={'uncoupled-2Hz' 'L-lead-2Hz' 'R-lead-2Hz' 'mutual-2Hz' 'mutual-3Hz' 'mutual-3Hz-faster'};  % conditionNames{1}
+ConditionInstructions={'Tap on your own.'... %  \nPacer 2Hz.
+    'Follow player L in red.'... %  \nPacer 2Hz
+    'Follow player R in blue.'... % \nPacer 2Hz
+    'Syn with each other.\nPacer start at 2Hz'... % 
+    'Syn with each other faster.\nPacer start at 3Hz'... % \nPacer 2Hz
+    'Syn with each other as fast as you can.\nPacer start at 3Hz'}; 
 
 % Block & Trial number of the experiment **********************************
 % number of taps per trial/condition
@@ -265,18 +266,16 @@ try
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx',xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',color);
 
-            % Show trial and block number at the bottom
-%             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)...
-%                  ' \n Hit a key to continue'];
-            Showtrial=['         Read to tap?'...
-                 ' \n Experimenter hit a key to start']; 
+            Screen('TextSize',windowPtr, 10); % smaller size font
+            Showtrial=['Read to tap?'...
+                 '\nExperimenter hit a key to continue.']; 
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx','center','sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx',xCenterL,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx',xCenterR,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
-
+            Screen('TextSize',windowPtr, 18); % reset default font size
             Screen('Flip', windowPtr);
             pause(1); 
             % hit a key to continue
@@ -333,7 +332,7 @@ try
     end
 % initials trial frame number
 % Show The End
-TheEnd = ['The End'];
+TheEnd = ['The End. /nThank you!'];
 DrawFormattedText2(TheEnd,'win',windowPtr,...
     'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
 DrawFormattedText2(TheEnd,'win',windowPtr,...
@@ -355,6 +354,9 @@ catch
 end  
 
 
-% save data
+%% save data
 % cd /home/hnl/Documents/GitHub/1overf/stimulus_data_storage
-% seed.mat
+% cd /home/hnl/Acquisition/zhibin
+% filename=[num2str(seed) '.mat'];
+% save(filename);
+% cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/5_conditions

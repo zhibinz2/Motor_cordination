@@ -1,5 +1,5 @@
 
-   % DrawHighQualityUnicodeTextDemo
+% DrawHighQualityUnicodeTextDemo
 %
 % This demo shows how to draw high-quality, anti-aliased text, and some
 % japanese text encoded in Unicode.

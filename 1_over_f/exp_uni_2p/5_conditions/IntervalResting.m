@@ -3,15 +3,24 @@ TimeRestingEEG=30; % 30 seconds @@@@@@@@@@@@@@@@@@@@@@@@@@@@2
 numFramesRestEye=round (TimeRestingEEG/(ifi*waitframes)); 
 
 %*************************************************************************
-% Start taking eye open and eye close resting stage EEG
-instructionStart=['Eye open, rest for ' num2str(TimeRestingEEG/60) ' min' '\n Experimenter hit a key to start'];
+% Start taking eye open resting stage EEG
+instructionStart=['Rest with eyes open for ' num2str(TimeRestingEEG/60) ' min'];
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
+Screen('TextSize',windowPtr, 10); % reset font size
+instructionStart=['Experimenter hit a key to continue.'];
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx', 'center','sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx', xCenterL,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx', xCenterR,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
 Screen('Flip',windowPtr);
+Screen('TextSize',windowPtr, 18); % reset font size to default
 % hit a key to continue
 KbStrokeWait;
 Screen('Flip',windowPtr);% Reponse with a black screen
@@ -53,13 +62,23 @@ Screen('FillRect', windowPtr, white, LeftUpperSquare);
 Screen('Flip',windowPtr);
 
 %****************************************************************************
-instructionStart=['        Ready to continue?' '\n Experimenter hit a key to resume.']
+Screen('TextSize',windowPtr, 18);
+instructionStart=['Ready to continue?'];
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
 DrawFormattedText2(instructionStart,'win',windowPtr,...
     'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
+Screen('TextSize',windowPtr, 10);
+instructionStart=['Experimenter hit a key to continue.'];
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx', 'center','sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx', xCenterL,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
+DrawFormattedText2(instructionStart,'win',windowPtr,...
+    'sx', xCenterR,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
+Screen('TextSize',windowPtr, 18);
 Screen('Flip',windowPtr);
 % hit a key to continue
 KbStrokeWait;

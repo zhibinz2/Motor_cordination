@@ -3,13 +3,16 @@
 
 %% to Set Your Monitor Resolution
 !xrandr --output DVI-D-0 --mode 1920x1080
+
+!xrandr --output DP-0 --mode 1920x1080
+!xrandr --output DP-2 --mode 1920x1080
+!xrandr --output DP-6 --mode 1920x1080
 %% Set 3 monitors of the same in mirror mode
 % For hnlstim2:
 % The physical arrangement of the 3 monitors is as follow:
 % DP-0 on the left; DP-2 (main) in the middle; DP-6 on the right;
 % Don't disconnect the current DP ports! 
 % Because the DP number changes every time they are reconnected!
-
 !xrandr --output DP-0 --same-as DP-2
 !xrandr --output DP-6 --same-as DP-2
 

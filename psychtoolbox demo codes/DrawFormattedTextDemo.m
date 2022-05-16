@@ -1,12 +1,3 @@
-
-
-
-
-
-
-
-
-
 % DrawFormattedTextDemo
 %
 % Draws lots of formatted text, shows how to center text vertically and/or
