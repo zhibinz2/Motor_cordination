@@ -35,14 +35,11 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     end
         
     %% draw instruction for each trial / condition with different color
-    % for experimentor
     DrawFormattedText2(ConditionInstructions{conditionSelected},'win',windowPtr,...
     'sx','center','sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',color);
-    % for player L
-    DrawFormattedText2(ConditionInstructionsL{conditionSelected},'win',windowPtr,...
+    DrawFormattedText2(ConditionInstructions{conditionSelected},'win',windowPtr,...
     'sx',xCenterL,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',color);
-    % for player R
-    DrawFormattedText2(ConditionInstructionsR{conditionSelected},'win',windowPtr,...
+    DrawFormattedText2(ConditionInstructions{conditionSelected},'win',windowPtr,...
     'sx',xCenterR,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',color);
 
     %% draw fixation crosses on 3 monitors (different color in each condition)
@@ -109,7 +106,7 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
                 Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
             end
 
-            if (conditionSelected == 4)
+            if (conditionSelected == 4) | (conditionSelected == 5) 
                 if (n < NumFramesInterval2Hz*30) | (n == NumFramesInterval2Hz*30) % feed to oneself
                     Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Left monitor
                 end
@@ -118,13 +115,9 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
                 end
             end
 
-            if (conditionSelected == 5) | (conditionSelected == 6)
-                if (n < NumFramesInterval3Hz*30) | (n == NumFramesInterval3Hz*30) % feed to oneself
-                    Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Left monitor
-                end
-                if n > NumFramesInterval3Hz*30 % feed to the other
-                    Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
-                end
+            if (conditionSelected == 6)
+                NumFramesInterval3Hz*30
+
             end
 
             % update number of taps recorded
@@ -177,6 +170,7 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
                 if n > NumFramesInterval3Hz*30 % feed to the other
                     Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
                 end
+
             end
 
             % update number of taps recorded

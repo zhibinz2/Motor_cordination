@@ -8,14 +8,14 @@
 !xrandr --output DP-2 --mode 1920x1080
 !xrandr --output DP-6 --mode 1920x1080
 
-!xrandr --output DP-0 --mode 1920x1080 --pos 0x0 --output DP-2 --mode 1920x1080 --primary --pos 1920x0 --output DP-6 --mode 1600x900 --pos 3840x0
+%!xrandr --output DP-0 --mode 1920x1080 --pos 0x0 --output DP-2 --mode 1920x1080 --primary --pos 1920x0 --output DP-6 --mode 1600x900 --pos 3840x0
 
 %% Turn off screen panning
 !xrandr --output DP-0 --panning 0x0+0+0
 !xrandr --output DP-2 --panning 0x0+0+0
 !xrandr --output DP-6 --panning 0x0+0+0
 
-!xrandr --fb 6400x1600 --output "DP-0" --mode 1920x1080 --panning 0x0 --output DP-0 --mode 1920x1080 --panning 0x0 --left-of DP-2  --output DP-6 --mode 1920x1080 --panning 0x0 --right-of DP-2
+%!xrandr --fb 6400x1600 --output "DP-0" --mode 1920x1080 --panning 0x0 --output DP-0 --mode 1920x1080 --panning 0x0 --left-of DP-2  --output DP-6 --mode 1920x1080 --panning 0x0 --right-of DP-2
 
 %% Set 3 monitors of the same in mirror mode
 % For hnlstim2:
