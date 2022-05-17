@@ -58,7 +58,7 @@ for i=1:16
 end
 
 
-%%
+%% SVD and single trial estimate
 % remove 3 prefrontal channels
 tapTrial_erp=mean(tapTrial_data(:,4:32,:),3);
 % tapTrial_erp=mean(tapTrial_data(:,1:32,:),3);
@@ -141,20 +141,22 @@ for i=1:16
     subplot(4,4,i)
     plot(stimTrial_erp_estimate_trial(:,i));
     title(['trial' num2str(i)]); xline(2000,'m',{'task'});
-    hold on; xline(minimal_inds(i),'k',{'minima'});
+    hold on; %xline(minimal_inds(i),'k',{'minima'});
+    xline(find(BPTrials_synchronization(:,i)==1),'k',{'response'}); % the buttom press
 end
 suptitle('single trial estimate of ERP < 8 Hz(x -1*V(:,1), look for negative peaks)');
 
 % % Examine the single trial estimate (take time)
-% close; figure('units','normalized','outerposition',[0 0 1 1]);
-% for i=1:240
-%     subplot(15,16,i)
-%     plot(stimTrial_erp_estimate_trial(:,i));
-%     title(['trial' num2str(i)]); 
-%     xline(2000,'m');
-%     xline(minimal_inds(i),'k');
-% end
-% suptitle('single trial estimate of ERP (multiply with -1*V(:,1), look for negative peaks)');
+close; figure('units','normalized','outerposition',[0 0 1 1]);
+for i=1:240
+    subplot(15,16,i)
+    plot(stimTrial_erp_estimate_trial(:,i));
+    title(['trial' num2str(i)]); 
+    xline(2000,'m');
+    % xline(minimal_inds(i),'k');
+    xline(find(BPTrials_synchronization(:,i)==1),'k',{'response'}); % the buttom press
+end
+suptitle('single trial estimate of ERP (multiply with -1*V(:,1), look for negative peaks)');
 
 %% 3 plots
 y=error/2000;

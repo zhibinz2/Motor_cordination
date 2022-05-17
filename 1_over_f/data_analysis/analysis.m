@@ -185,6 +185,11 @@ plot(PresInd,ones(1,length(PresInd)),'ro'); % look at the above Index (one press
 threshold = NumFramesInterval*ifi*sr/4; % determine a threshold of key press interval
 BottonPresTimeInd=PresInd(find([1 diff(PresInd')>threshold])); % exact index of key press onset in datatimes (reduce several indices into one)
 
+% create a time series that assign botton presses as 1, all other as 0
+BottonPresTime01=zeros(size(time));
+BottonPresTime01(BottonPresTimeInd)=1;
+plot(BottonPresTime01)
+
 %% Examine photocell amd botton presses timing
 PhotocellTime=locs; % locs are values in time
 BottonPressTime=time(BottonPresTimeInd);

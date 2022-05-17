@@ -13,7 +13,37 @@ Path_filenameL=[pwd '/' EEGfileNameL];
 Path_filenameR=[pwd '/' EEGfileNameR];
 [timeR,samplesR,TRIGGERindR,srR,channels_infoR] = LoadTMSi(Path_filenameR);
 
-% Extract Trigger info
+
+%% check bottom-right photocell light detector
+labelsL=channels_infoL.labels;
+% look for the second ISO aux channel for the photocell 
+ISOauxind1=find(labelsL=='AUX 1-1');% ISO aux
+ISOauxind2=find(labelsL=='AUX 1-2');
+ISOauxind=find(labelsL=='ISO aux')
+% plot(samples(38,:),'b'); %  ISO aux = analog
+% examine
+figure;subplot(2,1,1);
+plot(samplesL(35,:)','r'); title('ISOauxind1')%  ISO aux = analog
+subplot(2,1,2);
+plot(samplesL(36,:)','b'); title('ISOauxind2')
+% select a good one
+ISOauxind=ISOauxind1;
+
+% labelsR=channels_infoR;
+% % look for the second ISO aux channel for the photocell 
+% ISOauxind1=find(labelsR=='AUX 1-1');
+% ISOauxind2=find(labelsR=='AUX 1-2');
+% % plot(samples(38,:),'b'); %  ISO aux = analog
+% % examine
+% figure;subplot(2,1,1);
+% plot(samplesR(ISOauxind1,:)','r'); title('ISOauxind1')%  ISO aux = analog
+% subplot(2,1,2);
+% plot(samplesR(ISOauxind2,:)','b'); title('ISOauxind2')
+% % select a good one
+% ISOauxind=ISOauxind1;
+
+
+%% Extract Trigger info
 TriggersL=samplesL(TRIGGERindL,:)';unique(TriggersL)
 TriggersR=samplesR(TRIGGERindR,:)';unique(TriggersR)
 % feedback from other = 251 (255-2^2); 
@@ -24,11 +54,12 @@ figure;plot(TriggersL,'ro');hold on;plot(TriggersR,'bo');hold off; % examine (no
 % find the first photocell and align Left and Right in time
 TriggersL(find(TriggersL== 255)) = 0; % replace 255 with 0
 indL=find(TriggersL == 127); % photocell indices
-plot(TriggersL,'ro');xline(indL(1));
+figure;plot(TriggersL,'ro');xline(indL(1));
 TriggersL=TriggersL(indL(1):end);plot(TriggersL,'ro');% Update TriggersL: chop off the head before first photocell;
+
 TriggersR(find(TriggersR== 255)) = 0; % replace 255 with 0
 indR=find(TriggersR == 127); % photocell indices
-plot(TriggersR,'bo');xline(indR(1));
+figure;plot(TriggersR,'bo');xline(indR(1));
 TriggersR=TriggersR(indR(1):end);plot(TriggersR,'bo'); % Update TriggersL: chop off the head before first photocell;
 
 % align with the first phtocell and examine
@@ -36,16 +67,16 @@ figure('units','normalized','outerposition',[0 0 1 0.6]);
 subplot(2,1,1);
 plot(TriggersL,'ro');
 title('Left Player, 127=stimulus, 239=self, 251=feedback');
-xlim([0 3e5]); 
+xlim([0 0.4e5]); 
 subplot(2,1,2);
 plot(TriggersR,'bo');
 title('Right Player, 127=stimulus, 239=self, 251=feedback');
-xlim([0 3e5]);
+xlim([0 0.4e5]);
 
 % align with the first phtocell and examine
 figure('units','normalized','outerposition',[0 0 1 0.6]);
 plot(TriggersL,'ro');
-xlim([0 3e5]); 
+xlim([0 0.4e5]); 
 hold on;
 plot(TriggersR,'b.');
 title('Left Player (red), Right Player (blue), 127=stimulus, 239=self, 251=feedback');
@@ -65,8 +96,7 @@ xlabel('time (0.5 ms / sample)');
 string(x)
 ind1=round(x(1))
 ind2=round(x(2))
-(ind1-ind2)/srL % delay in second
-
+(ind1-ind2)/srL % delay in ms
 
 %% Local function
 % https://www.mathworks.com/help/matlab/matlab_prog/local-functions-in-scripts.html

@@ -605,6 +605,13 @@ for i=1:240
     stimTrials_synchronization(:,:,i)=mixedsig(:,(ind-sr):(ind+sr-1))';
 end
 stimTrials_synchronization;
+% synchronization condition (segment botton presses 01 time series)
+BPTrials_synchronization=zeros(Trial_Length,numTrial);
+for i=1:240
+    ind=PhotocellTimeInd(ind1+i-1);% index for the stimulus
+    BPTrials_synchronization(:,i)=BottonPresTime01((ind-sr):(ind+sr-1));
+end
+
 
 % syncopation condition
 ind1=4+240*(find(allPerm==2)-1)+1; % first stimulus in time
