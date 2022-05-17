@@ -1,12 +1,14 @@
 % run SuppressWarning.m 
 % Empty extra taps in the memory before the trial begin
-for i=1:100
+i=1;
+while i<100
     try
-     [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL); % extract first key press  
-     [pressedR1, RBkeyR1]=readCedrusRB(deviceR, keymapR); % extract first key press  
+     [pressedL1, RBkeyL1]=readCedrusRB(deviceL, keymapL);% extract first key press  
+     [pressedR1, RBkeyR1]=readCedrusRB(deviceR, keymapR);% extract first key press  
     catch
         % do nothing
     end
+    i=i+1;
 end
 
 %initialize variables
@@ -15,7 +17,7 @@ pressedL2=[]; RBkeyL2=[];
 pressedR1=[]; RBkeyR1=[];
 pressedR2=[]; RBkeyR2=[]; 
 
-fliptimes=[];
+% fliptimes=[];
 
 % initial or reset trial frame number
 n=1;
@@ -23,7 +25,7 @@ n=1;
 % initialized number of taps recorded
 tapsRecordedL=0;tapsRecordedR=0;
 
-numFrames = max(Showframeselected); % +NumFramesInterval2Hz*600*3; % add numFrames to allow more time
+numFrames = NumFramesInterval2Hz*60*3; % add numFrames to allow more time
 
 while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) % either one reach 600 taps  @@@@@@@@
     tic
@@ -157,25 +159,25 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
             end
 
             % provide feedback stim to the other player 
-            if (conditionSelected == 3) | (conditionSelected == 4) | (conditionSelected == 5) | (conditionSelected == 6)
+            if (conditionSelected == 3)
                 Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Left monitor
             end
             
             if (conditionSelected == 4) 
                 if (n < NumFramesInterval2Hz*30) | (n == NumFramesInterval2Hz*30) % feed to oneself
-                    Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Left monitor
+                    Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Left monitor
                 end
                 if n > NumFramesInterval2Hz*30 % feed to the other
-                    Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
+                    Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Right monitor
                 end
             end
             
             if (conditionSelected == 5) | (conditionSelected == 6)
                 if (n < NumFramesInterval3Hz*30) | (n == NumFramesInterval3Hz*30) % feed to oneself
-                    Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Left monitor
+                    Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Left monitor
                 end
                 if n > NumFramesInterval3Hz*30 % feed to the other
-                    Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
+                    Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Right monitor
                 end
             end
 
@@ -198,6 +200,6 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
 
     % update n
     n = n+1;
-    fliptime=toc;
-    fliptimes=[fliptimes fliptime];
+    % fliptime=toc;
+    % fliptimes=[fliptimes fliptime];
 end

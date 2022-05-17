@@ -1,5 +1,6 @@
 %% This version is 1 over f tapping for 2 person over an extended 3 monitors-window
 % There are 5 conditions
+% This is the full length version
 cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/5_conditions
 sca; clc; close all; clear all; clearvars; 
 
@@ -25,13 +26,23 @@ AssertOpenGL;
 %% Set trial conditions ****************************************************
 conditions = [1 2 3 4 5 6];
 conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-2Hz' 'mutual-3Hz' 'mutual-faster'};  % conditionNames{1}
-%conditionNames={'uncoupled-2Hz' 'L-lead-2Hz' 'R-lead-2Hz' 'mutual-2Hz' 'mutual-3Hz' 'mutual-3Hz-faster'};  % conditionNames{1}
-ConditionInstructions={'Tap on your own.'... %  \nPacer 2Hz.
-    'Follow player L in red.'... %  \nPacer 2Hz
-    'Follow player R in blue.'... % \nPacer 2Hz
-    'Syn with each other.\nPacer start at 2Hz'... % 
-    'Syn with each other faster.\nPacer start at 3Hz'... % \nPacer 2Hz
-    'Syn with each other as fast as you can.\nPacer start at 3Hz'}; 
+% conditionNames={'uncoupled-2Hz' 'L-lead-2Hz' 'R-lead-2Hz' 'mutual-2Hz' 'mutual-3Hz' 'mutual-3Hz-faster'};  % conditionNames{1}
+% Instruction for the experimentor
+ConditionInstructions={'uncoupled-2Hz' 'L-lead-2Hz' 'R-lead-2Hz' 'mutual-2Hz' 'mutual-3Hz' 'mutual-3Hz-faster'}; 
+% Instruction for the left player
+ConditionInstructionsL={'Tap on your own.\nPacer start at 2Hz.'... %  \nPacer 2Hz.
+    'Tap on your own.\nPacer start at 2Hz.'... %  \nPacer 2Hz
+    'Syn with player R in blue.'... % \nPacer 2Hz
+    'Pacer start at 2Hz.\nThen syn with each other.'... % 
+    'Pacer start at 3Hz.\nThen syn with each other.'... % \nPacer 2Hz
+    'Pacer start at 3Hz.\nThen syn with each other as fast as you can.'}; 
+% Instruction for the right player
+ConditionInstructionsR={'Tap on your own.\nPacer start at 2Hz.'... %  \nPacer 2Hz.
+    'Syn with player L in red.'... %  \nPacer 2Hz
+    'Tap on your own.\nPacer start at 2Hz.'... % \nPacer 2Hz
+    'Pacer start at 2Hz.\nThen syn with each other.'... % 
+    'Pacer start at 3Hz.\nThen syn with each other.'... % \nPacer 2Hz
+    'Pacer start at 3Hz.\nThen syn with each other as fast as you can.'}; 
 
 % Block & Trial number of the experiment **********************************
 % number of taps per trial/condition
@@ -253,18 +264,21 @@ try
                 color = blue;
             elseif conditionSelected == 4
                 color = megenta;
-            else conditionSelected == 5
+            else (conditionSelected == 5) | (conditionSelected == 6) 
                 color = purple;
             end
 
             % show instruction for each trial / condition
-            ShowCondition=[ConditionInstructions{conditionSelected}];
+            ShowCondition=[ConditionInstructions{conditionSelected}]; % Center monitor
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
+            ShowCondition=[ConditionInstructionsL{conditionSelected}]; % Left monitor
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx',xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',color);
+            ShowCondition=[ConditionInstructionsR{conditionSelected}]; % Right monitor
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx',xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',color);
+            
             Screen('TextSize',windowPtr, 10); % smaller size font
             Showtrial=['Read to tap?'...
                  '\nExperimenter hit a key to continue.']; 

@@ -1,5 +1,5 @@
 % time for resting EEG (EO=eye open; EC= eye close)
-TimeRestingEEG=5; % 30 seconds @@@@@@@@@@@@@@@@@@@@@@@@@@@@2 
+TimeRestingEEG=3; % 30 seconds @@@@@@@@@@@@@@@@@@@@@@@@@@@@2 
 numFramesRestEye=round (TimeRestingEEG/(ifi*waitframes)); 
 
 %*************************************************************************

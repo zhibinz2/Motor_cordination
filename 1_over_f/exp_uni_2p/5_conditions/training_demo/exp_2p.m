@@ -1,5 +1,6 @@
 %% This version is 1 over f tapping for 2 person over an extended 3 monitors-window
 % There are 5 conditions
+% This is the demo version
 cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/5_conditions/training_demo
 sca; clc; close all; clear all; clearvars; 
 
@@ -263,16 +264,18 @@ try
                 color = blue;
             elseif conditionSelected == 4
                 color = megenta;
-            else conditionSelected == 5
+            else (conditionSelected == 5) | (conditionSelected == 6) 
                 color = purple;
             end
 
             % show instruction for each trial / condition
-            ShowCondition=[ConditionInstructions{conditionSelected}];
+            ShowCondition=[ConditionInstructions{conditionSelected}]; % Center monitor
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
+            ShowCondition=[ConditionInstructionsL{conditionSelected}]; % Left monitor
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx',xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',color);
+            ShowCondition=[ConditionInstructionsR{conditionSelected}]; % Right monitor
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx',xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',color);
 

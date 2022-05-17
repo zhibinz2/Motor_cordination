@@ -1,5 +1,5 @@
 % time for resting EEG (EO=eye open; EC= eye close)
-TimeRestingEEG=5; % 2.5 min = 150 seconds @@@@@@@@@@@@@@@@@@@@@@@@@2
+TimeRestingEEG=3; % 2.5 min = 150 seconds @@@@@@@@@@@@@@@@@@@@@@@@@2
 numFramesRestEye=round (TimeRestingEEG/(ifi*waitframes)); 
 
 %*************************************************************************
@@ -139,7 +139,7 @@ DrawFormattedText2(instructionStart,'win',windowPtr,...
 Screen('Flip',windowPtr);
 Screen('TextSize',windowPtr, 18); % reset font size to default
 % play a beep sound to signal subject to open eyes
-Beeper(400,0.9,1.5);
+Beeper(400,0.9,0.5);
 
 % hit a key to continue
 KbStrokeWait;
