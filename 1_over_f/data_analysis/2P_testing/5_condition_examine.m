@@ -116,10 +116,6 @@ ind2=round(x(2))
 (ind1-ind2)/srL % delay in ms
 
 %% Align and Only plot the diff (color code with player)
-plot(TriggersL==239);ylim([0 2]);
-
-
-
 
 figure('units','normalized','outerposition',[0 0 1 0.6]);
 hold on;
@@ -143,3 +139,32 @@ string(x)
 ind1=round(x(1))
 ind2=round(x(2))
 (ind1-ind2)/srL % delay in ms
+
+
+%% plot the buttom press intervals
+plot(TriggersL==239);ylim([0 2]);
+BoL=(TriggersL==239);%boolean array: true values when there are button presses
+pressIndL=find([0;diff(BoL)]==1); % take each button press onset
+pressIntervalsL=[pressIndL(1);diff(pressIndL)]; 
+figure;plot(pressIntervalsL,'r');
+ylim([0 3000]);
+
+plot(TriggersR==239);ylim([0 2]);
+BoR=(TriggersR==239);%boolean array: true values when there are button presses
+pressIndR=find([0;diff(BoR)]==1); % take each button press onset
+pressIntervalsR=[pressIndR(1);diff(pressIndR)]; 
+figure;plot(pressIntervalsR,'b');
+ylim([0 3000]);
+
+figure;
+plot(pressIntervalsL,'r');
+hold on;
+plot(pressIntervalsR,'b');
+hold off;ylim([0 3000]);
+
+figure;
+subplot(2,1,1);
+plot((TriggersL==239),'r');
+subplot(2,1,2);
+plot((TriggersR==239),'b');
+ylim([0 2]);
