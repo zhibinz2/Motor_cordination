@@ -25,7 +25,7 @@ n=1;
 % initialized number of taps recorded
 tapsRecordedL=0;tapsRecordedR=0;
 
-numFrames = NumFramesInterval2Hz*600*3; % add numFrames to allow more time
+numFrames = NumFramesInterval2Hz*60*3; % add numFrames to allow more time
 
 while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) % either one reach 600 taps  @@@@@@@@
     tic
@@ -67,13 +67,13 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3 0 -screenXpixels/3 0]); % Middle monitor
     end
     
-    %% show stimulus(pacer) and photocells on the top at the same time
+    %% show the Pacers and photocells on the top at the same time
     if any(Showframeselected(:) == n)
         % Show the pacer 
         Screen('FrameOval', windowPtr,green, [xCenter-screenXpixels/24-screenYpixels/35 yCenter-screenYpixels/35 xCenter-screenXpixels/24+screenYpixels/35 yCenter+screenYpixels/35],1,1); % green pacer center left
         Screen('FrameOval', windowPtr,green, [xCenter+screenXpixels/24-screenYpixels/35 yCenter-screenYpixels/35 xCenter+screenXpixels/24+screenYpixels/35 yCenter+screenYpixels/35],1,1); % green pacer center right
          if (conditionSelected == 1) | (conditionSelected == 2) | (conditionSelected == 4)| (conditionSelected == 5) | (conditionSelected == 6) % shown on left
-            Screen('FrameOval', windowPtr,green, [xCenter-screenXpixels/3-screenYpixels/35 yCenter-screenYpixels/35 xCenter-screenXpixels/3+screenYpixels/35 yCenter+screenYpixels/35],1,1);
+            Screen('FrameOval', windowPtr,green, [xCenter-screenXpixels/3-screenYpixels/35 yCenter-screenYpixels/35 xCenter-screenXpixels/3+screenYpixels/35 yCenter+screenYpixels/35],1,1);% mdidle
             end
          if (conditionSelected == 1) | (conditionSelected == 3) | (conditionSelected == 4) | (conditionSelected == 5) | (conditionSelected == 6) % shown on right
             Screen('FrameOval', windowPtr,green, [xCenter+screenXpixels/3-screenYpixels/35 yCenter-screenYpixels/35 xCenter+screenXpixels/3+screenYpixels/35 yCenter+screenYpixels/35],1,1);

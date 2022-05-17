@@ -1,6 +1,7 @@
 %% This version is 1 over f tapping for 2 person over an extended 3 monitors-window
 % There are 5 conditions
-
+% This is the full length version
+cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/5_conditions
 sca; clc; close all; clear all; clearvars; 
 
 %% set keyboards
@@ -24,17 +25,28 @@ AssertOpenGL;
 
 %% Set trial conditions ****************************************************
 conditions = [1 2 3 4 5 6];
-conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-2Hz' 'mutual-3Hz' 'mutual-fast'};  % conditionNames{1}
-ConditionInstructions={'paced then uncouple'...
-    'paced then follow L'...
-    'paced then follow R'...
-    'paced then coordinate at 2Hz'...
-    'paced then coordinate at 3Hz'...
-    'paced then coordinate as fast as you can'}; 
+conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-2Hz' 'mutual-3Hz' 'mutual-faster'};  % conditionNames{1}
+% conditionNames={'uncoupled-2Hz' 'L-lead-2Hz' 'R-lead-2Hz' 'mutual-2Hz' 'mutual-3Hz' 'mutual-3Hz-faster'};  % conditionNames{1}
+% Instruction for the experimentor
+ConditionInstructions={'uncoupled-2Hz' 'L-lead-2Hz' 'R-lead-2Hz' 'mutual-2Hz' 'mutual-3Hz' 'mutual-3Hz-faster'}; 
+% Instruction for the left player
+ConditionInstructionsL={'Tap on your own.\nPacer start at 2Hz.'... %  \nPacer 2Hz.
+    'Tap on your own.\nPacer start at 2Hz.'... %  \nPacer 2Hz
+    'Syn with player R in blue.'... % \nPacer 2Hz
+    'Pacer start at 2Hz.\nThen syn with each other.'... % 
+    'Pacer start at 3Hz.\nThen syn with each other.'... % \nPacer 2Hz
+    'Pacer start at 3Hz.\nThen syn with each other as fast as you can.'}; 
+% Instruction for the right player
+ConditionInstructionsR={'Tap on your own.\nPacer start at 2Hz.'... %  \nPacer 2Hz.
+    'Syn with player L in red.'... %  \nPacer 2Hz
+    'Tap on your own.\nPacer start at 2Hz.'... % \nPacer 2Hz
+    'Pacer start at 2Hz.\nThen syn with each other.'... % 
+    'Pacer start at 3Hz.\nThen syn with each other.'... % \nPacer 2Hz
+    'Pacer start at 3Hz.\nThen syn with each other as fast as you can.'}; 
 
 % Block & Trial number of the experiment **********************************
 % number of taps per trial/condition
-numTaps=20; % 600 @@@@@@@@ 
+numTaps=600; % 600 @@@@@@@@ 
 % number of trials per block
 numTrials=6;
 % number of blocks
@@ -59,7 +71,7 @@ rng(seed);
 % end
 
 % if not randomized
-allPerm=[2 1 3 4 5 6];
+allPerm=[1 2 3 4 5 6];
 % ######################################### Randomization of the experiment 
 
 
@@ -75,7 +87,7 @@ try
     Screen('Preference', 'SkipSyncTests', 1); %  shorten the maximum duration of the sync tests to 3 seconds worst case
     Screen('Preference', 'SuppressAllWarnings', 1); %disable all output to the command window 
     % The use of “mirror mode”, or “clone mode”, where multiple displays show the
-    % same content, will almost always cause timing and performance problems.
+    % same content, will almost always cause  timing and performance problems.
 
     % Get the screen numbers. This gives us a number for each of the screens
     % attached to our computer. For help see: Screen Screens?
@@ -189,7 +201,7 @@ try
     MeanTapInterval2Hz=0.5; % second
     NumFramesInterval2Hz=round(MeanTapInterval2Hz/(ifi*waitframes));  
     
-    % condition 1-4 (paced the frist 60 taps, set the rest of the frames with value zeros)
+    % condition 1-4 (paced the frist 30 taps, set the rest of the frames with value zeros)
     Showframes1=[1:NumFramesInterval2Hz:NumFramesInterval2Hz*30 zeros(1,570)]; 
     Showframes2=Showframes1;
     Showframes3=Showframes1;
@@ -200,9 +212,10 @@ try
     NumFramesInterval3Hz=round(MeanTapInterval3Hz/(ifi*waitframes));  % on average 72 frames per stimulus 
     % condition 5
     Showframes5=[1:NumFramesInterval3Hz:NumFramesInterval3Hz*30 zeros(1,570)]; 
+    Showframes6=Showframes5;
     
     % combine all 6 conditions
-    Showframes=[Showframes1;Showframes2;Showframes3;Showframes4;Showframes5];
+    Showframes=[Showframes1;Showframes2;Showframes3;Showframes4;Showframes5;Showframes6];
 
     %% Setting time variables**********************************************
     % Length of one minute baseline
@@ -219,6 +232,9 @@ try
     FixCrX=[xCenter-round(screenYpixels/200):xCenter+round(screenYpixels/200)-1 repmat(xCenter,1,round(screenYpixels/100)+1)];
     FixCrY=[repmat(yCenter,1,round(screenYpixels/100)+1) yCenter-round(screenYpixels/200)+1:yCenter+round(screenYpixels/200)];
    
+    %% Take resting EEG
+    run restingEEG.m
+
     %% ############################### Loop through block
     % *******************************Loop through block
     for block=1:numBlock
@@ -248,31 +264,31 @@ try
                 color = blue;
             elseif conditionSelected == 4
                 color = megenta;
-            else conditionSelected == 5
+            else (conditionSelected == 5) | (conditionSelected == 6) 
                 color = purple;
             end
 
             % show instruction for each trial / condition
-            ShowCondition=[ConditionInstructions{conditionSelected}];
+            ShowCondition=[ConditionInstructions{conditionSelected}]; % Center monitor
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
+            ShowCondition=[ConditionInstructionsL{conditionSelected}]; % Left monitor
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx',xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',color);
+            ShowCondition=[ConditionInstructionsR{conditionSelected}]; % Right monitor
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx',xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',color);
-
-            % Show trial and block number at the bottom
-%             Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials) ', in block ' num2str(block) ' / ' num2str(numBlock)...
-%                  ' \n Hit a key to continue'];
-            Showtrial=['Beginning trial ' num2str(t) ' / ' num2str(numTrials)  ...
-                 ' \n Hit a key to continue']; 
+            
+            Screen('TextSize',windowPtr, 10); % smaller size font
+            Showtrial=['Read to tap?'...
+                 '\nExperimenter hit a key to continue.']; 
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx','center','sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx',xCenterL,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
             DrawFormattedText2(Showtrial,'win',windowPtr,...
             'sx',xCenterR,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
-
+            Screen('TextSize',windowPtr, 18); % reset default font size
             Screen('Flip', windowPtr);
             pause(1); 
             % hit a key to continue
@@ -307,20 +323,21 @@ try
 %             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
 
             if block ~= numBlock | t ~= numTrials % only bypass the last trial
-                % Show Resting
-                between_block_rest= 3; % in seconds
-                Resting = ['Take a rest for at least ' num2str(between_block_rest) ' s. \n Then hit a key to continue.'];
-                DrawFormattedText2(Resting,'win',windowPtr,...
-                    'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
-                DrawFormattedText2(Resting,'win',windowPtr,...
-                    'sx', xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
-                DrawFormattedText2(Resting,'win',windowPtr,...
-                    'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
-                vbl=Screen('Flip',windowPtr); 
-                % Rest 1 sec
-                pause(between_block_rest);
-                % hit a key to continue
-                KbStrokeWait;   
+                run IntervalResting.m
+%                 % Show Resting
+%                 between_block_rest= 3; % in seconds
+%                 Resting = ['Take a rest for at least ' num2str(between_block_rest) ' s. \n Experimentor hit a key to continue.'];
+%                 DrawFormattedText2(Resting,'win',windowPtr,...
+%                     'sx', 'center','sy', 'center','xalign','center','yalign','top','baseColor',white);
+%                 DrawFormattedText2(Resting,'win',windowPtr,...
+%                     'sx', xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',white);
+%                 DrawFormattedText2(Resting,'win',windowPtr,...
+%                     'sx', xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',white);
+%                 vbl=Screen('Flip',windowPtr); 
+%                 % Rest 1 sec
+%                 pause(between_block_rest);
+%                 % hit a key to continue
+%                 KbStrokeWait;   
             end
 
         end
@@ -328,7 +345,7 @@ try
     end
 % initials trial frame number
 % Show The End
-TheEnd = ['The End'];
+TheEnd = ['The End. /nThank you!'];
 DrawFormattedText2(TheEnd,'win',windowPtr,...
     'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
 DrawFormattedText2(TheEnd,'win',windowPtr,...
@@ -350,6 +367,9 @@ catch
 end  
 
 
-% save data
+%% save data
 % cd /home/hnl/Documents/GitHub/1overf/stimulus_data_storage
-% seed.mat
+cd /home/hnl/Acquisition/zhibin
+filename=[num2str(seed) '.mat'];
+save(filename);
+% cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/5_conditions
