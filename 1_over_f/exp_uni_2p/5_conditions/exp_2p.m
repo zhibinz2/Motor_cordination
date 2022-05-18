@@ -345,7 +345,7 @@ try
     end
 % initials trial frame number
 % Show The End
-TheEnd = ['The End. /nThank you!'];
+TheEnd = ['The End. \nThank you!'];
 DrawFormattedText2(TheEnd,'win',windowPtr,...
     'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
 DrawFormattedText2(TheEnd,'win',windowPtr,...
