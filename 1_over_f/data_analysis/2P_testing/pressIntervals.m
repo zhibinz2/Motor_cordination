@@ -16,3 +16,5 @@ BottonPresTimeInd=PresInd(find([1 diff(PresInd')>threshold])); % exact index of 
 BottonPresTime01=zeros(size(time));
 BottonPresTime01(BottonPresTimeInd)=1;
 plot(BottonPresTime01)
+
+%% reset time in play R 
