@@ -35,6 +35,10 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
         Screen('CloseAll');
         break;
     end
+    % If F1 is pressed, exit and continue to the next condition
+    if keyCode(KbName('F1'));
+        n=numFrames;
+    end
         
     %% draw instruction for each trial / condition with different color
     % for experimentor

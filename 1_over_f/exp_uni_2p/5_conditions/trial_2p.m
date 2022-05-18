@@ -29,11 +29,15 @@ numFrames = NumFramesInterval2Hz*600*3; % add numFrames to allow more time
 
 while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) % either one reach 600 taps  @@@@@@@@
     tic
-    % If esc is press, break out of the while loop and close the screen
+    % If esc is pressed, break out of the while loop and close the screen
     [keyIsDown, keysecs, keyCode] = KbCheck;
     if keyCode(KbName('escape'));
         Screen('CloseAll');
         break;
+    end
+    % If F1 is pressed, exit and continue to the next condition
+    if keyCode(KbName('F1'));
+        n=numFrames;
     end
         
     %% draw instruction for each trial / condition with different color
