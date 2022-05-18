@@ -2,6 +2,7 @@
 clear;close all;
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing;
 cd /ssd/zhibin/1overf/20220515_2P
+cd /ssd/zhibin/1overf/20220517_2P
 
 [EEGfileNameL]=uigetfile('*.Poly5');% select the Left player EEG
 Path_filenameL=[pwd '/' EEGfileNameL];
@@ -38,13 +39,13 @@ TriggersR=samplesR(TRIGGERindR,:)';unique(TriggersR)
 % find the first photocell and align Left and Right in time
 TriggersL(find(TriggersL == 255)) = 0; % replace 255 with 0
 indL=find(TriggersL == 127); % photocell indices
-figure;plot(TriggersL,'ro');xline(indL(1));
+figure;plot(TriggersL,'ro');% xline(indL(1)); xline(indL(1));
 TriggersL=TriggersL(indL(1):end); % remove trigger data before the first photocell;
 figure;plot(TriggersL,'ro');% Update TriggersL: chop off the head before first photocell;
 
 TriggersR(find(TriggersR == 255)) = 0; % replace 255 with 0
 indR=find(TriggersR == 127); % photocell indices
-figure;plot(TriggersR,'bo');xline(indR(1));
+figure;plot(TriggersR,'bo');% xline(indR(3));
 TriggersR=TriggersR(indR(1):end); % remove trigger data before the first photocell;
 figure;plot(TriggersR,'bo'); % Update TriggersL: chop off the head before first photocell;
 
