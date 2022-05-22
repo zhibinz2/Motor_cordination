@@ -1,8 +1,9 @@
- %% load TMSi data
+%% load TMSi data
 clear;close all;
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing;
 cd /ssd/zhibin/1overf/20220515_2P
 cd /ssd/zhibin/1overf/20220517_2P
+cd /ssd/zhibin/1overf/20220518_2P
 
 [EEGfileNameL]=uigetfile('*.Poly5');% select the Left player EEG
 Path_filenameL=[pwd '/' EEGfileNameL];
@@ -32,41 +33,42 @@ TriggersL=samplesL(TRIGGERindL,:)';unique(TriggersL)
 TriggersR=samplesR(TRIGGERindR,:)';unique(TriggersR)
 % feedback from other = 251 (255-2^2); 
 % self key presses = 239 (255-2^4); 
-% stimulus photocell = 127 (255-2^7); 
-% what is 111?
-% what is 235?
+% 235 = 255-2^2-2^4 when feedback and self key press overlapped
+% pacer = 127 (255-2^7); 
+% 111 = 255 -2^7-2^4 % when pacer and self key press overlapped
+
 
 % find the first photocell and align Left and Right in time
 TriggersL(find(TriggersL == 255)) = 0; % replace 255 with 0
-indL=find(TriggersL == 127); % photocell indices
-figure;plot(TriggersL,'ro');% xline(indL(1)); xline(indL(1));
-TriggersL=TriggersL(indL(1):end); % remove trigger data before the first photocell;
-figure;plot(TriggersL,'ro');% Update TriggersL: chop off the head before first photocell;
+indL=unique([find(TriggersL == 127);find(TriggersL == 111)]); % pacer indices
+figure;plot(TriggersL,'ro'); title('Recording L (Trigger Channel)'); % xline(indL(1)); xline(indL(1));
+TriggersLcut=TriggersL(indL(1):end); % remove trigger data before the first photocell;
+figure;plot(TriggersLcut,'ro');% Update TriggersL: chop off the head before first photocell;
 
 TriggersR(find(TriggersR == 255)) = 0; % replace 255 with 0
 indR=find(TriggersR == 127); % photocell indices
-figure;plot(TriggersR,'bo');% xline(indR(3));
-TriggersR=TriggersR(indR(1):end); % remove trigger data before the first photocell;
-figure;plot(TriggersR,'bo'); % Update TriggersL: chop off the head before first photocell;
+figure;plot(TriggersR,'bo');title('Recording R (Trigger Channel)');% xline(indR(1)); xline(indR(3));
+TriggersRcut=TriggersR(indR(1):end); % remove trigger data before the first photocell;
+figure;plot(TriggersRcut,'bo'); % Update TriggersL: chop off the head before first photocell;
 
 % Align with the first phtocell and examine in two subplots
 figure('units','normalized','outerposition',[0 0 1 0.6]);
 subplot(2,1,1);
-plot(TriggersL,'ro');
+plot(TriggersLcut,'ro');
 title('Left Player, 127=stimulus, 239=self, 251=feedback');
-xlim([0 max([length(TriggersL) length(TriggersR)])]); 
+xlim([0 max([length(TriggersLcut) length(TriggersRcut)])]); 
 subplot(2,1,2);
-plot(TriggersR,'b.');
-title('Right Player, 127=stimulus, 239=self, 251=feedback');
-xlim([0 max([length(TriggersL) length(TriggersR)])]); 
+plot(TriggersRcut,'b.');
+title('Right recorder, 127=stimulus, 239=self, 251=feedback');
+xlim([0 max([length(TriggersLcut) length(TriggersRcut)])]); 
 
 % Align with the first phtocell and examine in one plot (color code with recording device)
 figure('units','normalized','outerposition',[0 0 1 0.6]);
-plot(TriggersL,'ro');
-xlim([0 max([length(TriggersL) length(TriggersR)])]); 
+plot(TriggersLcut,'ro');
+xlim([0 max([length(TriggersLcut) length(TriggersRcut)])]); 
 hold on;
-plot(TriggersR,'b.');
-title('Left Player (red), Right Player (blue), 127=stimulus, 239=self, 251=feedback');
+plot(TriggersRcut,'b.');
+title('Left recorder (red), Right Player (blue), 127=stimulus, 239=self, 251=feedback');
 
 %% Align with the first phtocell and examine in one plot (color code with player)
 figure('units','normalized','outerposition',[0 0 1 0.6]);
@@ -169,3 +171,5 @@ plot((TriggersL==239),'r');
 subplot(2,1,2);
 plot((TriggersR==239),'b');
 ylim([0 2]);
+
+
