@@ -41,7 +41,7 @@ sum(BottonPresTimeL01) % num of button presses
 
 % Right player
 PresIndR=unique([find(TriggersR == 239);find(TriggersR == 235);find(TriggersR == 111 )]); % extract Index of real key presses in the values
-plot(PresIndR,ones(1,length(PresIndR)),'ro'); % look at the above Index (one press produced several indices)
+plot(PresIndR,ones(1,length(PresIndR)),'bo'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
 % determine a threshold of numbers of frames in the button press interval
 threshold = 1*1.5; % interval larger than 1 consecutive samples
