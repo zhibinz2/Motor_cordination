@@ -66,8 +66,8 @@ subplot(2,1,1);plotx(filtered_dataL4);ylim([-300 300]);
 subplot(2,1,2);plotx(filtered_dataR4);ylim([-300 300]);
 % ylim([-100 100]);
 
-clearvars filtered_dataL1 filtered_dataL2 filtered_dataL3
-clearvars filtered_dataR1 filtered_dataR2 filtered_dataR3
+clearvars filtered_dataL1 filtered_dataL2 filtered_dataL3 paddingL
+clearvars filtered_dataR1 filtered_dataR2 filtered_dataR3 paddingR
 
 %% ICA
 filtered_dataL4; filtered_dataR4;
@@ -231,7 +231,8 @@ for chan=1:32
     % plot([1 1],[1 1],'ro');
     plot(fV(1:size(amplitude,1)),amplitude(:,chan));
     if ~isempty(find([1:30 32]==chan))
-    set(gca,'XTick',[]); % set(gca,'YTick',[]); 
+    set(gca,'XTick',[]); 
+    % set(gca,'YTick',[]); 
     end
     if chan==31
         xlabel('frequency');
