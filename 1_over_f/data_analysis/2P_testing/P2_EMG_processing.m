@@ -27,4 +27,19 @@ figure('units','normalized','outerposition',[0 0 1 0.6]);
 subplot(2,1,1);plot(timeL,filtered_EMGL,'r'); title('filtered_EMGL');% move to zero level
 subplot(2,1,2);plot(timeR,filtered_EMGR,'b'); title('filtered_EMGR');
 
-%%
+%% Hilbert transform
+% method 4 *******  spline interpolation over local maxima (best)
+np = 50; % N-tap Hilbert filter
+[upL,loL] = envelope(filtered_EMGL,np,'peak');
+[upR,loR] = envelope(filtered_EMGR,np,'peak');
+close;figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(2,1,1);
+plot(timeL,filtered_EMGL,'g');
+hold on; plot(timeL,upL,'r');
+ylim([-1000 1000]);title(['np = ' num2str(np)]); % xlim([1000 1100]);
+hold off;
+subplot(2,1,2);
+plot(timeR,filtered_EMGR,'g');
+hold on; plot(timeR,upR,'r');
+ylim([-1000 1000]);title(['np = ' num2str(np)]); % xlim([1000 1100]);
+hold off;

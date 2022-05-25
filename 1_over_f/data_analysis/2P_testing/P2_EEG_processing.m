@@ -1,3 +1,7 @@
+cd /ssd/zhibin/1overf/20220515_2P
+cd /ssd/zhibin/1overf/20220517_2P
+cd /ssd/zhibin/1overf/20220518_2P
+
 %% plot raw EEG
 timeL;samplesL;TRIGGERindL;srL;channels_infoL;
 timeR;samplesR;TRIGGERindR;srR;channels_infoR;
@@ -130,7 +134,7 @@ suptitle('R');
 [RHO1,PVAL1] = corr(filtered_dataR4(:,1),icasigR');
 [RHO3,PVAL3] = corr(filtered_dataR4(:,3),icasigR');
 [B1,I1]=sort(abs(RHO1),'descend');[B3,I3]=sort(abs(RHO3),'descend');
-ComponentsExamR=unique([I1(1:3) I3(1:3)])
+ComponentsExamR=unique([I1(1:2) I3(1:2)])
 % topoplot to examine them
 figure;
 for i=1:length(ComponentsExamR)
@@ -276,6 +280,11 @@ EEGCondi5R=mixedsigR(PacersR(22):PacersR(23),:);
 EEGResting6R=mixedsigR(PacersR(23):PacersR(24),:);
 EEGCondi6R=mixedsigR(PacersR(26):end,:);
 
+save(['EEG' num2str(seed) '.mat'],'EEGCondi1L','EEGCondi2L','EEGCondi3L',...
+    'EEGCondi4L','EEGCondi5L','EEGCondi6L',...
+    'EEGCondi1R','EEGCondi2R','EEGCondi3R',...
+    'EEGCondi4R','EEGCondi5R','EEGCondi6R');
+
 
 %% segment button presses
 BottonPresTimeL01; BottonPresTimeR01;
@@ -308,6 +317,12 @@ BPCondi5R=BottonPresTimeR01(PacersR(22):PacersR(23),:);
 BPResting6R=BottonPresTimeR01(PacersR(23):PacersR(24),:);
 BPCondi6R=BottonPresTimeR01(PacersR(26):end,:);
 
+save(['BP' num2str(seed) '.mat'],'BPCondi1L','BPCondi2L','BPCondi3L',...
+    'BPCondi4L','BPCondi5L','BPCondi6L',...
+    'BPCondi1R','BPCondi2R','BPCondi3R',...
+    'BPCondi4R','BPCondi5R','BPCondi6R');
+
+
 %% segment feedbacks from the other 
 FeedbTimeL01; FeedbTimeR01;
 
@@ -339,33 +354,44 @@ FBCondi5R=FeedbTimeR01(PacersR(22):PacersR(23),:);
 FBResting6R=FeedbTimeR01(PacersR(23):PacersR(24),:);
 FBCondi6R=FeedbTimeR01(PacersR(26):end,:);
 
+save(['FB' num2str(seed) '.mat'],'FBCondi1L','FBCondi2L','FBCondi3L',...
+    'FBCondi4L','FBCondi5L','FBCondi6L',...
+    'FBCondi1R','FBCondi2R','FBCondi3R',...
+    'FBCondi4R','FBCondi5R','FBCondi6R');
+
 %% %% segment EMG
-filtered_EMGL; filtered_EMGR;
+filtered_EMGL; filtered_EMGR; % before hilbert transform
+upL;upR; % after hilbert transform
 
-EMGOpenEyeRestingL=filtered_EMGL(PacersL(1):PacersL(2),:);
-EMGCloseEyeRestingL=filtered_EMGL(PacersL(3):PacersL(4),:);
-EMGCondi1L=filtered_EMGL(PacersL(6):PacersL(7),:);
-EMGResting2L=filtered_EMGL(PacersL(7):PacersL(8),:);
-EMGCondi2L=filtered_EMGL(PacersL(10):PacersL(11),:);
-EMGResting3L=filtered_EMGL(PacersL(11):PacersL(12),:);
-EMGCondi3L=filtered_EMGL(PacersL(14):PacersL(15),:);
-EMGResting4L=filtered_EMGL(PacersL(15):PacersL(16),:);
-EMGCondi4L=filtered_EMGL(PacersL(18):PacersL(19),:);
-EMGResting5L=filtered_EMGL(PacersL(19):PacersL(20),:);
-EMGCondi5L=filtered_EMGL(PacersL(22):PacersL(23),:);
-EMGResting6L=filtered_EMGL(PacersL(23):PacersL(24),:);
-EMGCondi6L=filtered_EMGL(PacersL(26):end,:);
+EMGOpenEyeRestingL=upL(PacersL(1):PacersL(2),:);
+EMGCloseEyeRestingL=upL(PacersL(3):PacersL(4),:);
+EMGCondi1L=upL(PacersL(6):PacersL(7),:);
+EMGResting2L=upL(PacersL(7):PacersL(8),:);
+EMGCondi2L=upL(PacersL(10):PacersL(11),:);
+EMGResting3L=upL(PacersL(11):PacersL(12),:);
+EMGCondi3L=upL(PacersL(14):PacersL(15),:);
+EMGResting4L=upL(PacersL(15):PacersL(16),:);
+EMGCondi4L=upL(PacersL(18):PacersL(19),:);
+EMGResting5L=upL(PacersL(19):PacersL(20),:);
+EMGCondi5L=upL(PacersL(22):PacersL(23),:);
+EMGResting6L=upL(PacersL(23):PacersL(24),:);
+EMGCondi6L=upL(PacersL(26):end,:);
 
-EMGOpenEyeRestingR=filtered_EMGR(PacersR(1):PacersR(2),:);
-EMGCloseEyeRestingR=filtered_EMGR(PacersR(3):PacersR(4),:);
-EMGCondi1R=filtered_EMGR(PacersR(6):PacersR(7),:);
-EMGResting2R=filtered_EMGR(PacersR(7):PacersR(8),:);
-EMGCondi2R=filtered_EMGR(PacersR(10):PacersR(11),:);
-EMGResting3R=filtered_EMGR(PacersR(11):PacersR(12),:);
-EMGCondi3R=filtered_EMGR(PacersR(14):PacersR(15),:);
-EMGResting4R=filtered_EMGR(PacersR(15):PacersR(16),:);
-EMGCondi4R=filtered_EMGR(PacersR(18):PacersR(19),:);
-EMGResting5R=filtered_EMGR(PacersR(19):PacersR(20),:);
-EMGCondi5R=filtered_EMGR(PacersR(22):PacersR(23),:);
-EMGResting6R=filtered_EMGR(PacersR(23):PacersR(24),:);
-EMGCondi6R=filtered_EMGR(PacersR(26):end,:);
+EMGOpenEyeRestingR=upR(PacersR(1):PacersR(2),:);
+EMGCloseEyeRestingR=upR(PacersR(3):PacersR(4),:);
+EMGCondi1R=upR(PacersR(6):PacersR(7),:);
+EMGResting2R=upR(PacersR(7):PacersR(8),:);
+EMGCondi2R=upR(PacersR(10):PacersR(11),:);
+EMGResting3R=upR(PacersR(11):PacersR(12),:);
+EMGCondi3R=upR(PacersR(14):PacersR(15),:);
+EMGResting4R=upR(PacersR(15):PacersR(16),:);
+EMGCondi4R=upR(PacersR(18):PacersR(19),:);
+EMGResting5R=upR(PacersR(19):PacersR(20),:);
+EMGCondi5R=upR(PacersR(22):PacersR(23),:);
+EMGResting6R=upR(PacersR(23):PacersR(24),:);
+EMGCondi6R=upR(PacersR(26):end,:);
+
+save(['EMG' num2str(seed) '.mat'],'EMGCondi1L','EMGCondi2L','EMGCondi3L',...
+    'EMGCondi4L','EMGCondi5L','EMGCondi6L',...
+    'EMGCondi1R','EMGCondi2R','EMGCondi3R',...
+    'EMGCondi4R','EMGCondi5R','EMGCondi6R');
