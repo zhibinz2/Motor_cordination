@@ -18,11 +18,9 @@ EEGR=samplesR(1:32,:)';
 detrend_dataL=detrend(EEGL,2);
 detrend_dataR=detrend(EEGR,2);
 
-figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(detrend_dataL); ylim([-1000 1000]);
-
-figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(detrend_dataR); ylim([-1000 1000]);
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(2,1,1);plot(detrend_dataL); ylim([-1000 1000]);
+subplot(2,1,2);plot(detrend_dataR); ylim([-1000 1000]);
 
 %% filtfilthd method (hnl) high pass first then low pass
 cd /usr/local/MATLAB/R2019a/toolbox/signal/signal
@@ -34,20 +32,18 @@ Hd = makefilter(srL,0.2,0.15,6,20,0);
 filtered_dataL1=filtfilthd(Hd,detrend_dataL);
 filtered_dataR1=filtfilthd(Hd,detrend_dataR);
 
-figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(filtered_dataL1); ylim([-300 300]);
-figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(filtered_dataR1); ylim([-300 300]);
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(2,1,1);plot(filtered_dataL1); ylim([-300 300]);
+subplot(2,1,2);plot(filtered_dataR1); ylim([-300 300]);
 
 % add padding (this step takes several minutes)
 paddingL=zeros(round(size(filtered_dataL1,1)/10), size(filtered_dataL1,2));
 filtered_dataL2=cat(1,paddingL,filtered_dataL1,paddingL);
 paddingR=zeros(round(size(filtered_dataR1,1)/10), size(filtered_dataR1,2));
 filtered_dataR2=cat(1,paddingR,filtered_dataR1,paddingR);
-figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(filtered_dataL2);ylim([-300 300]);title('filtered-dataL2');
-figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(filtered_dataR2);ylim([-300 300]);title('filtered-dataR2');
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(2,1,1);;plot(filtered_dataL2);ylim([-300 300]);title('filtered-dataL2');
+subplot(2,1,2);plot(filtered_dataR2);ylim([-300 300]);title('filtered-dataR2');
 
 % low pass 
 % (this will create short edge artifact)
@@ -57,19 +53,17 @@ plot(filtered_dataR2);ylim([-300 300]);title('filtered-dataR2');
 Hd = makefilter(srL,50,51,6,20,0);  
 filtered_dataL3=filtfilthd(Hd,filtered_dataL2);
 filtered_dataR3=filtfilthd(Hd,filtered_dataR2);
-figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(filtered_dataL3);ylim([-300 300]);
-figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(filtered_dataR3);ylim([-300 300]);
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(2,1,1);plot(filtered_dataL3);ylim([-300 300]);
+subplot(2,1,2);plot(filtered_dataR3);ylim([-300 300]);
 % plotx(filtered_dataR3(ind1:ind2,:));ylim([-300 300]); % channel 30 bad
 
 % remove padding
 filtered_dataL4=filtered_dataL3((size(paddingL,1)+1):(size(paddingL,1)+size(detrend_dataL,1)),:);
 filtered_dataR4=filtered_dataR3((size(paddingR,1)+1):(size(paddingR,1)+size(detrend_dataR,1)),:);
-figure('units','normalized','outerposition',[0 0 1 0.3]);
-plotx(filtered_dataL4);ylim([-300 300]);
-figure('units','normalized','outerposition',[0 0 1 0.3]);
-plotx(filtered_dataR4);ylim([-300 300]);
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(2,1,1);plotx(filtered_dataL4);ylim([-300 300]);
+subplot(2,1,2);plotx(filtered_dataR4);ylim([-300 300]);
 % ylim([-100 100]);
 
 clearvars filtered_dataL1 filtered_dataL2 filtered_dataL3
@@ -85,9 +79,9 @@ for i=1:size(AL,2)
     SqAL(i)=sumsqr(AL(:,i));
 end
 figure;
-plot(1:size(AL,2),SqAL,'ro');ylabel('sum of square of column in A');xlabel('ICs');
-[B,I]=sort(SqAL,'descend');
-ComponentsExam=I(1:10);
+plot(1:size(AL,2),SqAL,'ro');ylabel('sum of square of column in A');xlabel('ICs'); title('L');
+[BL,IL]=sort(SqAL,'descend');
+ComponentsExam=IL(1:10);
 % topoplot to examine them
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info
 load('chaninfo.mat')
@@ -96,18 +90,22 @@ for i=1:length(ComponentsExam)
     subplot(5,2,i);
     topoplot(AL(:,ComponentsExam(i)),chaninfo,'nosedir','+X');title(['component' num2str(ComponentsExam(i))]);colorbar;
 end
+suptitle('L');
 % Calculate Correlation
 % FP1 and FP2 are channel 1 and 3;
 % compute correlation between FP1 and FP2;
 [RHO1,PVAL1] = corr(filtered_dataL4(:,1),icasigL');
 [RHO3,PVAL3] = corr(filtered_dataL4(:,3),icasigL');
 [B1,I1]=sort(abs(RHO1),'descend');[B3,I3]=sort(abs(RHO3),'descend');
-ComponentsExamL=unique([I1(1:2) I3(1:2)]);
+ComponentsExamL=unique([I1(1:2) I3(1:2)])
 figure;
 for i=1:length(ComponentsExamL)
     subplot(length(ComponentsExamL),1,i);
     topoplot(AL(:,ComponentsExamL(i)),chaninfo,'nosedir','+X');title(['component' num2str(ComponentsExamL(i))]);colorbar;
 end
+suptitle('L');
+% Decide component to remove
+ComponentRemoveL=2; % ComponentRemoveL=ComponentsExamL;
 
 % Right player
 % run ICA
@@ -117,39 +115,42 @@ for i=1:size(AR,2)
     SqAR(i)=sumsqr(AR(:,i));
 end
 figure;
-plot(1:size(AR,2),SqAR,'ro');ylabel('sum of square of column in A');xlabel('ICs');
-[B,I]=sort(SqAR,'descend');
-ComponentsExam=I(1:10);
+plot(1:size(AR,2),SqAR,'ro');ylabel('sum of square of column in A');xlabel('ICs');title('R');
+[BR,IR]=sort(SqAR,'descend');
+ComponentsExam=IR(1:10);
 figure;
 for i=1:length(ComponentsExam)
     subplot(5,2,i);
     topoplot(AR(:,ComponentsExam(i)),chaninfo,'nosedir','+X');title(['component' num2str(ComponentsExam(i))]);colorbar;
 end
+suptitle('R');
 % Calculate Correlation
 % FP1 and FP2 are channel 1 and 3;
 % compute correlation between FP1 and FP2;
 [RHO1,PVAL1] = corr(filtered_dataR4(:,1),icasigR');
 [RHO3,PVAL3] = corr(filtered_dataR4(:,3),icasigR');
 [B1,I1]=sort(abs(RHO1),'descend');[B3,I3]=sort(abs(RHO3),'descend');
-ComponentsExamR=unique([I1(1:2) I3(1:2)]);
+ComponentsExamR=unique([I1(1:3) I3(1:3)])
 % topoplot to examine them
 figure;
 for i=1:length(ComponentsExamR)
     subplot(length(ComponentsExamR),1,i);
     topoplot(AR(:,ComponentsExamR(i)),chaninfo,'nosedir','+X');title(['component' num2str(ComponentsExamR(i))]);colorbar;
 end
+% Decide component to remove
+ComponentRemoveR=[27 29]; % ComponentRemoveL=ComponentsExamL;
 
 % Remove components and mix back the signal and display the comparison
 % (before vs after)
 % Left player
-ComponentRemoveL=ComponentsExamL;
-AL(:,ComponentRemoveL)=0; icasigL(ComponentRemoveL,:)=0;
-mixedsigL=AL*icasigL;
+ALrm=AL;icasigLrm=icasigL; % make new, backup AL, icasigL
+ALrm(:,ComponentRemoveL)=0; icasigLrm(ComponentRemoveL,:)=0;
+mixedsigL=ALrm*icasigLrm;
 mixedsigL=mixedsigL';
 % Plot before and after
 figure('units','normalized','outerposition',[0 0 1 1]);
-subplot(2,1,1);
 % before ICA
+subplot(2,1,1);
 plotx(timeL,filtered_dataL4);
 hold on;hold off; ylim([-200 200]);
 title('EEG Singal Before ICA');
@@ -162,8 +163,8 @@ title('Mixed Signal with ICs removed');
 ind1=round(length(timeL)*0.55);
 ind2=round(length(timeL)*0.6);
 figure('units','normalized','outerposition',[0 0 1 1]);
-subplot(2,1,1);
 % before ICA
+subplot(2,1,1);
 plotx(timeL(ind1:ind2),filtered_dataL4(ind1:ind2,:));
 hold on;hold off; ylim([-200 200]);
 title('EEG Singal Before ICA');
@@ -174,14 +175,14 @@ hold on;hold off; ylim([-200 200]);
 title('Mixed Signal with ICs removed');
 
 % Right player
-ComponentRemoveR=ComponentsExamR;
-AR(:,ComponentRemoveR)=0; icasigR(ComponentRemoveR,:)=0;
-mixedsigR=AR*icasigR;
+ARrm=AR;icasigRrm=icasigR; % make new, backup AR, icasigR
+ARrm(:,ComponentRemoveR)=0; icasigRrm(ComponentRemoveR,:)=0;
+mixedsigR=ARrm*icasigRrm;
 mixedsigR=mixedsigR';
 % Plot before and after
 figure('units','normalized','outerposition',[0 0 1 1]);
-subplot(2,1,1);
 % before ICA
+subplot(2,1,1);
 plotx(timeR,filtered_dataR4);
 hold on;hold off;ylim([-100 100]);
 title('EEG Singal Before ICA');
@@ -195,8 +196,8 @@ ind1=round(length(timeL)*0.55);
 ind2=round(length(timeL)*0.6);
 % zoom in and plot again
 figure('units','normalized','outerposition',[0 0 1 1]);
-subplot(2,1,1);
 % before ICA
+subplot(2,1,1);
 plotx(timeR(ind1:ind2),filtered_dataR4(ind1:ind2,:));
 % plotx(timeR(ind1:ind2),filtered_dataR4(ind1:ind2,1:29)); 
 hold on;hold off;ylim([-100 100]);
@@ -205,14 +206,14 @@ title('EEG Singal Before ICA');
 subplot(2,1,2);
 plotx(timeR(ind1:ind2),mixedsigR(ind1:ind2,:));
 % plotx(timeR(ind1:ind2),mixedsigR(ind1:ind2,1:29));
-
 hold on;hold off;ylim([-100 100]);
 title('Mixed Signal with ICs removed');
 
 %% examine spectra on scalp map
+run /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info.m
 Timeselected=timeL(ind1:ind2);% Timeselected=timeR(ind1:ind2); 
 EEGselected=filtered_dataL4(ind1:ind2,:);% EEGselected=filtered_dataR4(ind1:ind2,:);
-EEGselected=mixedsigL(ind1:ind2,:);% EEGselected=mixedsigR(ind1:ind2,:);
+% EEGselected=mixedsigL(ind1:ind2,:);% EEGselected=mixedsigR(ind1:ind2,:);
 % fft
 fcoef=fft(EEGselected);
 N=size(EEGselected,1); % N=length(Timeselected);
@@ -337,3 +338,33 @@ FBCondi5R=FeedbTimeR01(PacersR(22):PacersR(23),:);
 FBResting6R=FeedbTimeR01(PacersR(23):PacersR(24),:);
 FBCondi6R=FeedbTimeR01(PacersR(26):end,:);
 
+%% %% segment EMG
+filtered_EMGL; filtered_EMGR;
+
+EMGOpenEyeRestingL=filtered_EMGL(PacersL(1):PacersL(2),:);
+EMGCloseEyeRestingL=filtered_EMGL(PacersL(3):PacersL(4),:);
+EMGCondi1L=filtered_EMGL(PacersL(6):PacersL(7),:);
+EMGResting2L=filtered_EMGL(PacersL(7):PacersL(8),:);
+EMGCondi2L=filtered_EMGL(PacersL(10):PacersL(11),:);
+EMGResting3L=filtered_EMGL(PacersL(11):PacersL(12),:);
+EMGCondi3L=filtered_EMGL(PacersL(14):PacersL(15),:);
+EMGResting4L=filtered_EMGL(PacersL(15):PacersL(16),:);
+EMGCondi4L=filtered_EMGL(PacersL(18):PacersL(19),:);
+EMGResting5L=filtered_EMGL(PacersL(19):PacersL(20),:);
+EMGCondi5L=filtered_EMGL(PacersL(22):PacersL(23),:);
+EMGResting6L=filtered_EMGL(PacersL(23):PacersL(24),:);
+EMGCondi6L=filtered_EMGL(PacersL(26):end,:);
+
+EMGOpenEyeRestingR=filtered_EMGR(PacersR(1):PacersR(2),:);
+EMGCloseEyeRestingR=filtered_EMGR(PacersR(3):PacersR(4),:);
+EMGCondi1R=filtered_EMGR(PacersR(6):PacersR(7),:);
+EMGResting2R=filtered_EMGR(PacersR(7):PacersR(8),:);
+EMGCondi2R=filtered_EMGR(PacersR(10):PacersR(11),:);
+EMGResting3R=filtered_EMGR(PacersR(11):PacersR(12),:);
+EMGCondi3R=filtered_EMGR(PacersR(14):PacersR(15),:);
+EMGResting4R=filtered_EMGR(PacersR(15):PacersR(16),:);
+EMGCondi4R=filtered_EMGR(PacersR(18):PacersR(19),:);
+EMGResting5R=filtered_EMGR(PacersR(19):PacersR(20),:);
+EMGCondi5R=filtered_EMGR(PacersR(22):PacersR(23),:);
+EMGResting6R=filtered_EMGR(PacersR(23):PacersR(24),:);
+EMGCondi6R=filtered_EMGR(PacersR(26):end,:);

@@ -58,7 +58,7 @@ numPresR=sum(BottonPresTimeR01) % num of button presses
 %% extract time points for feedbacks from other
 % Left Player
 FeedbIndL=unique([find(TriggersL == 251);find(TriggersL == 235)]); % extract Index of real key presses in the values
-plot(FeedbIndL,ones(1,length(FeedbIndL)),'ro'); % look at the above Index (one press produced several indices)
+plot(FeedbIndL,ones(1,length(FeedbIndL)),'bo'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
 % determine a threshold of numbers of frames in the button press interval
 threshold = ifi*waitframes*srL*1.5; % number of samples within a interval larger than the waitframes
@@ -68,7 +68,7 @@ FeedbTimeIndL=FeedbIndL(find([0 diff(FeedbIndL')]>threshold)); % exact index of 
 % create a time series that assign botton presses as 1, all other as 0
 FeedbTimeL01=zeros(size(timeL));
 FeedbTimeL01(FeedbTimeIndL)=1;
-plot(FeedbTimeL01,'r.')
+plot(FeedbTimeL01,'b.')
 numFbL=sum(FeedbTimeL01) % num of feedbacks from the other plus 4+2x5 resting photocells
 
 % Right Player
@@ -83,7 +83,7 @@ FeedbTimeIndR=FeedbIndR(find([0 diff(FeedbIndR')]>threshold)); % exact index of 
 % create a time series that assign botton presses as 1, all other as 0
 FeedbTimeR01=zeros(size(timeL));
 FeedbTimeR01(FeedbTimeIndR)=1;
-plot(FeedbTimeR01,'b.')
+plot(FeedbTimeR01,'r.')
 numFbR=sum(FeedbTimeR01) % num of feedbacks from the other plus 4+2x5 resting photocells
 
 %% extract time points for pacers (using this as index to segment data into conditions)
@@ -103,13 +103,13 @@ PacerTimeIndL=PacerIndL(find([diff([0 PacerIndL'])]>threshold)); % exact index o
 % create a time series that assign botton presses as 1, all other as 0
 PacerTimeL01=zeros(size(timeL));
 PacerTimeL01(PacerTimeIndL)=1;
-plot(PacerTimeL01);
+plot(PacerTimeL01,'r');
 sum(PacerTimeL01)
 % xlim([-1 length(PacerTimeL01)]);
 
 % Right player
 PacerIndR=unique([find(TriggersR == 127);find(TriggersR == 111)]); % extract Index of real key presses in the values
-plot(PacerIndR,ones(1,length(PacerIndR)),'ro'); % look at the above Index (one press produced several indices)
+plot(PacerIndR,ones(1,length(PacerIndR)),'bo'); % look at the above Index (one press produced several indices)
 % Pacer at 2Hz has intervals of 500ms (1000 samples)
 % Pacer at 3Hz has interval of 333ms (666.6 samples)
 % determine a threshold of numbers of samples in pacer interval
@@ -121,9 +121,10 @@ PacerTimeIndR=PacerIndR(find([diff([0 PacerIndR'])]>threshold)); % exact index o
 % create a time series that assign botton presses as 1, all other as 0
 PacerTimeR01=zeros(size(timeR));
 PacerTimeR01(PacerTimeIndR)=1;
-plot(PacerTimeR01);
+plot(PacerTimeR01,'b');
 sum(PacerTimeR01)
 
+% Plot not alligned
 figure;
 PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
 plot(PacersL, ones(length(PacersL)),'r.');
@@ -138,6 +139,7 @@ figure;
 plot(PacersL,ones(1,length(PacersL)),'r.');hold on;ylim([0 3]);
 plot(PacerTimeIndL,2*ones(1,length(PacerTimeIndL)),'r.');
 
+% Plot alligned
 figure;
 plot(PacersL-PacersL(1), ones(length(PacersL)),'r.');
 hold on;
