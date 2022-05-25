@@ -27,6 +27,8 @@ plot(detrend_dataR); ylim([-1000 1000]);
 %% filtfilthd method (hnl) high pass first then low pass
 cd /usr/local/MATLAB/R2019a/toolbox/signal/signal
 which filtfilt
+which filtfilt -all
+cd D:\Program Files\MATLAB\R2019b\toolbox\signal\signal\filtfilt.m   
 % high pass (no paddings needed)
 Hd = makefilter(srL,0.2,0.15,6,20,0); 
 filtered_dataL1=filtfilthd(Hd,detrend_dataL);
@@ -72,6 +74,7 @@ plotx(filtered_dataR4);ylim([-300 300]);
 
 clearvars filtered_dataL1 filtered_dataL2 filtered_dataL3
 clearvars filtered_dataR1 filtered_dataR2 filtered_dataR3
+
 %% ICA
 filtered_dataL4; filtered_dataR4;
 % Left player
@@ -99,7 +102,7 @@ end
 [RHO1,PVAL1] = corr(filtered_dataL4(:,1),icasigL');
 [RHO3,PVAL3] = corr(filtered_dataL4(:,3),icasigL');
 [B1,I1]=sort(abs(RHO1),'descend');[B3,I3]=sort(abs(RHO3),'descend');
-ComponentsExamL=unique([I1(1) I3(1)]);
+ComponentsExamL=unique([I1(1:2) I3(1:2)]);
 figure;
 for i=1:length(ComponentsExamL)
     subplot(length(ComponentsExamL),1,i);
@@ -128,7 +131,7 @@ end
 [RHO1,PVAL1] = corr(filtered_dataR4(:,1),icasigR');
 [RHO3,PVAL3] = corr(filtered_dataR4(:,3),icasigR');
 [B1,I1]=sort(abs(RHO1),'descend');[B3,I3]=sort(abs(RHO3),'descend');
-ComponentsExamR=unique([I1(1) I3(1)]);
+ComponentsExamR=unique([I1(1:2) I3(1:2)]);
 % topoplot to examine them
 figure;
 for i=1:length(ComponentsExamR)
@@ -195,17 +198,21 @@ figure('units','normalized','outerposition',[0 0 1 1]);
 subplot(2,1,1);
 % before ICA
 plotx(timeR(ind1:ind2),filtered_dataR4(ind1:ind2,:));
+% plotx(timeR(ind1:ind2),filtered_dataR4(ind1:ind2,1:29)); 
 hold on;hold off;ylim([-100 100]);
 title('EEG Singal Before ICA');
 % after ICA
 subplot(2,1,2);
 plotx(timeR(ind1:ind2),mixedsigR(ind1:ind2,:));
+% plotx(timeR(ind1:ind2),mixedsigR(ind1:ind2,1:29));
+
 hold on;hold off;ylim([-100 100]);
 title('Mixed Signal with ICs removed');
 
-% examine spectra on scalp map
-Timeselected=timeR(ind1:ind2);
-EEGselected=filtered_dataR4(ind1:ind2,:);
+%% examine spectra on scalp map
+Timeselected=timeL(ind1:ind2);% Timeselected=timeR(ind1:ind2); 
+EEGselected=filtered_dataL4(ind1:ind2,:);% EEGselected=filtered_dataR4(ind1:ind2,:);
+EEGselected=mixedsigL(ind1:ind2,:);% EEGselected=mixedsigR(ind1:ind2,:);
 % fft
 fcoef=fft(EEGselected);
 N=size(EEGselected,1); % N=length(Timeselected);
@@ -213,7 +220,7 @@ fcoef=fcoef/N;
 halfN=floor(N/2);
 % df=1/T; 
 % fV=[0:df:(halfN-1)*df]; 
-fV=linspace(0,sr/2,halfN+1); % same df
+fV=linspace(0,srR/2,halfN+1); % same df
 fcoef=2*fcoef(1:halfN,:);
 amplitude = abs(fcoef);
 % Plot on scalp map for the spectra (for my own examing)
@@ -223,17 +230,16 @@ for chan=1:32
     % plot([1 1],[1 1],'ro');
     plot(fV(1:size(amplitude,1)),amplitude(:,chan));
     if ~isempty(find([1:30 32]==chan))
-    set(gca,'XTick',[]); set(gca,'YTick',[]); 
+    set(gca,'XTick',[]); % set(gca,'YTick',[]); 
     end
     if chan==31
         xlabel('frequency');
         ylabel('amplitude (uV)');
     end
-    xlim([0 25]);title([labels{chan}]);ylim([0 15]);
+    xlim([0 25]);title([labels{chan}]);%ylim([0 1]);
 end
 suptitle('spectra of all channels on scalp map')
 
-% plot again with only good chans
 
 %% Segment EEG
 % mixedsigL=mixedsigL';

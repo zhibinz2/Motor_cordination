@@ -135,8 +135,8 @@ plot(PacersR, ones(length(PacersR)),'b.');
 ShiftPacer=PacerTimeIndL(end)-PacerTimeIndR(end);
 PacersL=PacersR+ShiftPacer;
 figure;
-plot(PacersL,ones(1,length(PacersL)),'r.');hold on;ylim([0 3]);
-plot(PacerTimeIndL,2*ones(1,length(PacerTimeIndL)),'r.');
+subplot(2,1,1);plot(PacersL,ones(1,length(PacersL)));
+subplot(2,1,2);plot(PacerTimeIndL,ones(1,
 
 figure;
 plot(PacersL-PacersL(1), ones(length(PacersL)),'r.');
