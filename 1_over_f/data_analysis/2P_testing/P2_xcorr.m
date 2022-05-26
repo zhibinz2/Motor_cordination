@@ -1,6 +1,13 @@
 %% Raw data
 timeL;samplesL;TRIGGERindL;srL;channels_infoL;
 timeR;samplesR;TRIGGERindR;srR;channels_infoR;
+% code for the analysis
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+% data
+clear;close all;
+cd /ssd/zhibin/1overf/20220515_2P
+cd /ssd/zhibin/1overf/20220517_2P
+cd /ssd/zhibin/1overf/20220518_2P
 %% Segmented data
 % Segment EEG
 % mixedsigL=mixedsigL';
@@ -128,6 +135,41 @@ EMGResting5R=filtered_EMGR(PacersR(19):PacersR(20),:);
 EMGCondi5R=filtered_EMGR(PacersR(22):PacersR(23),:);
 EMGResting6R=filtered_EMGR(PacersR(23):PacersR(24),:);
 EMGCondi6R=filtered_EMGR(PacersR(26):end,:);
+%% cross spectra
+open allspectra.m
+time_series1=EEGCondi2L; % time_series1=BPCondi1L;
+time_series2=EEGCondi2R; % time_series2=FBCondi2L; % time_series2=BPCondi2L;
+data=cat(3,time_series1,time_series2); % treat the two time series as two trials in the data
+
+maxfreq = 50;
+goodepochs = [1:size(data,3)];
+win = [1:size(data,1)];
+
+df = rate/length(win);
+nbins = ceil(maxfreq/df) + 1;
+freqs = [0:(nbins-1)]*df;
+fcoef = fft(ndetrend(data(win,:,:),1),[],1)/length(win);
+eppow = abs(squeeze(mean(fcoef(1:nbins,:,goodepochs),3))).^2; % averaged across all good trials
+plot(freqs,eppow(:,5));
+pow = squeeze(var(fcoef(1:nbins,:,goodepochs),[],3)); % variance
+plot(freqs,pow(:,5));
+
+for k = 1:nbins % for each frequency
+   sf = corrcoef(transpose(squeeze(fcoef(k,:,goodepochs)))); % coherence
+%  coh(k,:,:) = abs(sf).^2;
+%  phase(k,:,:) = angle(sf);
+  cprod(k,:,:) = cov(transpose(squeeze(fcoef(k,:,goodepochs))));% cross spectra
+  corr(k,:,:) = sf; % coherence
+end;
+
+f= 10; %Hz
+ind=round(f/df)+1;
+imagesc(abs(squeeze(cprod(ind,:,:)))); xlabel('channels');ylabel('channels'); % cross spetra
+
+%% autocorr
+% https://www.mathworks.com/help/econ/autocorr.html
+
+
 
 %% xcorr
 time_series1=
