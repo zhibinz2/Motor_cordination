@@ -74,6 +74,8 @@ BPCondi5R=BottonPresTimeR01(PacersR(22):PacersR(23),:);
 BPResting6R=BottonPresTimeR01(PacersR(23):PacersR(24),:);
 BPCondi6R=BottonPresTimeR01(PacersR(26):end,:);
 
+%
+
 %% segment feedbacks from the other 
 FeedbTimeL01; FeedbTimeR01;
 
@@ -137,8 +139,8 @@ EMGResting6R=filtered_EMGR(PacersR(23):PacersR(24),:);
 EMGCondi6R=filtered_EMGR(PacersR(26):end,:);
 %% cross spectra
 open allspectra.m
-time_series1=EEGCondi2L; % time_series1=BPCondi1L;
-time_series2=EEGCondi2R; % time_series2=FBCondi2L; % time_series2=BPCondi2L;
+time_series1=EEGCondi2L; % time_series1=BPCondi2L;
+time_series2=EEGCondi2R; % time_series2=FBCondi2R; % time_series2=BPCondi2L;
 data=cat(3,time_series1,time_series2); % treat the two time series as two trials in the data
 
 maxfreq = 50;
@@ -164,16 +166,59 @@ end;
 
 f= 10; %Hz
 ind=round(f/df)+1;
-imagesc(abs(squeeze(cprod(ind,:,:)))); xlabel('channels');ylabel('channels'); % cross spetra
+imagesc(abs(squeeze(cprod(ind,:,:)))); xlabel('channels');ylabel('channels'); colorbar;% cross spetra
+imagesc(angle(squeeze(cprod(ind,:,:)))); xlabel('channels');ylabel('channels'); colorbar;% phase differences
+
+% label all channels
+xticks([1:32]);
+xticklabels(AllchanNames); % all 32 channels
+xtickangle(90);
+yticks([1:32]);
+yticklabels(AllchanNames) % all 32 channels
 
 %% autocorr
 % https://www.mathworks.com/help/econ/autocorr.html
 
+% autocorr on boolean (not meaningful)
+time_series=FBCondi2L;
+[acf,lags] = autocorr(time_series);
+figure; autocorr(time_series,40) % number of lags
 
+% autocorr on intervals
+time_series=Calinterval(FBCondi2L');
+figure; autocorr(time_series,40) % number of lags
+
+% autocorr on errors
+time_series1=find(FBCondi2R==1);% plot(time_series1);
+time_series2=find(BPCondi2R==1);% plot(time_series2);
+% TimeLength=min([length(time_series1) length(time_series2)]);
+% TimeLength=max([length(time_series1) length(time_series2)]);
+TimeLength=length(time_series1);
+Error=[];
+% find the time difference with the closest botton press 
+for i=1:TimeLength % i=StartStim2 % syncopation has one press less than condition 1 and 3
+    [minValue,closetIndex]=min(abs(time_series2-time_series1(i))); % closetIndex in BottonPressTime
+    Error(i)=time_series2(closetIndex)-time_series1(i);
+end
+figure;plot(Error/2000,'r.');title('error');xlabel('taps');ylabel('timing error (s)');
+figure; autocorr(Error,500) % number of lags
 
 %% xcorr
-time_series1=
-time_series2= 
-[r,lags]=xcorr(time_series1, time_series2);
-plot(lags./2,r);xlabel('time [ms]');ylabel('cross correlation');xlim([-500 500]);ylim([-2*1e8 2*1e8]);
-title('xcorr');
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+
+% xcorr on boolean
+time_series1=FBCondi2R';% plot(time_series1);
+time_series2=BPCondi2R';% plot(time_series2);
+TimeLength=min([length(time_series1) length(time_series2)]);
+[r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000, 'normalized');
+figure;plot(lags./2,r);xlabel('time [ms]');ylabel('cross correlation');title('xcorr');
+
+% xcorr on intervals
+time_series1=Calinterval(FBCondi2L');% plot(time_series1);
+time_series2=Calinterval(BPCondi2L');% plot(time_series2);
+TimeLength=min([length(time_series1) length(time_series2)]);
+[r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000,'normalized');
+figure;plot(lags./2,r);xlabel('time [ms]');ylabel('cross correlation');title('xcorr');
+
+
+
