@@ -139,6 +139,7 @@ EMGResting6R=filtered_EMGR(PacersR(23):PacersR(24),:);
 EMGCondi6R=filtered_EMGR(PacersR(26):end,:);
 %% cross spectra
 open allspectra.m
+% all channels
 time_series1=EEGCondi2L; % time_series1=BPCondi2L;
 time_series2=EEGCondi2R; % time_series2=FBCondi2R; % time_series2=BPCondi2L;
 data=cat(3,time_series1,time_series2); % treat the two time series as two trials in the data
@@ -152,19 +153,20 @@ nbins = ceil(maxfreq/df) + 1;
 freqs = [0:(nbins-1)]*df;
 fcoef = fft(ndetrend(data(win,:,:),1),[],1)/length(win);
 eppow = abs(squeeze(mean(fcoef(1:nbins,:,goodepochs),3))).^2; % averaged across all good trials
-plot(freqs,eppow(:,5));
+plot(freqs,eppow(:,5));% plot just one channel
 pow = squeeze(var(fcoef(1:nbins,:,goodepochs),[],3)); % variance
-plot(freqs,pow(:,5));
+plot(freqs,pow(:,5));% plot just one channel
 
+cprod=[];corr=[];
 for k = 1:nbins % for each frequency
    sf = corrcoef(transpose(squeeze(fcoef(k,:,goodepochs)))); % coherence
 %  coh(k,:,:) = abs(sf).^2;
 %  phase(k,:,:) = angle(sf);
   cprod(k,:,:) = cov(transpose(squeeze(fcoef(k,:,goodepochs))));% cross spectra
   corr(k,:,:) = sf; % coherence
-end;
+end
 
-f= 10; %Hz
+f= 10; % Hz % looking at one frequency
 ind=round(f/df)+1;
 imagesc(abs(squeeze(cprod(ind,:,:)))); xlabel('channels');ylabel('channels'); colorbar;% cross spetra
 imagesc(angle(squeeze(cprod(ind,:,:)))); xlabel('channels');ylabel('channels'); colorbar;% phase differences
@@ -175,6 +177,48 @@ xticklabels(AllchanNames); % all 32 channels
 xtickangle(90);
 yticks([1:32]);
 yticklabels(AllchanNames) % all 32 channels
+
+
+% two channels
+time_series1=EEGCondi2L(:,5); % time_series1=BPCondi2L;
+time_series2=EEGCondi2R(:,5); % time_series2=FBCondi2R; % time_series2=BPCondi2L;
+data=cat(3,time_series1,time_series2); % treat the two time series as two trials in the data
+
+maxfreq = 50;
+goodepochs = [1:size(data,3)];
+win = [1:size(data,1)];
+
+df = rate/length(win);
+nbins = ceil(maxfreq/df) + 1;
+freqs = [0:(nbins-1)]*df;
+fcoef = fft(ndetrend(data(win,:,:),1),[],1)/length(win);
+eppow = abs(squeeze(mean(fcoef(1:nbins,:,goodepochs),3))).^2; % averaged across all good trials (power spectra)
+figure;plot(freqs,eppow);% plot just one channel
+pow = squeeze(var(fcoef(1:nbins,:,goodepochs),[],3)); % variance across all good trials (power spectra)
+figure;plot(freqs,pow);% plot just one channel
+
+cprod=[];corr=[];
+for k = 1:nbins % for each frequency
+   sf = corrcoef(transpose(squeeze(fcoef(k,:,goodepochs)))); % coherence
+   corr(k,:,:) = sf; % coherence
+%  coh(k,:,:) = abs(sf).^2; % coherence (
+%  phase(k,:,:) = angle(sf);
+  cprod(k,:,:) = cov(transpose(squeeze(fcoef(k,:,goodepochs))));% covarience, cross spectra
+  
+end
+
+% look at one frequency
+f= 10; % Hz 
+ind=round(f/df)+1;
+figure;imagesc(abs(squeeze(cprod(ind,:,:)))); xlabel('channels');ylabel('channels'); colorbar;% cross spetra
+figure;imagesc(angle(squeeze(cprod(ind,:,:)))); xlabel('channels');ylabel('channels'); colorbar;% phase differences
+
+% look at all frequency
+figure;plot(freqs,cprod);
+figure;plot(freqs,abs(cprod)); % cross spectra
+figure;plot(freqs,angle(cprod)); % phase difference
+figure;plot(freqs,corr);
+
 
 %% autocorr
 % https://www.mathworks.com/help/econ/autocorr.html
