@@ -1,22 +1,73 @@
 %% resample key presses
+cd /ssd/zhibin/1overf/20220515_2P/Segmented_data
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/Syncopation_2P
+
 BPCondi1L;BPCondi1R;
-figure;plot(Calinterval(BPCondi1L'),'b.');hold on;
-Addshowframes=Calinterval(BPCondi1L');
-Addshowframes=cumsum(Addshowframes);
-plot(Addshowframes,'mo');hold on;
-Addshowframes=round(Addshowframes/(2000/100)/2);
-plot(Addshowframes,'m+');hold on;
-Addshowframes(1) 
-NumFramesInterval2Hz*29+1
-shift=Addshowframes(1)-(NumFramesInterval2Hz*29+1)
-Addshowframes=Addshowframes-shift;
-Addshowframes(1)
-NumFramesInterval2Hz*29+1
-Showframes1=[];
-Showframes1=[1:NumFramesInterval2Hz:NumFramesInterval2Hz*30 Addshowframes(2:end)]; 
+% select the time series
+BP01=BPCondi1L;
+% convert to intervals
+BPintervals=Calinterval(BP01');
+AddshowframesCum=cumsum(BPintervals);
+
+figure;
+% subplot(3,1,1);
+plot(BPintervals,'b.');hold on;
+plot(AddshowframesCum,'mo');hold off;
+xlim([0 60]);title('BP intervals & cumsum');
+legend('BP intervals','Cumsum');
+
+% resample
+sr=unique([srL srR]) % TMSi SAGA recording sampling rate in Hz
+
+srShowframe=sr*ifi*waitframes % samples per screen flip rate interval
+sr/srShowframe % how many Psychtoolbox flips per second
+DownSampleRate=sr/(sr/srShowframe);
+
+open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/timeing_2P_check.m
+open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/5_conditions/TestFliping_time.m
+FlipsFreq = (1/ifi)/waitframes % how many pyschotoolbox flip per second (feedback/photocell freq)
+DownSampleRate = sr/FlipsFreq 
+
+AddshowframesDown=round(AddshowframesCum/DownSampleRate);
+% Addshowframes=round(Addshowframes/(sr/(1/ifi))/waitframes); % Downsampling rate at 40
+
+% subplot(3,1,2);
+figure;
+plot(AddshowframesCum,'mo'); % before downsampling 
+hold on;
+plot(AddshowframesDown,'k+'); % downsampled frames for psychtoolbox
+holf off;
+xlim([0 60]);title('before downsampling & after downsampling');
+legend('before downsampling', 'after downsampling');
+
+
+
+AddshowframesDown(1) 
+NumFramesInterval2Hz*29+1 % num of farmes at the 30th tap
+shift=AddshowframesDown(1)-(NumFramesInterval2Hz*29+1)
+AddshowframesDown=AddshowframesDown-shift;
+AddshowframesDown(1) == NumFramesInterval2Hz*29+1 % test if they were aligned
+SyncoShowframes=[]; % create Showframes for Syncopated expt
+SyncoShowframes=[1:NumFramesInterval2Hz:NumFramesInterval2Hz*30 AddshowframesDown(2:end)]; 
+
+
+cd /ssd/zhibin/1overf/20220515_2P
+load('20220515.mat')
+figure;
 plot(Showframes1,'go');hold on;
-Showframes1=Showframes1*1.5;
-plot(Showframes1,'k*');
+plot(SyncoShowframes,'k*');
+xlim([0 60]);
+title('syn showframes1 & synco showframe');
+legend('syn showframes1', 'synco showframe');
+
+figure;
+plot(SyncoShowframes,'go');hold on;
+SyncoSlowShowframes=SyncoShowframes*1.5;
+plot(SyncoSlowShowframes,'k*');
+xlim([0 60]);
+title('before slowing & after slowing');
+legend('before slowing', 'after slowing');
+
 %% Randomization of the pace stimuli in each condition ****************************************
     % Mean stimulus interval for 2Hz pacing
     MeanTapInterval2Hz=0.5; % second
