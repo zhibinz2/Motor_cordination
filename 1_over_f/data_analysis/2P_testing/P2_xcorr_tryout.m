@@ -3,144 +3,17 @@ timeL;samplesL;TRIGGERindL;srL;channels_infoL;
 timeR;samplesR;TRIGGERindR;srR;channels_infoR;
 % code for the analysis
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
-% data
+% load data
 clear;close all;
 cd /ssd/zhibin/1overf/20220515_2P
 cd /ssd/zhibin/1overf/20220517_2P
 cd /ssd/zhibin/1overf/20220518_2P
-%% Segmented data
-% Segment EEG
-% mixedsigL=mixedsigL';
-% mixedsigR=mixedsigR';
-% PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
-% PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
-EEGOpenEyeRestingL=mixedsigL(PacersL(1):PacersL(2),:);
-EEGCloseEyeRestingL=mixedsigL(PacersL(3):PacersL(4),:);
-EEGCondi1L=mixedsigL(PacersL(6):PacersL(7),:);
-EEGResting2L=mixedsigL(PacersL(7):PacersL(8),:);
-EEGCondi2L=mixedsigL(PacersL(10):PacersL(11),:);
-EEGResting3L=mixedsigL(PacersL(11):PacersL(12),:);
-EEGCondi3L=mixedsigL(PacersL(14):PacersL(15),:);
-EEGResting4L=mixedsigL(PacersL(15):PacersL(16),:);
-EEGCondi4L=mixedsigL(PacersL(18):PacersL(19),:);
-EEGResting5L=mixedsigL(PacersL(19):PacersL(20),:);
-EEGCondi5L=mixedsigL(PacersL(22):PacersL(23),:);
-EEGResting6L=mixedsigL(PacersL(23):PacersL(24),:);
-EEGCondi6L=mixedsigL(PacersL(26):end,:);
+%% Segment data process
+open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/P2_EEG_processing.m
 
-EEGOpenEyeRestingR=mixedsigR(PacersR(1):PacersR(2),:);
-EEGCloseEyeRestingR=mixedsigR(PacersR(3):PacersR(4),:);
-EEGCondi1R=mixedsigR(PacersR(6):PacersR(7),:);
-EEGResting2R=mixedsigR(PacersR(7):PacersR(8),:);
-EEGCondi2R=mixedsigR(PacersR(10):PacersR(11),:);
-EEGResting3R=mixedsigR(PacersR(11):PacersR(12),:);
-EEGCondi3R=mixedsigR(PacersR(14):PacersR(15),:);
-EEGResting4R=mixedsigR(PacersR(15):PacersR(16),:);
-EEGCondi4R=mixedsigR(PacersR(18):PacersR(19),:);
-EEGResting5R=mixedsigR(PacersR(19):PacersR(20),:);
-EEGCondi5R=mixedsigR(PacersR(22):PacersR(23),:);
-EEGResting6R=mixedsigR(PacersR(23):PacersR(24),:);
-EEGCondi6R=mixedsigR(PacersR(26):end,:);
-
-
-%% segment button presses
-BottonPresTimeL01; BottonPresTimeR01;
-
-BPOpenEyeRestingL=BottonPresTimeL01(PacersL(1):PacersL(2),:);
-BPCloseEyeRestingL=BottonPresTimeL01(PacersL(3):PacersL(4),:);
-BPCondi1L=BottonPresTimeL01(PacersL(6):PacersL(7),:); plot(BPCondi1L,'r');
-BPResting2L=BottonPresTimeL01(PacersL(7):PacersL(8),:);
-BPCondi2L=BottonPresTimeL01(PacersL(10):PacersL(11),:);
-BPResting3L=BottonPresTimeL01(PacersL(11):PacersL(12),:);
-BPCondi3L=BottonPresTimeL01(PacersL(14):PacersL(15),:);
-BPResting4L=BottonPresTimeL01(PacersL(15):PacersL(16),:);
-BPCondi4L=BottonPresTimeL01(PacersL(18):PacersL(19),:);
-BPResting5L=BottonPresTimeL01(PacersL(19):PacersL(20),:);
-BPCondi5L=BottonPresTimeL01(PacersL(22):PacersL(23),:);
-BPResting6L=BottonPresTimeL01(PacersL(23):PacersL(24),:);
-BPCondi6L=BottonPresTimeL01(PacersL(26):end,:);
-
-BPOpenEyeRestingR=BottonPresTimeR01(PacersR(1):PacersR(2),:);
-BPCloseEyeRestingR=BottonPresTimeR01(PacersR(3):PacersR(4),:);
-BPCondi1R=BottonPresTimeR01(PacersR(6):PacersR(7),:);plot(BPCondi1R,'b');
-BPResting2R=BottonPresTimeR01(PacersR(7):PacersR(8),:);
-BPCondi2R=BottonPresTimeR01(PacersR(10):PacersR(11),:);
-BPResting3R=BottonPresTimeR01(PacersR(11):PacersR(12),:);
-BPCondi3R=BottonPresTimeR01(PacersR(14):PacersR(15),:);
-BPResting4R=BottonPresTimeR01(PacersR(15):PacersR(16),:);
-BPCondi4R=BottonPresTimeR01(PacersR(18):PacersR(19),:);
-BPResting5R=BottonPresTimeR01(PacersR(19):PacersR(20),:);
-BPCondi5R=BottonPresTimeR01(PacersR(22):PacersR(23),:);
-BPResting6R=BottonPresTimeR01(PacersR(23):PacersR(24),:);
-BPCondi6R=BottonPresTimeR01(PacersR(26):end,:);
-
-%
-
-%% segment feedbacks from the other 
-FeedbTimeL01; FeedbTimeR01;
-
-FBOpenEyeRestingL=FeedbTimeL01(PacersL(1):PacersL(2),:);
-FBCloseEyeRestingL=FeedbTimeL01(PacersL(3):PacersL(4),:);
-FBCondi1L=FeedbTimeL01(PacersL(6):PacersL(7),:); plot(FBCondi1L,'b');
-FBResting2L=FeedbTimeL01(PacersL(7):PacersL(8),:);
-FBCondi2L=FeedbTimeL01(PacersL(10):PacersL(11),:);
-FBResting3L=FeedbTimeL01(PacersL(11):PacersL(12),:);
-FBCondi3L=FeedbTimeL01(PacersL(14):PacersL(15),:);
-FBResting4L=FeedbTimeL01(PacersL(15):PacersL(16),:);
-FBCondi4L=FeedbTimeL01(PacersL(18):PacersL(19),:);
-FBResting5L=FeedbTimeL01(PacersL(19):PacersL(20),:);
-FBCondi5L=FeedbTimeL01(PacersL(22):PacersL(23),:);
-FBResting6L=FeedbTimeL01(PacersL(23):PacersL(24),:);
-FBCondi6L=FeedbTimeL01(PacersL(26):end,:);
-
-FBOpenEyeRestingR=FeedbTimeR01(PacersR(1):PacersR(2),:);
-FBCloseEyeRestingR=FeedbTimeR01(PacersR(3):PacersR(4),:);
-FBCondi1R=FeedbTimeR01(PacersR(6):PacersR(7),:); plot(FBCondi1R,'r');
-FBResting2R=FeedbTimeR01(PacersR(7):PacersR(8),:);
-FBCondi2R=FeedbTimeR01(PacersR(10):PacersR(11),:);
-FBResting3R=FeedbTimeR01(PacersR(11):PacersR(12),:);
-FBCondi3R=FeedbTimeR01(PacersR(14):PacersR(15),:);
-FBResting4R=FeedbTimeR01(PacersR(15):PacersR(16),:);
-FBCondi4R=FeedbTimeR01(PacersR(18):PacersR(19),:);
-FBResting5R=FeedbTimeR01(PacersR(19):PacersR(20),:);
-FBCondi5R=FeedbTimeR01(PacersR(22):PacersR(23),:);
-FBResting6R=FeedbTimeR01(PacersR(23):PacersR(24),:);
-FBCondi6R=FeedbTimeR01(PacersR(26):end,:);
-
-%% %% segment EMG
-filtered_EMGL; filtered_EMGR;
-
-EMGOpenEyeRestingL=filtered_EMGL(PacersL(1):PacersL(2),:);
-EMGCloseEyeRestingL=filtered_EMGL(PacersL(3):PacersL(4),:);
-EMGCondi1L=filtered_EMGL(PacersL(6):PacersL(7),:);
-EMGResting2L=filtered_EMGL(PacersL(7):PacersL(8),:);
-EMGCondi2L=filtered_EMGL(PacersL(10):PacersL(11),:);
-EMGResting3L=filtered_EMGL(PacersL(11):PacersL(12),:);
-EMGCondi3L=filtered_EMGL(PacersL(14):PacersL(15),:);
-EMGResting4L=filtered_EMGL(PacersL(15):PacersL(16),:);
-EMGCondi4L=filtered_EMGL(PacersL(18):PacersL(19),:);
-EMGResting5L=filtered_EMGL(PacersL(19):PacersL(20),:);
-EMGCondi5L=filtered_EMGL(PacersL(22):PacersL(23),:);
-EMGResting6L=filtered_EMGL(PacersL(23):PacersL(24),:);
-EMGCondi6L=filtered_EMGL(PacersL(26):end,:);
-
-EMGOpenEyeRestingR=filtered_EMGR(PacersR(1):PacersR(2),:);
-EMGCloseEyeRestingR=filtered_EMGR(PacersR(3):PacersR(4),:);
-EMGCondi1R=filtered_EMGR(PacersR(6):PacersR(7),:);
-EMGResting2R=filtered_EMGR(PacersR(7):PacersR(8),:);
-EMGCondi2R=filtered_EMGR(PacersR(10):PacersR(11),:);
-EMGResting3R=filtered_EMGR(PacersR(11):PacersR(12),:);
-EMGCondi3R=filtered_EMGR(PacersR(14):PacersR(15),:);
-EMGResting4R=filtered_EMGR(PacersR(15):PacersR(16),:);
-EMGCondi4R=filtered_EMGR(PacersR(18):PacersR(19),:);
-EMGResting5R=filtered_EMGR(PacersR(19):PacersR(20),:);
-EMGCondi5R=filtered_EMGR(PacersR(22):PacersR(23),:);
-EMGResting6R=filtered_EMGR(PacersR(23):PacersR(24),:);
-EMGCondi6R=filtered_EMGR(PacersR(26):end,:);
-
-%% load data
-clear /ssd/zhibin/1overf/20220515_2P/Segmented_data
-
+%% load segmented data
+clear
+cd /ssd/zhibin/1overf/20220515_2P/Segmented_data
 
 %% Xspectra Method1: multply by conjugate (work!)
 open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/Xspectra_tryout.m
@@ -280,7 +153,6 @@ figure;plot(freqs,cprod);
 figure;plot(freqs,abs(cprod)); % cross spectra
 figure;plot(freqs,angle(cprod)); % phase difference
 figure;plot(freqs,corr);
-
 
 %% autocorr
 % https://www.mathworks.com/help/econ/autocorr.html
