@@ -26,6 +26,8 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 D=3-A(1); % ? D is the dimension of the time series % ?
 
 % plot the fit
+FitValues=polyval(A,log(n(1:end)));
 hold on;
-plot(
+plot(log(n(1:end)),FitValues,'r--');
+legend({'Data',['Fit (DFA=' num2str(Alpha1) ')']});
 return

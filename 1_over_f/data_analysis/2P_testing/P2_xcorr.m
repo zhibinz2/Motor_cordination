@@ -320,6 +320,7 @@ subplot(3,1,3);
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
 [D,Alpha1]=DFA_main(Error);
 title(['DFA of error']);
+hold off
 
 %% xcorr
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
