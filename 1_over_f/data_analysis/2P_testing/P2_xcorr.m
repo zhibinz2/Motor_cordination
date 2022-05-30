@@ -284,11 +284,12 @@ figure;plot(freqs,corr);
 % autocorr on boolean (not meaningful)
 time_series=FBCondi2L;
 [acf,lags] = autocorr(time_series);
-figure; autocorr(time_series,40) % number of lags
+figure; autocorr(time_series,500) % number of lags
 
 % autocorr on intervals
 time_series=Calinterval(FBCondi2L');
-figure; autocorr(time_series,40) % number of lags
+figure; autocorr(time_series,500) % number of lags
+title('autocorr on intervals');
 
 % autocorr on errors
 time_series1=find(FBCondi2R==1);% plot(time_series1);
@@ -302,8 +303,12 @@ for i=1:TimeLength % i=StartStim2 % syncopation has one press less than conditio
     [minValue,closetIndex]=min(abs(time_series2-time_series1(i))); % closetIndex in BottonPressTime
     Error(i)=time_series2(closetIndex)-time_series1(i);
 end
-figure;plot(Error/2000,'r.');title('error');xlabel('taps');ylabel('timing error (s)');
-figure; autocorr(Error,500) % number of lags
+figure;
+subplot(2,1,1);
+plot(Error/2000,'r.');title('error');xlabel('taps');ylabel('timing error (s)');
+subplot(2,1,2);
+autocorr(Error,250);% number of lags
+title('autocorr of error');
 
 %% xcorr
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
@@ -313,14 +318,14 @@ time_series1=FBCondi2R';% plot(time_series1);
 time_series2=BPCondi2R';% plot(time_series2);
 TimeLength=min([length(time_series1) length(time_series2)]);
 [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000, 'normalized');
-figure;plot(lags./2,r);xlabel('time [ms]');ylabel('cross correlation');title('xcorr');
+figure;plot(lags./2,r);xlabel('time [ms]');ylabel('cross correlation');title('xcorr on boolean');
 
 % xcorr on intervals
 time_series1=Calinterval(FBCondi2L');% plot(time_series1);
 time_series2=Calinterval(BPCondi2L');% plot(time_series2);
 TimeLength=min([length(time_series1) length(time_series2)]);
 [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000,'normalized');
-figure;plot(lags./2,r);xlabel('time [ms]');ylabel('cross correlation');title('xcorr');
+figure;plot(lags./2,r);xlabel('time [ms]');ylabel('cross correlation');title('xcorr on intervals');
 
 
 
