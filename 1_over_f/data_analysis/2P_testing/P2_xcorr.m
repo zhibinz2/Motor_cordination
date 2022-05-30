@@ -139,6 +139,8 @@ EMGResting6R=filtered_EMGR(PacersR(23):PacersR(24),:);
 EMGCondi6R=filtered_EMGR(PacersR(26):end,:);
 %% cross spectra
 open allspectra.m
+
+
 % all channels
 time_series1=EEGCondi2L; % time_series1=BPCondi2L;
 time_series2=EEGCondi2R; % time_series2=FBCondi2R; % time_series2=BPCondi2L;
