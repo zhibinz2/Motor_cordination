@@ -73,18 +73,16 @@ while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
     Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3 0 -screenXpixels/3 0]); % Middle monitor
     end
     
-    %% show stimulus(pacer) and photocells on the top at the same time
+    %% show resampled recording and photocells on the top at the same time
     if any(Showframeselected(:) == n)
-        % Show the pacer 
-        Screen('FrameOval', windowPtr,green, [xCenter-screenXpixels/24-screenYpixels/35 yCenter-screenYpixels/35 xCenter-screenXpixels/24+screenYpixels/35 yCenter+screenYpixels/35],1,1); % green pacer center left
-        Screen('FrameOval', windowPtr,green, [xCenter+screenXpixels/24-screenYpixels/35 yCenter-screenYpixels/35 xCenter+screenXpixels/24+screenYpixels/35 yCenter+screenYpixels/35],1,1); % green pacer center right
-         if (conditionSelected == 1) | (conditionSelected == 2) | (conditionSelected == 4)| (conditionSelected == 5) | (conditionSelected == 6) % shown on left
-            Screen('FrameOval', windowPtr,green, [xCenter-screenXpixels/3-screenYpixels/35 yCenter-screenYpixels/35 xCenter-screenXpixels/3+screenYpixels/35 yCenter+screenYpixels/35],1,1);
-            end
-         if (conditionSelected == 1) | (conditionSelected == 3) | (conditionSelected == 4) | (conditionSelected == 5) | (conditionSelected == 6) % shown on right
-            Screen('FrameOval', windowPtr,green, [xCenter+screenXpixels/3-screenYpixels/35 yCenter-screenYpixels/35 xCenter+screenXpixels/3+screenYpixels/35 yCenter+screenYpixels/35],1,1);
-         end
-        % Flash the photocell to indicate the pacers
+        % show one's own resampled recording
+        if (conditionSelected == 1) | (conditionSelected == 2) 
+            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Left monitor
+        end
+        if (conditionSelected == 1) | (conditionSelected == 3) 
+            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Right monitor
+        end
+        % Flash the photocell to indicate the recorded BPs
         Screen('FillRect', windowPtr, white, LeftUpperSquare);
         Screen('FillRect', windowPtr, white, RightUpperSquare);    
     end
@@ -106,33 +104,10 @@ while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
             Screen('DrawDots', windowPtr, [xCenter-screenXpixels/24;yCenter], screenYpixels/20-2, red, [0 0], 2); % center monitor (left shift -screenYpixels/24)
             % show bottomright photocell on the other side undercovered
             Screen('FillRect', windowPtr, white, RightBottomSquare); 
-            
-            % show leader player's own buttom press
-            if (conditionSelected == 1) | (conditionSelected == 2) 
-                Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Left monitor
-            end
 
             % feedback to the other paticipants
-            if (conditionSelected == 2) % show feedback
+            if (conditionSelected == 2) | (conditionSelected == 4) % show feedback to other
                 Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
-            end
-
-            if (conditionSelected == 4)
-                if (n < NumFramesInterval2Hz*30) | (n == NumFramesInterval2Hz*30) % feed to oneself
-                    Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Left monitor
-                end
-                if n > NumFramesInterval2Hz*30 % feed to the other
-                    Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
-                end
-            end
-
-            if (conditionSelected == 5) | (conditionSelected == 6)
-                if (n < NumFramesInterval3Hz*30) | (n == NumFramesInterval3Hz*30) % feed to oneself
-                    Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Left monitor
-                end
-                if n > NumFramesInterval3Hz*30 % feed to the other
-                    Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
-                end
             end
 
             % update number of taps recorded
@@ -145,7 +120,6 @@ while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
     try
         % Right player
         [pressedR1, RBkeyR1]=readCedrusRB(deviceR, keymapR);
-        % [pressedR2, RBkeyR2]=readCedrusRB(deviceR, keymapR);
     catch
         % do nothing; 
     end
@@ -158,35 +132,12 @@ while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
             Screen('DrawDots', windowPtr, [xCenter+screenXpixels/24;yCenter], screenYpixels/20-2, blue, [0 0], 2); % center monitor (right shift +screenYpixels/24)
             % show bottomleft photocell on the other side undercovered
             Screen('FillRect', windowPtr, white, LeftBottomSquare); 
-            
-            % show one's own buttom press
-            if (conditionSelected == 1) | (conditionSelected == 3) 
-                Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Right monitor
-            end
-
+          
             % provide feedback stim to the other player 
-            if (conditionSelected == 3)
+            if (conditionSelected == 3) | (conditionSelected == 4)
                 Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Left monitor
             end
-            
-            if (conditionSelected == 4) 
-                if (n < NumFramesInterval2Hz*30) | (n == NumFramesInterval2Hz*30) % feed to oneself
-                    Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Left monitor
-                end
-                if n > NumFramesInterval2Hz*30 % feed to the other
-                    Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Right monitor
-                end
-            end
-            
-            if (conditionSelected == 5) | (conditionSelected == 6)
-                if (n < NumFramesInterval3Hz*30) | (n == NumFramesInterval3Hz*30) % feed to oneself
-                    Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Left monitor
-                end
-                if n > NumFramesInterval3Hz*30 % feed to the other
-                    Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Right monitor
-                end
-            end
-
+           
             % update number of taps recorded
             tapsRecordedR=tapsRecordedR+1;
         % end

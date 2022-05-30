@@ -252,10 +252,8 @@ try
                 color = red;
             elseif conditionSelected == 3
                 color = blue;
-            elseif conditionSelected == 4
+            else conditionSelected == 4
                 color = megenta;
-            else (conditionSelected == 5) | (conditionSelected == 6) 
-                color = purple;
             end
 
             % show instruction for each trial / condition
