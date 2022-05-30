@@ -137,9 +137,65 @@ EMGResting5R=filtered_EMGR(PacersR(19):PacersR(20),:);
 EMGCondi5R=filtered_EMGR(PacersR(22):PacersR(23),:);
 EMGResting6R=filtered_EMGR(PacersR(23):PacersR(24),:);
 EMGCondi6R=filtered_EMGR(PacersR(26):end,:);
-%% cross spectra
-open allspectra.m
 
+%% Xspectra Method1: multply by conjugate (work!)
+open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/Xspectra_tryout.m
+
+% two channels
+x1=EEGCondi2L(:,5); % time_series1=BPCondi2L;
+x2=EEGCondi2R(:,5); 
+
+maxfreq = 5;
+sr=2000; % unique([srL srR]);
+T=size(EEGCondi2R,1)/sr; % in second
+df=1/T;
+nbins = ceil(maxfreq/df) + 1;
+freqs = [0:(nbins-1)]*df;
+
+fcoef1 = fft(ndetrend(x1,1),[],1)/length(x1);
+fcoef2 = fft(ndetrend(x2,1),[],1)/length(x2);
+
+cprod=[];
+for i=1:nbins
+    cprod(i)=fcoef1(i)*conj(fcoef2(i))/length(x1);
+end
+
+% look at all frequency
+figure;
+subplot(4,1,1);plot(x1,'r');hold on;plot(x2,'b');title('two time series');
+subplot(4,1,2);plot(freqs,cprod);title('cprod');
+subplot(4,1,3);plot(freqs,abs(cprod)); title('abs(cprod)');% cross spectra
+subplot(4,1,4);plot(freqs,angle(cprod)); title('angle(cprod)');% phase difference
+
+% two channels
+x1=EEGCondi2L; % time_series1=BPCondi2L;
+x2=EEGCondi2R; 
+
+maxfreq = 5;
+sr=2000; % unique([srL srR]);
+SamplesLength=size(x2,1);
+T=SamplesLength/sr; % in second
+df=1/T;
+nbins = ceil(maxfreq/df) + 1;
+freqs = [0:(nbins-1)]*df;
+
+fcoef1 = fft(ndetrend(x1,1),[],1)/SamplesLength;
+fcoef2 = fft(ndetrend(x2,1),[],1)/SamplesLength;
+
+cprod=[];
+for i=1:nbins
+    cprod(i,:)=fcoef1(i,:).*conj(fcoef2(i,:))/length(x1);
+end
+
+% look at all frequency
+figure;
+subplot(4,1,1);plot(x1);hold on;plot(x2);title('two time series');
+subplot(4,1,2);plot(freqs,cprod);title('cprod');
+subplot(4,1,3);plot(freqs,abs(cprod)); title('abs(cprod)');% cross spectra
+subplot(4,1,4);plot(freqs,angle(cprod)); title('angle(cprod)');% phase difference
+
+%% cross spectra (allspectra)
+open allspectra.m
 
 % all channels
 time_series1=EEGCondi2L; % time_series1=BPCondi2L;
