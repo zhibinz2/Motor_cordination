@@ -1,23 +1,31 @@
 function [D,Alpha1]=DFA_main(DATA)
 % DATA should be a time series of length(DATA) greater than 2000,and of column vector.
-%A is the alpha in the paper
-%D is the dimension of the time series % ?
-%n can be changed to your interest
+% A is the alpha in the paper
+% (https://aip.scitation.org/doi/pdf/10.1063/1.166141)
+% D is the dimension of the time series % ?
+% n can be changed to your interest
 
-% n=100:100:1000;
-% n=2:2:200;
-n=2:2:512
-N1=length(n);
-F_n=zeros(N1,1);
- for i=1:N1
+% n=100:100:1000; % win_lengths (function default)
+% n=2:2:200; % all win_lengths(customized to our need)
+n=16:16:512; % all 32 different win_lengths (customized to our need)
+Nw=length(n); % number of different win_lengths
+F_n=zeros(Nw,1); % initialize RMS values in the FDA time series
+ for i=1:Nw
      F_n(i)=DFA(DATA,n(i),1);
  end
  n=n';
+ 
 %  plot(n,F_n);
- plot(log(n),log(F_n));
-xlabel('n')
-ylabel('F(n)')
- A=polyfit(log(n(1:end)),log(F_n(1:end)),1);
-Alpha1=A(1);
- D=3-A(1);%  ?
+plot(log(n),log(F_n));
+xlabel('Scale - log(n)') % win_lengths 
+ylabel('RMS - log(F-n)') % RMS values
+title('DFA')
+
+A=polyfit(log(n(1:end)),log(F_n(1:end)),1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+D=3-A(1); % ? D is the dimension of the time series % ?
+
+% plot the fit
+hold on;
+plot(
 return

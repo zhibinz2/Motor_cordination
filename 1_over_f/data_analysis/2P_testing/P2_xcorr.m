@@ -138,6 +138,10 @@ EMGCondi5R=filtered_EMGR(PacersR(22):PacersR(23),:);
 EMGResting6R=filtered_EMGR(PacersR(23):PacersR(24),:);
 EMGCondi6R=filtered_EMGR(PacersR(26):end,:);
 
+%% load data
+clear /ssd/zhibin/1overf/20220515_2P/Segmented_data
+
+
 %% Xspectra Method1: multply by conjugate (work!)
 open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/Xspectra_tryout.m
 
@@ -303,12 +307,19 @@ for i=1:TimeLength % i=StartStim2 % syncopation has one press less than conditio
     [minValue,closetIndex]=min(abs(time_series2-time_series1(i))); % closetIndex in BottonPressTime
     Error(i)=time_series2(closetIndex)-time_series1(i);
 end
+% sliding window of errors
+
+% plot
 figure;
-subplot(2,1,1);
+subplot(3,1,1);
 plot(Error/2000,'r.');title('error');xlabel('taps');ylabel('timing error (s)');
-subplot(2,1,2);
+subplot(3,1,2);
 autocorr(Error,250);% number of lags
 title('autocorr of error');
+subplot(3,1,3);
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
+[D,Alpha1]=DFA_main(Error);
+title(['DFA of error']);
 
 %% xcorr
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing

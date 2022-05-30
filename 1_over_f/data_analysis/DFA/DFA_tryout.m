@@ -56,6 +56,12 @@ DATA=Error1;
 DATA=Error2;
 DATA=Error3;
 
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
+figure;
+[D,Alpha1]=DFA_main(DATA);
+title('DFA');
+
+%%
 function [D,Alpha1]=DFA_main(DATA)
 % DATA should be a time series of length(DATA) greater than 2000,and of column vector.
 %A is the alpha in the paper
