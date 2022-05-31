@@ -5,7 +5,7 @@ cd /ssd/zhibin/1overf/20220517_2P
 cd /ssd/zhibin/1overf/20220518_2P
 %% P2 behaviral (short-range / local statistics; weak anticipation) on interval
 % [ autocorr(BP_L) + xcorr(BP_L vs FB_L) + xcorr(BP_R vs FB_R) + autocorr(BP_R) ]
-% 6 conditions -subplots(4,6,condi)
+% 6 conditions -subplots(4,6,condi) 
 
 figure;
 for condi=1:6

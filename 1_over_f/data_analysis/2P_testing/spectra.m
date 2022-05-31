@@ -3,7 +3,7 @@ function [fcoef1,fcoef2,cprod, freqs] = spectra(x1,x2,maxfreq,sr);
 % This function can be used for Powerspectra or Cross spectra
 
 SamplesLength=size(x2,1);
-T=SamplesLength/sr; % in second
+T=SamplesLength/sr; % in second 
 df=1/T;
 nbins = ceil(maxfreq/df) + 1;
 freqs = [0:(nbins-1)]*df;
