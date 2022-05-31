@@ -4,22 +4,13 @@
 
 figure;
 for condi=1:6
+    subplot(4,6,condi);
     if condi==1; BP_L=BPCondi1L; FB_L=; BP_R=;FB_R=;end
     if condi==2; BP_L=BPCondi2L; FB_L=; BP_R=;FB_R=;end
     if condi==3; BP_L=BPCondi3L; FB_L=; BP_R=;FB_R=;end
     if condi==4; BP_L=BPCondi4L; FB_L=; BP_R=;FB_R=;end
     if condi==5; BP_L=BPCondi5L; FB_L=; BP_R=;FB_R=;end
     if condi==6; BP_L=BPCondi6L; FB_L=; BP_R=;FB_R=;end
-    subplot(4,6,condi); %  autocorr(BP_L)
-    autocorr(BP_L);
-    subplot(4,6,6+condi); %  xcorr(BP_L vs FB_L)
-    
-    subplot(4,6,6*2+condi); %   xcorr(BP_R vs FB_R) 
-    
-    subplot(4,6,6*2+condi); %  autocorr(BP_R)
-    
-    
-end
     
         
 
