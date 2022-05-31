@@ -9,81 +9,81 @@ cd /ssd/zhibin/1overf/20220518_2P
 
 figure;
 for condi=1:6
-    if condi==1; BP_L=BPCondi1L; FB_L=; BP_R=;FB_R=;end
-    if condi==2; BP_L=BPCondi2L; FB_L=; BP_R=;FB_R=;end
-    if condi==3; BP_L=BPCondi3L; FB_L=; BP_R=;FB_R=;end
-    if condi==4; BP_L=BPCondi4L; FB_L=; BP_R=;FB_R=;end
-    if condi==5; BP_L=BPCondi5L; FB_L=; BP_R=;FB_R=;end
-    if condi==6; BP_L=BPCondi6L; FB_L=; BP_R=;FB_R=;end
+    if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R;FB_R=FBCondi1R;end
+    if condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R;FB_R=FBCondi2R;end
+    if condi==3; BP_L=BPCondi3L; FB_L=FBCondi3L; BP_R=BPCondi3R;FB_R=FBCondi3R;end
+    if condi==4; BP_L=BPCondi4L; FB_L=FBCondi4L; BP_R=BPCondi4R;FB_R=FBCondi4R;end
+    if condi==5; BP_L=BPCondi5L; FB_L=FBCondi5L; BP_R=BPCondi5R;FB_R=FBCondi5R;end
+    if condi==6; BP_L=BPCondi6L; FB_L=FBCondi6L; BP_R=BPCondi6R;FB_R=FBCondi6R;end
     % compute
     subplot(4,6,condi); %  autocorr(BP_L)
-        autocorr(Calinterval(BP_L'),500); xlabel('lags');ylabal('autocorrelation'); 
-        title(['autocorr BP_L' '\nCondi ' num2str(condi)]);
+        autocorr(Calinterval(BP_L'),440); xlabel('lags');ylabel('autocorr'); 
+        title({'autocorr BP-L', ['Condi ' num2str(condi)]});
     subplot(4,6,6+condi); %  xcorr(BP_L vs FB_L)
         time_series1=Calinterval(BP_L');% plot(time_series1);
         time_series2=Calinterval(FB_L');% plot(time_series2);
         TimeLength=min([length(time_series1) length(time_series2)]);
         [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000,'normalized');
-        plot(lags./2,r);xlabel('time [ms]');ylabel('cross correlation');
-        title(['xcorr BP_L & FB_L' '\nCondi ' num2str(condi)]);
+        plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+        title({'xcorr BP-L & FB-L', ['Condi ' num2str(condi)]});
     subplot(4,6,6*2+condi); %   xcorr(BP_R vs FB_R) 
         time_series1=Calinterval(BP_R');% plot(time_series1);
         time_series2=Calinterval(FB_R');% plot(time_series2);
         TimeLength=min([length(time_series1) length(time_series2)]);
         [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000,'normalized');
-        plot(lags./2,r);xlabel('time [ms]');ylabel('cross correlation');
-        title(['xcorr BP_R & FB_R' '\nCondi ' num2str(condi)]);
+        plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+        title({'xcorr BP-R & FB-R', ['Condi ' num2str(condi)]});
     subplot(4,6,6*3+condi); %  autocorr(BP_R)
-        autocorr(Calinterval(BP_R'),500); xlabel('lags');ylabal('autocorrelation'); 
-        title(['autocorr BP_R' '\nCondi ' num2str(condi)]);
-    suptitle('short-range statistics: tapping intervals');
+        autocorr(Calinterval(BP_R'),440); xlabel('lags');ylabel('autocorr'); 
+        title({'autocorr BP-R', ['Condi ' num2str(condi)]});
 end
-    
+suptitle({'short-range statistics: tapping intervals',['subject ' num2str(seed)]});
         
 
-%% P2 behaviral (long-range / global statistics; strong anticipation)
+%% P2 behaviral (long-range / global statistics; strong anticipation) on interval
 % Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
 % 6 conditions -subplots(4,6,i)
-maxfreq=5;sr=2000;
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 figure;
 for condi=1:6
-    if condi==1; BP_L=BPCondi1L; BP_R=;end
-    if condi==2; BP_L=BPCondi2L; BP_R=;end
-    if condi==3; BP_L=BPCondi3L; BP_R=;end
-    if condi==4; BP_L=BPCondi4L; BP_R=;end
-    if condi==5; BP_L=BPCondi5L; BP_R=;end
-    if condi==6; BP_L=BPCondi6L; BP_R=;end
+    if condi==1; BP_L=BPCondi1L; BP_R=BPCondi1R; end
+    if condi==2; BP_L=BPCondi2L; BP_R=BPCondi2R; end
+    if condi==3; BP_L=BPCondi3L; BP_R=BPCondi3R; end
+    if condi==4; BP_L=BPCondi4L; BP_R=BPCondi4R; end
+    if condi==5; BP_L=BPCondi5L; BP_R=BPCondi5R; end
+    if condi==6; BP_L=BPCondi6L; BP_R=BPCondi6R; end
     subplot(4,6,condi); % Pspectra(BP_L)
-        [fcoef1,fcoef2,cprod, freqs] = spectra(Calinterval(BP_L'),Calinterval(BP_L'),maxfreq,sr);
-        plot(freqs,abs(cprod)); title('abs(cprod)');% cross spectra
-        xlabel('freqs');ylabal('power'); 
-        title(['Power spectra BP_L' '\nCondi ' num2str(condi)]);
-        hold on;
-        tbl=table(freqs',abs(cprod'));
-        mdl=fitlm(tbl,'linear');
-        plotAdded(mdl);
+        y=Calinterval(BP_L');
+        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4)
+            Fs=2;% assuming a sampling frequency of 2 Hz
+        else (condi == 5) | (condi == 6) 
+            Fs=3;% assuming a sampling frequency of 3 Hz
+        end
+        [freqs,fcoef] = oneoverf(y,Fs);
+        xlabel('Log(f)');ylabel('Log(power)');
+        title({'Spectrum BP_L', ['Condi ' num2str(condi)]});
         
     subplot(4,6,6+condi);  % Pspectra(BP_R) 
-        [fcoef1,fcoef2,cprod, freqs] = spectra(Calinterval(BP_L'),Calinterval(BP_L'),maxfreq,sr);
-        plot(freqs,abs(cprod)); title('abs(cprod)');% cross spectra
-        xlabel('freqs');ylabal('power'); 
-        title(['Power spectra BP_R' '\nCondi ' num2str(condi)]);
-        hold on;
-        tbl=table(freqs',abs(cprod'));
-        mdl=fitlm(tbl,'linear');
-        plotAdded(mdl);
+        y=Calinterval(BP_R');
+        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4)
+            Fs=2;% assuming a sampling frequency of 2 Hz
+        else (condi == 5) | (condi == 6) 
+            Fs=3;% assuming a sampling frequency of 3 Hz
+        end
+        [freqs,fcoef] = oneoverf(y,Fs);
+        xlabel('Log(f)');ylabel('Log(power)');
+        title({'Spectrum BP_R', ['Condi ' num2str(condi)]});    
         
     subplot(4,6,6*2+condi);  % DFA(BP_L)
-        addpath 
         [D,Alpha1]=DFA_main(Calinterval(BP_L'));
-        title('['DFA BP_L' '\nCondi ' num2str(condi)]');
+        title({'DFA BP_L', ['Condi ' num2str(condi)]});
         
-    subplot(4,6,6*2+condi);  % DFA(BP_R)
+    subplot(4,6,6*3+condi);  % DFA(BP_R)
         [D,Alpha1]=DFA_main(Calinterval(BP_R'));
-        title('['DFA BP_R' '\nCondi ' num2str(condi)]');
-      
-    suptitle('long-range statistics: tapping intervals');
+        title({'DFA BP_R', ['Condi ' num2str(condi)]});
+
 end
+suptitle({'long-range statistics: tapping intervals',['subject ' num2str(seed)]});
 
 %% P2 Error (short & long -range statistics)
 % Error + autocorr (Error) + Pspectra(Error)+ DFA(Error)
@@ -158,7 +158,7 @@ end
 % each of the 6 conditions (subplots(3,6,i)) for each of the 32 channels;
 % auto save the 32 figures in a folder named - 
 
-
+[fcoef1,fcoef2,cprod, freqs] = spectra(Calinterval(BP_R')',Calinterval(BP_L')',maxfreq,sr);
 
 
 
