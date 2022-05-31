@@ -57,8 +57,9 @@ for condi=1:6
         plot(freqs,abs(cprod)); title('abs(cprod)');% cross spectra
         xlabel('freqs');ylabal('power'); 
         title(['Power spectra BP_L' '\nCondi ' num2str(condi)]);
+        legend('BP_L','BP_R');
         hold on;
-        tbl=table(freqs',abs(cprod'));
+        tbl=table(xx',yy');
         mdl=fitlm(tbl,'linear');
         plotAdded(mdl);
         
@@ -67,19 +68,20 @@ for condi=1:6
         plot(freqs,abs(cprod)); title('abs(cprod)');% cross spectra
         xlabel('freqs');ylabal('power'); 
         title(['Power spectra BP_R' '\nCondi ' num2str(condi)]);
+        legend('BP_L','BP_R');
         hold on;
-        tbl=table(freqs',abs(cprod'));
+        tbl=table(xx',yy');
         mdl=fitlm(tbl,'linear');
         plotAdded(mdl);
         
     subplot(2,6,6*2+condi);  % DFA(BP_L)
         addpath 
-        [D,Alpha1]=DFA_main(Calinterval(BP_L'));
-        title('['DFA BP_L' '\nCondi ' num2str(condi)]');
+        [D,Alpha1]=DFA_main(DATA);
+        title('['Power spectra' '\nCondi ' num2str(condi)]');
+        
         
     subplot(2,6,6*2+condi);  % DFA(BP_R)
-        [D,Alpha1]=DFA_main(Calinterval(BP_R'));
-        title('['DFA BP_R' '\nCondi ' num2str(condi)]');
+
       
     suptitle('long-range statistics: tapping intervals');
 end
