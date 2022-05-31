@@ -44,7 +44,7 @@ subplot(4,1,2);plot(freqs,cprod);title('cprod');
 subplot(4,1,3);plot(freqs,abs(cprod)); title('abs(cprod)');% cross spectra
 subplot(4,1,4);plot(freqs,angle(cprod)); title('angle(cprod)');% phase difference
 
-% all channels
+% two channels
 x1=EEGCondi2L; % time_series1=BPCondi2L;
 x2=EEGCondi2R; 
 
@@ -179,7 +179,6 @@ for i=1:TimeLength % i=StartStim2 % syncopation has one press less than conditio
     [minValue,closetIndex]=min(abs(time_series2-time_series1(i))); % closetIndex in BottonPressTime
     Error(i)=time_series2(closetIndex)-time_series1(i);
 end
-
 % sliding window of errors
 
 % plot
