@@ -8,7 +8,7 @@ cd G:\1overf\20220515_2P\Segmented_data\
 % [ autocorr(BP_L) + xcorr(BP_L vs FB_L) + xcorr(BP_R vs FB_R) + autocorr(BP_R) ]
 % 6 conditions -subplots(4,6,condi) 
 
-figure;
+figure('units','normalized','outerposition',[0 0 1 1]);
 for condi=1:6
     if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R;FB_R=FBCondi1R;end
     if condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R;FB_R=FBCondi2R;end
@@ -18,7 +18,7 @@ for condi=1:6
     if condi==6; BP_L=BPCondi6L; FB_L=FBCondi6L; BP_R=BPCondi6R;FB_R=FBCondi6R;end
     % compute
     subplot(4,6,condi); %  autocorr(BP_L)
-        autocorr(Calinterval(BP_L'),440); xlabel('lags');ylabel('autocorr'); 
+        autocorr(Calinterval(BP_L'),430); xlabel('lags');ylabel('autocorr'); 
         title({'autocorr BP-L', ['Condi ' num2str(condi)]});
     subplot(4,6,6+condi); %  xcorr(BP_L vs FB_L)
         time_series1=Calinterval(BP_L');% plot(time_series1);
@@ -35,7 +35,7 @@ for condi=1:6
         plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
         title({'xcorr BP-R & FB-R', ['Condi ' num2str(condi)]});
     subplot(4,6,6*3+condi); %  autocorr(BP_R)
-        autocorr(Calinterval(BP_R'),440); xlabel('lags');ylabel('autocorr'); 
+        autocorr(Calinterval(BP_R'),430); xlabel('lags');ylabel('autocorr'); 
         title({'autocorr BP-R', ['Condi ' num2str(condi)]});
 end
 suptitle({'short-range statistics: tapping intervals',['subject ' num2str(seed)]});
@@ -43,13 +43,12 @@ suptitle({'short-range statistics: tapping intervals',['subject ' num2str(seed)]
 figureName=['ShortBP' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
-    close all;
 %% P2 behaviral (long-range / global statistics; strong anticipation) on interval
 % Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
 % 6 conditions -subplots(4,6,i)
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 
-figure;
+figure('units','normalized','outerposition',[0 0 1 1]);
 for condi=1:6
     if condi==1; BP_L=BPCondi1L; BP_R=BPCondi1R; end
     if condi==2; BP_L=BPCondi2L; BP_R=BPCondi2R; end
@@ -59,9 +58,9 @@ for condi=1:6
     if condi==6; BP_L=BPCondi6L; BP_R=BPCondi6R; end
     subplot(4,6,condi); % Pspectra(BP_L)
         y=Calinterval(BP_L');
-        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4)
+        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4);
             Fs=2;% assuming a sampling frequency of 2 Hz
-        else (condi == 5) | (condi == 6) 
+        else (condi == 5) | (condi == 6) ;
             Fs=3;% assuming a sampling frequency of 3 Hz
         end
         [freqs,fcoef] = oneoverf(y,Fs);
@@ -70,9 +69,9 @@ for condi=1:6
         
     subplot(4,6,6+condi);  % Pspectra(BP_R) 
         y=Calinterval(BP_R');
-        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4)
+        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4);
             Fs=2;% assuming a sampling frequency of 2 Hz
-        else (condi == 5) | (condi == 6) 
+        else (condi == 5) | (condi == 6) ;
             Fs=3;% assuming a sampling frequency of 3 Hz
         end
         [freqs,fcoef] = oneoverf(y,Fs);
@@ -93,8 +92,7 @@ suptitle({'long-range statistics: tapping intervals',['subject ' num2str(seed)]}
 figureName=['LongBP' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
-    close all;
-    
+
 %% P2 Error (short & long -range statistics)
 % Error + autocorr (Error) + Pspectra(Error)+ DFA(Error)
 % uncoupled condition (bidiretional error) -subplots(4,10,1-2)
@@ -103,7 +101,7 @@ figureName=['LongBP' num2str(seed)];
 addpath D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\2P_testing
 addpath D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\DFA
 
-figure;
+figure('units','normalized','outerposition',[0 0 1 1]);
 for condi=1:10
     if condi==1; BP_L=BPCondi1L; BP_R=BPCondi1R; time_series1=find(BP_L==1); time_series2=find(BP_R==1); subcondi=1; end % R's Error base on L (uncouple)
     if condi==2; BP_L=BPCondi1L; BP_R=BPCondi1R; time_series1=find(BP_R==1); time_series2=find(BP_L==1); subcondi=1; end % L's Error base on R (uncouple)
@@ -162,19 +160,15 @@ for condi=1:10
 end
 suptitle({'short & long-range statistics: error',['subject ' num2str(seed)]});
 
-
-% use a sliding window and do it again
-% 6 conditions -subplots(3,6,i)
-
 figureName=['Error' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
-    close all;
     
+
 %% P2 EMG (short-range / local statistics; weak anticipation)
 % [ autocorr(EMG_L) + xcorr (EMG_L vs EMG_R) + autocorr(EMG_R) ]
 % 6 conditions - subplots(3,6,i)
-figure;
+figure('units','normalized','outerposition',[0 0 1 1]);
 for condi=1:6
     if condi==1; EMG_L=EMGCondi1L; EMG_R=EMGCondi1R; end % R's Error base on L (uncouple)
     if condi==2; EMG_L=EMGCondi2L; EMG_R=EMGCondi2R; end % L's Error base on R (uncouple)
@@ -208,13 +202,12 @@ suptitle({'short-range statistics: EMG',['subject ' num2str(seed)]});
 figureName=['ShortEMG' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
-    close all;
     
 %% P2 EMG (long-range / global statistics; strong anticipation)
 % [ Pspectra(EMG_L) + Xspectra (EMG_L vs EMG_R) + Pspectra(EMG_R) ]
 % 6 conditions - subplots(3,6,i)
 maxfreq=10;sr=2000;
-figure;
+figure('units','normalized','outerposition',[0 0 1 1]);
 for condi=1:6
     if condi==1; EMG_L=EMGCondi1L; EMG_R=EMGCondi1R; end % R's Error base on L (uncouple)
     if condi==2; EMG_L=EMGCondi2L; EMG_R=EMGCondi2R; end % L's Error base on R (uncouple)
@@ -246,7 +239,6 @@ suptitle({'long-range statistics: EMG',['subject ' num2str(seed)]});
 figureName=['LongEMG' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
-    close all;
     
 %% EEG auto xcorr (weak anticipation, short-range / local statistics)
 % [ autocorr(EEG_L) + xcorr(EEG_L vs EEG_R) + autocorr(EEG_R) ]
@@ -254,6 +246,7 @@ figureName=['LongEMG' num2str(seed)];
 % auto save the 32 figures in a folder named - ShortEEG
 cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/ShortEEG
 cd /ssd/zhibin/1overf/20220517_2P/Segmented_data/ShortEEG
+cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/ShortEEG
 
 maxfreq=25;sr=2000;
 for chan = 1:32
@@ -299,6 +292,9 @@ end
 % each of the 6 conditions (subplots(3,6,i)) for each of the 32 channels;
 % auto save the 32 figures in a folder named - LongEEG
 cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/LongEEG
+cd /ssd/zhibin/1overf/20220517_2P/Segmented_data/LongEEG
+cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/LongEEG
+
 maxfreq=25;sr=2000;
 for chan = 1:32
     figure('units','normalized','outerposition',[0 0 1 1]);
