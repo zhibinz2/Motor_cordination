@@ -202,7 +202,8 @@ time_series1=FBCondi2R';% plot(time_series1);
 time_series2=BPCondi2R';% plot(time_series2);
 TimeLength=min([length(time_series1) length(time_series2)]);
 [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000, 'normalized');
-figure;plot(lags./2,r);xlabel('time [ms]');ylabel('cross correlation');title('xcorr on boolean');
+figure;plot(lags./2,r);% devided by 2 so that the unit is ms
+xlabel('time [ms]');ylabel('cross correlation');title('xcorr on boolean');
 
 % xcorr on intervals
 time_series1=Calinterval(FBCondi2L');% plot(time_series1);

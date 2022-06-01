@@ -158,12 +158,69 @@ suptitle({'short & long-range statistics: error',['subject ' num2str(seed)]});
 %% P2 EMG (short-range / local statistics; weak anticipation)
 % [ autocorr(EMG_L) + xcorr (EMG_L vs EMG_R) + autocorr(EMG_R) ]
 % 6 conditions - subplots(3,6,i)
-
+figure;
+for condi=1:6
+    if condi==1; EMG_L=EMGCondi1L; EMG_R=EMGCondi1R; end % R's Error base on L (uncouple)
+    if condi==2; EMG_L=EMGCondi2L; EMG_R=EMGCondi2R; end % L's Error base on R (uncouple)
+    if condi==3; EMG_L=EMGCondi3L; EMG_R=EMGCondi3R; end % R's Error base on L (unidirectional)
+    if condi==4; EMG_L=EMGCondi4L; EMG_R=EMGCondi4R; end % L's Error base on R (unidirectional)
+    if condi==5; EMG_L=EMGCondi5L; EMG_R=EMGCondi5R; end % R's Error base on L (2Hz bidirection)
+    if condi==6; EMG_L=EMGCondi6L; EMG_R=EMGCondi6R; end % L's Error base on R (2Hz bidirection)
+    
+    subplot(3,6,condi); % autocorr(EMG_L)
+        lags=round(length(EMG_L))-1;
+        autocorr(EMG_L',lags); xlabel('lags');ylabel('autocorr'); 
+        title({'EMG-L', ['Condi ' num2str(condi)]});
+        ylim([-0.5 1]);
+        
+    subplot(3,6,6+condi); % xcorr (EMG_L vs EMG_R) 
+        time_series1=EMG_L';% plot(time_series1);
+        time_series2=EMG_R';% plot(time_series2);
+        TimeLength=min([length(time_series1) length(time_series2)]);
+        [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), TimeLength-1,'normalized');
+        plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');title('xcorr on EMG-L & EMG-R');
+        ylim([-0.1 0.6]);xlim([-5e5 5e5]);
+        
+    subplot(3,6,6*2+condi); %  autocorr(EMG_R) 
+        lags=round(length(EMG_R))-1;
+        autocorr(EMG_R',lags); xlabel('lags');ylabel('autocorr'); 
+        title({'EMG-R', ['Condi ' num2str(condi)]});
+        ylim([-0.5 1]);
+end
+suptitle({'short-range statistics: EMG',['subject ' num2str(seed)]});
 
 %% P2 EMG (long-range / global statistics; strong anticipation)
 % [ Pspectra(EMG_L) + Xspectra (EMG_L vs EMG_R) + Pspectra(EMG_R) ]
 % 6 conditions - subplots(3,6,i)
-
+maxfreq=10;sr=2000;
+figure;
+for condi=1:6
+    if condi==1; EMG_L=EMGCondi1L; EMG_R=EMGCondi1R; end % R's Error base on L (uncouple)
+    if condi==2; EMG_L=EMGCondi2L; EMG_R=EMGCondi2R; end % L's Error base on R (uncouple)
+    if condi==3; EMG_L=EMGCondi3L; EMG_R=EMGCondi3R; end % R's Error base on L (unidirectional)
+    if condi==4; EMG_L=EMGCondi4L; EMG_R=EMGCondi4R; end % L's Error base on R (unidirectional)
+    if condi==5; EMG_L=EMGCondi5L; EMG_R=EMGCondi5R; end % R's Error base on L (2Hz bidirection)
+    if condi==6; EMG_L=EMGCondi6L; EMG_R=EMGCondi6R; end % L's Error base on R (2Hz bidirection)
+    
+    subplot(3,6,condi); % Pspectra(EMG_L) 
+        [fcoef1,fcoef2,cprod, freqs] = spectra(EMG_L,EMG_L,maxfreq,sr);
+        plot(freqs,abs(cprod));xlabel('freqs');ylabel('power');
+        title({'EMG-L', ['Condi ' num2str(condi)]});
+%         ylim([ ]);
+        
+    subplot(3,6,6+condi); % xcorr (EMG_L vs EMG_R) 
+        [fcoef1,fcoef2,cprod, freqs] = spectra(EMG_L,EMG_R,maxfreq,sr);
+        plot(freqs,abs(cprod));xlabel('freqs');ylabel('power');
+        title('xspectra between EMG-L & EMG-R');
+%         ylim([ ]);xlim([ ]);
+        
+    subplot(3,6,6*2+condi); %  Xspectra(EMG_R) 
+        [fcoef1,fcoef2,cprod, freqs] = spectra(EMG_R,EMG_R,maxfreq,sr);
+        plot(freqs,abs(cprod));xlabel('freqs');ylabel('power');
+        title({'EMG-R', ['Condi ' num2str(condi)]});
+%         ylim([ ]);
+end
+suptitle({'long-range statistics: EMG',['subject ' num2str(seed)]});
 
 %% EEG auto xcorr (weak anticipation, short-range / local statistics)
 % [ autocorr(EEG_L) + xcorr(EEG_L vs EEG_R) + autocorr(EEG_R) ]
