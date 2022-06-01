@@ -53,7 +53,7 @@ ConditionInstructionsR={'Syncopate with blue.'... %  \nPacer 2Hz.
 % number of taps per trial/condition
 numTaps=600; % 600 @@@@@@@@ 
 % number of trials per block
-numTrials=4;
+numTrials=6;
 % number of blocks
 numBlock=1;
 % total trial number
@@ -204,11 +204,11 @@ try
 
     % combine all 4 conditions
     MaxTaps=max([length(ShowframesL) length(ShowframesR)]);
-%     Showframes=zeros(4,MaxTaps);
-%     Showframes(1,1:length(ShowframesL))= ShowframesL; 
-%     Showframes(2,1:length(ShowframesR))= ShowframesR;
-%     Showframes(3,1:length(ShowframesR))= ShowframesR;
-%     Showframes(4,1:length(ShowframesR))= ShowframesR;
+    Showframes=zeros(4,MaxTaps);
+    Showframes(1,1:length(ShowframesL))= ShowframesL; 
+    Showframes(2,1:length(ShowframesR))= ShowframesR;
+    Showframes(3,1:length(ShowframesR))= ShowframesR;
+    Showframes(4,1:length(ShowframesR))= ShowframesR;
     % figure;plot(Showframes(1,:),'r.');hold on;plot(Showframes(2,:),'b.');
 
     %% Setting time variables**********************************************
@@ -248,7 +248,7 @@ try
 
             % pick a condition from randomized set allPerm
             conditionSelected = allPerm(numTrials*(block-1)+t);
-            % Showframeselected=Showframes(conditionSelected,:);
+            Showframeselected=Showframes(conditionSelected,:);
             
             % select color
             if conditionSelected == 1

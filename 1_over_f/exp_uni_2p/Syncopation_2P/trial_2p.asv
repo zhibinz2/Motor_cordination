@@ -60,10 +60,8 @@ while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
     % for player R
     if conditionSelected == 1;
         DrawFormattedText2(ConditionInstructionsR{conditionSelected},'win',windowPtr,...
-    'sx',xCenterR,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',blue);
+    'sx',xCenterR,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',color);
     elseif conditionSelected == 4;
-        DrawFormattedText2(ConditionInstructionsR{conditionSelected},'win',windowPtr,...
-    'sx',xCenterR,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',red);
     else
         DrawFormattedText2(ConditionInstructionsR{conditionSelected},'win',windowPtr,...
     'sx',xCenterR,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',color);
