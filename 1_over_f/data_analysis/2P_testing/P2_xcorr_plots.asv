@@ -45,7 +45,6 @@ suptitle({'short-range statistics: tapping intervals',['subject ' num2str(seed)]
 % Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
 % 6 conditions -subplots(4,6,i)
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
-
 figure;
 for condi=1:6
     if condi==1; BP_L=BPCondi1L; BP_R=BPCondi1R; end
@@ -92,8 +91,6 @@ suptitle({'long-range statistics: tapping intervals',['subject ' num2str(seed)]}
 % uncoupled condition (bidiretional error) -subplots(4,10,1-2)
 % unidrectional conditions -subplots(4,10,3-4)
 % bidirectional condition (bidiretional error) -subplots(4,10,5-10)
-addpath D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\2P_testing
-addpath D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\DFA
 
 figure;
 for condi=1:10
@@ -123,33 +120,26 @@ for condi=1:10
         plot(Error/2000,'r.');
         xlabel('taps');ylabel('timing error (s)');
         title({'error', ['Condi ' num2str(subcondi)]});
-        ylim([-0.5 0.6]);
         
     subplot(4,10,10+condi);  % autocorr (Error) 
-        autocorr(Error/2000,440); xlabel('lags');ylabel('autocorr'); 
+        autocorr(Calinterval(Error'),440); xlabel('lags');ylabel('autocorr'); 
         title({'error', ['Condi ' num2str(subcondi)]});
-        ylim([-0.2 0.8]);
         
     subplot(4,10,10*2+condi);  % Pspectra(Error)
-        y=Error/2000;
+        y=Calinterval(BP_R');
         if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4)
             Fs=2;% assuming a sampling frequency of 2 Hz
         else (condi == 5) | (condi == 6) 
             Fs=3;% assuming a sampling frequency of 3 Hz
-        end
-        [freqs,fcoef] = oneoverf(y,Fs);
+        end[freqs,fcoef] = oneoverf(y,Fs);
         xlabel('Log(f)');ylabel('Log(power)');
-        title({'Spectrum Error', ['Condi ' num2str(subcondi)]});
-        ylim([-10 0]);
+        title({'Spectrum BP_R', ['Condi ' num2str(condi)]});    
         
     subplot(4,10,10*3+condi);  %  DFA(Error) 
-        [D,Alpha1]=DFA_main(Error/2000);
-        title({'DFA Error', ['Condi ' num2str(subcondi)]});
-        ylim([-3 1]);
-
+        
+    
 end
-suptitle({'short & long-range statistics: error',['subject ' num2str(seed)]});
-
+suptitle('short & long -range statistics: error');
 
 % use a sliding window and do it again
 % 6 conditions -subplots(3,6,i)
