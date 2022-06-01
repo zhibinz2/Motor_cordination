@@ -40,7 +40,10 @@ for condi=1:6
 end
 suptitle({'short-range statistics: tapping intervals',['subject ' num2str(seed)]});
         
-
+figureName=['ShortBP' num2str(seed)];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+    close all;
 %% P2 behaviral (long-range / global statistics; strong anticipation) on interval
 % Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
 % 6 conditions -subplots(4,6,i)
@@ -87,6 +90,11 @@ for condi=1:6
 end
 suptitle({'long-range statistics: tapping intervals',['subject ' num2str(seed)]});
 
+figureName=['LongBP' num2str(seed)];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+    close all;
+    
 %% P2 Error (short & long -range statistics)
 % Error + autocorr (Error) + Pspectra(Error)+ DFA(Error)
 % uncoupled condition (bidiretional error) -subplots(4,10,1-2)
@@ -158,7 +166,11 @@ suptitle({'short & long-range statistics: error',['subject ' num2str(seed)]});
 % use a sliding window and do it again
 % 6 conditions -subplots(3,6,i)
 
-
+figureName=['Error' num2str(seed)];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+    close all;
+    
 %% P2 EMG (short-range / local statistics; weak anticipation)
 % [ autocorr(EMG_L) + xcorr (EMG_L vs EMG_R) + autocorr(EMG_R) ]
 % 6 conditions - subplots(3,6,i)
@@ -193,6 +205,11 @@ for condi=1:6
 end
 suptitle({'short-range statistics: EMG',['subject ' num2str(seed)]});
 
+figureName=['ShortEMG' num2str(seed)];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+    close all;
+    
 %% P2 EMG (long-range / global statistics; strong anticipation)
 % [ Pspectra(EMG_L) + Xspectra (EMG_L vs EMG_R) + Pspectra(EMG_R) ]
 % 6 conditions - subplots(3,6,i)
@@ -226,11 +243,18 @@ for condi=1:6
 end
 suptitle({'long-range statistics: EMG',['subject ' num2str(seed)]});
 
+figureName=['LongEMG' num2str(seed)];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+    close all;
+    
 %% EEG auto xcorr (weak anticipation, short-range / local statistics)
 % [ autocorr(EEG_L) + xcorr(EEG_L vs EEG_R) + autocorr(EEG_R) ]
 % each of the 6 conditions (subplots(3,6,i)) for each of the 32 channels;
 % auto save the 32 figures in a folder named - ShortEEG
 cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/ShortEEG
+cd /ssd/zhibin/1overf/20220517_2P/Segmented_data/ShortEEG
+
 maxfreq=25;sr=2000;
 for chan = 1:32
     figure('units','normalized','outerposition',[0 0 1 1]);
@@ -268,6 +292,7 @@ for chan = 1:32
     saveas(gcf,figureName,'jpg');
     close all;
 end
+
 
 %% EEG Power spectra and Xspectra (strong anticipation, long-range / global statistics)
 % [ Pspectra(EEG_L) + Xspectra(EEG_L vs EEG_R) + Pspectra(EEG_R) ]
