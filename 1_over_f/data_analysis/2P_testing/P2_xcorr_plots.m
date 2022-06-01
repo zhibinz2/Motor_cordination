@@ -118,23 +118,27 @@ for condi=1:10
         [minValue,closetIndex]=min(abs(time_series2-time_series1(i))); % closetIndex in BottonPressTime
         Error(i)=time_series2(closetIndex)-time_series1(i);
     end
+    % smooth the error with sliding window
+    win=20;
+    [ErrorSmooth] = smoothError(Error,win);
+%     ErrorSmooth=Error;
 
     subplot(4,10,condi); % Error
-        plot(Error/2000,'r.');
+        plot(ErrorSmooth/2000,'r.');
         xlabel('taps');ylabel('timing error (s)');
         title({'error', ['Condi ' num2str(subcondi)]});
         ylim([-0.5 0.6]);
         
     subplot(4,10,10+condi);  % autocorr (Error) 
-        autocorr(Error/2000,440); xlabel('lags');ylabel('autocorr'); 
+        autocorr(ErrorSmooth/2000,400); xlabel('lags');ylabel('autocorr'); 
         title({'error', ['Condi ' num2str(subcondi)]});
         ylim([-0.2 0.8]);
         
     subplot(4,10,10*2+condi);  % Pspectra(Error)
-        y=Error/2000;
-        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4)
+        y=ErrorSmooth/2000;
+        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4) | (condi == 5) | (condi == 6);
             Fs=2;% assuming a sampling frequency of 2 Hz
-        else (condi == 5) | (condi == 6) 
+        else (condi == 7) | (condi == 8) | (condi == 9) | (condi == 10);
             Fs=3;% assuming a sampling frequency of 3 Hz
         end
         [freqs,fcoef] = oneoverf(y,Fs);
@@ -143,7 +147,7 @@ for condi=1:10
         ylim([-10 0]);
         
     subplot(4,10,10*3+condi);  %  DFA(Error) 
-        [D,Alpha1]=DFA_main(Error/2000);
+        [D,Alpha1]=DFA_main(ErrorSmooth/2000);
         title({'DFA Error', ['Condi ' num2str(subcondi)]});
         ylim([-3 1]);
 

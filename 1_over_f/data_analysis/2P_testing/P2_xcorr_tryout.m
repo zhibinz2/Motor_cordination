@@ -179,7 +179,14 @@ for i=1:TimeLength % i=StartStim2 % syncopation has one press less than conditio
     [minValue,closetIndex]=min(abs(time_series2-time_series1(i))); % closetIndex in BottonPressTime
     Error(i)=time_series2(closetIndex)-time_series1(i);
 end
-% sliding window of errors
+
+% sliding window of 10 errors
+function [ErrorSmooth] = smoothError(Error,win);
+ErrorSmooth=[];
+for i=1:length(Error)-20
+    ErrorSmooth(i)=mean(Error(i:i+9));
+end
+end
 
 % plot
 figure;
