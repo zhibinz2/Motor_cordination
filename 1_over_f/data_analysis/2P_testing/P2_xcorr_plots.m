@@ -212,13 +212,13 @@ for condi=1:6
         title({'EMG-L', ['Condi ' num2str(condi)]});
 %         ylim([0 3e-3]);
         
-    subplot(3,6,6+condi); % xcorr (EMG_L vs EMG_R) 
+    subplot(3,6,6+condi); % Xspectra (EMG_L vs EMG_R) 
         [fcoef1,fcoef2,cprod, freqs] = spectra(EMG_L,EMG_R,maxfreq,sr);
         plot(freqs,abs(cprod));xlabel('freqs');ylabel('power');
         title('xspectra between EMG-L & EMG-R');
 %         ylim([0 6]);
         
-    subplot(3,6,6*2+condi); %  Xspectra(EMG_R) 
+    subplot(3,6,6*2+condi); %  Pspectra (EMG_R) 
         [fcoef1,fcoef2,cprod, freqs] = spectra(EMG_R,EMG_R,maxfreq,sr);
         plot(freqs,abs(cprod));xlabel('freqs');ylabel('power');
         title({'EMG-R', ['Condi ' num2str(condi)]});
@@ -229,41 +229,84 @@ suptitle({'long-range statistics: EMG',['subject ' num2str(seed)]});
 %% EEG auto xcorr (weak anticipation, short-range / local statistics)
 % [ autocorr(EEG_L) + xcorr(EEG_L vs EEG_R) + autocorr(EEG_R) ]
 % each of the 6 conditions (subplots(3,6,i)) for each of the 32 channels;
-% auto save the 32 figures in a folder named -
+% auto save the 32 figures in a folder named - ShortEEG
+cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/ShortEEG
+maxfreq=25;sr=2000;
+for chan = 1:32
+    figure('units','normalized','outerposition',[0 0 1 1]);
+    for condi=1:6
+        if condi==1; EEG_L=EEGCondi1L; EEG_R=EEGCondi1R; end % R's Error base on L (uncouple)
+        if condi==2; EEG_L=EEGCondi2L; EEG_R=EEGCondi2R; end % L's Error base on R (uncouple)
+        if condi==3; EEG_L=EEGCondi3L; EEG_R=EEGCondi3R; end % R's Error base on L (unidirectional)
+        if condi==4; EEG_L=EEGCondi4L; EEG_R=EEGCondi4R; end % L's Error base on R (unidirectional)
+        if condi==5; EEG_L=EEGCondi5L; EEG_R=EEGCondi5R; end % R's Error base on L (2Hz bidirection)
+        if condi==6; EEG_L=EEGCondi6L; EEG_R=EEGCondi6R; end % L's Error base on R (2Hz bidirection)
 
+        subplot(3,6,condi); % autocorr(EEG_L) 
+            lags=round(length(EEG_L(:,chan)))-1;
+            autocorr(EEG_L(:,chan)',lags); xlabel('lags');ylabel('autocorr'); 
+            title({'Autocorr EEG-L', ['Condi ' num2str(condi)]});
+    %         ylim([]);
+
+        subplot(3,6,6+condi); % xcorr(EEG_L vs EEG_R)  
+            time_series1=EEG_L(:,chan)';% plot(time_series1);
+            time_series2=EEG_R(:,chan)';% plot(time_series2);
+            TimeLength=min([length(time_series1) length(time_series2)]);
+            [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), TimeLength-1,'normalized');
+            plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');title('xcorr on EEG-L & EEG-R');
+%             ylim([]);xlim([]);
+
+        subplot(3,6,6*2+condi); % autocorr(EEG_R)
+            lags=round(length(EEG_R(:,chan)))-1;
+            autocorr(EEG_R(:,chan)',lags); xlabel('lags');ylabel('autocorr'); 
+            title({'Autocorr EEG-R', ['Condi ' num2str(condi)]});
+    %         ylim([]);
+    end
+    suptitle({['short-range statistics: EEG channel ' num2str(chan)],['subject ' num2str(seed)]});
+    figureName=['ShortEEGchan' num2str(chan)];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+    close all;
+end
 
 %% EEG Power spectra and Xspectra (strong anticipation, long-range / global statistics)
 % [ Pspectra(EEG_L) + Xspectra(EEG_L vs EEG_R) + Pspectra(EEG_R) ]
 % each of the 6 conditions (subplots(3,6,i)) for each of the 32 channels;
-% auto save the 32 figures in a folder named - 
-
+% auto save the 32 figures in a folder named - LongEEG
+cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/LongEEG
 maxfreq=25;sr=2000;
-figure;
-for condi=1:6
-    if condi==1; EMG_L=EEGCondi1L; EEG_R=EEGCondi1R; end % R's Error base on L (uncouple)
-    if condi==2; EEG_L=EEGCondi2L; EEG_R=EEGCondi2R; end % L's Error base on R (uncouple)
-    if condi==3; EEG_L=EEGCondi3L; EEG_R=EEGCondi3R; end % R's Error base on L (unidirectional)
-    if condi==4; EEG_L=EEGCondi4L; EEG_R=EEGCondi4R; end % L's Error base on R (unidirectional)
-    if condi==5; EEG_L=EEGCondi5L; EEG_R=EEGCondi5R; end % R's Error base on L (2Hz bidirection)
-    if condi==6; EEG_L=EEGCondi6L; EEG_R=EEGCondi6R; end % L's Error base on R (2Hz bidirection)
-    
-    subplot(3,6,condi); % Pspectra(EMG_L) 
-        [fcoef1,fcoef2,cprod, freqs] = spectra(Calinterval(BP_L')',Calinterval(BP_L')',maxfreq,sr);
-        plot(freqs,abs(cprod));xlabel('freqs');ylabel('power');
-        title({'EEG-L', ['Condi ' num2str(condi)]});
-%         ylim([]);
-        
-    subplot(3,6,6+condi); % xcorr (EMG_L vs EMG_R) 
-        [fcoef1,fcoef2,cprod, freqs] = spectra(Calinterval(BP_L')',Calinterval(BP_R')',maxfreq,sr);
-        plot(freqs,abs(cprod));xlabel('freqs');ylabel('power');
-        title('xspectra between EEG-L & EEG-R');
-%         ylim([]);
-        
-    subplot(3,6,6*2+condi); %  Xspectra(EMG_R) 
-        [fcoef1,fcoef2,cprod, freqs] = spectra(Calinterval(BP_R')',Calinterval(BP_R')',maxfreq,sr);
-        plot(freqs,abs(cprod));xlabel('freqs');ylabel('power');
-        title({'EEG-R', ['Condi ' num2str(condi)]});
-%         ylim([]);
+for chan = 1:32
+    figure('units','normalized','outerposition',[0 0 1 1]);
+    for condi=1:6
+        if condi==1; EEG_L=EEGCondi1L; EEG_R=EEGCondi1R; end % R's Error base on L (uncouple)
+        if condi==2; EEG_L=EEGCondi2L; EEG_R=EEGCondi2R; end % L's Error base on R (uncouple)
+        if condi==3; EEG_L=EEGCondi3L; EEG_R=EEGCondi3R; end % R's Error base on L (unidirectional)
+        if condi==4; EEG_L=EEGCondi4L; EEG_R=EEGCondi4R; end % L's Error base on R (unidirectional)
+        if condi==5; EEG_L=EEGCondi5L; EEG_R=EEGCondi5R; end % R's Error base on L (2Hz bidirection)
+        if condi==6; EEG_L=EEGCondi6L; EEG_R=EEGCondi6R; end % L's Error base on R (2Hz bidirection)
+
+        subplot(3,6,condi); % Pspectra(EEG_L) 
+            [fcoef1,fcoef2,cprod, freqs] = spectra(EEG_L(:,chan),EEG_L(:,chan),maxfreq,sr);
+            plot(freqs,abs(cprod));xlabel('freqs');ylabel('power');
+            title({'EEG-L', ['Condi ' num2str(condi)]});
+    %         ylim([]);
+
+        subplot(3,6,6+condi); % xcorr (EEG_L vs EEG_R) 
+            [fcoef1,fcoef2,cprod, freqs] = spectra(EEG_L(:,chan),EEG_R(:,chan),maxfreq,sr);
+            plot(freqs,abs(cprod));xlabel('freqs');ylabel('power');
+            title('xspectra between EEG-L & EEG-R');
+    %         ylim([]);
+
+        subplot(3,6,6*2+condi); %  Pspectra(EEG_R) 
+            [fcoef1,fcoef2,cprod, freqs] = spectra(EEG_R(:,chan),EEG_R(:,chan),maxfreq,sr);
+            plot(freqs,abs(cprod));xlabel('freqs');ylabel('power');
+            title({'EEG-R', ['Condi ' num2str(condi)]});
+    %         ylim([]);
+    end
+    suptitle({['long-range statistics: EEG channel ' num2str(chan)],['subject ' num2str(seed)]});
+    figureName=['LongEEGchan' num2str(chan)];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+    close all;
 end
-suptitle({'long-range statistics: EMG',['subject ' num2str(seed)]});
 
