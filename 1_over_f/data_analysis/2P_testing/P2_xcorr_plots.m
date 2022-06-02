@@ -163,11 +163,11 @@ for condi=1:6
         
     subplot(4,6,6*2+condi);  % DFA(BP_L)
         [D,Alpha1]=DFA_main(Calinterval(BP_L'));
-        title({'DFA BP_L', ['Condi ' num2str(condi)]});
+        title({'DFA BP-L', ['Condi ' num2str(condi)]});
         
     subplot(4,6,6*3+condi);  % DFA(BP_R)
         [D,Alpha1]=DFA_main(Calinterval(BP_R'));
-        title({'DFA BP_R', ['Condi ' num2str(condi)]});
+        title({'DFA BP-R', ['Condi ' num2str(condi)]});
 
 end
 suptitle({'long-range statistics: tapping intervals',['subject ' num2str(seed)]});
@@ -532,3 +532,49 @@ for chan = 1:32
     close all;
 end
 
+
+%% Xcorr (short-range): EMG vs FB(boolean) (equal length)
+% [ xcorr(EMG_L vs BP_L) + xcorr(EMG_L vs FB_L) + xcorr(EMG_R vs BP_R) + xcorr(EMG_R vs FB_R) ]
+% 6 conditions -subplots(4,6,condi) 
+
+figure('units','normalized','outerposition',[0 0 1 1]);
+for condi=1:6
+    if condi==1; EMG_L=EMGCondi1L; BP_L=BPCondi1L; FB_L=FBCondi1L; EMG_R=EMGCondi1R; BP_R=BPCondi1R; FB_R=FBCondi1R; end
+    if condi==2; EMG_L=EMGCondi2L; BP_L=BPCondi2L; FB_L=FBCondi2L; EMG_R=EMGCondi2R; BP_R=BPCondi2R; FB_R=FBCondi2R; end
+    if condi==3; EMG_L=EMGCondi3L; BP_L=BPCondi3L; FB_L=FBCondi3L; EMG_R=EMGCondi3R; BP_R=BPCondi3R; FB_R=FBCondi3R; end
+    if condi==4; EMG_L=EMGCondi4L; BP_L=BPCondi4L; FB_L=FBCondi4L; EMG_R=EMGCondi4R; BP_R=BPCondi4R; FB_R=FBCondi4R; end
+    if condi==5; EMG_L=EMGCondi5L; BP_L=BPCondi5L; FB_L=FBCondi5L; EMG_R=EMGCondi5R; BP_R=BPCondi5R; FB_R=FBCondi5R; end
+    if condi==6; EMG_L=EMGCondi6L; BP_L=BPCondi6L; FB_L=FBCondi6L; EMG_R=EMGCondi6R; BP_R=BPCondi6R; FB_R=FBCondi6R; end
+    % compute
+    subplot(4,6,condi); %  xcorr(EMG_L vs BP_L)
+        [r,lags]=xcorr(EMG_L', BP_L', length(EMG_L),'normalized');
+        plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+        title({'xcorr EMG-L & BP-L', ['Condi ' num2str(condi)]});
+        xlim([-2e5 2e5]);ylim([-0.005 0.1]);
+    subplot(4,6,6+condi); %  xcorr(EMG_L vs FB_L)
+        [r,lags]=xcorr(EMG_L', FB_L', length(EMG_L),'normalized');
+        plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+        title({'xcorr EMG-L & FB-L', ['Condi ' num2str(condi)]});
+        xlim([-2e5 2e5]);ylim([-0.005 0.1]);
+    subplot(4,6,6*2+condi); %   xcorr(EMG_R vs BP_R)
+        [r,lags]=xcorr(EMG_R', BP_R', length(EMG_R),'normalized');
+        plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+        title({'xcorr EMG-R & BP-R', ['Condi ' num2str(condi)]});
+        xlim([-2e5 2e5]);ylim([-0.005 0.1]);
+    subplot(4,6,6*3+condi); %  xcorr(EMG_R vs FB_R)
+        [r,lags]=xcorr(EMG_R', FB_R', length(EMG_R),'normalized');
+        plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+        title({'xcorr EMG-R & FB-R', ['Condi ' num2str(condi)]});
+        xlim([-2e5 2e5]);ylim([-0.005 0.1]);
+end
+suptitle({'xcorr: EMG-BP/FB',['subject ' num2str(seed)]});
+        
+figureName=['xcorrEMG-BPFB' num2str(seed)];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+%%
+
+
+%%
+
+%%
