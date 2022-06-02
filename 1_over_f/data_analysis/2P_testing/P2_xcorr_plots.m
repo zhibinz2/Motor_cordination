@@ -229,7 +229,7 @@ figureName=['LongBP_smooth' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
 
-%% P2 behaviral boolean (long-range / global statistics; strong anticipation) on interval (take longer time)
+%% P2 behaviral boolean (long-range / global statistics; strong anticipation) on interval (take time too long to finish)
 % Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
 % 6 conditions -subplots(4,6,i)
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
@@ -290,48 +290,62 @@ addpath D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over
 win=20; % smooth the error with sliding window size
 
 figure('units','normalized','outerposition',[0 0 1 1]);
-for condi=1:10
-    if condi==1; BP_L=BPCondi1L; BP_R=BPCondi1R; time_series1=find(BP_L==1); time_series2=find(BP_R==1); subcondi=1; end % R's Error base on L (uncouple)
-    if condi==2; BP_L=BPCondi1L; BP_R=BPCondi1R; time_series1=find(BP_R==1); time_series2=find(BP_L==1); subcondi=1; end % L's Error base on R (uncouple)
-    if condi==3; BP_L=BPCondi2L; BP_R=BPCondi2R; time_series1=find(BP_L==1); time_series2=find(BP_R==1); subcondi=2; end % R's Error base on L (unidirectional)
-    if condi==4; BP_L=BPCondi3L; BP_R=BPCondi3R; time_series1=find(BP_R==1); time_series2=find(BP_L==1); subcondi=3; end % L's Error base on R (unidirectional)
-    if condi==5; BP_L=BPCondi4L; BP_R=BPCondi4R; time_series1=find(BP_L==1); time_series2=find(BP_R==1); subcondi=4; end % R's Error base on L (2Hz bidirection)
-    if condi==6; BP_L=BPCondi4L; BP_R=BPCondi4R; time_series1=find(BP_R==1); time_series2=find(BP_L==1); subcondi=4; end % L's Error base on R (2Hz bidirection)
-    if condi==7; BP_L=BPCondi5L; BP_R=BPCondi5R; time_series1=find(BP_L==1); time_series2=find(BP_R==1); subcondi=5; end % R's Error base on L (3Hz bidirection)
-    if condi==8; BP_L=BPCondi5L; BP_R=BPCondi5R; time_series1=find(BP_R==1); time_series2=find(BP_L==1); subcondi=5; end % L's Error base on R (3Hz bidirection)
-    if condi==9; BP_L=BPCondi6L; BP_R=BPCondi6R; time_series1=find(BP_L==1); time_series2=find(BP_R==1); subcondi=6; end % R's Error base on L (>3Hz bidirection)
-    if condi==10; BP_L=BPCondi6L; BP_R=BPCondi6R; time_series1=find(BP_R==1); time_series2=find(BP_L==1); subcondi=6; end % L's Error base on R (>3Hz bidirection)
+for condi=1:12
+%     if condi==1; BP_L=BPCondi1L; BP_R=BPCondi1R; time_series1=find(BP_L==1); time_series2=find(BP_R==1); subcondi=1; end % R's Error base on L (uncouple)
+%     if condi==2; BP_L=BPCondi1L; BP_R=BPCondi1R; time_series1=find(BP_R==1); time_series2=find(BP_L==1); subcondi=1; end % L's Error base on R (uncouple)
+%     if condi==3; BP_L=BPCondi2L; BP_R=BPCondi2R; time_series1=find(BP_L==1); time_series2=find(BP_R==1); subcondi=2; end % R's Error base on L (unidirectional)
+%     if condi==4; BP_L=BPCondi2L; BP_R=BPCondi2R; time_series1=find(BP_R==1); time_series2=find(BP_L==1); subcondi=2; end % L's Error base on R (unidirectional)
+%     if condi==5; BP_L=BPCondi3L; BP_R=BPCondi3R; time_series1=find(BP_L==1); time_series2=find(BP_R==1); subcondi=3; end % R's Error base on L (unidirectional)
+%     if condi==6; BP_L=BPCondi3L; BP_R=BPCondi3R; time_series1=find(BP_R==1); time_series2=find(BP_L==1); subcondi=3; end % L's Error base on R (unidirectional)
+%     if condi==7; BP_L=BPCondi4L; BP_R=BPCondi4R; time_series1=find(BP_L==1); time_series2=find(BP_R==1); subcondi=4; end % R's Error base on L (2Hz bidirection)
+%     if condi==8; BP_L=BPCondi4L; BP_R=BPCondi4R; time_series1=find(BP_R==1); time_series2=find(BP_L==1); subcondi=4; end % L's Error base on R (2Hz bidirection)
+%     if condi==9; BP_L=BPCondi5L; BP_R=BPCondi5R; time_series1=find(BP_L==1); time_series2=find(BP_R==1); subcondi=5; end % R's Error base on L (3Hz bidirection)
+%     if condi==10; BP_L=BPCondi5L; BP_R=BPCondi5R; time_series1=find(BP_R==1); time_series2=find(BP_L==1); subcondi=5; end % L's Error base on R (3Hz bidirection)
+%     if condi==11; BP_L=BPCondi6L; BP_R=BPCondi6R; time_series1=find(BP_L==1); time_series2=find(BP_R==1); subcondi=6; end % R's Error base on L (>3Hz bidirection)
+%     if condi==12; BP_L=BPCondi6L; BP_R=BPCondi6R; time_series1=find(BP_R==1); time_series2=find(BP_L==1); subcondi=6; end % L's Error base on R (>3Hz bidirection)
+    if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; time_series1=find(BP_L==1); time_series2=find(FB_L==1); subcondi=1; end % R's Error base on L (uncouple)
+    if condi==2; BP_R=BPCondi1R; FB_R=FBCondi1R; time_series1=find(BP_R==1); time_series2=find(FB_R==1); subcondi=1; end % L's Error base on R (uncouple)
+    if condi==3; BP_L=BPCondi2L; FB_L=FBCondi2L; time_series1=find(BP_L==1); time_series2=find(FB_L==1); subcondi=2; end % R's Error base on L (unidirectional)
+    if condi==4; BP_R=BPCondi2R; FB_R=FBCondi2R; time_series1=find(BP_R==1); time_series2=find(FB_R==1); subcondi=2; end % L's Error base on R (unidirectional)
+    if condi==5; BP_L=BPCondi3L; FB_L=FBCondi3L; time_series1=find(BP_L==1); time_series2=find(FB_L==1); subcondi=3; end % R's Error base on L (unidirectional)
+    if condi==6; BP_R=BPCondi3R; FB_R=FBCondi3R; time_series1=find(BP_R==1); time_series2=find(FB_R==1); subcondi=3; end % L's Error base on R (unidirectional)
+    if condi==7; BP_L=BPCondi4L; FB_L=FBCondi4L; time_series1=find(BP_L==1); time_series2=find(FB_L==1); subcondi=4; end % R's Error base on L (2Hz bidirection)
+    if condi==8; BP_R=BPCondi4R; FB_R=FBCondi4R; time_series1=find(BP_R==1); time_series2=find(FB_R==1); subcondi=4; end % L's Error base on R (2Hz bidirection)
+    if condi==9; BP_L=BPCondi5L; FB_L=FBCondi5L; time_series1=find(BP_L==1); time_series2=find(FB_L==1); subcondi=5; end % R's Error base on L (3Hz bidirection)
+    if condi==10; BP_R=BPCondi5R; FB_R=FBCondi5R; time_series1=find(BP_R==1); time_series2=find(FB_R==1); subcondi=5; end % L's Error base on R (3Hz bidirection)
+    if condi==11; BP_L=BPCondi6L; FB_L=FBCondi6L; time_series1=find(BP_L==1); time_series2=find(FB_L==1); subcondi=6; end % R's Error base on L (>3Hz bidirection)
+    if condi==12; BP_R=BPCondi6R; FB_R=FBCondi6R; time_series1=find(BP_R==1); time_series2=find(FB_R==1); subcondi=6; end % L's Error base on R (>3Hz bidirection)
     % Compute error
     % plot(time_series1); % plot(time_series2);
     % TimeLength=min([length(time_series1) length(time_series2)]);
     % TimeLength=max([length(time_series1) length(time_series2)]);
-    TimeLength=length(time_series1);
+    TimeLength=length(time_series1); % measure each error in time_series1
     Error=[];
     % find the time difference with the closest botton press 
     for i=1:TimeLength % i=StartStim2 % syncopation has one press less than condition 1 and 3
-        [minValue,closetIndex]=min(abs(time_series2-time_series1(i))); % closetIndex in BottonPressTime
+        [minValue,closetIndex]=min(abs(time_series2-time_series1(i))); % closetIndex in time_series2
         Error(i)=time_series2(closetIndex)-time_series1(i);
     end
     % smooth the error with sliding window
     [ErrorSmooth] = smoothError(Error,win);
 %     ErrorSmooth=Error;
 
-    subplot(4,10,condi); % Error
+    subplot(4,12,condi); % Error
         plot(ErrorSmooth/2000,'r.');
         xlabel('taps');ylabel('timing error (s)');
         title({'error', ['Condi ' num2str(subcondi)]});
         ylim([-0.5 0.6]);
         
-    subplot(4,10,10+condi);  % autocorr (Error) 
+    subplot(4,12,12+condi);  % autocorr (Error) 
         autocorr(ErrorSmooth/2000,400); xlabel('lags');ylabel('autocorr'); 
         title({'error', ['Condi ' num2str(subcondi)]});
         ylim([-0.2 0.8]);
         
-    subplot(4,10,10*2+condi);  % Pspectra(Error)
+    subplot(4,12,12*2+condi);  % Pspectra(Error)
         y=ErrorSmooth/2000;
-        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4) | (condi == 5) | (condi == 6);
+        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4) | (condi == 5) | (condi == 6) | (condi == 7) | (condi == 8);
             Fs=2;% assuming a sampling frequency of 2 Hz
-        else (condi == 7) | (condi == 8) | (condi == 9) | (condi == 10);
+        else (condi == 9) | (condi == 10) | (condi == 11) | (condi == 12);
             Fs=3;% assuming a sampling frequency of 3 Hz
         end
         [freqs,fcoef] = oneoverf(y,Fs);
@@ -339,10 +353,10 @@ for condi=1:10
         title({'Spectrum Error', ['Condi ' num2str(subcondi)]});
         ylim([-10 0]);
         
-    subplot(4,10,10*3+condi);  %  DFA(Error) 
+    subplot(4,12,12*3+condi);  %  DFA(Error) 
         [D,Alpha1]=DFA_main(ErrorSmooth/2000);
         title({'DFA Error', ['Condi ' num2str(subcondi)]});
-        ylim([-3 1]);
+        % ylim([-3 1]);
 
 end
 suptitle({'short & long-range statistics: error',['subject ' num2str(seed)]});
