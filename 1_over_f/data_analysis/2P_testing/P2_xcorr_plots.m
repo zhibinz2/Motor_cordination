@@ -569,12 +569,99 @@ for condi=1:6
 end
 suptitle({'xcorr: EMG-BP/FB',['subject ' num2str(seed)]});
         
-figureName=['xcorrEMG-BPFB' num2str(seed)];
+figureName=['xcorrEMG-BPFBboolean' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
-%%
+    
+%% Xcorr (short-range): EEG vs FB(boolean) (equal length)
+% [ xcorr(EMG_L vs BP_L) + xcorr(EMG_L vs FB_L) + xcorr(EMG_R vs BP_R) + xcorr(EMG_R vs FB_R) ]
+% 6 conditions -subplots(4,6,condi) 
+cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/XcorrEEG_BP_FB
 
+for chan=1:32
+    figure('units','normalized','outerposition',[0 0 1 1]);
+    for condi=1:6
+        if condi==1; EEG_L=EEGCondi1L; BP_L=BPCondi1L; FB_L=FBCondi1L; EEG_R=EEGCondi1R; BP_R=BPCondi1R; FB_R=FBCondi1R; end
+        if condi==2; EEG_L=EEGCondi2L; BP_L=BPCondi2L; FB_L=FBCondi2L; EEG_R=EEGCondi2R; BP_R=BPCondi2R; FB_R=FBCondi2R; end
+        if condi==3; EEG_L=EEGCondi3L; BP_L=BPCondi3L; FB_L=FBCondi3L; EEG_R=EEGCondi3R; BP_R=BPCondi3R; FB_R=FBCondi3R; end
+        if condi==4; EEG_L=EEGCondi4L; BP_L=BPCondi4L; FB_L=FBCondi4L; EEG_R=EEGCondi4R; BP_R=BPCondi4R; FB_R=FBCondi4R; end
+        if condi==5; EEG_L=EEGCondi5L; BP_L=BPCondi5L; FB_L=FBCondi5L; EEG_R=EEGCondi5R; BP_R=BPCondi5R; FB_R=FBCondi5R; end
+        if condi==6; EEG_L=EEGCondi6L; BP_L=BPCondi6L; FB_L=FBCondi6L; EEG_R=EEGCondi6R; BP_R=BPCondi6R; FB_R=FBCondi6R; end
+        % compute
+        subplot(4,6,condi); %  xcorr(EEG_L vs BP_L)
+            [r,lags]=xcorr(EEG_L(:,chan)', BP_L', length(EEG_L),'normalized');
+            plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+            title({'xcorr EEG-L & BP-L', ['Condi ' num2str(condi)]});
+            xlim([-2e5 2e5]);ylim([-0.005 0.1]);
+        subplot(4,6,6+condi); %  xcorr(EEG_L vs FB_L)
+            [r,lags]=xcorr(EEG_L(:,chan)', FB_L', length(EEG_L),'normalized');
+            plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+            title({'xcorr EEG-L & FB-L', ['Condi ' num2str(condi)]});
+            xlim([-2e5 2e5]);ylim([-0.005 0.1]);
+        subplot(4,6,6*2+condi); %   xcorr(EEG_R vs BP_R)
+            [r,lags]=xcorr(EEG_R(:,chan)', BP_R', length(EEG_R),'normalized');
+            plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+            title({'xcorr EEG-R & BP-R', ['Condi ' num2str(condi)]});
+            xlim([-2e5 2e5]);ylim([-0.005 0.1]);
+        subplot(4,6,6*3+condi); %  xcorr(EEG_R vs FB_R)
+            [r,lags]=xcorr(EEG_R(:,chan)', FB_R', length(EEG_R),'normalized');
+            plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+            title({'xcorr EEG-R & FB-R', ['Condi ' num2str(condi)]});
+            xlim([-2e5 2e5]);ylim([-0.005 0.1]);
+    end
+    suptitle({'xcorr: EEG-BP/FB    EEG channel ' num2str(chan) '   subject ' num2str(seed)]});
+        
+figureName=['xcorrEEG-BPFBboolean EEG channel ' num2str(chan) ' subject ' num2str(seed)];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+end
 
-%%
+close all;
 
+%% Xcorr (short-range): EEG vs EMG (equal length)
+% [ xcorr(EEG_L vs EMG_L) + xcorr(EEG_L vs EMG_R) xcorr(EEG_R vs EMG_L) xcorr(EEG_R vs EMG_R) ]
+% 6 conditions -subplots(2,6,condi) 
+cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/XcorrEEG_EMG
+
+for chan=1:32
+    figure('units','normalized','outerposition',[0 0 1 1]);
+    for condi=1:6
+        if condi==1; EEG_L=EEGCondi1L; EMG_L=EMGCondi1L; EEG_R=EEGCondi1R; EMG_R=EMGCondi1R; end
+        if condi==2; EEG_L=EEGCondi2L; EMG_L=EMGCondi2L; EEG_R=EEGCondi2R; EMG_R=EMGCondi2R; end
+        if condi==3; EEG_L=EEGCondi3L; EMG_L=EMGCondi3L; EEG_R=EEGCondi3R; EMG_R=EMGCondi3R; end
+        if condi==4; EEG_L=EEGCondi4L; EMG_L=EMGCondi4L; EEG_R=EEGCondi4R; EMG_R=EMGCondi4R; end
+        if condi==5; EEG_L=EEGCondi5L; EMG_L=EMGCondi5L; EEG_R=EEGCondi5R; EMG_R=EMGCondi5R; end
+        if condi==6; EEG_L=EEGCondi6L; EMG_L=EMGCondi6L; EEG_R=EEGCondi6R; EMG_R=EMGCondi6R; end
+        % compute
+        subplot(4,6,condi); %  xcorr(EEG_L vs EMG_L)
+            [r,lags]=xcorr(EEG_L(:,chan)', EMG_L', length(EMG_L),'normalized');
+            plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+            title({'xcorr EEG-L & EMG-L', ['Condi ' num2str(condi)]});
+            xlim([-2e5 2e5]);ylim([-0.005 0.1]);
+        subplot(4,6,6+condi); %  xcorr(EEG_L vs EMG_R)
+            minLength=min([size(EEG_L,1) length(EMG_R)]);
+            [r,lags]=xcorr(EEG_L(1:minLength,chan)', EMG_R(1:minLength)', minLength,'normalized');
+            plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+            title({'xcorr EEG-L & EMG-R', ['Condi ' num2str(condi)]});
+            xlim([-2e5 2e5]);ylim([-0.005 0.1]);
+        subplot(4,6,6*2+condi); %   xcorr(EEG_R vs EMG_L)
+            minLength=min([size(EEG_L,1) length(EMG_R)]);
+            [r,lags]=xcorr(EEG_R(1:minLength,chan)', EMG_L(1:minLength)', minLength,'normalized');
+            plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+            title({'xcorr EEG-R & EMG-L', ['Condi ' num2str(condi)]});
+            xlim([-2e5 2e5]);ylim([-0.005 0.1]);
+        subplot(4,6,6*3+condi); %  xcorr(EEG_R vs FB_R)
+            [r,lags]=xcorr(EEG_R(:,chan)', EMG_R', length(EMG_R),'normalized');
+            plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+            title({'xcorr EEG-R & EMG-R', ['Condi ' num2str(condi)]});
+            xlim([-2e5 2e5]);ylim([-0.005 0.1]);
+    end
+    suptitle({['xcorr: EEG-EMG    EEG channel ' num2str(chan) '   subject ' num2str(seed)]});
+        
+figureName=['xcorr EEG-EMG  EEG channel ' num2str(chan) ' subject ' num2str(seed)];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+end
+
+close all;
 %%
