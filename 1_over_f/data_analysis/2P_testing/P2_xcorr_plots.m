@@ -43,6 +43,89 @@ suptitle({'short-range statistics: tapping intervals',['subject ' num2str(seed)]
 figureName=['ShortBP' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
+    
+%% P2 behaviral smooth (better!) (short-range / local statistics; weak anticipation) on interval
+% [ autocorr(BP_L) + xcorr(BP_L vs FB_L) + xcorr(BP_R vs FB_R) + autocorr(BP_R) ]
+% 6 conditions -subplots(4,6,condi) 
+
+win=20; % smooth with a sliding window size
+
+figure('units','normalized','outerposition',[0 0 1 1]);
+for condi=1:6
+    if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R;FB_R=FBCondi1R;end
+    if condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R;FB_R=FBCondi2R;end
+    if condi==3; BP_L=BPCondi3L; FB_L=FBCondi3L; BP_R=BPCondi3R;FB_R=FBCondi3R;end
+    if condi==4; BP_L=BPCondi4L; FB_L=FBCondi4L; BP_R=BPCondi4R;FB_R=FBCondi4R;end
+    if condi==5; BP_L=BPCondi5L; FB_L=FBCondi5L; BP_R=BPCondi5R;FB_R=FBCondi5R;end
+    if condi==6; BP_L=BPCondi6L; FB_L=FBCondi6L; BP_R=BPCondi6R;FB_R=FBCondi6R;end
+    % compute
+    subplot(4,6,condi); %  autocorr(BP_L)
+        autocorr(smoothError(Calinterval(BP_L'),win),430-win); xlabel('lags');ylabel('autocorr'); 
+        title({'autocorr BP-L', ['Condi ' num2str(condi)]});
+    subplot(4,6,6+condi); %  xcorr(BP_L vs FB_L)
+        time_series1=smoothError(Calinterval(BP_L'),win);% plot(time_series1);
+        time_series2=smoothError(Calinterval(FB_L'),win);% plot(time_series2);
+        TimeLength=min([length(time_series1) length(time_series2)]);
+        [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000,'normalized');
+        plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+        title({'xcorr BP-L & FB-L', ['Condi ' num2str(condi)]});
+    subplot(4,6,6*2+condi); %   xcorr(BP_R vs FB_R) 
+        time_series1=smoothError(Calinterval(BP_R'),win);% plot(time_series1);
+        time_series2=smoothError(Calinterval(FB_R'),win);% plot(time_series2);
+        TimeLength=min([length(time_series1) length(time_series2)]);
+        [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000,'normalized');
+        plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+        title({'xcorr BP-R & FB-R', ['Condi ' num2str(condi)]});
+    subplot(4,6,6*3+condi); %  autocorr(BP_R)
+        autocorr(smoothError(Calinterval(BP_R'),win),430-win); xlabel('lags');ylabel('autocorr'); 
+        title({'autocorr BP-R', ['Condi ' num2str(condi)]});
+end
+suptitle({'short-range statistics: tapping intervals',['subject ' num2str(seed)]});
+        
+figureName=['ShortBP_smooth' num2str(seed)];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+    
+%% P2 behaviral boolean (short-range / local statistics; weak anticipation) on interval
+% [ autocorr(BP_L) + xcorr(BP_L vs FB_L) + xcorr(BP_R vs FB_R) + autocorr(BP_R) ]
+% 6 conditions -subplots(4,6,condi) 
+
+figure('units','normalized','outerposition',[0 0 1 1]);
+for condi=1:6
+    if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R;FB_R=FBCondi1R;end
+    if condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R;FB_R=FBCondi2R;end
+    if condi==3; BP_L=BPCondi3L; FB_L=FBCondi3L; BP_R=BPCondi3R;FB_R=FBCondi3R;end
+    if condi==4; BP_L=BPCondi4L; FB_L=FBCondi4L; BP_R=BPCondi4R;FB_R=FBCondi4R;end
+    if condi==5; BP_L=BPCondi5L; FB_L=FBCondi5L; BP_R=BPCondi5R;FB_R=FBCondi5R;end
+    if condi==6; BP_L=BPCondi6L; FB_L=FBCondi6L; BP_R=BPCondi6R;FB_R=FBCondi6R;end
+    % compute
+    subplot(4,6,condi); %  autocorr(BP_L)
+        autocorr(BP_L',430); xlabel('lags');ylabel('autocorr'); 
+        title({'autocorr BP-L', ['Condi ' num2str(condi)]});
+    subplot(4,6,6+condi); %  xcorr(BP_L vs FB_L)
+        time_series1=BP_L';% plot(time_series1);
+        time_series2=FB_L';% plot(time_series2);
+        TimeLength=min([length(time_series1) length(time_series2)]);
+        [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000,'normalized');
+        plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+        title({'xcorr BP-L & FB-L', ['Condi ' num2str(condi)]});
+    subplot(4,6,6*2+condi); %   xcorr(BP_R vs FB_R) 
+        time_series1=BP_R';% plot(time_series1);
+        time_series2=FB_R';% plot(time_series2);
+        TimeLength=min([length(time_series1) length(time_series2)]);
+        [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000,'normalized');
+        plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');
+        title({'xcorr BP-R & FB-R', ['Condi ' num2str(condi)]});
+    subplot(4,6,6*3+condi); %  autocorr(BP_R)
+        autocorr(BP_R',430); xlabel('lags');ylabel('autocorr'); 
+        title({'autocorr BP-R', ['Condi ' num2str(condi)]});
+end
+suptitle({'short-range statistics: tapping intervals',['subject ' num2str(seed)]});
+        
+figureName=['ShortBP_boolean' num2str(seed)];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+    
 %% P2 behaviral (long-range / global statistics; strong anticipation) on interval
 % Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
 % 6 conditions -subplots(4,6,i)
@@ -93,6 +176,109 @@ figureName=['LongBP' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
 
+    
+%% P2 behaviral smoothed (long-range / global statistics; strong anticipation) on interval
+% Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
+% 6 conditions -subplots(4,6,i)
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+
+win=20; % smooth with a sliding window size
+
+figure('units','normalized','outerposition',[0 0 1 1]);
+for condi=1:6
+    if condi==1; BP_L=BPCondi1L; BP_R=BPCondi1R; end
+    if condi==2; BP_L=BPCondi2L; BP_R=BPCondi2R; end
+    if condi==3; BP_L=BPCondi3L; BP_R=BPCondi3R; end
+    if condi==4; BP_L=BPCondi4L; BP_R=BPCondi4R; end
+    if condi==5; BP_L=BPCondi5L; BP_R=BPCondi5R; end
+    if condi==6; BP_L=BPCondi6L; BP_R=BPCondi6R; end
+    subplot(4,6,condi); % Pspectra(BP_L)
+        y=smoothError(Calinterval(BP_L'),win);
+        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4);
+            Fs=2;% assuming a sampling frequency of 2 Hz
+        else (condi == 5) | (condi == 6) ;
+            Fs=3;% assuming a sampling frequency of 3 Hz
+        end
+        [freqs,fcoef] = oneoverf(y,Fs);
+        xlabel('Log(f)');ylabel('Log(power)');
+        title({'Spectrum BP_L', ['Condi ' num2str(condi)]});
+        
+    subplot(4,6,6+condi);  % Pspectra(BP_R) 
+        y=smoothError(Calinterval(BP_R'),win);
+        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4);
+            Fs=2;% assuming a sampling frequency of 2 Hz
+        else (condi == 5) | (condi == 6) ;
+            Fs=3;% assuming a sampling frequency of 3 Hz
+        end
+        [freqs,fcoef] = oneoverf(y,Fs);
+        xlabel('Log(f)');ylabel('Log(power)');
+        title({'Spectrum BP_R', ['Condi ' num2str(condi)]});    
+        
+    subplot(4,6,6*2+condi);  % DFA(BP_L)
+        [D,Alpha1]=DFA_main(smoothError(Calinterval(BP_L'),win));
+        title({'DFA BP_L', ['Condi ' num2str(condi)]});
+        
+    subplot(4,6,6*3+condi);  % DFA(BP_R)
+        [D,Alpha1]=DFA_main(smoothError(Calinterval(BP_R'),win));
+        title({'DFA BP_R', ['Condi ' num2str(condi)]});
+
+end
+suptitle({'long-range statistics: tapping intervals',['subject ' num2str(seed)]});
+
+figureName=['LongBP_smooth' num2str(seed)];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+
+%% P2 behaviral boolean (long-range / global statistics; strong anticipation) on interval (take longer time)
+% Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
+% 6 conditions -subplots(4,6,i)
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+tic
+figure('units','normalized','outerposition',[0 0 1 1]);
+for condi=1:6
+    if condi==1; BP_L=BPCondi1L; BP_R=BPCondi1R; end
+    if condi==2; BP_L=BPCondi2L; BP_R=BPCondi2R; end
+    if condi==3; BP_L=BPCondi3L; BP_R=BPCondi3R; end
+    if condi==4; BP_L=BPCondi4L; BP_R=BPCondi4R; end
+    if condi==5; BP_L=BPCondi5L; BP_R=BPCondi5R; end
+    if condi==6; BP_L=BPCondi6L; BP_R=BPCondi6R; end
+    subplot(4,6,condi); % Pspectra(BP_L)
+        y=BP_L';
+        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4);
+            Fs=2;% assuming a sampling frequency of 2 Hz
+        else (condi == 5) | (condi == 6) ;
+            Fs=3;% assuming a sampling frequency of 3 Hz
+        end
+        [freqs,fcoef] = oneoverf(y,Fs);
+        xlabel('Log(f)');ylabel('Log(power)');
+        title({'Spectrum BP_L', ['Condi ' num2str(condi)]});
+        
+    subplot(4,6,6+condi);  % Pspectra(BP_R) 
+        y=BP_R';
+        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4);
+            Fs=2;% assuming a sampling frequency of 2 Hz
+        else (condi == 5) | (condi == 6) ;
+            Fs=3;% assuming a sampling frequency of 3 Hz
+        end
+        [freqs,fcoef] = oneoverf(y,Fs);
+        xlabel('Log(f)');ylabel('Log(power)');
+        title({'Spectrum BP_R', ['Condi ' num2str(condi)]});    
+        
+    subplot(4,6,6*2+condi);  % DFA(BP_L)
+        [D,Alpha1]=DFA_main(BP_L');
+        title({'DFA BP_L', ['Condi ' num2str(condi)]});
+        
+    subplot(4,6,6*3+condi);  % DFA(BP_R)
+        [D,Alpha1]=DFA_main(BP_R');
+        title({'DFA BP_R', ['Condi ' num2str(condi)]});
+
+end
+suptitle({'long-range statistics: tapping intervals',['subject ' num2str(seed)]});
+
+figureName=['LongBP_boolean' num2str(seed)];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+toc
 %% P2 Error (short & long -range statistics)
 % Error + autocorr (Error) + Pspectra(Error)+ DFA(Error)
 % uncoupled condition (bidiretional error) -subplots(4,10,1-2)
@@ -100,6 +286,8 @@ figureName=['LongBP' num2str(seed)];
 % bidirectional condition (bidiretional error) -subplots(4,10,5-10)
 addpath D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\2P_testing
 addpath D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\DFA
+
+win=20; % smooth the error with sliding window size
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 for condi=1:10
@@ -125,7 +313,6 @@ for condi=1:10
         Error(i)=time_series2(closetIndex)-time_series1(i);
     end
     % smooth the error with sliding window
-    win=20;
     [ErrorSmooth] = smoothError(Error,win);
 %     ErrorSmooth=Error;
 
