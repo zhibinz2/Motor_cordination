@@ -56,7 +56,7 @@ numPresR=sum(BottonPresTimeR01) % num of button presses
 
 
 %% extract time points for feedbacks from other
-% Left Player
+% Left Player Recording
 FeedbIndL=unique([find(TriggersL == 251);find(TriggersL == 235)]); % extract Index of real key presses in the values
 plot(FeedbIndL,ones(1,length(FeedbIndL)),'bo'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
@@ -71,7 +71,7 @@ FeedbTimeL01(FeedbTimeIndL)=1;
 plot(FeedbTimeL01,'b.')
 numFbL=sum(FeedbTimeL01) % num of feedbacks from the other plus 4+2x5 resting photocells
 
-% Right Player
+% Right Player Recording
 FeedbIndR=unique([find(TriggersR == 251);find(TriggersR == 235)]); % extract Index of real key presses in the values
 plot(FeedbIndR,ones(1,length(FeedbIndR)),'ro'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
@@ -81,7 +81,7 @@ threshold = ifi*waitframes*srR*1.5; % number of samples within a interval larger
 % feedback via photocell to stimtracker has minial interval every other waitframes (minmal of 1000 Hz)
 FeedbTimeIndR=FeedbIndR(find([0 diff(FeedbIndR')]>threshold)); % exact index of key press onset in datatimes (reduce several indices into one)
 % create a time series that assign botton presses as 1, all other as 0
-FeedbTimeR01=zeros(size(timeL));
+FeedbTimeR01=zeros(size(timeR));
 FeedbTimeR01(FeedbTimeIndR)=1;
 plot(FeedbTimeR01,'r.')
 numFbR=sum(FeedbTimeR01) % num of feedbacks from the other plus 4+2x5 resting photocells
@@ -104,7 +104,7 @@ PacerTimeIndL=PacerIndL(find([diff([0 PacerIndL'])]>threshold)); % exact index o
 PacerTimeL01=zeros(size(timeL));
 PacerTimeL01(PacerTimeIndL)=1;
 plot(PacerTimeL01,'r');
-sum(PacerTimeL01)
+sum(PacerTimeL01) % check if == 194
 % xlim([-1 length(PacerTimeL01)]);
 
 % Right player
@@ -122,7 +122,7 @@ PacerTimeIndR=PacerIndR(find([diff([0 PacerIndR'])]>threshold)); % exact index o
 PacerTimeR01=zeros(size(timeR));
 PacerTimeR01(PacerTimeIndR)=1;
 plot(PacerTimeR01,'b');
-sum(PacerTimeR01)
+sum(PacerTimeR01) % check if == 194
 
 % Plot not alligned
 figure;
@@ -132,8 +132,9 @@ hold on;
 PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
 plot(PacersR, ones(length(PacersR)),'b.');
 
-% make shift for missming pacers
+% make shift for missming pacers (optional, only needed for 20220517_2P)
 ShiftPacer=PacerTimeIndL(end)-PacerTimeIndR(end);
+PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
 PacersL=PacersR+ShiftPacer;
 figure;
 plot(PacersL,ones(1,length(PacersL)),'r.');hold on;ylim([0 3]);
