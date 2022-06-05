@@ -17,6 +17,7 @@ megenta = [1 0 1];% fill([0 1 1 0],[0 0 1 1],megenta)
 cyan = [0 1 1]; % fill([0 1 1 0],[0 0 1 1],cc)
 purple = [0.6 0.1 0.9];
 condicolors=[darkgreen;red;blue;megenta;purple;purple];
+
 % test color
 showcolor=deepyellow;
 imagesc(cat(3,showcolor(1),showcolor(2),showcolor(3)));
@@ -80,21 +81,21 @@ for condi=1:6
         autocorr(smoothError(Calinterval(BP_L'),win),430-win); xlabel('lags');ylabel('autocorr'); 
         title({['Condi ' num2str(condi)], 'autocorr BP-L'},'Color',condicolors(condi,:));
     subplot(4,6,6+condi); %  xcorr(BP_L vs FB_L)
-        time_series1=smoothError(Calinterval(BP_L'),win);% plot(time_series1);
-        time_series2=smoothError(Calinterval(FB_L'),win);% plot(time_series2);
+        time_series1=smoothing(Calinterval(BP_L'),win);% plot(time_series1);
+        time_series2=smoothing(Calinterval(FB_L'),win);% plot(time_series2);
         TimeLength=min([length(time_series1) length(time_series2)]);
         [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000,'normalized');
         plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');xline(0,'--','Color',deepyellow);
         title('xcorr BP-L & FB-L','Color',condicolors(condi,:));
     subplot(4,6,6*2+condi); %   xcorr(BP_R vs FB_R) 
-        time_series1=smoothError(Calinterval(BP_R'),win);% plot(time_series1);
-        time_series2=smoothError(Calinterval(FB_R'),win);% plot(time_series2);
+        time_series1=smoothing(Calinterval(BP_R'),win);% plot(time_series1);
+        time_series2=smoothing(Calinterval(FB_R'),win);% plot(time_series2);
         TimeLength=min([length(time_series1) length(time_series2)]);
         [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000,'normalized');
         plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');xline(0,'--','Color',deepyellow);
         title('xcorr BP-R & FB-R','Color',condicolors(condi,:));
     subplot(4,6,6*3+condi); %  autocorr(BP_R)
-        autocorr(smoothError(Calinterval(BP_R'),win),430-win); xlabel('lags');ylabel('autocorr'); 
+        autocorr(smoothing(Calinterval(BP_R'),win),430-win); xlabel('lags');ylabel('autocorr'); 
         title('autocorr BP-R','Color',condicolors(condi,:));
 end
 suptitle(['short-range statistics: tapping intervals smoothed ' 'subject ' num2str(seed)]);
@@ -103,7 +104,7 @@ figureName=['ShortBP_smooth' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
     
-%% P2 behaviral boolean (short-range / local statistics; weak anticipation) on interval
+%% P2 behaviral boolean (low correlation) (short-range / local statistics; weak anticipation) on interval
 % [ autocorr(BP_L) + xcorr(BP_L vs FB_L) + xcorr(BP_R vs FB_R) + autocorr(BP_R) ]
 % 6 conditions -subplots(4,6,condi) 
 
@@ -214,7 +215,7 @@ for condi=1:6
     if condi==5; BP_L=BPCondi5L; BP_R=BPCondi5R; end
     if condi==6; BP_L=BPCondi6L; BP_R=BPCondi6R; end
     subplot(4,6,condi); % Pspectra(BP_L)
-        y=smoothError(Calinterval(BP_L'),win);
+        y=smoothing(Calinterval(BP_L'),win);
         if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4);
             Fs=2;% assuming a sampling frequency of 2 Hz
         else (condi == 5) | (condi == 6) ;
@@ -226,7 +227,7 @@ for condi=1:6
         ylim([-4 8]);xlim([-3 0]);
         
     subplot(4,6,6+condi);  % Pspectra(BP_R) 
-        y=smoothError(Calinterval(BP_R'),win);
+        y=smoothing(Calinterval(BP_R'),win);
         if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4);
             Fs=2;% assuming a sampling frequency of 2 Hz
         else (condi == 5) | (condi == 6) ;
@@ -237,17 +238,17 @@ for condi=1:6
         title('Spectrum BP_R', 'Color',condicolors(condi,:));    
         
     subplot(4,6,6*2+condi);  % DFA(BP_L)
-        [D,Alpha1]=DFA_main(smoothError(Calinterval(BP_L'),win));
-        title('DFA BP_L','Color',condicolors(condi,:));
+        [D,Alpha1]=DFA_main(smoothing(Calinterval(BP_L'),win));
+        title('DFA BP-L','Color',condicolors(condi,:));
         ylim([0 4]);xlim([0.5 3]);
         
     subplot(4,6,6*3+condi);  % DFA(BP_R)
-        [D,Alpha1]=DFA_main(smoothError(Calinterval(BP_R'),win));
-        title('DFA BP_R','Color',condicolors(condi,:));
+        [D,Alpha1]=DFA_main(smoothing(Calinterval(BP_R'),win));
+        title('DFA BP-R','Color',condicolors(condi,:));
         ylim([0 4]);xlim([0.5 3]);
 
 end
-suptitle(['long-range statistics: tapping intervals smoothed ' 'subject ' num2str(seed)]);
+suptitle(['long-range statistics: tapping intervals smoothed win ' num2str(win) ' subject ' num2str(seed)]);
 
 figureName=['LongBP_smooth' num2str(seed)];
     % save the figure
@@ -351,7 +352,7 @@ for condi=1:12
         Error(i)=time_series2(closetIndex)-time_series1(i);
     end
     % smooth the error with sliding window
-    [ErrorSmooth] = smoothError(Error,win);
+    [ErrorSmooth] = smoothing(Error,win);
 %     ErrorSmooth=Error;
 
     subplot(4,12,condi); % Error
@@ -413,11 +414,11 @@ for condi=1:6
         time_series1=EMG_L';% plot(time_series1);
         time_series2=EMG_R';% plot(time_series2);
         TimeLength=min([length(time_series1) length(time_series2)]);
-        [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), TimeLength-1,'normalized');
+        [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), TimeLength-1),'normalized');
         plot(lags./2,r);xlabel('lag of time [ms]');ylabel('Xcorr');
         title('EMG-L & EMG-R','Color',condicolors(condi,:));
         xline(0,'--','Color',deepyellow);
-        ylim([-0.1 0.6]);% xlim([-5e5 5e5]);
+        % ylim([-0.1 1]);% xlim([-5e5 5e5]);
         xlim([-2000 2000]);
         
     subplot(3,6,6*2+condi); %  autocorr(EMG_R) 
@@ -516,7 +517,7 @@ for chan = 1:32
             ylim([-0.5 1]);
             xlim([0 2000]);
     end
-    suptitle(['short-range statistics: EEG channel ' num2str(chan) ' subject ' num2str(seed)]);
+    suptitle(['short-range statistics: EEG channel ' labels{chan} ' subject ' num2str(seed)]);
     figureName=['ShortEEGchan' num2str(chan)];
     % save the figure
     saveas(gcf,figureName,'jpg');
@@ -561,7 +562,7 @@ for chan = 1:32
             title('EEG-R','Color',condicolors(condi,:));
     %         ylim([]);
     end
-    suptitle(['long-range statistics: EEG channel ' num2str(chan) ' subject ' num2str(seed)]);
+    suptitle(['long-range statistics: EEG channel ' labels{chan} ' subject ' num2str(seed)]);
     figureName=['LongEEGchan' num2str(chan)];
     % save the figure
     saveas(gcf,figureName,'jpg');
@@ -569,7 +570,7 @@ for chan = 1:32
 end
 
 
-%% Xcorr (short-range): EMG vs FB(boolean) (equal length)
+%% Xcorr (short-range): EMG vs FB(boolean) (equal length) (low correlation)
 % [ xcorr(EMG_L vs BP_L) + xcorr(EMG_L vs FB_L) + xcorr(EMG_R vs BP_R) + xcorr(EMG_R vs FB_R) ]
 % 6 conditions -subplots(4,6,condi) 
 
@@ -645,7 +646,7 @@ for chan=1:32
             title('EEG-R & FB-R','Color',condicolors(condi,:));
             xlim([-2e3 2e3]);ylim([-0.005 0.1]);
     end
-    suptitle(['xcorr: EEG-BP/FB    EEG channel ' num2str(chan) '   subject ' num2str(seed)]);
+    suptitle(['xcorr: EEG-BP/FB    EEG channel ' labels{chan} '   subject ' num2str(seed)]);
         
 figureName=['xcorrEEG-BPFBboolean EEG channel ' num2str(chan) ' subject ' num2str(seed)];
     % save the figure
@@ -692,7 +693,7 @@ for chan=1:32
             title('EEG-R & EMG-R', 'Color',condicolors(condi,:));
             xlim([-2e3 2e3]);ylim([-0.1 0.1]);
     end
-    suptitle(['xcorr: EEG-EMG    EEG channel ' num2str(chan) '   subject ' num2str(seed)]);
+    suptitle(['xcorr: EEG-EMG    EEG channel ' labels{chan} '   subject ' num2str(seed)]);
         
 figureName=['xcorr EEG-EMG  EEG channel ' num2str(chan) ' subject ' num2str(seed)];
     % save the figure
