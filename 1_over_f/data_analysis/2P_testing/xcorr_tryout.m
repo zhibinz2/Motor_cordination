@@ -32,12 +32,13 @@ for j = 1:32
 end
 plot(lags,y);
 
+figure;
 for j = 1:32
-[y(:,j),lags] = xcorr(BPCondi2L(1:end),EEGCondi2L(1:end,j),2000,'coeff');
+[y(:,j),lags] = xcorr(EEGCondi2L(1:end,j),BPCondi2L(1:end),2000,'coeff');
 end
 plotx(lags,y);
 
-%%
+%% hist of BP interval
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 win=20;
 y=smoothing(Calinterval(BPCondi2L'),win);hist(y)
