@@ -17,8 +17,8 @@ F_n=zeros(Nw,1); % initialize RMS values in the FDA time series
  
 %  plot(n,F_n);
 plot(log10(n),log10(F_n));
-xlabel('Scale - log10(n)') % win_lengths 
-ylabel('RMS - log10(F-n)') % RMS values
+xlabel('Scale [log10(n)]') % win_lengths 
+ylabel('RMS [log10(F-n)]') % RMS values
 title('DFA')
 
 A=polyfit(log10(n(1:end)),log10(F_n(1:end)),1);
