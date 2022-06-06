@@ -28,8 +28,8 @@ conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-2Hz' 'mutual-3Hz' 'mutual-
 %% PLOT 1:  hist BP intervals  
 % [ hist(BP_L) + hist(FB_L) + hist(FP_R) + hist(BP_R)  ]
 % 6 conditions -subplots(4,6,condi) 
-
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+
 figure('units','normalized','outerposition',[0 0 1 1]);
 for condi=1:6
     if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R;FB_R=FBCondi1R;end
@@ -64,14 +64,14 @@ suptitle(['Button press intervals ' ' -- subject ' num2str(seed)]);
 
 % cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/Plots
 figureName=['BP-hist -- ' num2str(seed)];
-    % save the figure
-    saveas(gcf,figureName,'jpg');
+% save the figure
+saveas(gcf,figureName,'jpg');
     
 %% PLOT 2:  BP interval corr (short-range / local statistics; weak anticipation) on interval
 % [ autocorr(BP_L) + xcorr(BP_L vs FB_L) + xcorr(BP_R vs FB_R) + autocorr(BP_R) ]
 % 6 conditions -subplots(4,6,condi) 
-
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+
 figure('units','normalized','outerposition',[0 0 1 1]);
 for condi=1:6
     if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R; FB_R=FBCondi1R; end
@@ -509,6 +509,8 @@ suptitle(['error-normalized ' 'win ' num2str(win) ' subject ' num2str(seed)]);
 figureName=['Error-normalized -- ' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
+    saveas(gcf,figureName,'fig');
+    close all;
     
 %% PLOT 10:  EMG corr (short-range / local statistics; weak anticipation)
 % [ autocorr(EMG_L) + xcorr (EMG_L vs EMG_R) + autocorr(EMG_R) ]
@@ -597,7 +599,7 @@ figureName=['EMG-spectra' num2str(seed)];
 % [ autocorr(EEG_L) + xcorr(EEG_L vs EEG_R) + autocorr(EEG_R) ]
 % each of the 6 conditions (subplots(3,6,i)) for each of the 32 channels;
 % auto save the 32 figures in a folder named - ShortEEG
-cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/Plots/ShortEEG
+cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/Plots/EEGcorr_chans
 cd /ssd/zhibin/1overf/20220517_2P/Segmented_data/Plots/ShortEEG
 cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/Plots/EEGcorr_chans
 
@@ -708,7 +710,7 @@ close all;
 % [ Pspectra(EEG_L) + Xspectra(EEG_L vs EEG_R) + Pspectra(EEG_R) ]
 % each of the 6 conditions (subplots(3,6,i)) for each of the 32 channels;
 % auto save the 32 figures in a folder named - LongEEG
-cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/LongEEG
+cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/EEGspectra_chans
 cd /ssd/zhibin/1overf/20220517_2P/Segmented_data/LongEEG
 cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/EEGspectra_chans
 
@@ -778,7 +780,7 @@ for condi=1:6
         title('EMG-R & BP-R','Color',condicolors(condi,:));
         % xlim([-2e3 2e3]);ylim([-0.005 0.1]);
     subplot(4,6,6*3+condi); %  xcorr(EMG_R vs FB_R)
-        [r,lags]=xcorr(EMG_R', FB_R', 1000,'normalized');
+        [r,lags]=xcorr(EMG_R', FB_R', 1000, 'normalized');
         plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');xline(0,'Color',deepyellow);
         title('EMG-R & FB-R','Color',condicolors(condi,:));
         % xlim([-2e3 2e3]);ylim([-0.005 0.1]);
@@ -837,7 +839,7 @@ close all;
 %% PLOT 17:  Xcorr EEG vs BP/FB(boolean) - all chans (short-range): (equal length) (low correlation)
 % [ xcorr(EMG_L vs BP_L) + xcorr(EMG_L vs FB_L) + xcorr(EMG_R vs BP_R) + xcorr(EMG_R vs FB_R) ]
 % 6 conditions -subplots(4,6,condi) 
-cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/XcorrEEG_BP_FB
+cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/Plots
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 for condi=1:6
