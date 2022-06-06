@@ -8,11 +8,34 @@ plot(lags,r);xlabel('lags');ylabel('Xcorr');
 
 %%
 n = 0:15;
-x = 0.84.^n; plot(x); plot(x);
-y = circshift(x,5)-0.5; plot(y);
+x = 0.84.^n; plot(x); figure;plot(x);title('x');
+y = circshift(x,5)-0.5; figure;plot(y);title('y');
 [c,lags] = xcorr(x,y,15,'normalized');
 [c,lags] = xcorr(x,y,15,'coeff');
-stem(lags,c)
+figure;stem(lags,c)
+
+%%
+t = [0.01:0.01:1];
+% two sin waves
+f1 = 2
+x1 = sin(2*pi*f1*t);
+
+f2 = 2
+x2 = sin(2*pi*f2*t);
+phase_shift=pi*0.1
+x2 = sin(2*pi*f2*t+phase_shift);
+
+figure
+clf
+subplot(2,1,1);
+plot(t,x1,'r');
+hold on
+plot(t,x2,'b');title(['phase-shift = ' num2str(phase_shift)]);
+legend('x1','x2');
+
+subplot(2,1,2);
+[c,lags] = xcorr(x1,x2,100,'coeff');
+stem(lags,c);xline(0,'r');
 
 %% EMG
 [r,lags]=xcorr(EMG_L, BP_L, 1000,'normalized');
