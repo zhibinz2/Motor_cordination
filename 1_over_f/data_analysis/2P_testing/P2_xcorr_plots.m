@@ -434,6 +434,8 @@ suptitle(['error-smooth ' 'win ' num2str(win) ' subject ' num2str(seed)]);
 figureName=['Error-smooth -- ' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
+    saveas(gcf,figureName,'fig');
+    close all;
     
 %% PLOT 9:  P2 Error smooth normalized (short & long -range statistics)
 % Error + autocorr (Error) + Pspectra(Error)+ DFA(Error)
