@@ -1,6 +1,6 @@
 function [freqs,fcoef] = oneoverf(y,Fs);
-%UNTITLED6 Summary of this function goes here
-%   Detailed explanation goes here
+% this function compute do fft, plot power spectrum
+%   Dand fit the 1overf 
     fcoef=fft(y);
     N=length(y);
     fcoef=fcoef/N;
