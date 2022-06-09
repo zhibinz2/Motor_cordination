@@ -66,7 +66,112 @@ suptitle(['Button press intervals ' ' -- subject ' num2str(seed)]);
 figureName=['BP-hist -- ' num2str(seed)];
 % save the figure
 saveas(gcf,figureName,'jpg');
-    
+
+%% PLOT 1-1:  BP-FB intervals trend
+% [(BP_L + FB_L) + (FP_R + BP_R)]+smooth[(BP_L + FB_L) + (FP_R + BP_R)]
+% 6 conditions -subplots(2,6,condi) 
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+
+figure('units','normalized','outerposition',[0 0 1 1]);
+win=20;
+for condi=1:6
+    if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R; FB_R=FBCondi1R;end
+    if condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R; FB_R=FBCondi2R;end
+    if condi==3; BP_L=BPCondi3L; FB_L=FBCondi3L; BP_R=BPCondi3R; FB_R=FBCondi3R;end
+    if condi==4; BP_L=BPCondi4L; FB_L=FBCondi4L; BP_R=BPCondi4R; FB_R=FBCondi4R;end
+    if condi==5; BP_L=BPCondi5L; FB_L=FBCondi5L; BP_R=BPCondi5R; FB_R=FBCondi5R;end
+    if condi==6; BP_L=BPCondi6L; FB_L=FBCondi6L; BP_R=BPCondi6R; FB_R=FBCondi6R;end
+    % compute
+    subplot(4,6,condi); %  (BP_L + FB_L)
+        BP_inter1=Calinterval(BP_L')./2; BP_inter2=Calinterval(FB_L')./2;
+        BPfrac_time1=linspace(1,5,length(BP_inter1)); BPfrac_time2=linspace(1,5,length(BP_inter2)); 
+        plot(BPfrac_time1,BP_inter1,'r');hold on; plot(BPfrac_time2,BP_inter2,'b');
+        xlabel('fractional time (min)');ylabel('interval (ms)');
+        legend('BP-L','FB-L');
+        title({['Condi ' conditionNames{condi}],'L recording'},'Color',condicolors(condi,:));
+    subplot(4,6,6+condi); %  (FP_R + BP_R)
+        BP_inter1=Calinterval(BP_R')./2; BP_inter2=Calinterval(FB_R')./2;
+        BPfrac_time1=linspace(1,5,length(BP_inter1)); BPfrac_time2=linspace(1,5,length(BP_inter2)); 
+        plot(BPfrac_time1,BP_inter1,'b');hold on; plot(BPfrac_time2,BP_inter2,'r');
+        xlabel('fractional time (min)');ylabel('interval (ms)');
+        legend('BP-R','FB-R');
+        title('R recording','Color',condicolors(condi,:));
+    subplot(4,6,6*2+condi); %   smooth[(BP_L + FB_L)]
+        BP_inter1=smoothing(Calinterval(BP_L')./2,win); BP_inter2=smoothing(Calinterval(FB_L')./2,win);
+        BPfrac_time1=linspace(1,5,length(BP_inter1)); BPfrac_time2=linspace(1,5,length(BP_inter2)); 
+        plot(BPfrac_time1,BP_inter1,'r');hold on; plot(BPfrac_time2,BP_inter2,'b');
+        xlabel('fractional time (min)');ylabel('interval (ms)');
+        legend('BP-L','FB-L');
+        title('L recording smoothed','Color',condicolors(condi,:));
+    subplot(4,6,6*3+condi); % smooth[(FP_R + BP_R)]
+        BP_inter1=smoothing(Calinterval(BP_R')./2,win); BP_inter2=smoothing(Calinterval(FB_R')./2,win);
+        BPfrac_time1=linspace(1,5,length(BP_inter1)); BPfrac_time2=linspace(1,5,length(BP_inter2)); 
+        plot(BPfrac_time1,BP_inter1,'b');hold on; plot(BPfrac_time2,BP_inter2,'r');
+        xlabel('fractional time (min)');ylabel('interval (ms)');
+        legend('BP-R','FB-R');
+        title('R recording smoothed','Color',condicolors(condi,:));
+end
+suptitle(['Fractional button press intervals smoothed win ' num2str(win) ' -- subject ' num2str(seed)]);
+
+% cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/Plots
+figureName=['BP-FB-frac-smooth-win-' num2str(win) '----' num2str(seed)];
+% save the figure
+saveas(gcf,figureName,'jpg');
+
+%% PLOT 1-2:  BP intervals smoothed trend
+% [(BP_L + FB_L) + (FP_R + BP_R)]+smooth[(BP_L + FB_L) + (FP_R + BP_R)]
+% 6 conditions -subplots(2,6,condi) 
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+
+figure('units','normalized','outerposition',[0 0 1 1]);
+for condi=1:6
+    if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R; FB_R=FBCondi1R; end
+    if condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R; FB_R=FBCondi2R; end
+    if condi==3; BP_L=BPCondi3L; FB_L=FBCondi3L; BP_R=BPCondi3R; FB_R=FBCondi3R; end
+    if condi==4; BP_L=BPCondi4L; FB_L=FBCondi4L; BP_R=BPCondi4R; FB_R=FBCondi4R; end
+    if condi==5; BP_L=BPCondi5L; FB_L=FBCondi5L; BP_R=BPCondi5R; FB_R=FBCondi5R; end
+    if condi==6; BP_L=BPCondi6L; FB_L=FBCondi6L; BP_R=BPCondi6R; FB_R=FBCondi6R; end
+    % compute
+    subplot(4,6,condi); 
+        win=1;
+        BP_inter1=smoothing(Calinterval(BP_L')./2,win); BP_inter2=smoothing(Calinterval(BP_R')./2,win);
+        BPfrac_time1=linspace(1,5,length(BP_inter1)); BPfrac_time2=linspace(1,5,length(BP_inter2)); 
+        plot(BPfrac_time1,BP_inter1,'r');hold on; plot(BPfrac_time2,BP_inter2,'b');
+        xlabel('fractional time (min)');ylabel('interval (ms)');
+        legend('BP-L','BP-R');
+        title(['BP smooth win ' num2str(win)],'Color',condicolors(condi,:));
+    subplot(4,6,6+condi); 
+        win=20;
+        BP_inter1=smoothing(Calinterval(BP_L')./2,win); BP_inter2=smoothing(Calinterval(BP_R')./2,win);
+        BPfrac_time1=linspace(1,5,length(BP_inter1)); BPfrac_time2=linspace(1,5,length(BP_inter2)); 
+        plot(BPfrac_time1,BP_inter1,'r');hold on; plot(BPfrac_time2,BP_inter2,'b');
+        xlabel('fractional time (min)');ylabel('interval (ms)');
+        legend('BP-L','BP-R');
+        title(['BP smooth win ' num2str(win)],'Color',condicolors(condi,:));
+    subplot(4,6,12+condi); 
+        win=50;
+        BP_inter1=smoothing(Calinterval(BP_L')./2,win); BP_inter2=smoothing(Calinterval(BP_R')./2,win);
+        BPfrac_time1=linspace(1,5,length(BP_inter1)); BPfrac_time2=linspace(1,5,length(BP_inter2)); 
+        plot(BPfrac_time1,BP_inter1,'r');hold on; plot(BPfrac_time2,BP_inter2,'b');
+        xlabel('fractional time (min)');ylabel('interval (ms)');
+        legend('BP-L','BP-R');
+        title(['BP smooth win ' num2str(win)],'Color',condicolors(condi,:));
+    subplot(4,6,18+condi); 
+        win=100;
+        BP_inter1=smoothing(Calinterval(BP_L')./2,win); BP_inter2=smoothing(Calinterval(BP_R')./2,win);
+        BPfrac_time1=linspace(1,5,length(BP_inter1)); BPfrac_time2=linspace(1,5,length(BP_inter2)); 
+        plot(BPfrac_time1,BP_inter1,'r');hold on; plot(BPfrac_time2,BP_inter2,'b');
+        xlabel('fractional time (min)');ylabel('interval (ms)');
+        legend('BP-L','BP-R');
+        title(['BP smooth win ' num2str(win)],'Color',condicolors(condi,:));
+end
+suptitle(['Fractional BP intervals smoothed -- subject ' num2str(seed)]);
+
+% cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/Plots
+figureName=['BP-frac-smooth----' num2str(seed)];
+% save the figure
+saveas(gcf,figureName,'jpg');
+
 %% PLOT 2:  BP interval corr (short-range / local statistics; weak anticipation) on interval
 % [ autocorr(BP_L) + xcorr(BP_L vs FB_L) + xcorr(BP_R vs FB_R) + autocorr(BP_R) ]
 % 6 conditions -subplots(4,6,condi) 
