@@ -125,11 +125,18 @@ plot(PacerTimeR01,'b');
 sum(PacerTimeR01) % check if == 194
 
 % Plot not alligned
-figure;
+figure; % for 6 conditions
 PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
 plot(PacersL, ones(length(PacersL)),'r.');
 hold on;
 PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
+plot(PacersR, ones(length(PacersR)),'b.');
+
+figure; % for 5 conditions
+PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162]);
+plot(PacersL, ones(length(PacersL)),'r.');
+hold on;
+PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162]);
 plot(PacersR, ones(length(PacersR)),'b.');
 
 % make shift for missming pacers (optional, only needed for 20220517_2P)

@@ -198,6 +198,7 @@ for condi=1:6
         [r,lags]=xcorr(time_series1(1:TimeLength)', time_series2(1:TimeLength)', 430,'coeff');
         plot(lags,r);xlabel('lags');ylabel('Xcorr');xline(0,'--','Color',deepyellow);
         title('xcorr BP-L & FB-L','Color',condicolors(condi,:));
+        ylim([-0.2 0.3]);
     subplot(4,6,6*2+condi); %   xcorr(BP_R vs FB_R) 
         time_series1=Calinterval(BP_R');% plot(time_series1);
         time_series2=Calinterval(FB_R');% plot(time_series2);
@@ -207,6 +208,7 @@ for condi=1:6
         [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 430,'normalized');
         plot(lags,r);xlabel('lags');ylabel('Xcorr');xline(0,'--','Color',deepyellow);
         title('xcorr BP-R & FB-R','Color',condicolors(condi,:));
+        ylim([-0.2 0.3]);
     subplot(4,6,6*3+condi); %  autocorr(BP_R)
         autocorr(Calinterval(BP_R'),430); xlabel('lags');ylabel('autocorr'); 
         title('autocorr BP-R','Color',condicolors(condi,:));
@@ -244,6 +246,7 @@ for condi=1:6
         [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 430-win,'normalized');
         plot(lags,r);xlabel('lags');ylabel('Xcorr');xline(0,'--','Color',deepyellow);
         title('xcorr BP-L & FB-L','Color',condicolors(condi,:));
+        ylim([-0.5 1]);
     subplot(4,6,6*2+condi); %   xcorr(BP_R vs FB_R) 
         time_series1=smoothing(Calinterval(BP_R'),win);% plot(time_series1);
         time_series2=smoothing(Calinterval(FB_R'),win);% plot(time_series2);
@@ -253,6 +256,7 @@ for condi=1:6
         [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 430-win,'normalized');
         plot(lags,r);xlabel('lags');ylabel('Xcorr');xline(0,'--','Color',deepyellow);
         title('xcorr BP-R & FB-R','Color',condicolors(condi,:));
+        ylim([-0.5 1]);
     subplot(4,6,6*3+condi); %  autocorr(BP_R)
         autocorr(smoothing(Calinterval(BP_R'),win),430-win); xlabel('lags');ylabel('autocorr'); 
         title('autocorr BP-R','Color',condicolors(condi,:));
@@ -288,6 +292,7 @@ for condi=1:6
         [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000,'normalized');
         plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');xline(0,'--','Color',deepyellow);
         title('xcorr BP-L & FB-L','Color',condicolors(condi,:));
+        ylim([-5e-3 15e-3]);
     subplot(4,6,6*2+condi); %   xcorr(BP_R vs FB_R) 
         time_series1=BP_R';% plot(time_series1);
         time_series2=FB_R';% plot(time_series2);
@@ -297,6 +302,7 @@ for condi=1:6
         [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000,'normalized');
         plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');xline(0,'--','Color',deepyellow);
         title('xcorr BP-R & FB-R','Color',condicolors(condi,:));
+        ylim([-5e-3 15e-3]);
     subplot(4,6,6*3+condi); %  autocorr(BP_R)
         autocorr(BP_R',1000); xlabel('lags');ylabel('autocorr'); ylim([0 0.03]);
         title('autocorr BP-R','Color',condicolors(condi,:));
