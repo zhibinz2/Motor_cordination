@@ -37,7 +37,7 @@ while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
         Screen('CloseAll');
         break;
     end
-    % If F1 is pressed, exit and continue to the next condition 
+    % If F1 is pressed, exit and continue to the next condition
     if keyCode(KbName('F1'));
         n=numFrames;
     end

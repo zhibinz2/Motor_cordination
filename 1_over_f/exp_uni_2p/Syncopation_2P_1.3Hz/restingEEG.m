@@ -54,6 +54,15 @@ while i<numFramesRestEye
     Screen('DrawDots', windowPtr, [FixCrX+screenXpixels/3;FixCrY], screenYpixels/400, white, [0 0], 2);
     % Show the central dot
     % Screen('DrawDots', windowPtr, [xCenter;yCenter], Thickness, white, [0 0], 2);
+    % Show reminder
+    Screen('TextSize',windowPtr, 18);% reset font size to default
+    instructionStart=['Look at fixation cross and relax'];
+    DrawFormattedText2(instructionStart,'win',windowPtr,...
+        'sx', 'center','sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
+    DrawFormattedText2(instructionStart,'win',windowPtr,...
+        'sx', xCenterL,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
+    DrawFormattedText2(instructionStart,'win',windowPtr,...
+        'sx', xCenterR,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
     % Flip the black screen
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
     % update the while loop
@@ -110,6 +119,15 @@ while i<numFramesRestEye
     if keyCode(KbName('F1'));
         i=numFramesRestEye;
     end
+    % Show reminder
+    Screen('TextSize',windowPtr, 18);% reset font size to default
+    instructionStart=['No peeking. Eyes closed please!'];
+    DrawFormattedText2(instructionStart,'win',windowPtr,...
+        'sx', 'center','sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
+    DrawFormattedText2(instructionStart,'win',windowPtr,...
+        'sx', xCenterL,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
+    DrawFormattedText2(instructionStart,'win',windowPtr,...
+        'sx', xCenterR,'sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',white);
     % Flip the black screen
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
     % update the while loop

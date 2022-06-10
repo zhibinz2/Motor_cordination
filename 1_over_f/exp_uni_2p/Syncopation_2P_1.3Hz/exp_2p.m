@@ -4,12 +4,12 @@
 sca; clc; close all; clear all; clearvars; 
 
 %% load previous synchronization experiment results
-cd /home/hnl/Acquisition/zhibin/20220609_2P/Segmented_data/1_50Hz_ICAautomized/
-[BPCondi_dataName]=uigetfile('BP*.mat');% select the Left player EEG
-Path_filename=[pwd '/' BPCondi_dataName];
-load(Path_filename);
-
-%% Go to experimental directory
+% cd /home/hnl/Acquisition/zhibin/20220609_2P/Segmented_data/1_50Hz_ICAautomized/
+% [BPCondi_dataName]=uigetfile('BP*.mat');% select the Left player EEG
+% Path_filename=[pwd '/' BPCondi_dataName];
+% load(Path_filename);
+load('/home/hnl/Acquisition/zhibin/20220609_2P/Segmented_data/1_50Hz_ICAautomized/BP20220609.mat');
+%% Go back to experimental directory
 cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/Syncopation_2P_1.3Hz
 
 %% set keyboards
@@ -116,8 +116,8 @@ try
     % For help see: Screen Openwindow?
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
-    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3*60/59 330*40/33]); 
-%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
+%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3*60/59 330*40/33]); 
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
     % For help see: Screen windowSize?
