@@ -1,5 +1,5 @@
 % time for resting EEG (EO=eye open; EC= eye close)
-TimeRestingEEG=30; % 30 seconds @@@@@@@@@@@@@@@@@@@@@@@@@@@@2 
+TimeRestingEEG=3; % 30 seconds @@@@@@@@@@@@@@@@@@@@@@@@@@@@2 
 numFramesRestEye=round (TimeRestingEEG/(ifi*waitframes)); 
 
 %*************************************************************************
@@ -43,10 +43,6 @@ while i<numFramesRestEye
     if keyCode(KbName('escape'))
         Screen('CloseAll');
         break;
-    end
-    % If F1 is pressed, exit and continue to the next condition
-    if keyCode(KbName('F1'));
-        i=numFramesRestEye;
     end
     % Show the fixation cross
     Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenYpixels/400, white, [0 0], 2);

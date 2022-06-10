@@ -4,15 +4,13 @@
 sca; clc; close all; clear all; clearvars; 
 
 %% load previous synchronization experiment results
-% cd /ssd/zhibin/1overf/20220515_2P/Segmented_data
-cd /home/hnl/Acquisition/zhibin/20220515_2P/Segmented_data
-% cd /home/hnl/Acquisition/zhibin/20220609_2P/Segmented_data/1_50Hz_ICAautomized/
+cd /home/hnl/Acquisition/zhibin/20220609_2P/Segmented_data/1_50Hz_ICAautomized/
 [BPCondi_dataName]=uigetfile('BP*.mat');% select the Left player EEG
 Path_filename=[pwd '/' BPCondi_dataName];
 load(Path_filename);
 
 %% Go to experimental directory
-cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/Syncopation_2P
+cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/Syncopation_2P_1.3Hz
 
 %% set keyboards
 mydir  = pwd; % or cd
@@ -38,17 +36,18 @@ conditions = [1 2 3 4];
 conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-2Hz'};  % conditionNames{1}
 % conditionNames={'uncoupled-2Hz' 'L-lead-2Hz' 'R-lead-2Hz' 'mutual-2Hz' 'mutual-3Hz' 'mutual-3Hz-faster'};  % conditionNames{1}
 % Instruction for the experimentor
-ConditionInstructions={'uncoupled-2Hz' 'L-lead-2Hz' 'R-lead-2Hz' 'mutual-2Hz'}; 
+ConditionInstructions={'uncoupled-1.3Hz' 'L-lead-1.3Hz' 'R-lead-1.3Hz' 'mutual-1.3Hz'}; 
 % Instruction for the left player
-ConditionInstructionsL={'Syncopate with red.'... %  \nPacer 2Hz.
-    'Syncopate with red.'... %  \nPacer 2Hz
-    'Syncopate with blue.'... % \nPacer 2Hz
-    'Syncopate with blue.'}; 
+ConditionInstructionsL={'Tap between red.'... %  \nPacer 2Hz.
+    'Tap between red.'... %  \nPacer 2Hz
+    'Tap between blue.'... % \nPacer 2Hz
+    'Tap between blue.'}; 
 % Instruction for the right player
-ConditionInstructionsR={'Syncopate with blue.'... %  \nPacer 2Hz.
-    'Syncopate with red.'... %  \nPacer 2Hz
-    'Syncopate with blue.'... % \nPacer 2Hz
-    'Syncopate with red.'}; 
+ConditionInstructionsR={'Tap between blue.'... %  \nPacer 2Hz.
+    'Tap between red.'... %  \nPacer 2Hz
+    'Tap between blue.'... % \nPacer 2Hz
+    'Tap between red.'}; 
+
 
 % Block & Trial number of the experiment **********************************
 % number of taps per trial/condition
@@ -196,8 +195,8 @@ try
 
     %% Randomization of the pace stimuli in each condition ****************************************
     % Mean stimulus interval for 2Hz pacing
-    MeanTapInterval2Hz=0.5; % second
-    NumFramesInterval2Hz=round(MeanTapInterval2Hz/(ifi*waitframes));  
+    MeanTapInterval13Hz=0.75; % second
+    NumFramesInterval13Hz=round(MeanTapInterval13Hz/(ifi*waitframes));  
     % Resample previous tapping recording
     sr=2000;
     [ShowframesL] = resamBP(BPCondi1L,ifi,sr,waitframes);
@@ -228,7 +227,7 @@ try
     FixCrY=[repmat(yCenter,1,round(screenYpixels/100)+1) yCenter-round(screenYpixels/200)+1:yCenter+round(screenYpixels/200)];
    
     %% Take resting EEG
-    % run restingEEG.m %&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+    run restingEEG.m %&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
 
     %% ############################### Loop through block
@@ -263,15 +262,38 @@ try
             end
 
             % show instruction for each trial / condition
+            % for experimenter
             ShowCondition=[ConditionInstructions{conditionSelected}]; % Center monitor
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
-            ShowCondition=[ConditionInstructionsL{conditionSelected}]; % Left monitor
-            DrawFormattedText2(ShowCondition,'win',windowPtr,...
-            'sx',xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',color);
-            ShowCondition=[ConditionInstructionsR{conditionSelected}]; % Right monitor
-            DrawFormattedText2(ShowCondition,'win',windowPtr,...
-            'sx',xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',color);
+            % for left player
+            if conditionSelected == 1;
+                ShowCondition=[ConditionInstructionsL{conditionSelected}]; % Left monitor
+                DrawFormattedText2(ShowCondition,'win',windowPtr,...
+                'sx',xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',red);
+            elseif conditionSelected == 4;
+                ShowCondition=[ConditionInstructionsL{conditionSelected}]; % Left monitor
+                DrawFormattedText2(ShowCondition,'win',windowPtr,...
+                'sx',xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',blue);
+            else
+                ShowCondition=[ConditionInstructionsL{conditionSelected}]; % Left monitor
+                DrawFormattedText2(ShowCondition,'win',windowPtr,...
+                'sx',xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',color);
+            end
+            % for right player
+            if conditionSelected == 1;
+                ShowCondition=[ConditionInstructionsR{conditionSelected}]; % Right monitor
+                DrawFormattedText2(ShowCondition,'win',windowPtr,...
+                'sx',xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',blue);
+            elseif conditionSelected == 4;
+                ShowCondition=[ConditionInstructionsR{conditionSelected}]; % Right monitor
+                DrawFormattedText2(ShowCondition,'win',windowPtr,...
+                'sx',xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',red);
+            else
+                ShowCondition=[ConditionInstructionsR{conditionSelected}]; % Right monitor
+                DrawFormattedText2(ShowCondition,'win',windowPtr,...
+                'sx',xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',color);
+            end
             
             Screen('TextSize',windowPtr, 10); % smaller size font
             Showtrial=['Read to tap?'...
@@ -317,7 +339,7 @@ try
 %             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
 
             if block ~= numBlock | t ~= numTrials % only bypass the last trial
-                % run IntervalResting.m %&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+                run IntervalResting.m %&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 %                 % Show Resting
 %                 between_block_rest= 3; % in seconds
 %                 Resting = ['Take a rest for at least ' num2str(between_block_rest) ' s. \n Experimentor hit a key to continue.'];

@@ -25,7 +25,7 @@ n=1;
 % initialized number of taps recorded
 tapsRecordedL=0;tapsRecordedR=0;
 
-numFrames = NumFramesInterval2Hz*600*3; % add numFrames to allow more time
+numFrames = NumFramesInterval13Hz*600*3; % add numFrames to allow more time
 
 MaxTaps; numTaps;
 
@@ -85,8 +85,9 @@ while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
 
     %% Flash photocell every other second during the whole trial (bottom right)
     if (~isempty(find(([1:2:numFrames]==n)))) % every two frames
-    Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3*2 0 -screenXpixels/3*2 0]); % Left monitor
-    Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3 0 -screenXpixels/3 0]); % Middle monitor
+    Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3*2 0 -screenXpixels/3*2 0]); % Left monitor (Right Bottom)
+    Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3 0 -screenXpixels/3 0]); % Middle monitor (Right Bottom)
+    Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3+PhotosensorSize*2 0 -screenXpixels/3+PhotosensorSize*2 0]); % Right monitor (Left Bottom)
     end
     
     %% show resampled recording and photocells on the top at the same time
@@ -117,8 +118,11 @@ while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
         end
     end
     if (conditionSelected == 4) ;
-        Screen('FillRect', windowPtr, white, LeftUpperSquare); % photocell
-        Screen('FillRect', windowPtr, white, RightUpperSquare); % photocell
+        if any(ShowframesL(1:30) == n); % Pace right subject to get started
+            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
+            Screen('FillRect', windowPtr, white, LeftUpperSquare); % photocell
+            Screen('FillRect', windowPtr, white, RightUpperSquare); % photocell
+        end
     end
     
     %% Left Player
@@ -137,6 +141,8 @@ while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
             Screen('DrawDots', windowPtr, [xCenter-screenXpixels/24;yCenter], screenYpixels/20-2, red, [0 0], 2); % center monitor (left shift -screenYpixels/24)
             % show bottomright photocell on the other side undercovered
             Screen('FillRect', windowPtr, white, RightBottomSquare); 
+            % show upperleft photocell on the other side undercovered - right monitor
+            Screen('FillRect', windowPtr, white, RightUpperSquare+[-screenXpixels/3+PhotosensorSize*2 0 -screenXpixels/3+PhotosensorSize*2 0]); 
 
             % feedback to the other paticipants
             if (conditionSelected == 2) | (conditionSelected == 4) % show feedback to other
@@ -165,6 +171,8 @@ while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
             Screen('DrawDots', windowPtr, [xCenter+screenXpixels/24;yCenter], screenYpixels/20-2, blue, [0 0], 2); % center monitor (right shift +screenYpixels/24)
             % show bottomleft photocell on the other side undercovered
             Screen('FillRect', windowPtr, white, LeftBottomSquare); 
+            % show upperleft photocell on the other side undercovered - left monitor
+            Screen('FillRect', windowPtr, white, LeftUpperSquare+[+screenXpixels/3-PhotosensorSize*2 0 +screenXpixels/3-PhotosensorSize*2 0]); 
           
             % provide feedback stim to the other player 
             if (conditionSelected == 3) | (conditionSelected == 4)

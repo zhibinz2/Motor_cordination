@@ -44,6 +44,10 @@ while i<numFramesRestEye
         Screen('CloseAll');
         break;
     end
+    % If F1 is pressed, exit and continue to the next condition
+    if keyCode(KbName('F1'));
+        i=numFramesRestEye;
+    end
     % Show the fixation cross
     Screen('DrawDots', windowPtr, [FixCrX;FixCrY], screenYpixels/400, white, [0 0], 2);
     Screen('DrawDots', windowPtr, [FixCrX-screenXpixels/3;FixCrY], screenYpixels/400, white, [0 0], 2);
@@ -96,11 +100,15 @@ Screen('Flip',windowPtr);
 vbl = Screen('Flip', windowPtr);
 i=1;
 while i<numFramesRestEye
-% If esc is press, break out of the while loop and close the screen
+    % If esc is press, break out of the while loop and close the screen
     [keyIsDown, keysecs, keyCode] = KbCheck;
     if keyCode(KbName('escape'))
         Screen('CloseAll');
         break;
+    end
+    % If F1 is pressed, exit and continue to the next condition
+    if keyCode(KbName('F1'));
+        i=numFramesRestEye;
     end
     % Flip the black screen
     vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
