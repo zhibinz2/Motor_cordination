@@ -6,6 +6,7 @@ sca; clc; close all; clear all; clearvars;
 %% load previous synchronization experiment results
 % cd /ssd/zhibin/1overf/20220515_2P/Segmented_data
 cd /home/hnl/Acquisition/zhibin/20220515_2P/Segmented_data
+% cd /home/hnl/Acquisition/zhibin/20220609_2P/Segmented_data/1_50Hz_ICAautomized/
 [BPCondi_dataName]=uigetfile('BP*.mat');% select the Left player EEG
 Path_filename=[pwd '/' BPCondi_dataName];
 load(Path_filename);
