@@ -31,7 +31,7 @@ conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-2Hz' 'mutual-3Hz' 'mutual-
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 
 figure('units','normalized','outerposition',[0 0 1 1]);
-for condi=1:6
+for condi=1:6 % for condi=1:5
     if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R;FB_R=FBCondi1R;end
     if condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R;FB_R=FBCondi2R;end
     if condi==3; BP_L=BPCondi3L; FB_L=FBCondi3L; BP_R=BPCondi3R;FB_R=FBCondi3R;end
@@ -198,7 +198,7 @@ for condi=1:6
         [r,lags]=xcorr(time_series1(1:TimeLength)', time_series2(1:TimeLength)', 430,'coeff');
         plot(lags,r);xlabel('lags');ylabel('Xcorr');xline(0,'--','Color',deepyellow);
         title('xcorr BP-L & FB-L','Color',condicolors(condi,:));
-        ylim([-0.2 0.3]);
+        ylim([-0.2 0.5]);
     subplot(4,6,6*2+condi); %   xcorr(BP_R vs FB_R) 
         time_series1=Calinterval(BP_R');% plot(time_series1);
         time_series2=Calinterval(FB_R');% plot(time_series2);
@@ -208,7 +208,7 @@ for condi=1:6
         [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 430,'normalized');
         plot(lags,r);xlabel('lags');ylabel('Xcorr');xline(0,'--','Color',deepyellow);
         title('xcorr BP-R & FB-R','Color',condicolors(condi,:));
-        ylim([-0.2 0.3]);
+        ylim([-0.2 0.5]);
     subplot(4,6,6*3+condi); %  autocorr(BP_R)
         autocorr(Calinterval(BP_R'),430); xlabel('lags');ylabel('autocorr'); 
         title('autocorr BP-R','Color',condicolors(condi,:));
@@ -281,7 +281,7 @@ for condi=1:6
     if condi==6; BP_L=BPCondi6L; FB_L=FBCondi6L; BP_R=BPCondi6R;FB_R=FBCondi6R;end
     % compute
     subplot(4,6,condi); %  autocorr(BP_L)
-        autocorr(BP_L',1000); xlabel('lags');ylabel('autocorr'); ylim([0 0.03]);
+        autocorr(BP_L',1500); xlabel('lags');ylabel('autocorr'); ylim([0 0.03]);
         title({['Condi ' conditionNames{condi}], 'autocorr BP-L'},'Color',condicolors(condi,:));
     subplot(4,6,6+condi); %  xcorr(BP_L vs FB_L)
         time_series1=BP_L';% plot(time_series1);
@@ -289,7 +289,7 @@ for condi=1:6
         TimeLength=min([length(time_series1) length(time_series2)]);
         time_series1=time_series1-mean(time_series1);% plot(time_series1);
         time_series2=time_series2-mean(time_series2);% plot(time_series2);
-        [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000,'normalized');
+        [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1500,'normalized');
         plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');xline(0,'--','Color',deepyellow);
         title('xcorr BP-L & FB-L','Color',condicolors(condi,:));
         ylim([-5e-3 15e-3]);
@@ -299,15 +299,15 @@ for condi=1:6
         TimeLength=min([length(time_series1) length(time_series2)]);
         time_series1=time_series1-mean(time_series1);% plot(time_series1);
         time_series2=time_series2-mean(time_series2);% plot(time_series2);
-        [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1000,'normalized');
+        [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), 1500,'normalized');
         plot(lags./2,r);xlabel('time [ms]');ylabel('Xcorr');xline(0,'--','Color',deepyellow);
         title('xcorr BP-R & FB-R','Color',condicolors(condi,:));
         ylim([-5e-3 15e-3]);
     subplot(4,6,6*3+condi); %  autocorr(BP_R)
-        autocorr(BP_R',1000); xlabel('lags');ylabel('autocorr'); ylim([0 0.03]);
+        autocorr(BP_R',1500); xlabel('lags');ylabel('autocorr'); ylim([0 0.03]);
         title('autocorr BP-R','Color',condicolors(condi,:));
 end
-suptitle(['short-range statistics: tapping boolean ' 'subject ' num2str(seed)]);
+suptitle(['BPcorr_boolean ' 'subject ' num2str(seed)]);
         
 figureName=['BPcorr_boolean -- ' num2str(seed)];
     % save the figure
@@ -659,6 +659,8 @@ for condi=1:6
     subplot(3,6,6+condi); % xcorr (EMG_L vs EMG_R) 
         time_series1=EMG_L';% plot(time_series1);
         time_series2=EMG_R';% plot(time_series2);
+        time_series1=time_series1-mean(time_series1);
+        time_series2=time_series2-mean(time_series2);
         TimeLength=1000; % min([length(time_series1) length(time_series2)]);
         [r,lags]=xcorr(time_series1(1:TimeLength), time_series2(1:TimeLength), TimeLength-1,'normalized');
         plot(lags./2,r);xlabel('lag of time [ms]');ylabel('Xcorr');
@@ -1062,4 +1064,91 @@ figureName=['xcorr-EEG-EMG--EEG--chan' labels{chan} '--subject--' num2str(seed)]
 end
 
 close all;
-%%
+
+%% Photocell
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+
+figure('units','normalized','outerposition',[0 0 1 1]);
+win=20;
+for condi=1:6
+    if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; locs_L=FBlocsCondi1L; BP_R=BPCondi1R; FB_R=FBCondi1R; locs_R=FBlocsCondi1R; end
+    if condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; locs_L=FBlocsCondi2L; BP_R=BPCondi2R; FB_R=FBCondi2R; locs_R=FBlocsCondi2R; end
+    if condi==3; BP_L=BPCondi3L; FB_L=FBCondi3L; locs_L=FBlocsCondi3L; BP_R=BPCondi3R; FB_R=FBCondi3R; locs_R=FBlocsCondi3R; end
+    if condi==4; BP_L=BPCondi4L; FB_L=FBCondi4L; locs_L=FBlocsCondi4L; BP_R=BPCondi4R; FB_R=FBCondi4R; locs_R=FBlocsCondi4R; end
+    if condi==5; BP_L=BPCondi5L; FB_L=FBCondi5L; locs_L=FBlocsCondi5L; BP_R=BPCondi5R; FB_R=FBCondi5R; locs_R=FBlocsCondi5R; end
+    if condi==6; BP_L=BPCondi6L; FB_L=FBCondi6L; locs_L=FBlocsCondi6L; BP_R=BPCondi6R; FB_R=FBCondi6R; locs_R=FBlocsCondi6R; end
+    % compute
+    subplot(6,6,condi); %  hist(BP_L)
+        histogram(Calinterval(BP_L')./2,600,'FaceColor',condicolors(condi,:),'EdgeColor',condicolors(condi,:));
+        xlabel('BP-intervals (ms)');ylabel('number of BP intervals');xlim([0 1200]);
+        legend(['total ' num2str(length(Calinterval(BP_L')))]);
+        title({['Condi ' conditionNames{condi}],' BP-R interval'},'Color',condicolors(condi,:));
+    subplot(6,6,6+condi); %  hist(FB_L)
+        histogram(Calinterval(FB_L')./2,600,'FaceColor',condicolors(condi,:),'EdgeColor',condicolors(condi,:));
+        xlabel('FB-intervals (ms)');ylabel('number of FB intervals');xlim([0 1200]);
+        legend(['total ' num2str(length(Calinterval(FB_L')))]);
+        title('FB-L','Color',condicolors(condi,:));
+    subplot(6,6,6*2+condi); %  hist(FB_L)
+        histogram(Calinterval(locs_L)./2,600,'FaceColor',condicolors(condi,:),'EdgeColor',condicolors(condi,:));
+        xlabel('locs-intervals (ms)');ylabel('number of FB intervals');xlim([0 1200]);
+        legend(['total ' num2str(length(Calinterval(locs_L)))]);
+        title('locs-L','Color',condicolors(condi,:));
+    subplot(6,6,6*3+condi); %  hist(FB_L)
+        histogram(Calinterval(locs_R)./2,600,'FaceColor',condicolors(condi,:),'EdgeColor',condicolors(condi,:));
+        xlabel('locs-intervals (ms)');ylabel('number of FB intervals');xlim([0 1200]);
+        legend(['total ' num2str(length(Calinterval(locs_R)))]);
+        title('locs-L','Color',condicolors(condi,:));
+    subplot(6,6,6*4+condi); %   hist(FP_R)
+        histogram(Calinterval(FB_R')./2,600,'FaceColor',condicolors(condi,:),'EdgeColor',condicolors(condi,:));
+        xlabel('FB-intervals (ms)');ylabel('number of FB intervals');xlim([0 1200]);
+        legend(['total ' num2str(length(Calinterval(FB_R')))]);
+        title('FB-R','Color',condicolors(condi,:));
+    subplot(6,6,6*5+condi); %  hist(BP_R)
+        histogram(Calinterval(BP_R')./2,600,'FaceColor',condicolors(condi,:),'EdgeColor',condicolors(condi,:));
+        xlabel('BP-intervals (ms)');ylabel('number of BP intervals');xlim([0 1200]);
+        legend(['total ' num2str(length(Calinterval(BP_R')))]);
+        title('BP-R','Color',condicolors(condi,:));
+end
+suptitle(['Button press intervals ' ' -- subject ' num2str(seed)]);
+
+    
+figure('units','normalized','outerposition',[0 0 1 1]);
+win=20;
+for condi=1:6
+    if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; locs_L=FBlocsCondi1L; BP_R=BPCondi1R; FB_R=FBCondi1R; locs_R=FBlocsCondi1R; end
+    if condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; locs_L=FBlocsCondi2L; BP_R=BPCondi2R; FB_R=FBCondi2R; locs_R=FBlocsCondi2R; end
+    if condi==3; BP_L=BPCondi3L; FB_L=FBCondi3L; locs_L=FBlocsCondi3L; BP_R=BPCondi3R; FB_R=FBCondi3R; locs_R=FBlocsCondi3R; end
+    if condi==4; BP_L=BPCondi4L; FB_L=FBCondi4L; locs_L=FBlocsCondi4L; BP_R=BPCondi4R; FB_R=FBCondi4R; locs_R=FBlocsCondi4R; end
+    if condi==5; BP_L=BPCondi5L; FB_L=FBCondi5L; locs_L=FBlocsCondi5L; BP_R=BPCondi5R; FB_R=FBCondi5R; locs_R=FBlocsCondi5R; end
+    if condi==6; BP_L=BPCondi6L; FB_L=FBCondi6L; locs_L=FBlocsCondi6L; BP_R=BPCondi6R; FB_R=FBCondi6R; locs_R=FBlocsCondi6R; end
+    % compute
+    subplot(4,6,condi); %  (BP_L + FB_L)
+        BP_inter1=Calinterval(locs_L)./2; BP_inter2=Calinterval(FB_L')./2;
+        BPfrac_time1=linspace(1,5,length(BP_inter1)); BPfrac_time2=linspace(1,5,length(BP_inter2)); 
+        plot(BPfrac_time1,BP_inter1,'b');hold on; plot(BPfrac_time2,BP_inter2,'r');
+        xlabel('fractional time (min)');ylabel('interval (ms)');
+        legend('locs-L','FB-L');
+        title('L recording','Color',condicolors(condi,:));
+    subplot(4,6,6+condi); %  (FP_R + BP_R)
+        BP_inter1=Calinterval(locs_R)./2; BP_inter2=Calinterval(FB_R')./2;
+        BPfrac_time1=linspace(1,5,length(BP_inter1)); BPfrac_time2=linspace(1,5,length(BP_inter2)); 
+        plot(BPfrac_time1,BP_inter1,'b');hold on; plot(BPfrac_time2,BP_inter2,'r');
+        xlabel('fractional time (min)');ylabel('interval (ms)');
+        legend('locs-R','FB-R');
+        title('R recording','Color',condicolors(condi,:));
+    subplot(4,6,6*2+condi); %  
+        BP_inter1=smoothing(Calinterval(locs_L)./2,win); BP_inter2=smoothing(Calinterval(FB_L')./2,win);
+        BPfrac_time1=linspace(1,5,length(BP_inter1)); BPfrac_time2=linspace(1,5,length(BP_inter2)); 
+        plot(BPfrac_time1,BP_inter1,'b');hold on; plot(BPfrac_time2,BP_inter2,'r');
+        xlabel('fractional time (min)');ylabel('interval (ms)');
+        legend('locs-L','FB-L');
+        title('L recording smoothed','Color',condicolors(condi,:));
+    subplot(4,6,6*3+condi); % 
+        BP_inter1=smoothing(Calinterval(locs_R)./2,win); BP_inter2=smoothing(Calinterval(FB_R')./2,win);
+        BPfrac_time1=linspace(1,5,length(BP_inter1)); BPfrac_time2=linspace(1,5,length(BP_inter2)); 
+        plot(BPfrac_time1,BP_inter1,'b');hold on; plot(BPfrac_time2,BP_inter2,'r');
+        xlabel('fractional time (min)');ylabel('interval (ms)');
+        legend('locs-R','FB-R');
+        title('R recording smoothed','Color',condicolors(condi,:));
+end
+suptitle(['Fractional button press intervals smoothed win ' num2str(win) ' -- subject ' num2str(seed)]);

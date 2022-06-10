@@ -17,7 +17,7 @@ EEGCondi3L=mixedsigL(PacersL(14):PacersL(15),:);
 EEGResting4L=mixedsigL(PacersL(15):PacersL(16),:);
 EEGCondi4L=mixedsigL(PacersL(18):PacersL(19),:);
 EEGResting5L=mixedsigL(PacersL(19):PacersL(20),:);
-EEGCondi5L=mixedsigL(PacersL(22):PacersL(23),:);
+EEGCondi5L=mixedsigL(PacersL(22):PacersL(23),:);% EEGCondi5L=mixedsigL(PacersL(22):end,:); % if 5 conditions
 EEGResting6L=mixedsigL(PacersL(23):PacersL(24),:);
 EEGCondi6L=mixedsigL(PacersL(26):end,:);
 
@@ -31,7 +31,7 @@ EEGCondi3R=mixedsigR(PacersR(14):PacersR(15),:);
 EEGResting4R=mixedsigR(PacersR(15):PacersR(16),:);
 EEGCondi4R=mixedsigR(PacersR(18):PacersR(19),:);
 EEGResting5R=mixedsigR(PacersR(19):PacersR(20),:);
-EEGCondi5R=mixedsigR(PacersR(22):PacersR(23),:);
+EEGCondi5R=mixedsigR(PacersR(22):PacersR(23),:); % EEGCondi5R=mixedsigR(PacersR(22):end,:);
 EEGResting6R=mixedsigR(PacersR(23):PacersR(24),:);
 EEGCondi6R=mixedsigR(PacersR(26):end,:);
 
@@ -40,6 +40,11 @@ save(['EEG' num2str(seed) '.mat'],'EEGCondi1L','EEGCondi2L','EEGCondi3L',...
     'EEGCondi1R','EEGCondi2R','EEGCondi3R',...
     'EEGCondi4R','EEGCondi5R','EEGCondi6R');
 
+% if 5 conditions
+save(['EEG' num2str(seed) '.mat'],'EEGCondi1L','EEGCondi2L','EEGCondi3L',...
+    'EEGCondi4L','EEGCondi5L',...
+    'EEGCondi1R','EEGCondi2R','EEGCondi3R',...
+    'EEGCondi4R','EEGCondi5R');
 
 %% segment button presses
 BottonPresTimeL01; BottonPresTimeR01;
@@ -54,7 +59,7 @@ BPCondi3L=BottonPresTimeL01(PacersL(14):PacersL(15),:);
 BPResting4L=BottonPresTimeL01(PacersL(15):PacersL(16),:);
 BPCondi4L=BottonPresTimeL01(PacersL(18):PacersL(19),:);
 BPResting5L=BottonPresTimeL01(PacersL(19):PacersL(20),:);
-BPCondi5L=BottonPresTimeL01(PacersL(22):PacersL(23),:);
+BPCondi5L=BottonPresTimeL01(PacersL(22):PacersL(23),:); % BPCondi5L=BottonPresTimeL01(PacersL(22):end,:); % if 5 conditions
 BPResting6L=BottonPresTimeL01(PacersL(23):PacersL(24),:);
 BPCondi6L=BottonPresTimeL01(PacersL(26):end,:);
 
@@ -68,7 +73,7 @@ BPCondi3R=BottonPresTimeR01(PacersR(14):PacersR(15),:);
 BPResting4R=BottonPresTimeR01(PacersR(15):PacersR(16),:);
 BPCondi4R=BottonPresTimeR01(PacersR(18):PacersR(19),:);
 BPResting5R=BottonPresTimeR01(PacersR(19):PacersR(20),:);
-BPCondi5R=BottonPresTimeR01(PacersR(22):PacersR(23),:);
+BPCondi5R=BottonPresTimeR01(PacersR(22):PacersR(23),:); % BPCondi5R=BottonPresTimeR01(PacersR(22):end,:); % if 5 conditions
 BPResting6R=BottonPresTimeR01(PacersR(23):PacersR(24),:);
 BPCondi6R=BottonPresTimeR01(PacersR(26):end,:);
 
@@ -76,7 +81,11 @@ save(['BP' num2str(seed) '.mat'],'BPCondi1L','BPCondi2L','BPCondi3L',...
     'BPCondi4L','BPCondi5L','BPCondi6L',...
     'BPCondi1R','BPCondi2R','BPCondi3R',...
     'BPCondi4R','BPCondi5R','BPCondi6R');
-
+% if 5 conditions
+save(['BP' num2str(seed) '.mat'],'BPCondi1L','BPCondi2L','BPCondi3L',...
+    'BPCondi4L','BPCondi5L',...
+    'BPCondi1R','BPCondi2R','BPCondi3R',...
+    'BPCondi4R','BPCondi5R');
 
 %% segment feedbacks from the other 
 FeedbTimeL01; FeedbTimeR01;
@@ -91,7 +100,7 @@ FBCondi3L=FeedbTimeL01(PacersL(14):PacersL(15),:);
 FBResting4L=FeedbTimeL01(PacersL(15):PacersL(16),:);
 FBCondi4L=FeedbTimeL01(PacersL(18):PacersL(19),:);
 FBResting5L=FeedbTimeL01(PacersL(19):PacersL(20),:);
-FBCondi5L=FeedbTimeL01(PacersL(22):PacersL(23),:);
+FBCondi5L=FeedbTimeL01(PacersL(22):PacersL(23),:); % FBCondi5L=FeedbTimeL01(PacersL(22):end,:); % if 5 conditions
 FBResting6L=FeedbTimeL01(PacersL(23):PacersL(24),:);
 FBCondi6L=FeedbTimeL01(PacersL(26):end,:);
 
@@ -105,7 +114,7 @@ FBCondi3R=FeedbTimeR01(PacersR(14):PacersR(15),:);
 FBResting4R=FeedbTimeR01(PacersR(15):PacersR(16),:);
 FBCondi4R=FeedbTimeR01(PacersR(18):PacersR(19),:);
 FBResting5R=FeedbTimeR01(PacersR(19):PacersR(20),:);
-FBCondi5R=FeedbTimeR01(PacersR(22):PacersR(23),:);
+FBCondi5R=FeedbTimeR01(PacersR(22):PacersR(23),:); % FBCondi5R=FeedbTimeR01(PacersR(22):end,:); % if 5 conditions
 FBResting6R=FeedbTimeR01(PacersR(23):PacersR(24),:);
 FBCondi6R=FeedbTimeR01(PacersR(26):end,:);
 
@@ -113,6 +122,11 @@ save(['FB' num2str(seed) '.mat'],'FBCondi1L','FBCondi2L','FBCondi3L',...
     'FBCondi4L','FBCondi5L','FBCondi6L',...
     'FBCondi1R','FBCondi2R','FBCondi3R',...
     'FBCondi4R','FBCondi5R','FBCondi6R');
+% if 5 conditions
+save(['FB' num2str(seed) '.mat'],'FBCondi1L','FBCondi2L','FBCondi3L',...
+    'FBCondi4L','FBCondi5L',...
+    'FBCondi1R','FBCondi2R','FBCondi3R',...
+    'FBCondi4R','FBCondi5R');
 
 %% %% segment EMG
 filtered_EMGL; filtered_EMGR; % before hilbert transform
@@ -128,7 +142,7 @@ EMGCondi3L=upL(PacersL(14):PacersL(15),:);
 EMGResting4L=upL(PacersL(15):PacersL(16),:);
 EMGCondi4L=upL(PacersL(18):PacersL(19),:);
 EMGResting5L=upL(PacersL(19):PacersL(20),:);
-EMGCondi5L=upL(PacersL(22):PacersL(23),:);
+EMGCondi5L=upL(PacersL(22):PacersL(23),:); % EMGCondi5L=upL(PacersL(22):end,:);  %  if 5 conditions
 EMGResting6L=upL(PacersL(23):PacersL(24),:);
 EMGCondi6L=upL(PacersL(26):end,:);
 
@@ -142,7 +156,7 @@ EMGCondi3R=upR(PacersR(14):PacersR(15),:);
 EMGResting4R=upR(PacersR(15):PacersR(16),:);
 EMGCondi4R=upR(PacersR(18):PacersR(19),:);
 EMGResting5R=upR(PacersR(19):PacersR(20),:);
-EMGCondi5R=upR(PacersR(22):PacersR(23),:);
+EMGCondi5R=upR(PacersR(22):PacersR(23),:); % EMGCondi5R=upR(PacersR(22):end,:);  % if 5 conditions
 EMGResting6R=upR(PacersR(23):PacersR(24),:);
 EMGCondi6R=upR(PacersR(26):end,:);
 
@@ -150,3 +164,53 @@ save(['EMG' num2str(seed) '.mat'],'EMGCondi1L','EMGCondi2L','EMGCondi3L',...
     'EMGCondi4L','EMGCondi5L','EMGCondi6L',...
     'EMGCondi1R','EMGCondi2R','EMGCondi3R',...
     'EMGCondi4R','EMGCondi5R','EMGCondi6R');
+% if 5 conditions
+save(['EMG' num2str(seed) '.mat'],'EMGCondi1L','EMGCondi2L','EMGCondi3L',...
+    'EMGCondi4L','EMGCondi5L',...
+    'EMGCondi1R','EMGCondi2R','EMGCondi3R',...
+    'EMGCondi4R','EMGCondi5R');
+
+%%  segment Photocell
+locsL; locsR;
+locsL01=zeros(1,length(timeL)); 
+locsR01=zeros(1,length(timeL));
+locsL01(locsL)=1; % plot(locsL01);
+locsR01(locsR)=1; % plot(locsR01);
+
+FBlocsOpenEyeRestingL=locsL01(PacersL(1):PacersL(2));
+FBlocsCloseEyeRestingL=locsL01(PacersL(3):PacersL(4));
+FBlocsCondi1L=locsL01(PacersL(6):PacersL(7));
+FBlocsResting2L=locsL01(PacersL(7):PacersL(8));
+FBlocsCondi2L=locsL01(PacersL(10):PacersL(11));
+FBlocsResting3L=locsL01(PacersL(11):PacersL(12));
+FBlocsCondi3L=locsL01(PacersL(14):PacersL(15));
+FBlocsResting4L=locsL01(PacersL(15):PacersL(16));
+FBlocsCondi4L=locsL01(PacersL(18):PacersL(19));
+FBlocsResting5L=locsL01(PacersL(19):PacersL(20));
+FBlocsCondi5L=locsL01(PacersL(22):PacersL(23)); % FBlocsCondi5L=locsL01(PacersL(22):end); % if 5 conditions
+FBlocsResting6L=locsL01(PacersL(23):PacersL(24));
+FBlocsCondi6L=locsL01(PacersL(26):end);
+
+FBlocsOpenEyeRestingR=locsR01(PacersR(1):PacersR(2));
+FBlocsCloseEyeRestingR=locsR01(PacersR(3):PacersR(4));
+FBlocsCondi1R=locsR01(PacersR(6):PacersR(7));
+FBlocsResting2R=locsR01(PacersR(7):PacersR(8));
+FBlocsCondi2R=locsR01(PacersR(10):PacersR(11));
+FBlocsResting3R=locsR01(PacersR(11):PacersR(12));
+FBlocsCondi3R=locsR01(PacersR(14):PacersR(15));
+FBlocsResting4R=locsR01(PacersR(15):PacersR(16));
+FBlocsCondi4R=locsR01(PacersR(18):PacersR(19));
+FBlocsResting5R=locsR01(PacersR(19):PacersR(20));
+FBlocsCondi5R=locsR01(PacersR(22):PacersR(23)); % FBlocsCondi5R=locsR01(PacersR(22):end); % if 5 conditions
+FBlocsResting6R=locsR01(PacersR(23):PacersR(24));
+FBlocsCondi6R=locsR01(PacersR(26):end);
+
+save(['FBlocs' num2str(seed) '.mat'],'FBlocsCondi1L','FBlocsCondi2L','FBlocsCondi3L',...
+    'FBlocsCondi4L','FBlocsCondi5L','FBlocsCondi6L',...
+    'FBlocsCondi1R','FBlocsCondi2R','FBlocsCondi3R',...
+    'FBlocsCondi4R','FBlocsCondi5R','FBlocsCondi6R');
+% if 5 conditions
+save(['FBlocs' num2str(seed) '.mat'],'FBlocsCondi1L','FBlocsCondi2L','FBlocsCondi3L',...
+    'FBlocsCondi4L','FBlocsCondi5L',...
+    'FBlocsCondi1R','FBlocsCondi2R','FBlocsCondi3R',...
+    'FBlocsCondi4R','FBlocsCondi5R');
