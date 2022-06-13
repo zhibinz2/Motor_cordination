@@ -10,6 +10,7 @@ cd /ssd/zhibin/1overf/20220515_2P
 cd /ssd/zhibin/1overf/20220517_2P
 cd /ssd/zhibin/1overf/20220518_2P
 cd /ssd/zhibin/1overf/20220609_2P
+cd /ssd/zhibin/1overf/20220610_2P
 
 [EEGfileNameL]=uigetfile('*.Poly5');% select the Left player EEG
 Path_filenameL=[pwd '/' EEGfileNameL];
@@ -87,7 +88,7 @@ FeedbTimeR01(FeedbTimeIndR)=1;
 plot(FeedbTimeR01,'r.')
 numFbR=sum(FeedbTimeR01) % num of feedbacks from the other plus 4+2x5 resting photocells
 
-%% extract time points for pacers (using this as index to segment data into conditions)
+%% extract time points for pacers - synchronization (using this as index to segment data into conditions)
 % Left player
 % PacerIndL=unique([find(TriggersL == 127)]); % extract Index of real key presses in the values
 % PacerIndL=unique([find(TriggersL == 127);find(TriggersL == 111)); % extract Index of real key presses in the values
@@ -126,14 +127,14 @@ plot(PacerTimeR01,'b');
 sum(PacerTimeR01) % check if == 194
 
 % Plot not alligned
-figure; % for 6 conditions
+figure; % for 6 conditions (synchronization)
 PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
 plot(PacersL, ones(length(PacersL)),'r.');
 hold on;
 PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
 plot(PacersR, ones(length(PacersR)),'b.');
 
-figure; % for 5 conditions
+figure; % for 5 conditions (synchronization)
 PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162]);
 plot(PacersL, ones(length(PacersL)),'r.');
 hold on;
@@ -148,11 +149,32 @@ figure;
 plot(PacersL,ones(1,length(PacersL)),'r.');hold on;ylim([0 3]);
 plot(PacerTimeIndL,2*ones(1,length(PacerTimeIndL)),'r.');
 
-% Plot alligned
+% Plot alligned (synchronization)
 figure;
 plot(PacersL-PacersL(1), ones(length(PacersL)),'r.');
 hold on;
 plot(PacersR-PacersR(1), ones(length(PacersR)),'b.');
+
+
+% Plot alligned (syncopation)
+figure;
+plot(PacerTimeIndL-PacerTimeIndL(1), ones(length(PacerTimeIndL)),'r.');
+hold on;
+plot(PacerTimeIndR-PacerTimeIndR(1), ones(length(PacerTimeIndR)),'b.');
+
+%% extract time points for pacers - syncopation
+% PacerTimeIndL; PacerTimeIndR; % index in datatime
+% PacerTimeL01; PacerTimeR01;
+% figure; plot(PacerTimeR01,'b'); figure; plot(PacerTimeR01,'b');
+% L player pacer
+thresholdL=2000*3; % after longer than 3 sec interval
+SegPacerIndL=[1 find([0 diff(PacerTimeIndL')]>thresholdL)]; % should be 14 values (first five should be 1 2 3 4 5)
+SegtimeIndL=PacerTimeIndL(SegPacerIndL); % index in data time
+% R player pacer
+thresholdR=2000*3; % after longer than 3 sec interval
+SegPacerIndR=[1 find([0 diff(PacerTimeIndR')]>thresholdR)]; % should be 14 values (first five should be 1 2 3 4 5)
+SegtimeIndR=PacerTimeIndR(SegPacerIndR); % index in data time
+
 
 %% Extract feedbacks from light detector ISO (skip for now)
 % look for the second ISO aux channel for the photocell 

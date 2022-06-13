@@ -2,7 +2,7 @@
 cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/1_50Hz_ICAautomized
 cd /ssd/zhibin/1overf/20220517_2P/Segmented_data/1_50Hz_ICAautomized
 
-%% Segment EEG
+%% Segment EEG - synchronization
 % mixedsigL=mixedsigL';
 % mixedsigR=mixedsigR';
 % PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
@@ -46,7 +46,7 @@ save(['EEG' num2str(seed) '.mat'],'EEGCondi1L','EEGCondi2L','EEGCondi3L',...
     'EEGCondi1R','EEGCondi2R','EEGCondi3R',...
     'EEGCondi4R','EEGCondi5R');
 
-%% segment button presses
+%% segment button presses - synchronization
 BottonPresTimeL01; BottonPresTimeR01;
 
 BPOpenEyeRestingL=BottonPresTimeL01(PacersL(1):PacersL(2),:);
@@ -87,7 +87,7 @@ save(['BP' num2str(seed) '.mat'],'BPCondi1L','BPCondi2L','BPCondi3L',...
     'BPCondi1R','BPCondi2R','BPCondi3R',...
     'BPCondi4R','BPCondi5R');
 
-%% segment feedbacks from the other 
+%% segment feedbacks from the other  - synchronization
 FeedbTimeL01; FeedbTimeR01;
 
 FBOpenEyeRestingL=FeedbTimeL01(PacersL(1):PacersL(2),:);
@@ -128,7 +128,7 @@ save(['FB' num2str(seed) '.mat'],'FBCondi1L','FBCondi2L','FBCondi3L',...
     'FBCondi1R','FBCondi2R','FBCondi3R',...
     'FBCondi4R','FBCondi5R');
 
-%% %% segment EMG
+%% %% segment EMG - synchronization
 filtered_EMGL; filtered_EMGR; % before hilbert transform
 upL;upR; % after hilbert transform
 
@@ -170,7 +170,7 @@ save(['EMG' num2str(seed) '.mat'],'EMGCondi1L','EMGCondi2L','EMGCondi3L',...
     'EMGCondi1R','EMGCondi2R','EMGCondi3R',...
     'EMGCondi4R','EMGCondi5R');
 
-%%  segment Photocell
+%%  segment Photocell - synchronization
 locsL; locsR;
 locsL01=zeros(1,length(timeL)); 
 locsR01=zeros(1,length(timeL));
@@ -214,3 +214,119 @@ save(['FBlocs' num2str(seed) '.mat'],'FBlocsCondi1L','FBlocsCondi2L','FBlocsCond
     'FBlocsCondi4L','FBlocsCondi5L',...
     'FBlocsCondi1R','FBlocsCondi2R','FBlocsCondi3R',...
     'FBlocsCondi4R','FBlocsCondi5R');
+
+%% EEG - syncopation
+% mixedsigL=mixedsigL';
+% mixedsigR=mixedsigR';
+% SegtimeIndL; SegtimeIndR;
+
+EEGOpenEyeRestingL=mixedsigL(SegtimeIndL(1):SegtimeIndL(2),:);
+EEGCloseEyeRestingL=mixedsigL(SegtimeIndL(3):SegtimeIndL(4),:);
+EEGCondi1L=mixedsigL(SegtimeIndL(5):SegtimeIndL(6),:);
+EEGResting2L=mixedsigL(SegtimeIndL(6):SegtimeIndL(7),:);
+EEGCondi2L=mixedsigL(SegtimeIndL(8):SegtimeIndL(9),:);
+EEGResting3L=mixedsigL(SegtimeIndL(9):SegtimeIndL(10),:);
+EEGCondi3L=mixedsigL(SegtimeIndL(11):SegtimeIndL(12),:);
+EEGResting4L=mixedsigL(SegtimeIndL(12):PacersL(13),:);
+EEGCondi4L=mixedsigL(SegtimeIndL(14):end,:);
+
+EEGOpenEyeRestingR=mixedsigR(SegtimeIndR(1):SegtimeIndR(2),:);
+EEGCloseEyeRestingR=mixedsigR(SegtimeIndR(3):SegtimeIndR(4),:);
+EEGCondi1R=mixedsigR(SegtimeIndR(5):SegtimeIndR(6),:);
+EEGResting2R=mixedsigR(SegtimeIndR(6):SegtimeIndR(7),:);
+EEGCondi2R=mixedsigR(SegtimeIndR(8):SegtimeIndR(9),:);
+EEGResting3R=mixedsigR(SegtimeIndR(9):SegtimeIndR(10),:);
+EEGCondi3R=mixedsigR(SegtimeIndR(11):SegtimeIndR(12),:);
+EEGResting4R=mixedsigR(SegtimeIndR(12):PacersR(13),:);
+EEGCondi4R=mixedsigR(SegtimeIndR(14):end,:);
+
+save(['EEG' num2str(seed) '.mat'],'EEGCondi1L','EEGCondi2L','EEGCondi3L',...
+    'EEGCondi4L',...
+    'EEGCondi1R','EEGCondi2R','EEGCondi3R',...
+    'EEGCondi4R');
+
+%% BP - syncopation
+BottonPresTimeL01; BottonPresTimeR01;
+
+BPOpenEyeRestingL=BottonPresTimeL01(SegtimeIndL(1):SegtimeIndL(2),:);
+BPCloseEyeRestingL=BottonPresTimeL01(SegtimeIndL(3):SegtimeIndL(4),:);
+BPCondi1L=BottonPresTimeL01(SegtimeIndL(5):SegtimeIndL(6),:);
+BPResting2L=BottonPresTimeL01(SegtimeIndL(6):SegtimeIndL(7),:);
+BPCondi2L=BottonPresTimeL01(SegtimeIndL(8):SegtimeIndL(9),:);
+BPResting3L=BottonPresTimeL01(SegtimeIndL(9):SegtimeIndL(10),:);
+BPCondi3L=BottonPresTimeL01(SegtimeIndL(11):SegtimeIndL(12),:);
+BPResting4L=BottonPresTimeL01(SegtimeIndL(12):PacersL(13),:);
+BPCondi4L=BottonPresTimeL01(SegtimeIndL(14):end,:);
+
+BPOpenEyeRestingR=BottonPresTimeR01(SegtimeIndR(1):SegtimeIndR(2),:);
+BPCloseEyeRestingR=BottonPresTimeR01(SegtimeIndR(3):SegtimeIndR(4),:);
+BPCondi1R=BottonPresTimeR01(SegtimeIndR(5):SegtimeIndR(6),:);
+BPResting2R=BottonPresTimeR01(SegtimeIndR(6):SegtimeIndR(7),:);
+BPCondi2R=BottonPresTimeR01(SegtimeIndR(8):SegtimeIndR(9),:);
+BPResting3R=BottonPresTimeR01(SegtimeIndR(9):SegtimeIndR(10),:);
+BPCondi3R=BottonPresTimeR01(SegtimeIndR(11):SegtimeIndR(12),:);
+BPResting4R=BottonPresTimeR01(SegtimeIndR(12):PacersR(13),:);
+BPCondi4R=BottonPresTimeR01(SegtimeIndR(14):end,:);
+
+save(['BP' num2str(seed) '.mat'],'BPCondi1L','BPCondi2L','BPCondi3L',...
+    'BPCondi4L',...
+    'BPCondi1R','BPCondi2R','BPCondi3R',...
+    'BPCondi4R');
+
+%% FB - syncopation
+FeedbTimeL01; FeedbTimeR01;
+
+FBOpenEyeRestingL=FeedbTimeL01(SegtimeIndL(1):SegtimeIndL(2),:);
+FBCloseEyeRestingL=FeedbTimeL01(SegtimeIndL(3):SegtimeIndL(4),:);
+FBCondi1L=FeedbTimeL01(SegtimeIndL(5):SegtimeIndL(6),:);
+FBResting2L=FeedbTimeL01(SegtimeIndL(6):SegtimeIndL(7),:);
+FBCondi2L=FeedbTimeL01(SegtimeIndL(8):SegtimeIndL(9),:);
+FBResting3L=FeedbTimeL01(SegtimeIndL(9):SegtimeIndL(10),:);
+FBCondi3L=FeedbTimeL01(SegtimeIndL(11):SegtimeIndL(12),:);
+FBResting4L=FeedbTimeL01(SegtimeIndL(12):PacersL(13),:);
+FBCondi4L=FeedbTimeL01(SegtimeIndL(14):end,:);
+
+FBOpenEyeRestingR=FeedbTimeR01(SegtimeIndR(1):SegtimeIndR(2),:);
+FBCloseEyeRestingR=FeedbTimeR01(SegtimeIndR(3):SegtimeIndR(4),:);
+FBCondi1R=FeedbTimeR01(SegtimeIndR(5):SegtimeIndR(6),:);
+FBResting2R=FeedbTimeR01(SegtimeIndR(6):SegtimeIndR(7),:);
+FBCondi2R=FeedbTimeR01(SegtimeIndR(8):SegtimeIndR(9),:);
+FBResting3R=FeedbTimeR01(SegtimeIndR(9):SegtimeIndR(10),:);
+FBCondi3R=FeedbTimeR01(SegtimeIndR(11):SegtimeIndR(12),:);
+FBResting4R=FeedbTimeR01(SegtimeIndR(12):PacersR(13),:);
+FBCondi4R=FeedbTimeR01(SegtimeIndR(14):end,:);
+
+save(['FB' num2str(seed) '.mat'],'FBCondi1L','FBCondi2L','FBCondi3L',...
+    'FBCondi4L',...
+    'FBCondi1R','FBCondi2R','FBCondi3R',...
+    'FBCondi4R');
+
+%% EMG - syncopation
+filtered_EMGL; filtered_EMGR; % before hilbert transform
+upL;upR; % after hilbert transform
+
+EMGOpenEyeRestingL=upL(SegtimeIndL(1):SegtimeIndL(2),:);
+EMGCloseEyeRestingL=upL(SegtimeIndL(3):SegtimeIndL(4),:);
+EMGCondi1L=upL(SegtimeIndL(5):SegtimeIndL(6),:);
+EMGResting2L=upL(SegtimeIndL(6):SegtimeIndL(7),:);
+EMGCondi2L=upL(SegtimeIndL(8):SegtimeIndL(9),:);
+EMGResting3L=upL(SegtimeIndL(9):SegtimeIndL(10),:);
+EMGCondi3L=upL(SegtimeIndL(11):SegtimeIndL(12),:);
+EMGResting4L=upL(SegtimeIndL(12):PacersL(13),:);
+EMGCondi4L=upL(SegtimeIndL(14):end,:);
+
+EMGOpenEyeRestingR=upR(SegtimeIndR(1):SegtimeIndR(2),:);
+EMGCloseEyeRestingR=upR(SegtimeIndR(3):SegtimeIndR(4),:);
+EMGCondi1R=upR(SegtimeIndR(5):SegtimeIndR(6),:);
+EMGResting2R=upR(SegtimeIndR(6):SegtimeIndR(7),:);
+EMGCondi2R=upR(SegtimeIndR(8):SegtimeIndR(9),:);
+EMGResting3R=upR(SegtimeIndR(9):SegtimeIndR(10),:);
+EMGCondi3R=upR(SegtimeIndR(11):SegtimeIndR(12),:);
+EMGResting4R=upR(SegtimeIndR(12):PacersR(13),:);
+EMGCondi4R=upR(SegtimeIndR(14):end,:);
+
+save(['EMG' num2str(seed) '.mat'],'EMGCondi1L','EMGCondi2L','EMGCondi3L',...
+    'EMGCondi4L',...
+    'EMGCondi1R','EMGCondi2R','EMGCondi3R',...
+    'EMGCondi4R');
+

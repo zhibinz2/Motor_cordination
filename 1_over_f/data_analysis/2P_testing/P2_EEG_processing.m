@@ -301,9 +301,9 @@ run /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/chann
 % select the data to plot
 Timeselected=timeL(ind1:ind2);
 % Timeselected=timeR(ind1:ind2); 
-EEGselected=filtered_dataL5(ind1:ind2,:);
+% EEGselected=filtered_dataL5(ind1:ind2,:);
 % EEGselected=filtered_dataR5(ind1:ind2,:);
-% EEGselected=mixedsigL(ind1:ind2,:);
+EEGselected=mixedsigL(ind1:ind2,:);
 % EEGselected=mixedsigR(ind1:ind2,:);
 
 % fft and plot the spectrum
