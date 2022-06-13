@@ -330,3 +330,34 @@ save(['EMG' num2str(seed) '.mat'],'EMGCondi1L','EMGCondi2L','EMGCondi3L',...
     'EMGCondi1R','EMGCondi2R','EMGCondi3R',...
     'EMGCondi4R');
 
+%% segment Photocell -  syncopation
+locsL; locsR;
+locsL01=zeros(1,length(timeL)); 
+locsR01=zeros(1,length(timeL));
+locsL01(locsL)=1; % plot(locsL01);
+locsR01(locsR)=1; % plot(locsR01);
+
+FBlocsOpenEyeRestingL=locsL01(SegtimeIndL(1):SegtimeIndL(2));
+FBlocsCloseEyeRestingL=locsL01(SegtimeIndL(3):SegtimeIndL(4));
+FBlocsCondi1L=locsL01(SegtimeIndL(5):SegtimeIndL(6));
+FBlocsResting2L=locsL01(SegtimeIndL(6):SegtimeIndL(7));
+FBlocsCondi2L=locsL01(SegtimeIndL(8):SegtimeIndL(9));
+FBlocsResting3L=locsL01(SegtimeIndL(9):SegtimeIndL(10));
+FBlocsCondi3L=locsL01(SegtimeIndL(11):SegtimeIndL(12));
+FBlocsResting4L=locsL01(SegtimeIndL(12):PacersL(13));
+FBlocsCondi4L=locsL01(SegtimeIndL(14):end);
+
+FBlocsOpenEyeRestingR=locsR01(SegtimeIndR(1):SegtimeIndR(2));
+FBlocsCloseEyeRestingR=locsR01(SegtimeIndR(3):SegtimeIndR(4));
+FBlocsCondi1R=locsR01(SegtimeIndR(5):SegtimeIndR(6));
+FBlocsResting2R=locsR01(SegtimeIndR(6):SegtimeIndR(7));
+FBlocsCondi2R=locsR01(SegtimeIndR(8):SegtimeIndR(9));
+FBlocsResting3R=locsR01(SegtimeIndR(9):SegtimeIndR(10));
+FBlocsCondi3R=locsR01(SegtimeIndR(11):SegtimeIndR(12));
+FBlocsResting4R=locsR01(SegtimeIndR(12):PacersR(13));
+FBlocsCondi4R=locsR01(SegtimeIndR(14):end);
+
+save(['FBlocs' num2str(seed) '.mat'],'FBlocsCondi1L','FBlocsCondi2L','FBlocsCondi3L',...
+    'FBlocsCondi4L',...
+    'FBlocsCondi1R','FBlocsCondi2R','FBlocsCondi3R',...
+    'FBlocsCondi4R');
