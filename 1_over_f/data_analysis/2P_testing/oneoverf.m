@@ -12,7 +12,8 @@ function [freqs,fcoef] = oneoverf(y,Fs);
     p=amplitude.^2;
     
     %xx=log10(freqs(2:end));yy=log10(p(2:length(freqs)));
-    xx=log10(freqs(2:end));yy=log10(p(1:length(p)));
+    % xx=log10(freqs(2:end));yy=log10(p(1:length(p)));
+    xx=log10(freqs(2:11));yy=log10(p(1:10));
     plot(xx,yy);hold on;
     tbl=table(xx',yy');
     mdl=fitlm(tbl,'linear');

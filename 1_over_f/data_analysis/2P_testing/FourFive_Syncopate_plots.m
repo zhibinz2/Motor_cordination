@@ -130,7 +130,7 @@ for condi=1:4
         xlabel('fractional time (min)');ylabel('interval (ms)');
         legend('BP-L','BP-R');
         title({['Condi ' conditionNames{condi}],['BP smooth win ' num2str(win)]},'Color',condicolors(condi,:));
-        ylim([500 1000]);
+        ylim([400 1000]);
     subplot(4,4,4+condi); 
         win=20;
         BP_inter1=smoothing(Calinterval(BP_L')./2,win); BP_inter2=smoothing(Calinterval(BP_R')./2,win);
@@ -139,7 +139,7 @@ for condi=1:4
         xlabel('fractional time (min)');ylabel('interval (ms)');
         legend('BP-L','BP-R');
         title(['BP smooth win ' num2str(win)],'Color',condicolors(condi,:));
-        ylim([500 1000]);
+        ylim([400 1000]);
     subplot(4,4,4*2+condi); 
         win=50;
         BP_inter1=smoothing(Calinterval(BP_L')./2,win); BP_inter2=smoothing(Calinterval(BP_R')./2,win);
@@ -148,7 +148,7 @@ for condi=1:4
         xlabel('fractional time (min)');ylabel('interval (ms)');
         legend('BP-L','BP-R');
         title(['BP smooth win ' num2str(win)],'Color',condicolors(condi,:));
-        ylim([500 1000]);
+        ylim([400 1000]);
     subplot(4,4,4*3+condi); 
         win=100;
         BP_inter1=smoothing(Calinterval(BP_L')./2,win); BP_inter2=smoothing(Calinterval(BP_R')./2,win);
@@ -157,7 +157,7 @@ for condi=1:4
         xlabel('fractional time (min)');ylabel('interval (ms)');
         legend('BP-L','BP-R');
         title(['BP smooth win ' num2str(win)],'Color',condicolors(condi,:));
-        ylim([500 1000]);
+        ylim([400 1000]);
 end
 suptitle(['Fractional BP intervals smoothed -- subject ' num2str(seed) '-PLOT-1-2']);
 
@@ -188,7 +188,7 @@ for condi=1:4
         plot(resam_BP_inter1,'r'); hold on; plot(resam_BP_inter2,'b'); hold off;
         ylabel('interval (ms)','color','m');% xlabel('taps (resampled)');
         title({['Condi ' conditionNames{condi}],['BP smooth win ' num2str(win)]},'Color',condicolors(condi,:));
-        ylim([500 1100]);legend({'BP-L','BP-R'});
+        ylim([400 1100]);legend({'BP-L','BP-R'});
     subplot(2,4,4+condi); 
         % calculate correlation coeffiences win the same smoothing window
         corrSeries=[];
@@ -249,12 +249,13 @@ for condi=1:4
         autocorr(Calinterval(BP_R'),430); xlabel('lags');ylabel('autocorr'); 
         title('autocorr BP-R','Color',condicolors(condi,:));
 end
-suptitle(['PLOT 2: auto/x corr tapping intervals' ' -- subject ' num2str(seed)]);
+suptitle(['PLOT 2: auto/x corr tapping intervals' ' -- subject ' num2str(seed) '-PLOT-2']);
 
 % cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/Plots    
 figureName=['BPcorr--' num2str(seed) '-PLOT-2'];
     % save the figure
     saveas(gcf,figureName,'jpg');
+    saveas(gcf,figureName,'fig');
 
 
 %% PLOT 3:  BP interval corr smooth (better!) (short-range / local statistics; weak anticipation) on interval
@@ -298,11 +299,13 @@ for condi=1:4
         autocorr(smoothing(Calinterval(BP_R'),win),430-win); xlabel('lags');ylabel('autocorr'); 
         title('autocorr BP-R','Color',condicolors(condi,:));
 end
-suptitle(['BP interval corr smooth win ' num2str(win) ' subject ' num2str(seed)]);
+suptitle(['BP interval corr smooth win ' num2str(win) ' subject ' num2str(seed) '-PLOT3']);
         
-figureName=['BPcorr_smooth--' num2str(seed)];
+figureName=['BPcorr_smooth--' num2str(seed) '-PLOT3'];
     % save the figure
     saveas(gcf,figureName,'jpg');
+    saveas(gcf,figureName,'fig');
+
 
 
 %% PLOT 4:  BP corr boolean (low correlation) (short-range / local statistics; weak anticipation) on interval
@@ -349,7 +352,7 @@ figureName=['BPcorr_boolean -- ' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
 
-    %% PLOT 5:  BP interval spectra DFA (long-range / global statistics; strong anticipation)  
+%% PLOT 5:  BP interval spectra DFA (long-range / global statistics; strong anticipation)  
 % Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
 % 6 conditions -subplots(4,6,i)
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
@@ -401,6 +404,61 @@ figureName=['BP-spectra-DFA -- ' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
 
+    
+%% PLOT 5-1:  BP interval spectra DFA (long-range / global statistics; strong anticipation)  
+% Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
+% 6 conditions -subplots(4,6,i)
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
+
+figure('units','normalized','outerposition',[0 0 1 1]);
+for condi=1:4
+    if condi==1; BP_L=BPCondi1L; BP_R=BPCondi1R; end
+    if condi==2; BP_L=BPCondi2L; BP_R=BPCondi2R; end
+    if condi==3; BP_L=BPCondi3L; BP_R=BPCondi3R; end
+    if condi==4; BP_L=BPCondi4L; BP_R=BPCondi4R; end
+    subplot(4,4,condi); % Pspectra(BP_L)
+        y=Calinterval(BP_L');
+        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4);
+            Fs=2;% assuming a sampling frequency of 2 Hz
+        else (condi == 5) | (condi == 6) ;
+            Fs=3;% assuming a sampling frequency of 3 Hz
+        end
+        [freqs,fcoef] = oneoverf(y,Fs);
+        xlabel('Log(f)');ylabel('Log(power)');
+        title({['Condi ' conditionNames{condi}], 'Spectrum BP-L'},'Color',condicolors(condi,:));
+        ylim([-2 8]);xlim([-3 0]);
+        
+    subplot(4,4,4+condi);  % Pspectra(BP_R) 
+        y=Calinterval(BP_R');
+        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4);
+            Fs=2;% assuming a sampling frequency of 2 Hz
+        else (condi == 5) | (condi == 6) ;
+            Fs=3;% assuming a sampling frequency of 3 Hz
+        end
+        [freqs,fcoef] = oneoverf(y,Fs);
+        xlabel('Log(f)');ylabel('Log(power)');
+        title('Spectrum BP-R','Color',condicolors(condi,:));  
+        ylim([-2 8]);xlim([-3 0]);
+        
+    subplot(4,4,4*2+condi);  % DFA(BP_L)
+        [D,Alpha1]=DFA_main(Calinterval(BP_L'));
+        title('DFA BP-L','Color',condicolors(condi,:));
+        ylim([0.5 4]);xlim([0.5 3]);
+        
+    subplot(4,4,4*3+condi);  % DFA(BP_R)
+        [D,Alpha1]=DFA_main(Calinterval(BP_R'));
+        title('DFA BP-R','Color',condicolors(condi,:));
+        ylim([0.5 4]);xlim([0.5 3]);
+
+end
+suptitle(['BP-interval-spectra-DFA-first10-' ' -- subject ' num2str(seed) '-PLOT-5-1']);
+
+figureName=['BP-interval-spectra-DFA-first10- ' num2str(seed) '-PLOT-5-1'];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+    saveas(gcf,figureName,'fig');
+    
+    
 
 %% PLOT 6:  BP spectra-DFA smoothed (long-range / global statistics; strong anticipation) on interval
 % Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
@@ -436,6 +494,7 @@ for condi=1:4
         [freqs,fcoef] = oneoverf(y,Fs);
         xlabel('Log(f)');ylabel('Log(power)');
         title('Spectrum BP_R', 'Color',condicolors(condi,:));    
+        ylim([-4 8]);xlim([-3 0]);
         
     subplot(4,4,4*2+condi);  % DFA(BP_L)
         [D,Alpha1]=DFA_main(smoothing(Calinterval(BP_L'),win));
@@ -453,6 +512,62 @@ suptitle(['BP-intervals-smoothed win ' num2str(win) ' subject ' num2str(seed)]);
 figureName=['BP-spectra-DFA_smooth-- ' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
+
+    
+%% PLOT 6-1:  BP spectra-DFA smoothed (long-range / global statistics; strong anticipation) on interval
+% Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
+% 6 conditions -subplots(4,6,i)
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+
+figure('units','normalized','outerposition',[0 0 1 1]);
+win=20; % smooth with a sliding window size
+for condi=1:4
+    if condi==1; BP_L=BPCondi1L; BP_R=BPCondi1R; end
+    if condi==2; BP_L=BPCondi2L; BP_R=BPCondi2R; end
+    if condi==3; BP_L=BPCondi3L; BP_R=BPCondi3R; end
+    if condi==4; BP_L=BPCondi4L; BP_R=BPCondi4R; end
+    subplot(4,4,condi); % Pspectra(BP_L)
+        y=smoothing(Calinterval(BP_L'),win);
+        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4);
+            Fs=2;% assuming a sampling frequency of 2 Hz
+        else (condi == 5) | (condi == 6) ;
+            Fs=3;% assuming a sampling frequency of 3 Hz
+        end
+        [freqs,fcoef] = oneoverf(y,Fs);
+        xlabel('Log(f)');ylabel('Log(power)');
+        title({['Condi ' conditionNames{condi}], 'Spectrum BP_L'},'Color',condicolors(condi,:));
+        ylim([-4 8]);xlim([-3 0]);
+        
+    subplot(4,4,4+condi);  % Pspectra(BP_R) 
+        y=smoothing(Calinterval(BP_R'),win);
+        if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4);
+            Fs=2;% assuming a sampling frequency of 2 Hz
+        else (condi == 5) | (condi == 6) ;
+            Fs=3;% assuming a sampling frequency of 3 Hz
+        end
+        [freqs,fcoef] = oneoverf(y,Fs);
+        xlabel('Log(f)');ylabel('Log(power)');
+        title('Spectrum BP_R', 'Color',condicolors(condi,:));    
+        ylim([-4 8]);xlim([-3 0]);
+        
+    subplot(4,4,4*2+condi);  % DFA(BP_L)
+        [D,Alpha1]=DFA_main(smoothing(Calinterval(BP_L'),win));
+        title('DFA BP-L','Color',condicolors(condi,:));
+        ylim([0 4]);xlim([0.5 3]);
+        
+    subplot(4,4,4*3+condi);  % DFA(BP_R)
+        [D,Alpha1]=DFA_main(smoothing(Calinterval(BP_R'),win));
+        title('DFA BP-R','Color',condicolors(condi,:));
+        ylim([0 4]);xlim([0.5 3]);
+
+end
+suptitle(['BP-intervals-smoothed win ' num2str(win) ' subject ' num2str(seed) '-PLOT-6-1']);
+
+figureName=['BP-spectra-DFA_smooth-- ' num2str(seed) '-PLOT-6-1'];
+    % save the figure
+    saveas(gcf,figureName,'jpg');
+    saveas(gcf,figureName,'fig');
+
 
 %% PLOT 7:  (give up) BP boolean spectra DFA  (long-range / global statistics; strong anticipation) (very slow, basically white noise, no long range dependence)
 % Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)

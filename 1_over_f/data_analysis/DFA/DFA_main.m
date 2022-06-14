@@ -21,13 +21,16 @@ xlabel('Scale [log10(n)]') % win_lengths
 ylabel('RMS [log10(F-n)]') % RMS values
 title('DFA')
 
-A=polyfit(log10(n(1:end)),log10(F_n(1:end)),1);
+% A=polyfit(log10(n(1:end)),log10(F_n(1:end)),1);
+A=polyfit(log10(n(1:10)),log10(F_n(1:10)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 D=3-A(1); % ? D is the dimension of the time series % ?
 
 % plot the fit
-FitValues=polyval(A,log10(n(1:end)));
+% FitValues=polyval(A,log10(n(1:end)));
+FitValues=polyval(A,log10(n(1:10)));
 hold on;
-plot(log10(n(1:end)),FitValues,'r--');
+% plot(log10(n(1:end)),FitValues,'r--');
+plot(log10(n(1:10)),FitValues,'r--');
 legend({'Data',['Fit (DFA=' num2str(Alpha1) ')']});
 return
