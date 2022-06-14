@@ -366,7 +366,6 @@ suptitle(['BP intervals ' ' -- subject ' num2str(seed)]);
 figureName=['BP-spectra-DFA -- ' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
-
     
 %% PLOT 6:  BP spectra-DFA smoothed (long-range / global statistics; strong anticipation) on interval
 % Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
@@ -845,12 +844,12 @@ maxfreq=25;sr=2000;
 for chan = 1:32
     figure('units','normalized','outerposition',[0 0 1 1]);
     for condi=1:6
-        if condi==1; EEG_L=EEGCondi1L; EEG_R=EEGCondi1R; end % R's Error base on L (uncouple)
-        if condi==2; EEG_L=EEGCondi2L; EEG_R=EEGCondi2R; end % L's Error base on R (uncouple)
-        if condi==3; EEG_L=EEGCondi3L; EEG_R=EEGCondi3R; end % R's Error base on L (unidirectional)
-        if condi==4; EEG_L=EEGCondi4L; EEG_R=EEGCondi4R; end % L's Error base on R (unidirectional)
-        if condi==5; EEG_L=EEGCondi5L; EEG_R=EEGCondi5R; end % R's Error base on L (2Hz bidirection)
-        if condi==6; EEG_L=EEGCondi6L; EEG_R=EEGCondi6R; end % L's Error base on R (2Hz bidirection)
+        if condi==1; EEG_L=EEGCondi1L; EEG_R=EEGCondi1R; end %
+        if condi==2; EEG_L=EEGCondi2L; EEG_R=EEGCondi2R; end % 
+        if condi==3; EEG_L=EEGCondi3L; EEG_R=EEGCondi3R; end % 
+        if condi==4; EEG_L=EEGCondi4L; EEG_R=EEGCondi4R; end % 
+        if condi==5; EEG_L=EEGCondi5L; EEG_R=EEGCondi5R; end % 
+        if condi==6; EEG_L=EEGCondi6L; EEG_R=EEGCondi6R; end %
 
         subplot(3,6,condi); % Pspectra(EEG_L) 
             [fcoef1,fcoef2,cprod, freqs] = spectra(EEG_L(:,chan),EEG_L(:,chan),maxfreq,sr);

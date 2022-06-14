@@ -12,10 +12,10 @@ function [freqs,fcoef] = oneoverf(y,Fs);
     p=amplitude.^2;
     
     %xx=log10(freqs(2:end));yy=log10(p(2:length(freqs)));
-    % xx=log10(freqs(2:end));yy=log10(p(1:length(p)));
-    xx=log10(freqs(2:11));yy=log10(p(1:10));
+    xx=log10(freqs(2:end));yy=log10(p(1:length(p)));
     plot(xx,yy);hold on;
-    tbl=table(xx',yy');
+%     tbl=table(xx',yy');
+    tbl=table(xx(1:10)',yy(1:10)');
     mdl=fitlm(tbl,'linear');
     plotAdded(mdl);
     % xlabel('Log(f)');ylabel('Log(power)');title('C. Spectrum');

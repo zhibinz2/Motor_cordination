@@ -14,8 +14,16 @@ condicolors=[darkgreen;red;blue;megenta;purple;purple];
 % % test color
 % showcolor=deepyellow;
 % imagesc(cat(3,showcolor(1),showcolor(2),showcolor(3)));
-%%  conditionNames
-conditionNames;
+
+%% conditionNames
+conditionNames; % check if correct
+
+% syncopation expt
+conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-1.3Hz'};
+
+
+%% EEG chan labels
+labels = {' 1-Fp1',' 2-Fpz',' 3-Fp2',' 4-F7',' 5-F3',' 6-Fz',' 7-F4',' 8-F8','9-FC5','10-FC1','11-FC2','12-FC6','13-M1','14-T7','15-C3','16-Cz','17-C4','18-T8','19-M2','20-CP5','21-CP1','22-CP2','23-CP6','24-P7','25-P3','26-Pz','27-P4','28-P8','29-POz','30-O1','31-Oz','32-O2'};
 
 %% PLOT 1:  hist BP intervals  
 % [ hist(BP_L) + hist(FB_L) + hist(FP_R) + hist(BP_R)  ]
@@ -170,15 +178,21 @@ saveas(gcf,figureName,'jpg');
 % [(BP_L + FB_L) + (FP_R + BP_R)]+smooth[(BP_L + FB_L) + (FP_R + BP_R)]
 % 6 conditions -subplots(2,6,condi) 
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+% select number of conditions in the experiment
+Totalcondi=4;
+Totalcondi=5;
+Totalcondi=6;
 
 figure('units','normalized','outerposition',[0 0 1 0.8]);
-for condi=1:4
+for condi=1:Totalcondi
     if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R; FB_R=FBCondi1R; end
     if condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R; FB_R=FBCondi2R; end
     if condi==3; BP_L=BPCondi3L; FB_L=FBCondi3L; BP_R=BPCondi3R; FB_R=FBCondi3R; end
     if condi==4; BP_L=BPCondi4L; FB_L=FBCondi4L; BP_R=BPCondi4R; FB_R=FBCondi4R; end
+    if condi==5; BP_L=BPCondi5L; FB_L=FBCondi5L; BP_R=BPCondi5R;FB_R=FBCondi5R;end
+    if condi==6; BP_L=BPCondi6L; FB_L=FBCondi6L; BP_R=BPCondi6R;FB_R=FBCondi6R;end
     % compute
-    subplot(2,4,condi); 
+    subplot(2,Totalcondi,condi); 
         win=20;
         BP_inter1=smoothing(Calinterval(BP_L')./2,win); BP_inter2=smoothing(Calinterval(BP_R')./2,win);
         Maxlength=max([length(BP_inter1) length(BP_inter2)]);
@@ -188,8 +202,8 @@ for condi=1:4
         plot(resam_BP_inter1,'r'); hold on; plot(resam_BP_inter2,'b'); hold off;
         ylabel('interval (ms)','color','m');% xlabel('taps (resampled)');
         title({['Condi ' conditionNames{condi}],['BP smooth win ' num2str(win)]},'Color',condicolors(condi,:));
-        ylim([400 1100]);legend({'BP-L','BP-R'});
-    subplot(2,4,4+condi); 
+        ylim([100 600]);legend({'BP-L','BP-R'});
+    subplot(2,Totalcondi,Totalcondi+condi); 
         % calculate correlation coeffiences win the same smoothing window
         corrSeries=[];
         for i=1:(Maxlength-win+1)
@@ -207,10 +221,9 @@ suptitle(['Fractional BP intervals smoothed win' num2str(win) 'corr -- subject' 
 figureName=['BP-frac-smooth-corr----' num2str(seed) '-PLOT-1-3'];
 % save the figure
 saveas(gcf,figureName,'fig');
-saveas(gcf,figureName,'jpg');
 
 
-%% PLOT 2:  BP interval corr (short-range / local statistics; weak anticipation) on interval
+%% PLOT 2:  BP interval corr on interval
 % [ autocorr(BP_L) + xcorr(BP_L vs FB_L) + xcorr(BP_R vs FB_R) + autocorr(BP_R) ]
 % 6 conditions -subplots(4,6,condi) 
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
@@ -257,23 +270,28 @@ figureName=['BPcorr--' num2str(seed) '-PLOT-2'];
     saveas(gcf,figureName,'jpg');
     saveas(gcf,figureName,'fig');
 
-
 %% PLOT 3:  BP interval corr smooth (better!) (short-range / local statistics; weak anticipation) on interval
 % [ autocorr(BP_L) + xcorr(BP_L vs FB_L) + xcorr(BP_R vs FB_R) + autocorr(BP_R) ]
 % 6 conditions -subplots(4,6,condi) 
+% select number of conditions in the experiment
+Totalcondi=4;
+Totalcondi=5;
+Totalcondi=6;
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 win=20; % smooth with a sliding window size
-for condi=1:4
+for condi=1:Totalcondi
     if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R;FB_R=FBCondi1R;end
     if condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R;FB_R=FBCondi2R;end
     if condi==3; BP_L=BPCondi3L; FB_L=FBCondi3L; BP_R=BPCondi3R;FB_R=FBCondi3R;end
     if condi==4; BP_L=BPCondi4L; FB_L=FBCondi4L; BP_R=BPCondi4R;FB_R=FBCondi4R;end 
+    if condi==5; BP_L=BPCondi5L; FB_L=FBCondi5L; BP_R=BPCondi5R;FB_R=FBCondi5R;end
+    if condi==6; BP_L=BPCondi6L; FB_L=FBCondi6L; BP_R=BPCondi6R;FB_R=FBCondi6R;end
     % compute
-    subplot(4,4,condi); %  autocorr(BP_L)
+    subplot(4,Totalcondi,condi); %  autocorr(BP_L)
         autocorr(smoothing(Calinterval(BP_L'),win),430-win); xlabel('lags');ylabel('autocorr'); 
         title({['Condi ' conditionNames{condi}], 'autocorr BP-L'},'Color',condicolors(condi,:));
-    subplot(4,4,4+condi); %  xcorr(BP_L vs FB_L)
+    subplot(4,Totalcondi,Totalcondi+condi); %  xcorr(BP_L vs FB_L)
         time_series1=smoothing(Calinterval(BP_L'),win);% plot(time_series1);
         time_series2=smoothing(Calinterval(FB_L'),win);% plot(time_series2);
         TimeLength=min([length(time_series1) length(time_series2)]);
@@ -284,7 +302,7 @@ for condi=1:4
         plot(lags,r);xlabel('lags');ylabel('Xcorr');xline(0,'--','Color',deepyellow);
         title('xcorr BP-L & FB-L','Color',condicolors(condi,:));
         ylim([-0.5 1]);
-    subplot(4,4,4*2+condi); %   xcorr(BP_R vs FB_R) 
+    subplot(4,Totalcondi,Totalcondi*2+condi); %   xcorr(BP_R vs FB_R) 
         time_series1=smoothing(Calinterval(BP_R'),win);% plot(time_series1);
         time_series2=smoothing(Calinterval(FB_R'),win);% plot(time_series2);
         TimeLength=min([length(time_series1) length(time_series2)]);
@@ -295,18 +313,15 @@ for condi=1:4
         plot(lags,r);xlabel('lags');ylabel('Xcorr');xline(0,'--','Color',deepyellow);
         title('xcorr BP-R & FB-R','Color',condicolors(condi,:));
         ylim([-0.5 1]);
-    subplot(4,4,4*3+condi); %  autocorr(BP_R)
+    subplot(4,Totalcondi,Totalcondi*3+condi); %  autocorr(BP_R)
         autocorr(smoothing(Calinterval(BP_R'),win),430-win); xlabel('lags');ylabel('autocorr'); 
         title('autocorr BP-R','Color',condicolors(condi,:));
 end
-suptitle(['BP interval corr smooth win ' num2str(win) ' subject ' num2str(seed) '-PLOT3']);
+suptitle(['BP interval corr smooth win ' num2str(win) ' subject ' num2str(seed) '-PLOT-3']);
         
-figureName=['BPcorr_smooth--' num2str(seed) '-PLOT3'];
+figureName=['BPcorr_smooth--' num2str(seed) '-PLOT-3'];
     % save the figure
-    saveas(gcf,figureName,'jpg');
     saveas(gcf,figureName,'fig');
-
-
 
 %% PLOT 4:  BP corr boolean (low correlation) (short-range / local statistics; weak anticipation) on interval
 % [ autocorr(BP_L) + xcorr(BP_L vs FB_L) + xcorr(BP_R vs FB_R) + autocorr(BP_R) ]
@@ -403,8 +418,7 @@ suptitle(['BP intervals ' ' -- subject ' num2str(seed)]);
 figureName=['BP-spectra-DFA -- ' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
-
-    
+   
 %% PLOT 5-1:  BP interval spectra DFA (long-range / global statistics; strong anticipation)  
 % Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
 % 6 conditions -subplots(4,6,i)
@@ -457,10 +471,8 @@ figureName=['BP-interval-spectra-DFA-first10- ' num2str(seed) '-PLOT-5-1'];
     % save the figure
     saveas(gcf,figureName,'jpg');
     saveas(gcf,figureName,'fig');
-    
-    
-
-%% PLOT 6:  BP spectra-DFA smoothed (long-range / global statistics; strong anticipation) on interval
+ 
+%% PLOT 6:  BP interval spectra-DFA smoothed 
 % Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
 % 6 conditions -subplots(4,6,i)
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
@@ -513,20 +525,25 @@ figureName=['BP-spectra-DFA_smooth-- ' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
 
-    
-%% PLOT 6-1:  BP spectra-DFA smoothed (long-range / global statistics; strong anticipation) on interval
+%% PLOT 6-1:  BP interval spectra-DFA smoothed 
 % Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
 % 6 conditions -subplots(4,6,i)
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+% select number of conditions in the experiment
+Totalcondi=4;
+Totalcondi=5;
+Totalcondi=6;
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 win=20; % smooth with a sliding window size
-for condi=1:4
+for condi=1:Totalcondi
     if condi==1; BP_L=BPCondi1L; BP_R=BPCondi1R; end
     if condi==2; BP_L=BPCondi2L; BP_R=BPCondi2R; end
     if condi==3; BP_L=BPCondi3L; BP_R=BPCondi3R; end
     if condi==4; BP_L=BPCondi4L; BP_R=BPCondi4R; end
-    subplot(4,4,condi); % Pspectra(BP_L)
+    if condi==5; BP_L=BPCondi5L; BP_R=BPCondi5R; end
+    if condi==6; BP_L=BPCondi6L; BP_R=BPCondi6R; end
+    subplot(4,Totalcondi,condi); % Pspectra(BP_L)
         y=smoothing(Calinterval(BP_L'),win);
         if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4);
             Fs=2;% assuming a sampling frequency of 2 Hz
@@ -538,7 +555,7 @@ for condi=1:4
         title({['Condi ' conditionNames{condi}], 'Spectrum BP_L'},'Color',condicolors(condi,:));
         ylim([-4 8]);xlim([-3 0]);
         
-    subplot(4,4,4+condi);  % Pspectra(BP_R) 
+    subplot(4,Totalcondi,Totalcondi+condi);  % Pspectra(BP_R) 
         y=smoothing(Calinterval(BP_R'),win);
         if (condi == 1) | (condi == 2) |(condi == 3) | (condi == 4);
             Fs=2;% assuming a sampling frequency of 2 Hz
@@ -550,12 +567,12 @@ for condi=1:4
         title('Spectrum BP_R', 'Color',condicolors(condi,:));    
         ylim([-4 8]);xlim([-3 0]);
         
-    subplot(4,4,4*2+condi);  % DFA(BP_L)
+    subplot(4,Totalcondi,Totalcondi*2+condi);  % DFA(BP_L)
         [D,Alpha1]=DFA_main(smoothing(Calinterval(BP_L'),win));
         title('DFA BP-L','Color',condicolors(condi,:));
         ylim([0 4]);xlim([0.5 3]);
         
-    subplot(4,4,4*3+condi);  % DFA(BP_R)
+    subplot(4,Totalcondi,Totalcondi*3+condi);  % DFA(BP_R)
         [D,Alpha1]=DFA_main(smoothing(Calinterval(BP_R'),win));
         title('DFA BP-R','Color',condicolors(condi,:));
         ylim([0 4]);xlim([0.5 3]);
@@ -565,10 +582,9 @@ suptitle(['BP-intervals-smoothed win ' num2str(win) ' subject ' num2str(seed) '-
 
 figureName=['BP-spectra-DFA_smooth-- ' num2str(seed) '-PLOT-6-1'];
     % save the figure
-    saveas(gcf,figureName,'jpg');
     saveas(gcf,figureName,'fig');
-
-
+    saveas(gcf,figureName,'jpg');
+    
 %% PLOT 7:  (give up) BP boolean spectra DFA  (long-range / global statistics; strong anticipation) (very slow, basically white noise, no long range dependence)
 % Pspectra(BP_L) + Pspectra(BP_R) + DFA(BP_L) + DFA(BP_R)
 % 6 conditions -subplots(4,6,i)
@@ -857,6 +873,7 @@ figureName=['Error-normalized -- ' num2str(seed)];
 % select number of conditions in the experiment
 Totalcondi=4;
 Totalcondi=5;
+Totalcondi=6;
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 for condi=1:Totalcondi
@@ -899,7 +916,6 @@ suptitle(['EMG corr ' '-- subject ' num2str(seed)]);
 figureName=['EMGcorr' num2str(seed)];
     % save the figure
     saveas(gcf,figureName,'jpg');
-
 
 %% PLOT 11:  EMG spectra (long-range / global statistics; strong anticipation)
 % [ Pspectra(EMG_L) + Xspectra (EMG_L vs EMG_R) + Pspectra(EMG_R) ]
@@ -994,7 +1010,6 @@ for chan = 1:32
     close all;
 end
 
-
 %% PLOT 13:  EEG xcorr all chans (weak anticipation, short-range / local statistics)
 % [ autocorr(EEG_L) + xcorr(EEG_L vs EEG_R) + autocorr(EEG_R) ]
 % each of the 6 conditions (subplots(3,6,i)) for each of the 32 channels;
@@ -1055,7 +1070,6 @@ saveas(gcf,figureName,'jpg');
 saveas(gcf,figureName,'fig'); % save as fig to examine plotx
 close all;
 
-
 %% PLOT 14:  EEG Power spectra Xspectra - single chan (strong anticipation, long-range / global statistics)
 % [ Pspectra(EEG_L) + Xspectra(EEG_L vs EEG_R) + Pspectra(EEG_R) ]
 % each of the 6 conditions (subplots(3,6,i)) for each of the 32 channels;
@@ -1103,6 +1117,10 @@ end
 % each of the 6 conditions (subplots(3,6,i)) for each of the 32 channels;
 % auto save the 32 figures in a folder 
 cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/EEGspectra_chans_smooth
+% select number of conditions in the experiment
+Totalcondi=4;
+Totalcondi=5;
+Totalcondi=6;
 
 maxfreq=50;sr=2000;
 fselect=[1 2 4 8 16];
@@ -1111,20 +1129,22 @@ fselect=[1 2 4 8 16];
 df=1/20; indf=fselect/df;
 for chan = 1:32
     figure('units','normalized','outerposition',[0 0 1 1]);
-    for condi=1:4
-        if condi==1; EEG_L=EEGCondi1L; EEG_R=EEGCondi1R; end % R's Error base on L (uncouple)
-        if condi==2; EEG_L=EEGCondi2L; EEG_R=EEGCondi2R; end % L's Error base on R (uncouple)
-        if condi==3; EEG_L=EEGCondi3L; EEG_R=EEGCondi3R; end % R's Error base on L (unidirectional)
-        if condi==4; EEG_L=EEGCondi4L; EEG_R=EEGCondi4R; end % L's Error base on R (unidirectional)
+    for condi=1:Totalcondi
+        if condi==1; EEG_L=EEGCondi1L; EEG_R=EEGCondi1R; end 
+        if condi==2; EEG_L=EEGCondi2L; EEG_R=EEGCondi2R; end 
+        if condi==3; EEG_L=EEGCondi3L; EEG_R=EEGCondi3R; end
+        if condi==4; EEG_L=EEGCondi4L; EEG_R=EEGCondi4R; end 
+        if condi==5; EEG_L=EEGCondi5L; EEG_R=EEGCondi5R; end % R's Error base on L (3Hz bidirection)
+        if condi==6; EEG_L=EEGCondi6L; EEG_R=EEGCondi6R; end 
 
-        subplot(3,4,condi); % Pspectra(EEG_L) 
+        subplot(3,Totalcondi,condi); % Pspectra(EEG_L) 
             [fcoef1,fcoef2,cprod, freqs] = spectra(EEG_L(:,chan),EEG_L(:,chan),maxfreq,sr);
             sfreqs=smoothing(freqs,20); sP=smoothing(abs(cprod),20);
             plot(sfreqs(indf),sP(indf),'Color',condicolors(condi,:));xlabel('freqs');ylabel('Power');
             title({['Condi ' conditionNames{condi}],'EEG-L'},'Color',condicolors(condi,:));
     %         ylim([]);
 
-        subplot(3,4,4+condi); % xcorr (EEG_L vs EEG_R) 
+        subplot(3,Totalcondi,Totalcondi+condi); % xcorr (EEG_L vs EEG_R) 
             % figure;
             [fcoef1,fcoef2,cprod, freqs] = spectra(EEG_L(:,chan),EEG_R(:,chan),maxfreq,sr);      
             sfreqs=smoothing(freqs,20); sP=smoothing(abs(cprod),20);
@@ -1132,7 +1152,7 @@ for chan = 1:32
             title('EEG-L & EEG-R','Color',condicolors(condi,:));
     %         ylim([]);
 
-        subplot(3,4,4*2+condi); %  Pspectra(EEG_R) 
+        subplot(3,Totalcondi,Totalcondi*2+condi); %  Pspectra(EEG_R) 
             [fcoef1,fcoef2,cprod, freqs] = spectra(EEG_R(:,chan),EEG_R(:,chan),maxfreq,sr);
             sfreqs=smoothing(freqs,20); sP=smoothing(abs(cprod),20);
             plot(sfreqs(indf),sP(indf),'Color',condicolors(condi,:));xlabel('freqs');ylabel('Power');
@@ -1142,10 +1162,9 @@ for chan = 1:32
     suptitle(['EEG-spectra-smooth ' labels{chan} ' subject ' num2str(seed) '-PLOT-14-1']);
     figureName=['EEG-spectra-smooth-chan' labels{chan} '-PLOT-14-1'];
     % save the figure
-    saveas(gcf,figureName,'jpg');
+    saveas(gcf,figureName,'fig');
     close all;
 end
-
 
 %% PLOT 15:  Xcorr EMG vs BP/FB(boolean) (short-range):(equal length) 
 % [ xcorr(EMG_L vs BP_L) + xcorr(EMG_L vs FB_L) + xcorr(EMG_R vs BP_R) + xcorr(EMG_R vs FB_R) ]
@@ -1237,7 +1256,6 @@ figureName=['xcorrEEG-BPFBboolean_EEG_chan' labels{chan} '--subject--' num2str(s
 end
 
 close all;
-
 
 %% PLOT 17:  Xcorr EEG vs BP/FB(boolean) - all chans (short-range): (equal length) (low correlation)
 % [ xcorr(EMG_L vs BP_L) + xcorr(EMG_L vs FB_L) + xcorr(EMG_R vs BP_R) + xcorr(EMG_R vs FB_R) ]
@@ -1342,8 +1360,7 @@ end
 
 close all;
 
-
-%% Photocell
+0%% Photocell
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 
 figure('units','normalized','outerposition',[0 0 1 1]);

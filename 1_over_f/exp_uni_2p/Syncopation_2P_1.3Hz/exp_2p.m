@@ -33,7 +33,7 @@ AssertOpenGL;
 
 %% Set trial conditions ****************************************************
 conditions = [1 2 3 4];
-conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-2Hz'};  % conditionNames{1}
+conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-1.3Hz'};  % conditionNames{1}
 % conditionNames={'uncoupled-2Hz' 'L-lead-2Hz' 'R-lead-2Hz' 'mutual-2Hz' 'mutual-3Hz' 'mutual-3Hz-faster'};  % conditionNames{1}
 % Instruction for the experimentor
 ConditionInstructions={'uncoupled-1.3Hz' 'L-lead-1.3Hz' 'R-lead-1.3Hz' 'mutual-1.3Hz'}; 
