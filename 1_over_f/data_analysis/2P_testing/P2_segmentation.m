@@ -361,3 +361,32 @@ save(['FBlocs' num2str(seed) '.mat'],'FBlocsCondi1L','FBlocsCondi2L','FBlocsCond
     'FBlocsCondi4L',...
     'FBlocsCondi1R','FBlocsCondi2R','FBlocsCondi3R',...
     'FBlocsCondi4R');
+
+%% segment Pacers (for calculating errors) -  syncopation
+PacerTimeIndL; PacerTimeIndR;
+PacerTimeL01;PacerTimeR01;
+
+PacerOpenEyeRestingL=PacerTimeL01(SegtimeIndL(1):SegtimeIndL(2));
+PacerCloseEyeRestingL=PacerTimeL01(SegtimeIndL(3):SegtimeIndL(4));
+PacerCondi1L=PacerTimeL01(SegtimeIndL(5):SegtimeIndL(6));
+PacerResting2L=PacerTimeL01(SegtimeIndL(6):SegtimeIndL(7));
+PacerCondi2L=PacerTimeL01(SegtimeIndL(8):SegtimeIndL(9));
+PacerResting3L=PacerTimeL01(SegtimeIndL(9):SegtimeIndL(10));
+PacerCondi3L=PacerTimeL01(SegtimeIndL(11):SegtimeIndL(12));
+PacerResting4L=PacerTimeL01(SegtimeIndL(12):PacersL(13));
+PacerCondi4L=PacerTimeL01(SegtimeIndL(14):end);
+
+PacerOpenEyeRestingR=PacerTimeR01(SegtimeIndR(1):SegtimeIndR(2));
+PacerCloseEyeRestingR=PacerTimeR01(SegtimeIndR(3):SegtimeIndR(4));
+PacerCondi1R=PacerTimeR01(SegtimeIndR(5):SegtimeIndR(6));
+PacerResting2R=PacerTimeR01(SegtimeIndR(6):SegtimeIndR(7));
+PacerCondi2R=PacerTimeR01(SegtimeIndR(8):SegtimeIndR(9));
+PacerResting3R=PacerTimeR01(SegtimeIndR(9):SegtimeIndR(10));
+PacerCondi3R=PacerTimeR01(SegtimeIndR(11):SegtimeIndR(12));
+PacerResting4R=PacerTimeR01(SegtimeIndR(12):PacersR(13));
+PacerCondi4R=PacerTimeR01(SegtimeIndR(14):end);
+
+save(['Pacer' num2str(seed) '.mat'],'PacerCondi1L','PacerCondi2L','PacerCondi3L',...
+    'PacerCondi4L',...
+    'PacerCondi1R','PacerCondi2R','PacerCondi3R',...
+    'PacerCondi4R');
