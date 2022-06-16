@@ -184,6 +184,9 @@ Totalcondi=4;
 Totalcondi=5;
 Totalcondi=6;
 
+win=13;
+win=20;
+
 figure('units','normalized','outerposition',[0 0 1 1]);
 for condi=1:Totalcondi
     if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R; FB_R=FBCondi1R; end
@@ -194,11 +197,11 @@ for condi=1:Totalcondi
     if condi==6; BP_L=BPCondi6L; FB_L=FBCondi6L; BP_R=BPCondi6R;FB_R=FBCondi6R; end
     % compute
     subplot(2,Totalcondi,condi); 
-        win=13;
         BP_inter1=smoothing(Calinterval(BP_L')./2,win); BP_inter2=smoothing(Calinterval(BP_R')./2,win);
+        % Resample method
         Maxlength=max([length(BP_inter1) length(BP_inter2)]);
-        resam_BP_inter1=resample(BP_inter1',Maxlength,length(BP_inter1));
-        resam_BP_inter2=resample(BP_inter2',Maxlength,length(BP_inter2));
+        resam_BP_inter1=round(resample(BP_inter1',Maxlength,length(BP_inter1)));
+        resam_BP_inter2=round(resample(BP_inter2',Maxlength,length(BP_inter2)));
         % yyaxis left;ylabel('interval (ms)','color','m'); set(gca,'ycolor','m');ylim([500 1000])
         plot(resam_BP_inter1,'r'); hold on; plot(resam_BP_inter2,'b'); hold off;
         ylabel('interval (ms)','color','m');% xlabel('taps (resampled)');
@@ -214,8 +217,8 @@ for condi=1:Totalcondi
         % plot on top in green
         % yyaxis right; ylabel('corr coef','color',darkgreen);set(gca,'ycolor',darkgreen); ylim([-1 1]);
         plot(smoothing(corrSeries,win),'k'); ylabel('corr coef'); xlabel('taps (resampled)');
+        corrSeries = corrSeries(~isnan(corrSeries));
         median(corrSeries)
-        if condi==3; corrSeries3=corrSeries;end
         title(['corr coef smooth win ' num2str(win)],'Color',condicolors(condi,:));
         ylim([-1 1]);
         yline(0,'color',deepyellow);
@@ -396,6 +399,8 @@ Totalcondi=6;
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 win=13; % smooth with a sliding window size
+win=20;
+
 for condi=1:Totalcondi
     if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R;FB_R=FBCondi1R;end
     if condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R;FB_R=FBCondi2R;end
@@ -652,6 +657,8 @@ Totalcondi=6;
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 win=13; % smooth with a sliding window size
+win=20;
+
 for condi=1:Totalcondi
     if condi==1; BP_L=BPCondi1L; BP_R=BPCondi1R; end
     if condi==2; BP_L=BPCondi2L; BP_R=BPCondi2R; end
@@ -755,6 +762,7 @@ addpath D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 win=13; % smooth the error with sliding window size
+win=20;
 
 % select condition to plot
 condiSelect=[1 2 3 4 5 6 7 8];

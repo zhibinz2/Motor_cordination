@@ -2,7 +2,8 @@ function [IndHigh,IndMedium,IndLow,corrBP] = TriSeg(BP_L,BP_R,sr,win);
 % x1 and x2 are two time series (x1 and x2 can be boolean of BP)
 % cut x1 and x2 into 10 s per trials
 SamplesLength=sr*win; % chunck of 10 seconds
-nTrials=min([floor(length(BP_L)/SamplesLength) floor(length(BP_R)/SamplesLength)]);
+indL=find(BP_L);indR=find(BP_R); % find the last BP, we don't empty chunk at the end
+nTrials=min([floor(length(BP_L(1:indL(end)))/SamplesLength) floor(length(BP_R(1:indR(end)))/SamplesLength)]);
 corrBP=[];
 for i=1:nTrials
     xBP_L1=[];xBP_R1=[];
@@ -11,13 +12,13 @@ for i=1:nTrials
     xBP_L2=[Calinterval(xBP_L1')'];
     xBP_R2=[Calinterval(xBP_R1')'];
     % Cutting longer one short method
-%     minTap=min([length(xBP_L2) length(xBP_R2)]);
-%     z = corr(xBP_L2(1:minTap), xBP_R2(1:minTap));
-    % Resample method
-    Maxlength=max([length(xBP_L2) length(xBP_R2)]);
-    xBP_L3=resample(xBP_L2,Maxlength,length(xBP_L2));
-    xBP_R3=resample(xBP_R2,Maxlength,length(xBP_R2));
-    z = corr(xBP_L3, xBP_R3);
+    minTap=min([length(xBP_L2) length(xBP_R2)]);
+    z = corr(xBP_L2(1:minTap), xBP_R2(1:minTap));
+%     % Resample method
+%     Maxlength=max([length(xBP_L2) length(xBP_R2)]);
+%     xBP_L3=resample(xBP_L2,Maxlength,length(xBP_L2));
+%     xBP_R3=resample(xBP_R2,Maxlength,length(xBP_R2));
+%     z = corr(xBP_L3, xBP_R3);
     % Save the corrcoef
     corrBP(i)=z;
     % z = corrcoef(Calinterval(xBP_L1')',Calinterval(xBP_R1')');
