@@ -11,7 +11,7 @@ megenta = [1 0 1];% fill([0 1 1 0],[0 0 1 1],megenta)
 cyan = [0 1 1]; % fill([0 1 1 0],[0 0 1 1],cc)
 purple = [0.6 0.1 0.9];
 condicolors=[darkgreen;red;blue;megenta;purple;purple];
-HNLcolors=[darkgreen; deepyellow; pink]
+HNLcolors = [darkgreen; deepyellow; pink];
 % % test color
 % showcolor=pink;
 % imagesc(cat(3,showcolor(1),showcolor(2),showcolor(3)));
@@ -214,6 +214,8 @@ for condi=1:Totalcondi
         % plot on top in green
         % yyaxis right; ylabel('corr coef','color',darkgreen);set(gca,'ycolor',darkgreen); ylim([-1 1]);
         plot(smoothing(corrSeries,win),'k'); ylabel('corr coef'); xlabel('taps (resampled)');
+        median(corrSeries)
+        if condi==3; corrSeries3=corrSeries;end
         title(['corr coef smooth win ' num2str(win)],'Color',condicolors(condi,:));
         ylim([-1 1]);
         yline(0,'color',deepyellow);
@@ -785,6 +787,8 @@ for c=1:Totalcondi; % 1:Totalcondi*2
 
     subplot(4,Totalcondi,c); % Error
         plot(ErrorSmooth/2000,'r.');
+        median(ErrorSmooth/2000)
+        std(ErrorSmooth/2000)
         xlabel('taps');ylabel('timing error (s)');
         title({['Condi ' conditionNames{subcondi}],'error'},'Color',condicolors(subcondi,:));
         % ylim([-0.5 0.6]);
@@ -881,6 +885,8 @@ for c=1:Totalcondi; % 1:Totalcondi*2
         xlabel('taps');ylabel('timing error (s)');
         title({['Condi ' conditionNames{subcondi}],'error'},'Color',condicolors(subcondi,:));
         % ylim([-0.5 0.6]);
+        median(ErrorSmooth/2000)
+        std(ErrorSmooth/2000)
         
     subplot(4,Totalcondi,Totalcondi+c);  % autocorr (Error) 
         autocorr(ErrorSmooth/2000,350); xlabel('lags');ylabel('autocorr'); 
@@ -1487,7 +1493,7 @@ for chan = 1:32
                     legend(HML_labels(1:3));
                     xlabel('log-freqs');ylabel('log-Power');
                     ylim([0 0.01]);xlim([1.5 50]);
-                    title({['Condi ' conditionNames{condi}],['Spectra EEG-R']},'Color',condicolors(condi,:));
+                    title({['Condi ' conditionNames{condi}],['Spectra EEG-L']},'Color',condicolors(condi,:));
                     hold off;
                 end
 
