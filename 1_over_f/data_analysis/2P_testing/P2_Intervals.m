@@ -4,13 +4,15 @@ pressInd=find([0 diff(A)]==1);
 pressIntervals=[pressInd(1) diff(pressInd)];
 
 %% load TMSi data
-clear;close all;
+clear;
+close all;
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing;
-cd /ssd/zhibin/1overf/20220515_2P
-cd /ssd/zhibin/1overf/20220517_2P
-cd /ssd/zhibin/1overf/20220518_2P
-cd /ssd/zhibin/1overf/20220609_2P
-cd /ssd/zhibin/1overf/20220610_2P
+cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/Plots
+cd /ssd/zhibin/1overf/20220517_2P/Segmented_data/Plots
+cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/Plots
+cd /ssd/zhibin/1overf/20220609_2P/Segmented_data/Plots
+cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
 
 [EEGfileNameL]=uigetfile('*.Poly5');% select the Left player EEG
 Path_filenameL=[pwd '/' EEGfileNameL];

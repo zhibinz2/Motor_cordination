@@ -11,15 +11,25 @@ function [freqs,fcoef] = oneoverf(y,Fs);
     amplitude = abs(fcoef);
     p=amplitude.^2;
     
-    %xx=log10(freqs(2:end));yy=log10(p(2:length(freqs)));
-    xx=log10(freqs(2:end));yy=log10(p(1:length(p)));
-    plot(xx,yy);hold on;
-%     tbl=table(xx',yy');
-    tbl=table(xx(1:10)',yy(1:10)');
+    % xx=log10(freqs(2:end));yy=log10(p(2:length(freqs)));
+    % xx=log10(freqs(2:end));yy=log10(p(1:length(p)));
+    xx=smoothing(log10(freqs(2:end)),20);yy=smoothing(log10(p(1:length(p))),20);
+    plot(xx, yy);hold on;
+    
+    % linear fit
+    % select a few freqs
+    freqsind=[1:10 20 40 80 160];
+    tbl=table(xx(freqsind)',yy(freqsind)');
+%     tbl=table(xx(1:10)',yy(1:10)');
     mdl=fitlm(tbl,'linear');
     plotAdded(mdl);
     % xlabel('Log(f)');ylabel('Log(power)');title('C. Spectrum');
     %ylim([-3 3]);
     %ylim([-7 0]);
+    
+%     % linear fit
+%     tbl=table(xx(11:end)',yy(11:end)');
+%     mdl=fitlm(tbl,'linear');
+%     plotAdded(mdl);
 end
 

@@ -1,18 +1,7 @@
-function [P1,P2,Px,coh,phase,freqs,xx1,xx2] = spectra(x1,x2,maxfreq,sr,win);
+function [P1,P2,Px,coh,phase,freqs] = spectra2(xx1,xx2,maxfreq,sr,win);
 % x1 and x2 should be of the same length in the first dimension
 % This function can be used for Powerspectra or Cross spectra
 SamplesLength=sr*win; % chunck of 10 seconds
-nTrials=min([floor(length(x1)/SamplesLength) floor(length(x2)/SamplesLength)]);
-% zcore transform
-x1=zscore(x1);x2=zscore(x2);
-
-xx1=[];xx2=[];
-
-for i=1:nTrials
-    xx1(:,i)=x1((SamplesLength*(i-1)+1):(SamplesLength*i),:);
-    xx2(:,i)=x2((SamplesLength*(i-1)+1):(SamplesLength*i),:);
-end
-
 T=SamplesLength/sr; % in second 
 df=1/T;
 nbins = ceil(maxfreq/df) + 1;
@@ -31,4 +20,3 @@ coh=(abs(Px).^2)./(P1.*P2);
 phase=angle(Px);
 
 end
-

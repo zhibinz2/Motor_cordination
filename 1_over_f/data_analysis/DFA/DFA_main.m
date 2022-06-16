@@ -27,10 +27,16 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 D=3-A(1); % ? D is the dimension of the time series % ?
 
 % plot the fit
-% FitValues=polyval(A,log10(n(1:end)));
-FitValues=polyval(A,log10(n(1:10)));
+FitValues=polyval(A,log10(n(1:end)));
+% FitValues=polyval(A,log10(n(1:10)));
 hold on;
-% plot(log10(n(1:end)),FitValues,'r--');
-plot(log10(n(1:10)),FitValues,'r--');
-legend({'Data',['Fit (DFA=' num2str(Alpha1) ')']});
+plot(log10(n(1:end)),FitValues,'r--');
+% plot(log10(n(1:10)),FitValues,'r--');
+legend({'Data',['Fit (DFA=' num2str(Alpha1) ')']},'Location','southeast');
+
+% plot the fit
+% FitValues=polyval(A,log10(n(11:end)));
+% hold on;
+% plot(log10(n(11:end)),FitValues,'b--');
+% legend({'Data',['Fit (DFA=' num2str(Alpha1) ')']},'color',[0 0 1]);
 return

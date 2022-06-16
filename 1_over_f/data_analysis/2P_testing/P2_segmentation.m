@@ -227,7 +227,7 @@ EEGResting2L=mixedsigL(SegtimeIndL(6):SegtimeIndL(7),:);
 EEGCondi2L=mixedsigL(SegtimeIndL(8):SegtimeIndL(9),:);
 EEGResting3L=mixedsigL(SegtimeIndL(9):SegtimeIndL(10),:);
 EEGCondi3L=mixedsigL(SegtimeIndL(11):SegtimeIndL(12),:);
-EEGResting4L=mixedsigL(SegtimeIndL(12):PacersL(13),:);
+EEGResting4L=mixedsigL(SegtimeIndL(12):SegtimeIndL(13),:);
 EEGCondi4L=mixedsigL(SegtimeIndL(14):end,:);
 
 EEGOpenEyeRestingR=mixedsigR(SegtimeIndR(1):SegtimeIndR(2),:);
@@ -237,7 +237,7 @@ EEGResting2R=mixedsigR(SegtimeIndR(6):SegtimeIndR(7),:);
 EEGCondi2R=mixedsigR(SegtimeIndR(8):SegtimeIndR(9),:);
 EEGResting3R=mixedsigR(SegtimeIndR(9):SegtimeIndR(10),:);
 EEGCondi3R=mixedsigR(SegtimeIndR(11):SegtimeIndR(12),:);
-EEGResting4R=mixedsigR(SegtimeIndR(12):PacersR(13),:);
+EEGResting4R=mixedsigR(SegtimeIndR(12):SegtimeIndR(13),:);
 EEGCondi4R=mixedsigR(SegtimeIndR(14):end,:);
 
 save(['EEG' num2str(seed) '.mat'],'EEGCondi1L','EEGCondi2L','EEGCondi3L',...
@@ -255,7 +255,7 @@ BPResting2L=BottonPresTimeL01(SegtimeIndL(6):SegtimeIndL(7),:);
 BPCondi2L=BottonPresTimeL01(SegtimeIndL(8):SegtimeIndL(9),:);
 BPResting3L=BottonPresTimeL01(SegtimeIndL(9):SegtimeIndL(10),:);
 BPCondi3L=BottonPresTimeL01(SegtimeIndL(11):SegtimeIndL(12),:);
-BPResting4L=BottonPresTimeL01(SegtimeIndL(12):PacersL(13),:);
+BPResting4L=BottonPresTimeL01(SegtimeIndL(12):SegtimeIndL(13),:);
 BPCondi4L=BottonPresTimeL01(SegtimeIndL(14):end,:);
 
 BPOpenEyeRestingR=BottonPresTimeR01(SegtimeIndR(1):SegtimeIndR(2),:);
@@ -265,7 +265,7 @@ BPResting2R=BottonPresTimeR01(SegtimeIndR(6):SegtimeIndR(7),:);
 BPCondi2R=BottonPresTimeR01(SegtimeIndR(8):SegtimeIndR(9),:);
 BPResting3R=BottonPresTimeR01(SegtimeIndR(9):SegtimeIndR(10),:);
 BPCondi3R=BottonPresTimeR01(SegtimeIndR(11):SegtimeIndR(12),:);
-BPResting4R=BottonPresTimeR01(SegtimeIndR(12):PacersR(13),:);
+BPResting4R=BottonPresTimeR01(SegtimeIndR(12):SegtimeIndR(13),:);
 BPCondi4R=BottonPresTimeR01(SegtimeIndR(14):end,:);
 
 save(['BP' num2str(seed) '.mat'],'BPCondi1L','BPCondi2L','BPCondi3L',...
@@ -283,7 +283,7 @@ FBResting2L=FeedbTimeL01(SegtimeIndL(6):SegtimeIndL(7),:);
 FBCondi2L=FeedbTimeL01(SegtimeIndL(8):SegtimeIndL(9),:);
 FBResting3L=FeedbTimeL01(SegtimeIndL(9):SegtimeIndL(10),:);
 FBCondi3L=FeedbTimeL01(SegtimeIndL(11):SegtimeIndL(12),:);
-FBResting4L=FeedbTimeL01(SegtimeIndL(12):PacersL(13),:);
+FBResting4L=FeedbTimeL01(SegtimeIndL(12):SegtimeIndL(13),:);
 FBCondi4L=FeedbTimeL01(SegtimeIndL(14):end,:);
 
 FBOpenEyeRestingR=FeedbTimeR01(SegtimeIndR(1):SegtimeIndR(2),:);
@@ -293,7 +293,7 @@ FBResting2R=FeedbTimeR01(SegtimeIndR(6):SegtimeIndR(7),:);
 FBCondi2R=FeedbTimeR01(SegtimeIndR(8):SegtimeIndR(9),:);
 FBResting3R=FeedbTimeR01(SegtimeIndR(9):SegtimeIndR(10),:);
 FBCondi3R=FeedbTimeR01(SegtimeIndR(11):SegtimeIndR(12),:);
-FBResting4R=FeedbTimeR01(SegtimeIndR(12):PacersR(13),:);
+FBResting4R=FeedbTimeR01(SegtimeIndR(12):SegtimeIndR(13),:);
 FBCondi4R=FeedbTimeR01(SegtimeIndR(14):end,:);
 
 save(['FB' num2str(seed) '.mat'],'FBCondi1L','FBCondi2L','FBCondi3L',...
@@ -312,7 +312,7 @@ EMGResting2L=upL(SegtimeIndL(6):SegtimeIndL(7),:);
 EMGCondi2L=upL(SegtimeIndL(8):SegtimeIndL(9),:);
 EMGResting3L=upL(SegtimeIndL(9):SegtimeIndL(10),:);
 EMGCondi3L=upL(SegtimeIndL(11):SegtimeIndL(12),:);
-EMGResting4L=upL(SegtimeIndL(12):PacersL(13),:);
+EMGResting4L=upL(SegtimeIndL(12):SegtimeIndL(13),:);
 EMGCondi4L=upL(SegtimeIndL(14):end,:);
 
 EMGOpenEyeRestingR=upR(SegtimeIndR(1):SegtimeIndR(2),:);
@@ -322,7 +322,7 @@ EMGResting2R=upR(SegtimeIndR(6):SegtimeIndR(7),:);
 EMGCondi2R=upR(SegtimeIndR(8):SegtimeIndR(9),:);
 EMGResting3R=upR(SegtimeIndR(9):SegtimeIndR(10),:);
 EMGCondi3R=upR(SegtimeIndR(11):SegtimeIndR(12),:);
-EMGResting4R=upR(SegtimeIndR(12):PacersR(13),:);
+EMGResting4R=upR(SegtimeIndR(12):SegtimeIndR(13),:);
 EMGCondi4R=upR(SegtimeIndR(14):end,:);
 
 save(['EMG' num2str(seed) '.mat'],'EMGCondi1L','EMGCondi2L','EMGCondi3L',...
@@ -333,7 +333,7 @@ save(['EMG' num2str(seed) '.mat'],'EMGCondi1L','EMGCondi2L','EMGCondi3L',...
 %% segment Photocell -  syncopation
 locsL; locsR;
 locsL01=zeros(1,length(timeL)); 
-locsR01=zeros(1,length(timeL));
+locsR01=zeros(1,length(timeR));
 locsL01(locsL)=1; % plot(locsL01);
 locsR01(locsR)=1; % plot(locsR01);
 
@@ -344,7 +344,7 @@ FBlocsResting2L=locsL01(SegtimeIndL(6):SegtimeIndL(7));
 FBlocsCondi2L=locsL01(SegtimeIndL(8):SegtimeIndL(9));
 FBlocsResting3L=locsL01(SegtimeIndL(9):SegtimeIndL(10));
 FBlocsCondi3L=locsL01(SegtimeIndL(11):SegtimeIndL(12));
-FBlocsResting4L=locsL01(SegtimeIndL(12):PacersL(13));
+FBlocsResting4L=locsL01(SegtimeIndL(12):SegtimeIndL(13));
 FBlocsCondi4L=locsL01(SegtimeIndL(14):end);
 
 FBlocsOpenEyeRestingR=locsR01(SegtimeIndR(1):SegtimeIndR(2));
@@ -354,7 +354,7 @@ FBlocsResting2R=locsR01(SegtimeIndR(6):SegtimeIndR(7));
 FBlocsCondi2R=locsR01(SegtimeIndR(8):SegtimeIndR(9));
 FBlocsResting3R=locsR01(SegtimeIndR(9):SegtimeIndR(10));
 FBlocsCondi3R=locsR01(SegtimeIndR(11):SegtimeIndR(12));
-FBlocsResting4R=locsR01(SegtimeIndR(12):PacersR(13));
+FBlocsResting4R=locsR01(SegtimeIndR(12):SegtimeIndR(13));
 FBlocsCondi4R=locsR01(SegtimeIndR(14):end);
 
 save(['FBlocs' num2str(seed) '.mat'],'FBlocsCondi1L','FBlocsCondi2L','FBlocsCondi3L',...
@@ -373,7 +373,7 @@ PacerResting2L=PacerTimeL01(SegtimeIndL(6):SegtimeIndL(7));
 PacerCondi2L=PacerTimeL01(SegtimeIndL(8):SegtimeIndL(9));
 PacerResting3L=PacerTimeL01(SegtimeIndL(9):SegtimeIndL(10));
 PacerCondi3L=PacerTimeL01(SegtimeIndL(11):SegtimeIndL(12));
-PacerResting4L=PacerTimeL01(SegtimeIndL(12):PacersL(13));
+PacerResting4L=PacerTimeL01(SegtimeIndL(12):SegtimeIndL(13));
 PacerCondi4L=PacerTimeL01(SegtimeIndL(14):end);
 
 PacerOpenEyeRestingR=PacerTimeR01(SegtimeIndR(1):SegtimeIndR(2));
@@ -383,7 +383,7 @@ PacerResting2R=PacerTimeR01(SegtimeIndR(6):SegtimeIndR(7));
 PacerCondi2R=PacerTimeR01(SegtimeIndR(8):SegtimeIndR(9));
 PacerResting3R=PacerTimeR01(SegtimeIndR(9):SegtimeIndR(10));
 PacerCondi3R=PacerTimeR01(SegtimeIndR(11):SegtimeIndR(12));
-PacerResting4R=PacerTimeR01(SegtimeIndR(12):PacersR(13));
+PacerResting4R=PacerTimeR01(SegtimeIndR(12):SegtimeIndR(13));
 PacerCondi4R=PacerTimeR01(SegtimeIndR(14):end);
 
 save(['Pacer' num2str(seed) '.mat'],'PacerCondi1L','PacerCondi2L','PacerCondi3L',...
