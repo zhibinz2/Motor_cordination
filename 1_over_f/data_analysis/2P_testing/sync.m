@@ -57,6 +57,7 @@ end
 end 
 end
 
+powforpls=[];
 for j = 1:4 % four conditions
 powforpls = reshape(pow(j).EEG,50*64,nwin(j))';   
 %I am doing a 1 factor prediction model.  could test more factors. 

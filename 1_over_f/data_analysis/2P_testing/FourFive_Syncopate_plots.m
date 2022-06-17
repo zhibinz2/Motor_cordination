@@ -22,7 +22,6 @@ conditionNames; % check if correct
 % syncopation expt
 conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-1.3Hz'};
 
-
 %% EEG chan labels
 labels = {' 1-Fp1',' 2-Fpz',' 3-Fp2',' 4-F7',' 5-F3',' 6-Fz',' 7-F4',' 8-F8','9-FC5','10-FC1','11-FC2','12-FC6','13-M1','14-T7','15-C3','16-Cz','17-C4','18-T8','19-M2','20-CP5','21-CP1','22-CP2','23-CP6','24-P7','25-P3','26-Pz','27-P4','28-P8','29-POz','30-O1','31-Oz','32-O2'};
 
