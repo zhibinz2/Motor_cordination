@@ -32,7 +32,7 @@
 % The UAT requires Matlab codes for local Whittle estimation from 
 % http://shimotsu.web.fc2.com/Site/Matlab_Codes.html
 %--------------------------------------------------------------------------
-% Written by: Carlos Vladimir Rodríguez Caballero
+% Written by: Carlos Vladimir Rodrï¿½guez Caballero
 % vrodriguez@creates.au.dk
 % Aarhus University
 % CREATES
@@ -91,6 +91,7 @@ if F==1;
         plot(y);title('Simulated process');
     subplot(2,1,2);
         autocorr(y,length(y)*0.2);  
+        % autocorr(y,length(y)-1);  
 end;
 end
 
