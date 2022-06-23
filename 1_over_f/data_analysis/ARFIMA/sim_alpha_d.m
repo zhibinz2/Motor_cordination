@@ -29,8 +29,14 @@ xlim([0 4]);ylim([0 4])
 
 legend(['alpha1= ' num2str(alpha1)], ['alpha2= ' num2str(alpha2)],...
     ['alpha3= ' num2str(alpha3)], ['alpha4= ' num2str(alpha4)]);
+%% 1.3Hz tapping data
+cd /ssd/zhibin/1overf/20220609_2P/Segmented_data/Plots
+% calculate std of the tapping intervals
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 
 %% fit the slope to find d
+% Function 1
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA
 addpath(genpath('/home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA'));
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
@@ -44,7 +50,7 @@ subplot(1,4,2); autocorr(y,N-1);
 subplot(1,4,3); Fs=1.3; [freqs,fcoef] = oneoverf(y,Fs);xlabel('Log(f)');ylabel('Log(power)');
 subplot(1,4,4); [D,Alpha1]=DFA_main(y);
 
-
+% Function 2
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/ARFIMA/dgp_arfima
 % ARFIMA(0,0.8,0) >>>>  Results=dgp_arfima(0,[],[],600,1,0.8);
 figure('units','normalized','outerposition',[0 0 1 0.5]);
@@ -55,3 +61,89 @@ subplot(1,4,1); plot(y,'b');
 subplot(1,4,2); autocorr(y,T-1);
 subplot(1,4,3); Fs=1.3; [freqs,fcoef] = oneoverf(y,Fs);xlabel('Log(f)');ylabel('Log(power)');
 subplot(1,4,4); [D,Alpha1]=DFA_main(y);
+%% Different d
+figure('units','normalized','outerposition',[0 0 1 1]);
+N=600;ds=[0.2 0.5 1];stdx=20;
+for i=1:length(ds)
+    [Z] = ARFIMA_SIM(N,[],[],ds(i),stdx);
+    y=Z+750;
+    subplot(length(ds),4,(i-1)*4+1); 
+        plot(y,'b');title(['d = ' num2str(ds(i))]);
+        ylim([680 840]);
+    subplot(length(ds),4,(i-1)*4+2); 
+        autocorr(y,N-1);title(['d = ' num2str(ds(i))]);
+        ylim([-0.5 1]);
+    subplot(length(ds),4,(i-1)*4+3); 
+        Fs=1.3; [freqs,fcoef] = oneoverf(y,Fs);
+        xlabel('Log(f)');ylabel('Log(power)');
+        title(['d = ' num2str(ds(i)) '   (alpha = d*2)']);
+        ylim([-2.5 1]);
+    subplot(length(ds),4,(i-1)*4+4); 
+        [D,Alpha1]=DFA_main(y);
+        title(['d = ' num2str(ds(i)) '   (H = d+0.5)']);
+        ylim([0 3]);
+end
+% cd /usr/local/MATLAB/R2019a/toolbox/bioinfo/biodemos/ %suptitle.m
+% cd /usr/local/MATLAB/R2022a/toolbox/bioinfo/biodemos/ % suptitle.m
+suptitle(['Different d with same std = ' num2str(stdx)]);
+
+figureName=['Different_d'];
+saveas(gcf,figureName,'fig');
+%% Different length
+Ns=[100 500 1000 3000];d=1;stdx=20;
+figure('units','normalized','outerposition',[0 0 1 1]);
+for i=1:length(Ns)
+    [Z] = ARFIMA_SIM(Ns(i),[],[],d,stdx);
+    y=Z+750;
+    subplot(length(Ns),4,(i-1)*4+1); 
+        plot(y,'b');
+        title(['d = ' num2str(d) '    data length = ' num2str(Ns(i))]);
+        % ylim([680 840]);
+    subplot(length(Ns),4,(i-1)*4+2); 
+        autocorr(y,Ns(i)-1);
+        title(['d = ' num2str(d) '    data length = ' num2str(Ns(i))]);
+        % ylim([-0.5 1]);
+    subplot(length(Ns),4,(i-1)*4+3); 
+        Fs=1.3; [freqs,fcoef] = oneoverf(y,Fs);
+        xlabel('Log10(f)');ylabel('Log10(power)');
+        title(['d = ' num2str(d) '    data length = ' num2str(Ns(i))]);
+        % ylim([-2.5 1]);
+    subplot(length(Ns),4,(i-1)*4+4); 
+        [D,Alpha1]=DFA_main(y);
+        title(['d = ' num2str(d) '    data length = ' num2str(Ns(i))]);
+        % ylim([0 3]);
+end
+suptitle(['Different length with same d = ' num2str(d)]);
+
+figureName=['Different_N'];
+saveas(gcf,figureName,'fig');
+
+%% Degmenting 3000 taps into 100 taps/chuncks
+Ns=[3000 1000 500 100];d=1;stdx=20;
+figure('units','normalized','outerposition',[0 0 1 1]);
+for i=1:length(Ns)
+    [Z] = ARFIMA_SIM(3000,[],[],d,stdx);
+    y=Z+750;
+    ys=y(1:Ns(i));
+    subplot(length(Ns),4,(i-1)*4+1); 
+        plot(ys,'b');
+        title(['d = ' num2str(d) '    data length = ' num2str(Ns(i))]);
+        % ylim([680 840]);
+    subplot(length(Ns),4,(i-1)*4+2); 
+        autocorr(ys,Ns(i)-1);
+        title(['d = ' num2str(d) '    data length = ' num2str(Ns(i))]);
+        % ylim([-0.5 1]);
+    subplot(length(Ns),4,(i-1)*4+3); 
+        Fs=1.3; [freqs,fcoef] = oneoverf(ys,Fs);
+        xlabel('Log10(f)');ylabel('Log10(power)');
+        title(['d = ' num2str(d) '    data length = ' num2str(Ns(i))]);
+        % ylim([-2.5 1]);
+    subplot(length(Ns),4,(i-1)*4+4); 
+        [D,Alpha1]=DFA_main(ys);
+        title(['d = ' num2str(d) '    data length = ' num2str(Ns(i))]);
+        % ylim([0 3]);
+end
+suptitle(['The 1st Segment with different length from the 3000 taps']);
+
+figureName=['Different_Segment'];
+saveas(gcf,figureName,'fig');

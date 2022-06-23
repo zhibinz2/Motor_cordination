@@ -18,7 +18,7 @@ function [freqs,fcoef] = oneoverf(y,Fs);
     
     % linear fit
     % select a few freqs
-    freqsind=[1:10 20 40 80 160];
+    freqsind=2.^[1:floor(log2(length(yy)))];
     tbl=table(xx(freqsind)',yy(freqsind)');
 %     tbl=table(xx(1:10)',yy(1:10)');
     mdl=fitlm(tbl,'linear');

@@ -7,7 +7,7 @@ function [D,Alpha1]=DFA_main(DATA)
 
 % n=100:100:1000; % win_lengths (function default)
 % n=2:2:200; % all win_lengths(customized to our need)
-n=5:5:400; % all 32 different win_lengths (customized to our need)
+n=5:5:length(DATA); % all 32 different win_lengths (customized to our need)
 Nw=length(n); % number of different win_lengths
 F_n=zeros(Nw,1); % initialize RMS values in the FDA time series
  for i=1:Nw
@@ -16,7 +16,7 @@ F_n=zeros(Nw,1); % initialize RMS values in the FDA time series
  n=n';
  
 %  plot(n,F_n);
-plot(log10(n),log10(F_n));
+plot(log10(n),log10(F_n),'bx');
 xlabel('Scale [log10(n)]') % win_lengths 
 ylabel('RMS [log10(F-n)]') % RMS values
 title('DFA')
