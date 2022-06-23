@@ -1,4 +1,4 @@
-function [freqs,fcoef] = oneoverf(y,Fs);
+function [freqs,fcoef,beta] = oneoverf(y,Fs);
 % this function compute do fft, plot power spectrum
 %   Dand fit the 1overf 
     fcoef=fft(y);
@@ -23,6 +23,7 @@ function [freqs,fcoef] = oneoverf(y,Fs);
 %     tbl=table(xx(1:10)',yy(1:10)');
     mdl=fitlm(tbl,'linear');
     plotAdded(mdl);
+    beta=table2array(mdl.Coefficients(2,1));
     % xlabel('Log(f)');ylabel('Log(power)');title('C. Spectrum');
     %ylim([-3 3]);
     %ylim([-7 0]);
