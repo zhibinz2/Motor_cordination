@@ -147,3 +147,6 @@ suptitle(['The 1st Segment with different length from the 3000 taps']);
 
 figureName=['Different_Segment'];
 saveas(gcf,figureName,'fig');
+
+%% for 100 or 600 taps see how stable the estimations are
+ds=[0.1 0.1 1]
