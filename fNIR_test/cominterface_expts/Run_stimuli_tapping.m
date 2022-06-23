@@ -203,7 +203,7 @@ try      % if anything went wrong, exit the display and show the error on the Co
         %% Show the stimulus
         % get a timestamp by flip a black screen at the start of stimulus 
         vbl = Screen('Flip', windowPtr);
-		oxy.WriteEvent('A', conditionNames{conditionSelected})
+		oxy.WriteEvent(conditionNames{conditionSelected}, conditionNames{conditionSelected})
         % oxy.WriteEvent('A', 'stim')
         tic
         % initalize the while loop for displaying black screen
