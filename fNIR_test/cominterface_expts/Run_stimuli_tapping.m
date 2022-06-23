@@ -172,7 +172,7 @@ try      % if anything went wrong, exit the display and show the error on the Co
         % how many trials 
         for t=1:numTrials 
         % pick a condition from randomized set allPerm
-            conditionSelected = allPerm(numTrials*(block-1)+t);
+        conditionSelected = allPerm(numTrials*(block-1)+t);
             
         % Resting with black screen before each stimulus ******************************* 
         % Set the time for the resting interval before/after each stimulus with randomized jittering  
@@ -203,7 +203,8 @@ try      % if anything went wrong, exit the display and show the error on the Co
         %% Show the stimulus
         % get a timestamp by flip a black screen at the start of stimulus 
         vbl = Screen('Flip', windowPtr);
-		oxy.WriteEvent(conditionNames(conditionSelected), conditionNames(conditionSelected))
+		oxy.WriteEvent('A', conditionNames{conditionSelected})
+        % oxy.WriteEvent('A', 'stim')
         tic
         % initalize the while loop for displaying black screen
         n=1;
