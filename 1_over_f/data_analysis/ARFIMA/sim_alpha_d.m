@@ -61,27 +61,38 @@ subplot(1,4,1); plot(y,'b');
 subplot(1,4,2); autocorr(y,T-1);
 subplot(1,4,3); Fs=1.3; [freqs,fcoef] = oneoverf(y,Fs);xlabel('Log(f)');ylabel('Log(power)');
 subplot(1,4,4); [D,Alpha1]=DFA_main(y);
+
 %% Different d
 figure('units','normalized','outerposition',[0 0 1 1]);
-N=600;ds=[-0.5 -0.2 0.5];stdx=20;
+N=100;stdx=20;
+% ds=[-0.5 -0.2 0.5];
+ds=[0.2 0.5 1];
 for i=1:length(ds)
     [Z] = ARFIMA_SIM(N,[],[],ds(i),stdx);
     y=Z+750;
     subplot(length(ds),4,(i-1)*4+1); 
         plot(y,'b');title(['d = ' num2str(ds(i))]);
-        ylim([680 840]);
+        % ylim([680 840]);
     subplot(length(ds),4,(i-1)*4+2); 
         autocorr(y,N-1);title(['d = ' num2str(ds(i))]);
-        ylim([-0.5 1]);
+        % ylim([-0.5 1]);
     subplot(length(ds),4,(i-1)*4+3); 
-        Fs=1.3; [freqs,fcoef] = oneoverf(y,Fs);
-        xlabel('Log(f)');ylabel('Log(power)');
-        title(['d = ' num2str(ds(i)) '   (alpha = d*2)']);
-        ylim([-2.5 1]);
+        Fs=1.3; [freqs,fcoef,beta,xx,yy,FitValues] = oneoverf(y,Fs);
+        plot(xx, yy,'bx');xlabel('Log10(f)');ylabel('Log10(power)');
+        hold on;
+        plot(xx',FitValues,'r--');
+        legend({'Data',['Fit (Beta=' num2str(beta) ')']},'Location','northeast');
+        title(['d = ' num2str(ds(i)) '   (beta = d*2)']);
+        % ylim([-2.5 1]);
     subplot(length(ds),4,(i-1)*4+4); 
-        [D,Alpha1]=DFA_main(y);
+        [D,Alpha1,n,F_n,FitValues]=DFA_main(y);
+        plot(log10(n),log10(F_n),'bx');
+        xlabel('Scale [log10(n)]'); ylabel('RMS [log10(F-n)]');
+        hold on;
+        plot(log10(n(1:end)),FitValues,'r--');
+        legend({'Data',['Fit (H=' num2str(Alpha1) ')']},'Location','southeast');
         title(['d = ' num2str(ds(i)) '   (H = d+0.5)']);
-        ylim([0 3]);
+        % ylim([0 3]);
 end
 % cd /usr/local/MATLAB/R2019a/toolbox/bioinfo/biodemos/ %suptitle.m
 % cd /usr/local/MATLAB/R2022a/toolbox/bioinfo/biodemos/ % suptitle.m
@@ -89,6 +100,39 @@ suptitle(['Different d with same std = ' num2str(stdx)]);
 
 figureName=['Different_d'];
 saveas(gcf,figureName,'fig');
+
+%% add parcorr
+figure('units','normalized','outerposition',[0 0 1 1]);
+N=100;stdx=20;
+ds=[0.2 0.5 1];
+for i=1:length(ds)
+    [Z] = ARFIMA_SIM(N,[],[],ds(i),stdx);
+    y=Z+750;
+    subplot(length(ds),5,(i-1)*5+1); 
+        plot(y,'b');title(['d = ' num2str(ds(i))]);
+        % ylim([680 840]);
+    subplot(length(ds),5,(i-1)*5+2); 
+        autocorr(y,N-1);title(['d = ' num2str(ds(i))]);
+        ylabel('autocorr')
+        % ylim([-0.5 1]);
+    subplot(length(ds),5,(i-1)*5+3); 
+        parcorr(y,N-1);title(['d = ' num2str(ds(i))]);
+        ylabel('parcorr')
+        % ylim([-0.5 1]);   
+    subplot(length(ds),5,(i-1)*5+4); 
+        Fs=1.3; [freqs,fcoef] = oneoverf(y,Fs);
+        xlabel('Log(f)');ylabel('Log(power)');
+        title(['d = ' num2str(ds(i)) '   (beta = d*2)']);
+        % ylim([-2.5 1]);
+    subplot(length(ds),5,(i-1)*5+5); 
+        [D,Alpha1]=DFA_main(y);
+        title(['d = ' num2str(ds(i)) '   (H = d+0.5)']);
+        % ylim([0 3]);
+end
+% cd /usr/local/MATLAB/R2019a/toolbox/bioinfo/biodemos/ %suptitle.m
+% cd /usr/local/MATLAB/R2022a/toolbox/bioinfo/biodemos/ % suptitle.m
+suptitle(['Different d with same std = ' num2str(stdx)]);
+
 %% Different length
 Ns=[100 500 1000 3000];d=1;stdx=20;
 figure('units','normalized','outerposition',[0 0 1 1]);
@@ -118,7 +162,7 @@ suptitle(['Different length with same d = ' num2str(d)]);
 figureName=['Different_N'];
 saveas(gcf,figureName,'fig');
 
-%% Degmenting 3000 taps into 100 taps/chuncks
+%% Segmenting 3000 taps into 100 taps/chuncks
 Ns=[3000 1000 500 100];d=1;stdx=20;
 figure('units','normalized','outerposition',[0 0 1 1]);
 for i=1:length(Ns)
@@ -149,5 +193,73 @@ figureName=['Different_Segment'];
 saveas(gcf,figureName,'fig');
 
 %% for 100 or 600 taps see how stable the estimations are
-Ns=[100 600]; ds=[0.1 0.1 1];
+N=100; ds=[0.1:0.1:1]; repeat=100; stdx=20;
 
+% calcualtion
+Betass=[];Hss=[];BetassErr=[];HssErr=[];
+for j=1:length(ds)
+    d=ds(j);
+    Betas=[];Hs=[];
+    for i=1:repeat 
+        [Z] = ARFIMA_SIM(N,[],[],d,stdx);
+        y=Z+750;
+        % PSA
+        Fs=1.3; [~,~,beta] = oneoverf(y,Fs);
+        % DFA
+        [~,H]=DFA_main(y);
+        % append the values
+        Betas = [Betas beta];
+        Hs = [Hs H];  
+    end
+Betass=[Betass;Betas];
+BetassErr=[BetassErr; std(Betas)/sqrt(N)];
+Hss=[Hss;Hs];
+HssErr=[HssErr; std(Hs)/sqrt(N)];
+end
+
+% plot all 10 subplots
+figure('units','normalized','outerposition',[0 0 1 1]);
+for j=1:length(ds)
+    subplot(2,10,j);    
+    hist(Betass(j,:),repeat);
+    xlabel('beta');ylabel('repeats');
+    xlim([-2 5]);
+    title(['d = ' num2str(ds(j))]);
+    
+    subplot(2,10,10+j);
+    hist(Hss(j,:),repeat); 
+    xlabel('H');ylabel('repeats');
+    xlim([0 2]);
+    title(['d = ' num2str(ds(j))]);
+end
+suptitle(['Beta and H with different d repeating 100 times (ARFIMA ([],d,[]); length of ' num2str(N) ')']);
+
+% 2 plots with error bar
+figure;
+subplot(1,2,1);
+errorbar(ds,mean(Betass,2),BetassErr,'.')
+xlabel('d');ylabel('Beta');xlim([0 1.1]);
+title(['Beta with standard error']);
+subplot(1,2,2);
+errorbar(ds,mean(Hss,2),HssErr,'.')
+xlabel('d');ylabel('H');xlim([0 1.1]);
+title(['H with standard error']);
+suptitle(['Beta and H with different d repeating 100 times (ARFIMA ([],d,[]); length of ' num2str(N) ')']);
+
+% 2 violin plots
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/violin
+figure;
+subplot(1,2,1);
+[h,L,MX,MED]=violin(Betass');
+ylabel('\beta','FontSize',14)
+xticks([1:10]);
+xticklabels(string(ds));
+xlabel('d');
+title(['Beta']);
+subplot(1,2,2);
+[h,L,MX,MED]=violin(Hss');
+ylabel('H','FontSize',14)
+xticks([1:10]);
+xticklabels(string(ds));
+xlabel('d');
+suptitle(['Beta and H with different d repeating 100 times (ARFIMA ([],d,[]); length of ' num2str(N) ')']);
