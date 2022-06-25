@@ -18,17 +18,18 @@ function [freqs,fcoef,beta,xx,yy,FitValues] = oneoverf(y,Fs);
 %     hold on;
     
     % select freqs on power scale with base of 2 [2 4 8 16 32 ...] for the fit
-    % freqsind=2.^[1:floor(log2(length(yy)))];
+%     freqsind=2.^[1:floor(log2(length(yy)))];
     
     % method 1: linear fit using a table
 %     tbl=table(xx(freqsind)',yy(freqsind)');
-% %     tbl=table(xx(1:10)',yy(1:10)');
+%     tbl=table(xx(1:10)',yy(1:10)');
+%     tbl=table(xx',yy');
 %     mdl=fitlm(tbl,'linear');
-%     plotAdded(mdl);
-%     beta=table2array(mdl.Coefficients(2,1));
-%     % xlabel('Log(f)');ylabel('Log(power)');title('C. Spectrum');
-%     %ylim([-3 3]);
-%     %ylim([-7 0]);
+    % plotAdded(mdl);
+%     beta=-1*table2array(mdl.Coefficients(2,1));
+    % xlabel('Log(f)');ylabel('Log(power)');title('C. Spectrum');
+    %ylim([-3 3]);
+    %ylim([-7 0]);
     
 %     % linear fit
 %     tbl=table(xx(11:end)',yy(11:end)');
