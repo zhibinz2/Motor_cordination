@@ -300,7 +300,11 @@ for i=1:3
 end
 suptitle(['Beta and H with different d repeating 100 times (ARFIMA ([],d,[]); length of ' num2str(Ns) ')']);
 toc
+
 %Elapsed time is 640.222034 seconds.
+figureName=['InterARFIMA'];
+saveas(gcf,figureName,'fig');
+    
 %% PLOT-6-3 : 2 violin plots
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/violin
 figure;
@@ -333,9 +337,9 @@ Z=dgp_arfima(0,[],[],N,stdx,d,0);
 y2=round(Z'+750);
 Y2=[];
 for i=1:length(y2)
-    Y2=[Y2 1 zeros(1,y2(i))];
+    Y2=[Y2 1 zerxcos(1,y2(i))];
 end
-Y2=[zeros(1,750/2) Y2];
+Y2=[zeros(1,750/2) Y2]; % add the offset
 % figure;plot(y1,'r');hold on;plot(y2,'b');
 
 figure('units','normalized','outerposition',[0 0 0.6 1]);
@@ -373,9 +377,6 @@ plot(lags,r,'color',[0 0.5 0]);xlabel('Lag');ylabel('\rho(k)');yline(0,'color',[
 title('Xcorr: Player L & R');
 
 subplot(4,2,[4 6 8]);
-% % PSA
-% Fs=1.3; [~,~,beta] = oneoverf(y,Fs);
-% DFA
 [D,Alpha1,n,F_n,FitValues]=DFA_main(y1);
 plot(log10(n),log10(F_n),'rx');
 hold on; plot(log10(n),FitValues,'r');
@@ -390,5 +391,104 @@ title('DFA')
 figureName=['ZBPlot20220624'];
 saveas(gcf,figureName,'jpg');
     
+%% PLOT-7-1 simulation plot for the army 
+%parameters
+N=100; 
+d=0.7; 
+nrepeat=10; 
+stdx=20; 
+meanx = 750;
+
+acfmean1 = zeros(1,N/2+1);
+acfmean2 = zeros(1,N/2+1);
+rmean12 = zeros(1,N+1);
+
+for j = 1:nrepeat 
+
+    Z=dgp_arfima(0,[],[],N,stdx,d,0);
+    y1=round(Z'+meanx); 
+    
+    Z=dgp_arfima(0,[],[],N,stdx,d,0);
+    y2=round(Z'+meanx);
+    
+    Y1=[];
+    for i=1:length(y1)
+        Y1 =[Y1 1 zeros(1,y1(i))];
+    end
+    Y2=[];
+    for i=1:length(y2)
+        Y2 =[Y2 1 zeros(1,y2(i))];
+    end
+    Y2 =[zeros(1,750/2) Y2]; % add the offset
+    
+    MinLength=min([length(y1) length(y2)]);
+    
+    y1 = y1-mean(y1);
+    y2 = y2-mean(y2);
+    
+    [acf1,lags1,bounds1] = autocorr(y1(1:MinLength),N/2);
+    acfmean1 = acfmean1+ acf1;
+    [acf2,lags2,bounds2] = autocorr(y2(1:MinLength),N/2);
+    acfmean2 = acfmean2 + acf2;
+    [r12,lags12]=xcorr(y1(1:MinLength),y2(1:MinLength),N/2,'normalized');
+    rmean12 = rmean12 + r12;
+    
+end;
+
+acfmean1 = acfmean1/nrepeat;
+acfmean2 = acfmean2/nrepeat;
+rmean12 = rmean12/nrepeat;
+
+% Plotting is afterwards
+figure('units','normalized','outerposition',[0 0 0.6 1]);
+
+subplot(4,1,1);
+plot(Y1,'r');hold on;plot(Y2,'b');
+xlabel('time (ms)');
+yticks(1);yticklabels('button pressed');
+xlim([750*0 750*40]); ylim([0 1.5]);
+legend('Player L','Player R');
+title('Syncopated tapping sequences of 2 players');
+
+subplot(4,2,3);
+% stem(lags1,acfmean1,'r'); xlabel('Lag');ylabel('\rho(k)');
+plot(lags1,acfmean1,'r'); xlabel('Lag');ylabel('\rho(k)');axis([0 50 -0.2 1]) 
+% hold on;
+% h = line(lags,bounds(1)*ones(length(lags1),1));
+% h1 = line(lags,bounds(2)*ones(length(lags1),1));
+% set(h,'color',[1 0 1]);
+% set(h1,'color',[1 0 1]);
+title('Autocorr: Player L');
+
+subplot(4,2,5);
+% stem(lags2,acfmean2,'b'); xlabel('Lag');ylabel('\rho(k)');
+plot(lags2,acfmean2,'b');xlabel('Lag');ylabel('\rho(k)');axis([0 50 -0.2 1]) 
+% hold on;
+% h = line(lags,bounds(1)*ones(length(acf),1));
+% h1 = line(lags,bounds(2)*ones(length(acf),1));
+% set(h,'color',[1 0 1]);
+% set(h1,'color',[1 0 1]);
+title('Autocorr: Player R');
+
+subplot(4,2,7);
+plot(lags12,rmean12,'color',[0 0.5 0]);xlabel('Lag');ylabel('\rho(k)');
+% yline(0,'color',[1 0.8 0.2]);
+axis([-50 50 -0.2 1]);
+title('Xcorr: Player L & R');
+
+subplot(4,2,[4 6 8]);
+[D,Alpha1,n,F_n,FitValues]=DFA_main(y1);
+plot(log10(n),log10(F_n),'rx');
+hold on; plot(log10(n),FitValues,'r');
+[D,Alpha2,n,F_n,FitValues]=DFA_main(y2);
+plot(log10(n),log10(F_n),'bx');
+hold on; plot(log10(n),FitValues,'b');
+legend({'Player L',['H=' num2str(Alpha1)],'Player R',['H=' num2str(Alpha2)],},'Location','southeast');
+xlabel('Scale [log10(n)]') % win_lengths 
+ylabel('RMS [log10(F-n)]') % RMS values
+title('DFA')
+
+figureName=['RMPlot20220624'];
+saveas(gcf,figureName,'jpg');
 
 
