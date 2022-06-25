@@ -33,7 +33,20 @@ legend(['alpha1= ' num2str(alpha1)], ['alpha2= ' num2str(alpha2)],...
 cd /ssd/zhibin/1overf/20220609_2P/Segmented_data/Plots
 % calculate std of the tapping intervals
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
-
+%%  color scheme
+red   = [1 0 0];
+pink  = [1 0.65 0.75];
+blue  = [0 0 1];
+green = [0 1 0];
+darkgreen = [0 0.5 0];
+grey  = [0.5 0.5 0.5];
+yellow  = [1 1 0];
+deepyellow  = [1 0.8 0.2];
+megenta = [1 0 1];% fill([0 1 1 0],[0 0 1 1],megenta)
+cyan = [0 1 1]; % fill([0 1 1 0],[0 0 1 1],cc)
+purple = [0.6 0.1 0.9];
+ARFIMAcolors=[deepyellow;darkgreen;pink];
+    
 %% PLOT-2 Try the 2 functions fit the slope to find d
 % Function 1
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA
@@ -62,7 +75,7 @@ subplot(1,4,2); autocorr(y,T-1);
 subplot(1,4,3); Fs=1.3; [freqs,fcoef] = oneoverf(y,Fs);xlabel('Log(f)');ylabel('Log(power)');
 subplot(1,4,4); [D,Alpha1]=DFA_main(y);
 
-%% Different d
+%% PLOT-3 Different d
 figure('units','normalized','outerposition',[0 0 1 1]);
 N=1000;stdx=20;
 % ds=[-0.5 -0.2 0.5];
@@ -102,7 +115,7 @@ suptitle(['Different d with same std = ' num2str(stdx)]);
 figureName=['Different_d'];
 saveas(gcf,figureName,'fig');
 
-%% add parcorr
+%% PLOT-3-1 add parcorr
 figure('units','normalized','outerposition',[0 0 1 1]);
 N=100;stdx=20;
 ds=[0.2 0.5 1];
@@ -134,7 +147,7 @@ end
 % cd /usr/local/MATLAB/R2022a/toolbox/bioinfo/biodemos/ % suptitle.m
 suptitle(['Different d with same std = ' num2str(stdx)]);
 
-%% Different length
+%% PLOT-4 Different length
 Ns=[100 500 1000 3000];d=1;stdx=20;
 figure('units','normalized','outerposition',[0 0 1 1]);
 for i=1:length(Ns)
@@ -163,7 +176,7 @@ suptitle(['Different length with same d = ' num2str(d)]);
 figureName=['Different_N'];
 saveas(gcf,figureName,'fig');
 
-%% Segmenting 3000 taps into 100 taps/chuncks
+%% PLOT-5 Segmenting 3000 taps into 100 taps/chuncks
 Ns=[3000 1000 500 100];d=1;stdx=20;
 figure('units','normalized','outerposition',[0 0 1 1]);
 for i=1:length(Ns)
@@ -193,8 +206,12 @@ suptitle(['The 1st Segment with different length from the 3000 taps']);
 figureName=['Different_Segment'];
 saveas(gcf,figureName,'fig');
 
-%% PLOT for 100 or 600 taps see how stable the estimations are
+%% PLOT-6-calculation for 100 or 600 taps see how stable the estimations are
+%{ 
 N=100; ds=[0.1:0.1:1]; repeat=100; stdx=20;
+%}
+
+function [Betass,BetassErr,Hss,HssErr] = IterARFIMA(N,ds,repeat,stdx);
 
 % calcualtion
 Betass=[];Hss=[];BetassErr=[];HssErr=[];
@@ -218,8 +235,9 @@ BetassErr=[BetassErr; std(Betas)/sqrt(N)];
 Hss=[Hss;Hs];
 HssErr=[HssErr; std(Hs)/sqrt(N)];
 end
+end
 
-% plot all 10 subplots
+%% PLOT-6-1 plot all 10 subplots
 figure('units','normalized','outerposition',[0 0 1 1]);
 for j=1:length(ds)
     subplot(2,10,j);    
@@ -236,19 +254,54 @@ for j=1:length(ds)
 end
 % suptitle(['Beta and H with different d repeating 100 times (ARFIMA-SIM ([],d,[]); length of ' num2str(N) ')']);
 suptitle(['Beta and H with different d repeating 100 times (dgp-arfima ([],d,[]); length of ' num2str(N) ')']);
-% 2 plots with error bar
+
+%% PLOT-6-2 : 2 plots with error bar
 figure;
 subplot(1,2,1);
 errorbar(ds,mean(Betass,2),BetassErr,'.')
 xlabel('d');ylabel('Beta');xlim([0 1.1]);
 title(['Beta with standard error']);
+B=2.*ds; hold on; plot(ds,B,'color',purple);
+legend({'B','B=2*d'},'Location','southeast');
 subplot(1,2,2);
 errorbar(ds,mean(Hss,2),HssErr,'.')
 xlabel('d');ylabel('H');xlim([0 1.1]);
 title(['H with standard error']);
+H=ds+0.5; hold on; plot(ds,H,'color',purple);
+legend({'H','H=d+0.5'},'Location','southeast');
 suptitle(['Beta and H with different d repeating 100 times (ARFIMA ([],d,[]); length of ' num2str(N) ')']);
 
-% 2 violin plots
+%% PLOT-6-2-1 : 2 plots with error bar for 3 different length
+Ns=[100 600 1000]; ds=[0.1:0.1:1]; repeat=100; stdx=20;
+figure;
+tic;
+for i=1:3
+    [Betass,BetassErr,Hss,HssErr] = IterARFIMA(Ns(i),ds,repeat,stdx);
+    subplot(1,2,1);
+        hold on;
+        errorbar(ds,mean(Betass,2),BetassErr,'.','color',ARFIMAcolors(i,:));
+        xlabel('d');ylabel('Beta');xlim([0 1.1]);
+        title(['Beta with standard error']);
+        hold off;
+        if i==3;
+            B=2.*ds; hold on; plot(ds,B,'color',purple);hold off;
+            legend({'N=100','N=600','N=1000','B=2*d'},'Location','southeast');
+        end
+    subplot(1,2,2);
+        hold on;
+        errorbar(ds,mean(Hss,2),HssErr,'.','color',ARFIMAcolors(i,:))
+        xlabel('d');ylabel('H');xlim([0 1.1]);
+        title(['H with standard error']);
+        hold off;
+        if i==3;
+            H=ds+0.5; hold on; plot(ds,H,'color',purple);hold off;
+            legend({'N=100','N=600','N=1000','H=d+0.5'},'Location','southeast');
+        end
+end
+suptitle(['Beta and H with different d repeating 100 times (ARFIMA ([],d,[]); length of ' num2str(Ns) ')']);
+toc
+%Elapsed time is 640.222034 seconds.
+%% PLOT-6-3 : 2 violin plots
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/violin
 figure;
 subplot(1,2,1);
@@ -266,8 +319,8 @@ xticklabels(string(ds));
 xlabel('d');
 suptitle(['Beta and H with different d repeating 100 times (ARFIMA ([],d,[]); length of ' num2str(N) ')']);
 
-%% simulation plot for the army 
-N=100; d=1; repeat=100; stdx=20;
+%% PLOT-7 simulation plot for the army 
+N=100; d=0.7; repeat=100; stdx=20;
 
 Z=dgp_arfima(0,[],[],N,stdx,d,0);
 y1=round(Z'+750); 
@@ -285,7 +338,7 @@ end
 Y2=[zeros(1,750/2) Y2];
 % figure;plot(y1,'r');hold on;plot(y2,'b');
 
-figure;
+figure('units','normalized','outerposition',[0 0 0.6 1]);
 subplot(4,1,1);
 plot(Y1,'r');hold on;plot(Y2,'b');
 xlabel('time (ms)');
@@ -325,10 +378,10 @@ subplot(4,2,[4 6 8]);
 % DFA
 [D,Alpha1,n,F_n,FitValues]=DFA_main(y1);
 plot(log10(n),log10(F_n),'rx');
-hold on; plot(log10(n),FitValues,'r--');
+hold on; plot(log10(n),FitValues,'r');
 [D,Alpha2,n,F_n,FitValues]=DFA_main(y2);
 plot(log10(n),log10(F_n),'bx');
-hold on; plot(log10(n),FitValues,'b--');
+hold on; plot(log10(n),FitValues,'b');
 legend({'Player L',['H=' num2str(Alpha1)],'Player R',['H=' num2str(Alpha2)],},'Location','southeast');
 xlabel('Scale [log10(n)]') % win_lengths 
 ylabel('RMS [log10(F-n)]') % RMS values
