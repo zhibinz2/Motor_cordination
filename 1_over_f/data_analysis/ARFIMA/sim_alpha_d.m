@@ -526,7 +526,7 @@ Inter100=round(100/1.3,3);
 sr=2000;
 nrepeat=5;
 y1=[];y2=[];
-MinLength=80;
+MinLength=90;
 acfmean1=zeros(1,round(MinLength/2)+1);
 boundsmean1=zeros(1,2);
 acfmean2=zeros(1,round(MinLength/2)+1);
@@ -596,15 +596,16 @@ title('Autocorr: Player R');
 
 subplot(4,2,7);
 plot(lags12,rmean12,'color',[0 0.5 0]);xlabel('Lag');ylabel('\rho(k)');
-yline(0,'color',[1 0.8 0.2]);
+yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
 axis([-MinLength/2 MinLength/2 -0.3 1]);
 title('Xcorr: Player L & R');
 
-subplot(4,2,[4 6 8]);
-[D,Alpha1,n,F_n,FitValues]=DFA_main(y1(1).BPint(1:MinLength));
+subplot(4,2,[4 6]);
+i=2
+[D,Alpha1,n,F_n,FitValues]=DFA_main(y1(i).BPint(1:MinLength));
 plot(log10(n),log10(F_n),'rx');
 hold on; plot(log10(n),FitValues,'r');
-[D,Alpha2,n,F_n,FitValues]=DFA_main(y2(1).BPint(1:MinLength));
+[D,Alpha2,n,F_n,FitValues]=DFA_main(y2(i).BPint(1:MinLength));
 plot(log10(n),log10(F_n),'bx');
 hold on; plot(log10(n),FitValues,'b');
 legend({'Player L',['H=' num2str(Alpha1)],'Player R',['H=' num2str(Alpha2)],},'Location','southeast');
@@ -612,8 +613,31 @@ xlabel('Scale [log10(n)]') % win_lengths
 ylabel('RMS [log10(F-n)]') % RMS values
 title('DFA')
 
+subplot(4,2,[8]);
+plot(1:5,Alphas1,'r');hold on; plot(1:5,Alphas2,'b')
+xlabel('window');ylabel('H');xlim([0 6]);
+xticks(1:5);xticklabels(string(1:5));
+title(['H values in 5 consecutive window']);
+legend({'Player L','Player R'},'Location','southeast');
+
 % figureName=['RMPlot20220625'];
 % saveas(gcf,figureName,'jpg');
 
 
+% calculate H in the 5 window
+Alphas1=[];Alphas2=[];% Hs1Err=[];Hs2Err=[];  [HssErr; std(Hs)/sqrt(N)];
+for i=1:5
+    [D,Alpha1,n,F_n,FitValues]=DFA_main(y1(i).BPint(1:MinLength));
+    Alphas1=[Alphas1 Alpha1];
+    % Hs1Err=[Hs1Err std(Alphas1)/sqrt(N)];
+    [D,Alpha2,n,F_n,FitValues]=DFA_main(y2(i).BPint(1:MinLength));
+    Alphas2=[Alphas2 Alpha2];
+end
+
+figure;
+plot(1:5,Alphas1,'r');hold on; plot(1:5,Alphas2,'b')
+xlabel('window');ylabel('H');xlim([0 6]);
+xticks(1:5);xticklabels(string(1:5));
+title(['H values in 5 consecutive window']);
+legend({'Player L','Player R'},'Location','southeast');
 
