@@ -76,10 +76,11 @@ subplot(1,4,3); Fs=1.3; [freqs,fcoef] = oneoverf(y,Fs);xlabel('Log(f)');ylabel('
 subplot(1,4,4); [D,Alpha1]=DFA_main(y);
 
 %% PLOT-2-1
-N=600;F=[];O=[];d=0.5;stdx=20;
-[Z] = ARFIMA_SIM(N,F,O,d,stdx,er)
+clear
+N=600;F=[];O=[];d=0.5;stdx=20;er=[];
+[Z] = ARFIMA_SIM(N,F,O,d,stdx);
 
-
+clear
 c=0;ARo=[];MAo=[];T=100;SD=20;d=0.7;F=1;
 sim=dgp_arfima(c,ARo,MAo,T,SD,d,F);
 
@@ -652,4 +653,4 @@ legend({'Player L','Player R'},'Location','southeast');
 % figureName=['RMPlot20220625'];
 % saveas(gcf,figureName,'jpg');
 
-
+%% PLOT-7-2 syncopation plot for the army 

@@ -23,6 +23,7 @@ n=n';
 
 % select scales on power scale with base of 2 [2 4 8 16 32 ...] for the fit
 % scaleInds=2.^[1:floor(log2(length(n)))];
+% % open nextpow2
     
 % A=polyfit(log10(n(scaleInds)),log10(F_n(scaleInds)),1);
 A=polyfit(log10(n),log10(F_n),1);

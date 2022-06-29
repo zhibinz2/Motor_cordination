@@ -19,6 +19,7 @@ function [freqs,fcoef,beta,xx,yy,FitValues] = oneoverf(y,Fs);
     
     % select freqs on power scale with base of 2 [2 4 8 16 32 ...] for the fit
 %     freqsind=2.^[1:floor(log2(length(yy)))];
+    % open nextpow2 % % open nextpow2(length(yy))
     
     % method 1: linear fit using a table
 %     tbl=table(xx(freqsind)',yy(freqsind)');
