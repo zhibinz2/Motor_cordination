@@ -75,6 +75,15 @@ subplot(1,4,2); autocorr(y,T-1);
 subplot(1,4,3); Fs=1.3; [freqs,fcoef] = oneoverf(y,Fs);xlabel('Log(f)');ylabel('Log(power)');
 subplot(1,4,4); [D,Alpha1]=DFA_main(y);
 
+%% PLOT-2-1
+N=600;F=[];O=[];d=0.5;stdx=20;
+[Z] = ARFIMA_SIM(N,F,O,d,stdx,er)
+
+
+c=0;ARo=[];MAo=[];T=100;SD=20;d=0.7;F=1;
+sim=dgp_arfima(c,ARo,MAo,T,SD,d,F);
+
+
 %% PLOT-3 Different d
 figure('units','normalized','outerposition',[0 0 1 1]);
 N=1000;stdx=20;

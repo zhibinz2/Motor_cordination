@@ -75,6 +75,15 @@ subplot(1,4,2); autocorr(y,T-1);
 subplot(1,4,3); Fs=1.3; [freqs,fcoef] = oneoverf(y,Fs);xlabel('Log(f)');ylabel('Log(power)');
 subplot(1,4,4); [D,Alpha1]=DFA_main(y);
 
+%% PLOT-2-1
+N=600;F=[];O=[];d=0.5;stdx=20;
+[Z] = ARFIMA_SIM(N,F,O,d,stdx,er)
+
+
+c=0;ARo=[];MAo=[];T=100;SD=20;d=0.7;F=1;
+sim=dgp_arfima(c,ARo,MAo,T,SD,d,F);
+
+
 %% PLOT-3 Different d
 figure('units','normalized','outerposition',[0 0 1 1]);
 N=1000;stdx=20;
@@ -525,7 +534,7 @@ y2=Calinterval(BP_R')./2;
 Inter100=round(100/1.3,3);
 
 sr=2000;
-nrepeat=4;
+nrepeat=3;
 y1=[];y2=[];
 MinLength=74; % choose an even number
 acfmean1=zeros(1,round(MinLength/2)+1);
@@ -533,6 +542,7 @@ boundsmean1=zeros(1,2);
 acfmean2=zeros(1,round(MinLength/2)+1);
 boundsmean2=zeros(1,2);
 rmean12=zeros(1,round(MinLength)+1);
+
 
 for i=1:nrepeat
     y1(i).BPint=Calinterval(BP_L((Inter100*sr*(i-1)+1):(Inter100*sr*i))')./2;
@@ -633,7 +643,7 @@ ylabel('RMS [log10(F-n)]') % RMS values
 title('DFA')
 
 subplot(4,2,[8]);
-plot(1:5,Alphas1,'r');hold on; plot(1:5,Alphas2,'b')
+plot(1:nrepeat,Alphas1,'r');hold on; plot(1:nrepeat,Alphas2,'b')
 xlabel('window');ylabel('H');xlim([0 6]);
 xticks(1:5);xticklabels(string(1:5));
 title(['H values in 5 consecutive window']);
