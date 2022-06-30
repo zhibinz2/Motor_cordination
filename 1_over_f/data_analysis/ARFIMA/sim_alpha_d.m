@@ -677,15 +677,21 @@ load('FB20220610.mat')
 
 cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\ARFIMA\Sim_plots\20220610
 
-for condi=1:4
-    
-condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R;FB_R=FBCondi1R;
-condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R;FB_R=FBCondi2R;
-condi==3; BP_L=BPCondi3L; FB_L=FBCondi3L; BP_R=BPCondi3R;FB_R=FBCondi3R;
-condi==4; BP_L=BPCondi4L; FB_L=FBCondi4L; BP_R=BPCondi4R;FB_R=FBCondi4R;
-
 % syncopation expt
 conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-1.3Hz'};
+conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-2Hz'};
+
+% number of samples for 100 taps
+sr=2000;
+hz=2; % hz=1.2; % tapping frequency
+Inter100=round(100/hz,3)*sr;
+
+for condi=1:4
+    
+if condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R;FB_R=FBCondi1R;end
+if condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R;FB_R=FBCondi2R;end
+if condi==3; BP_L=BPCondi3L; FB_L=FBCondi3L; BP_R=BPCondi3R;FB_R=FBCondi3R;end
+if condi==4; BP_L=BPCondi4L; FB_L=FBCondi4L; BP_R=BPCondi4R;FB_R=FBCondi4R;end
 
 % cut off from the last bottom press
 BP_L=cutofflast(BP_L);
@@ -694,10 +700,6 @@ BP_R=cutofflast(BP_R);
 % total number of taps
 y1=Calinterval(BP_L')./2;
 y2=Calinterval(BP_R')./2;
-
-% number of samples for 100 taps
-sr=2000;
-Inter100=round(100/1.3,3)*sr;
 
 % minimal number of sliding window (every 0.2*Inter100)
 increment=round(0.2*Inter100);
@@ -828,5 +830,7 @@ xticks(1:nrepeat);xticklabels(string(1:nrepeat));
 legend({'Player L','Player R'},'Location','southeast');
 
 % cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
-figureName=['condi_' num2str(condi) '--' conditionNames(condi)];
+figureName=['condi_' num2str(condi)];
 saveas(gcf,figureName,'fig');
+
+end
