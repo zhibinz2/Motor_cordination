@@ -662,14 +662,28 @@ addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
 cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/1_50Hz_ICAautomized
+
+cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\ARFIMA\Sim_plots
+addpath D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\2P_testing
+cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\2P_testing
+addpath D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\DFA
+cd G:\1overf\20220610_2P
+cd G:\1overf\20220610_2P\Segmented_data\1_50Hz_ICAautomized
+
+
 clear
 load('BP20220610.mat')
 load('FB20220610.mat')
 
-condi=1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R;FB_R=FBCondi1R;
-condi=2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R;FB_R=FBCondi2R;
-condi=3; BP_L=BPCondi3L; FB_L=FBCondi3L; BP_R=BPCondi3R;FB_R=FBCondi3R;
-condi=4; BP_L=BPCondi4L; FB_L=FBCondi4L; BP_R=BPCondi4R;FB_R=FBCondi4R;
+cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\ARFIMA\Sim_plots\20220610
+
+for condi=1:4
+    
+condi==1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R;FB_R=FBCondi1R;
+condi==2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R;FB_R=FBCondi2R;
+condi==3; BP_L=BPCondi3L; FB_L=FBCondi3L; BP_R=BPCondi3R;FB_R=FBCondi3R;
+condi==4; BP_L=BPCondi4L; FB_L=FBCondi4L; BP_R=BPCondi4R;FB_R=FBCondi4R;
+
 % syncopation expt
 conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-1.3Hz'};
 
@@ -700,7 +714,6 @@ acfmean2=zeros(1,lags+1);
 boundsmean2=zeros(1,2);
 rmean12=zeros(1,2*lags+1);
 
-tic
 for i=1:nrepeat
     
     y1(i).BPint=Calinterval(BP_L((increment*(i-1)+1):((increment*(i-1)+1+Inter100-1)))')./2;
@@ -721,14 +734,12 @@ for i=1:nrepeat
     rmean12 = rmean12 + r12;
     
 end;
-toc
 
 acfmean1 = acfmean1/nrepeat;
 acfmean2 = acfmean2/nrepeat;
 rmean12 = rmean12/nrepeat;
 boundsmean1=boundsmean1/nrepeat;
 boundsmean2=boundsmean2/nrepeat;
-
 
 % calculate H in the 5 window
 Alphas1=[];Alphas2=[];% Hs1Err=[];Hs2Err=[];  [HssErr; std(Hs)/sqrt(N)];
@@ -755,8 +766,6 @@ end
 % xticks(1:5);xticklabels(string(1:5));
 % title(['H values in 5 consecutive window']);
 % legend({'Player L','Player R'},'Location','southeast');
-
-
 
 % Plotting is afterwards
 figure('units','normalized','outerposition',[0 0 0.6 1]);
@@ -818,6 +827,6 @@ xticks(1:nrepeat);xticklabels(string(1:nrepeat));
 % title(['H values in 5 consecutive window']);
 legend({'Player L','Player R'},'Location','southeast');
 
-cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
-% figureName=['RMPlot20220625'];
-% saveas(gcf,figureName,'jpg');
+% cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
+figureName=['condi_' num2str(condi) '--' conditionNames(condi)];
+saveas(gcf,figureName,'fig');
