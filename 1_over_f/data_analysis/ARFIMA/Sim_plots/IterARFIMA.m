@@ -10,8 +10,8 @@ for j=1:length(ds)
     d=ds(j);
     Betas=[];Hs=[];
     for i=1:repeat 
-        % [Z] = ARFIMA_SIM(N,[],[],d,stdx);
-        Z=dgp_arfima(0,[],[],N,stdx,d,0);
+        % [Z] = ARFIMA_SIM(N,[],[],d,stdx); % Good H for shorter length
+        Z=dgp_arfima(0,[],[],N,stdx,d,0); % Good for all length
         y=Z+750;
         % PSA
         Fs=1.3; [~,~,beta] = oneoverf(y,Fs);
