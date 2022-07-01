@@ -307,12 +307,12 @@ for i=1:3
             legend({'N=100','N=600','N=1000','H=d+0.5'},'Location','southeast');
         end
 end
-suptitle(['Beta and H with different d repeating 100 times (ARFIMA_SIM ([],d,[]); length of ' num2str(Ns) ')']);
+suptitle(['Beta and H with different d repeating 100 times (ARFIMA([],d,[]); length of ' num2str(Ns) ')']);
 toc
 
 %Elapsed time is 640.222034 seconds.
-figureName=['InterARFIMA_gdp'];
-figureName=['InterARFIMA_SIM'];
+figureName=['InterARFIMA_gdp20'];
+figureName=['InterARFIMA_SIM100'];
 saveas(gcf,figureName,'fig');
     
 %% PLOT-6-3 : 2 violin plots
@@ -683,7 +683,7 @@ conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-2Hz'};
 
 % number of samples for 100 taps
 sr=2000;
-hz=2; % hz=1.2; % tapping frequency
+hz=2; % hz=1.3; % tapping frequency
 Inter100=round(100/hz,3)*sr;
 
 for condi=1:4
@@ -830,7 +830,7 @@ xticks(1:nrepeat);xticklabels(string(1:nrepeat));
 legend({'Player L','Player R'},'Location','southeast');
 
 % cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
-figureName=['condi_' num2str(condi)];
-saveas(gcf,figureName,'fig');
+% figureName=['condi_' num2str(condi)];
+% saveas(gcf,figureName,'fig');
 
 end

@@ -7,7 +7,7 @@ function [D,Alpha1,n,F_n,FitValues]=DFA_main(DATA)
 
 % n=100:100:1000; % win_lengths (function default)
 % n=2:2:200; % all win_lengths(customized to our need)
-n=5:5:length(DATA); % all 32 different win_lengths (customized to our need)
+n=5:5:length(DATA)/2; % all 32 different win_lengths (customized to our need)
 Nw=length(n); % number of different win_lengths
 F_n=zeros(Nw,1); % initialize RMS values in the FDA time series
  for i=1:Nw

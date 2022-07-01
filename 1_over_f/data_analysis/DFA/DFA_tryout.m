@@ -92,3 +92,13 @@ return
 % functions in folder "r-DFA"
 
 %% Mike Cohen lecture (https://www.youtube.com/watch?v=-RmxLZF8adI)
+
+%% Try out with BP
+cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/1_50Hz_ICAautomized
+BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R;FB_R=FBCondi1R;
+y=Calinterval(BP_L')./2;
+DATA=y;
+[D,Alpha1,n,F_n,FitValues]=DFA_main(DATA);
+win_length=5;win_length=100;win_length=300;
+order=1;
+F_n(i)=DFA(DATA,n(i),1);

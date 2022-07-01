@@ -21,7 +21,7 @@ mean1=mean(DATA(1:N1)); % grand mean of the data
 for i=1:N1      
     y(i)=sum(DATA(1:i)-mean1); 
 end
-% plot(y);
+% plot(DATA); plot(y);
 y=y'; % transpose for polyfit
 
 % % my alternative method, use cumsum instead (but incorrect, this will result in original length)
@@ -43,7 +43,9 @@ end
 %   Y = POLYVAL(P,X) returns the value of a polynomial P evaluated at X. P
 %   is a vector of length N+1 whose elements are the coefficients of the
 %   polynomial in descending powers: Y = P(1)*X^N + P(2)*X^(N-1) + ... + P(N)*X + P(N+1)
+% plot(Yn); plot(y');
 
 sum1=sum((y'-Yn).^2)/N1; % take the mean square
 sum1=sqrt(sum1); % take the root
-output1=sum1; % the final RMS (root mean squared value)
+output1=sum1; % the final RMS (root mean squared value) 
+% the bigger the output, the bigger the fluctuation is in this win_length scale
