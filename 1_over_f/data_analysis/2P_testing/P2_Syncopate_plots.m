@@ -1,3 +1,6 @@
+%% This script analyze not only syncopate but also synchronization data.
+% probably disregard previous P2_Xcorr_plots.m
+
 %% Plots - syncopation - color scheme
 red   = [1 0 0];
 pink  = [1 0.65 0.75];
