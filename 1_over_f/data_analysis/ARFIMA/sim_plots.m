@@ -282,7 +282,7 @@ legend({'H','H=d+0.5'},'Location','southeast');
 suptitle(['Beta and H with different d repeating 100 times (ARFIMA ([],d,[]); length of ' num2str(N) ')']);
 
 %% PLOT-6-2-1 : 2 plots with error bar for 3 different length
-Ns=[100 600 1000]; ds=[0.1:0.1:1]; repeat=100; stdx=20;
+Ns=[100 600 1000]; ds=[0.1:0.1:1]; repeat=10; stdx=20;
 figure;
 tic;
 for i=1:3

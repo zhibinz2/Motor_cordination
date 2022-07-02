@@ -176,3 +176,66 @@ legend({'Player L','Player R'},'Location','southeast');
 % saveas(gcf,figureName,'fig');
 
 end
+
+%% PLOT Spetra and DFA for EEG
+cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/1_50Hz_ICAautomized
+clear
+load('EEG20220610.mat')
+
+% syncopation expt
+conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-1.3Hz'};
+% conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-2Hz'};
+
+
+tempEEG = load('/ssd/zhibin/1overf/20220610_2P/Segmented_data/1_50Hz_ICAautomized/EEG20220610.mat'); 
+% tempBP = load('/ssd/zhibin/1overf/20220610_2P/Segmented_data/1_50Hz_ICAautomized/BP20220610.mat'); 
+
+data(1,1).EEG = tempEEG.EEGCondi1L;
+data(1,2).EEG = tempEEG.EEGCondi1R;
+data(2,1).EEG = tempEEG.EEGCondi2L;
+data(2,2).EEG = tempEEG.EEGCondi2R;
+data(3,1).EEG = tempEEG.EEGCondi3L;
+data(3,2).EEG = tempEEG.EEGCondi3R;
+data(4,1).EEG = tempEEG.EEGCondi4L;
+data(4,2).EEG = tempEEG.EEGCondi4R;
+
+% number of samples for 100 taps
+sr=2000;
+hz=2; % hz=1.3; % tapping frequency
+Inter100=round(100/hz,3)*sr;
+
+for condi=1:4
+    if condi==1; EEG_L=EEGCondi1L; EEG_R=EEGCondi1R; end 
+    if condi==2; EEG_L=EEGCondi2L; EEG_R=EEGCondi2R; end 
+    if condi==3; EEG_L=EEGCondi3L; EEG_R=EEGCondi3R; end 
+    if condi==4; EEG_L=EEGCondi4L; EEG_R=EEGCondi4R; end 
+    
+    Fs=2000;chan=15;
+    
+    % minimal number of sliding window (every 0.2*Inter100)
+    increment=round(0.2*Inter100);
+    nrepeat=(min([size(EEG_L,1) size(EEG_R,1)])-Inter100)/increment;
+    nrepeat=floor(nrepeat);
+    
+    for i=1:nrepeat % i=15
+    % segment into intervals
+    y1(i).EEGint=zscore(EEG_L((increment*(i-1)+1):((increment*(i-1)+1+Inter100-1)),chan));
+    y2(i).EEGint=zscore(EEG_R((increment*(i-1)+1):((increment*(i-1)+1+Inter100-1)),chan));
+    
+    % [freqs,fcoef,beta,xx,yy,FitValues] = oneoverf(y1(i).EEGint,Fs);
+    y=y1(i).EEGint;
+    [freqs,fcoef,beta1,xx,yy,FitValues] = oneoverf(y1(i).EEGint,Fs);
+    plot(xx, yy,'bx');xlabel('Log10(f)');ylabel('Log10(power)');
+    hold on;plot(xx',FitValues,'r--');
+    
+    % fft on the fly
+    tempf = fft(y,[],1);
+    for m = 1:50 % 50 frequencies
+        freqs = (m-1)*10+1:m*10; % downsample freqs to only 500 samples
+        power = sum(abs(tempf(freqs,:)),1);
+        pow(j).EEG(m,:,k) = power;
+    end
+    
+    % use allspetra
+    
+    
