@@ -44,8 +44,6 @@ function [freqs,fcoef,beta,xx,yy,FitValues] = oneoverf(y,Fs);
     beta=-A(1); % the slope, or beta, the first order polynomial coefficient from polyfit (same way with Hurst Componenet)
     % plot the fit
     FitValues=polyval(A,xx');
-%     hold on;
-%     plot(xx',FitValues,'r--');
-%     legend({'Data',['Fit (Beta=' num2str(beta) ')']},'Location','northeast');
+%     
     end
 
