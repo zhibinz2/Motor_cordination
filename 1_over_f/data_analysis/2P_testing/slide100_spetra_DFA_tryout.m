@@ -195,6 +195,7 @@ conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-1.3Hz'};
 tempEEG = load('/ssd/zhibin/1overf/20220610_2P/Segmented_data/1_50Hz_ICAautomized/EEG20220610.mat'); 
 % tempBP = load('/ssd/zhibin/1overf/20220610_2P/Segmented_data/1_50Hz_ICAautomized/BP20220610.mat'); 
 
+clear data
 data(1,1).EEG = tempEEG.EEGCondi1L;
 data(1,2).EEG = tempEEG.EEGCondi1R;
 data(2,1).EEG = tempEEG.EEGCondi2L;
@@ -209,72 +210,84 @@ sr=2000;
 hz=2; % hz=1.3; % tapping frequency
 Inter100=round(100/hz,3)*sr;
 
+Fs=2000;chan=15;maxfreq=50;
 for condi=1:4
-    if condi==1; EEG_L=EEGCondi1L; EEG_R=EEGCondi1R; end 
-    if condi==2; EEG_L=EEGCondi2L; EEG_R=EEGCondi2R; end 
-    if condi==3; EEG_L=EEGCondi3L; EEG_R=EEGCondi3R; end 
-    if condi==4; EEG_L=EEGCondi4L; EEG_R=EEGCondi4R; end 
+%     if condi==1; EEG_L=EEGCondi1L; EEG_R=EEGCondi1R; end 
+%     if condi==2; EEG_L=EEGCondi2L; EEG_R=EEGCondi2R; end 
+%     if condi==3; EEG_L=EEGCondi3L; EEG_R=EEGCondi3R; end 
+%     if condi==4; EEG_L=EEGCondi4L; EEG_R=EEGCondi4R; end 
     
-    Fs=2000;chan=15;
-    
+    if condi==1; EEG_L=data(1,1).EEG; EEG_R=data(1,2).EEG; end 
+    if condi==2; EEG_L=data(2,1).EEG; EEG_R=data(2,2).EEG; end 
+    if condi==3; EEG_L=data(3,1).EEG; EEG_R=data(3,2).EEG; end 
+    if condi==4; EEG_L=data(4,1).EEG; EEG_R=data(4,2).EEG; end 
+
     % minimal number of sliding window (every 0.2*Inter100)
     increment=round(0.2*Inter100);
     nrepeat=(min([size(EEG_L,1) size(EEG_R,1)])-Inter100)/increment;
     nrepeat=floor(nrepeat);
     
+    beta1=[];beta2=[];
+    % loop through each window to compute each beta
     for i=1:nrepeat % i=15
     % segment into intervals
     y1(i).EEGint=zscore(EEG_L((increment*(i-1)+1):((increment*(i-1)+1+Inter100-1)),chan));
     y2(i).EEGint=zscore(EEG_R((increment*(i-1)+1):((increment*(i-1)+1+Inter100-1)),chan));
     
+    % method 1: using my oneoverf function
     % [freqs,fcoef,beta,xx,yy,FitValues] = oneoverf(y1(i).EEGint,Fs);
-    y=y1(i).EEGint;
-    [freqs,fcoef,beta1,xx,yy,FitValues] = oneoverf(y1(i).EEGint,Fs);
-    plot(xx, yy,'bx');xlabel('Log10(f)');ylabel('Log10(power)');
-    hold on;plot(xx',FitValues,'r--');
+    % y=y1(i).EEGint;
+%     [~,~,beta1] = oneoverf(y1(i).EEGint,Fs);
+%     [~,~,beta2] = oneoverf(y2(i).EEGint,Fs);
+%     [freqs,fcoef,beta1,xx,yy,FitValues] = oneoverf(y1(i).EEGint,Fs);
+%     plot(xx, yy,'bx');xlabel('Log10(f)');ylabel('Log10(power)');
+%     hold on;plot(xx',FitValues,'r--');
     
-    % fft on the fly
-    tempf = fft(y,[],1);
-    for m = 1:50 % 50 frequencies
-        freqs = (m-1)*10+1:m*10; % downsample freqs to only 500 samples
-        power = sum(abs(tempf(freqs,:)),1);
-        pow(j).EEG(m,:,k) = power;
+
+    % Method2: use allspetra
+%     data=y;Fs=2000;maxfreq=50;
+%     %[pow,freqs,df,eppow, corr,cprod,fcoef] = allspectra(data,rate,maxfreq);
+     
+    
+    % method3: fft on the fly, using my getEEGbeta function
+    [tempbeta1] = getEEGbeta(y1(i).EEGint,maxfreq,Fs);
+    [tempbeta2] = getEEGbeta(y2(i).EEGint,maxfreq,Fs);
+    beta1=[beta1 tempbeta1];
+    beta2=[beta2 tempbeta2];
+    
+%     % DFA (didn't work out very well, take too much time)
+%     figure;plot(data);
+%     N=20; 
+%     DATA=downsample(data,N); 
+%     figure; plot(DATA);
+%     
+%     tic
+%     [D,Alpha1,n,F_n,FitValues]=DFA_main(DATA);
+%     toc
+    % Elapsed time is 1189.036306 seconds. (N=5, down to 400Hz)
+    % Elapsed time is 125.205380 seconds. (N=10, down to 200Hz)
+    % Elapsed time is 37.622419 seconds. (N=20, down to 100Hz)
+    % Elapsed time is 125.205380 seconds. (10, down to 200Hz)
     end
     
-    % use allspetra
-    data=y;rate=2000;maxfreq=50;
-    %[pow,freqs,df,eppow, corr,cprod,fcoef] = allspectra(data,rate,maxfreq);
-    df = rate/length(data(:,1));
-    nbins = ceil(maxfreq/df) + 1;
-    freqs = [0:(nbins-1)]*df;
-    selectInd = 1:round(length(freqs)/(maxfreq*10)):length(freqs); % downsample
-    selectInd = selectInd(ceil((15/30)*length(selectInd)):end); % select from 15 Hz - 50 Hz
-    fcoef = fft(ndetrend(data(:,1),1),[],1)/size(data,1);
-    eppow = abs(squeeze((fcoef(1:nbins,:)))).^2; 
-    % figure; plot(eppow); 
-    % plot(freqs,eppow,'.');xlim([15 50]);
-    % plot(log10(freqs),log10(eppow),'.');xlim([log10(15) log10(50)]);
-    % plot(freqs(selectInd),eppow(selectInd),'.');
-    % pow = squeeze(var(fcoef(1:nbins,:),[],3)); % figure; plot(pow)
-    xx=log10(freqs(selectInd));yy=log10(eppow(selectInd)); 
-    plot(xx',yy,'.');
-    A=polyfit(xx',yy,1);
-    beta=-A(1); % the slope, or beta, the first order polynomial coefficient from polyfit (same way with Hurst Componenet)
-    % plot the fit
-    FitValues=polyval(A,xx');
-    hold on;
-    plot(xx',FitValues,'r--');
-    legend({'Data',['Fit (Beta=' num2str(beta) ')']},'Location','northeast');
-    hold off;
+    data(condi,1).beta=beta1;
+    data(condi,2).beta=beta2;
     
-    
-    % DFA
-    figure;plot(data);
-    DATA=downsample(data,10); % downsample to 200Hz
-    figure; plot(DATA);
-    
-    tic
-    [D,Alpha1,n,F_n,FitValues]=DFA_main(DATA);
-    toc
-    % Elapsed time is 1189.036306 seconds.
-    % Elapsed time is 125.205380 seconds.
+end
+
+% plot beta for the 4 conditions
+figure('units','normalized','outerposition',[0 0 1 0.5]);
+for condi=1:4
+    subplot(1,4,condi);
+    plot(data(condi,1).beta,'r');hold on;plot(data(condi,2).beta,'b');
+    xlabel('slinding window');ylabel('beta');
+    legend('Player L','Player R');
+    title(conditionNames(condi));
+end
+suptitle('EEG beta syncopation 20220610');
+
+% cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
+figureName=['EEG_beta'];
+saveas(gcf,figureName,'fig');
+
+%% DFA sliding for 1-Person experiments
