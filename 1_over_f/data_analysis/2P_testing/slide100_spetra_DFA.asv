@@ -261,4 +261,10 @@ for condi=1:4
     beta=-A(1); % the slope, or beta, the first order polynomial coefficient from polyfit (same way with Hurst Componenet)
     % plot the fit
     FitValues=polyval(A,xx');
+    hold on;
+    plot(xx',FitValues,'r--');
+    legend({'Data',['Fit (Beta=' num2str(beta) ')']},'Location','northeast');
     
+    tic
+    [D,Alpha1,n,F_n,FitValues]=DFA_main(data);
+    toc

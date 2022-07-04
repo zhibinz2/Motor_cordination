@@ -256,7 +256,8 @@ for condi=1:4
     % plot(log10(freqs),log10(eppow),'.');xlim([log10(15) log10(50)]);
     % plot(freqs(selectInd),eppow(selectInd),'.');
     % pow = squeeze(var(fcoef(1:nbins,:),[],3)); % figure; plot(pow)
-    xx=log10(freqs(selectInd));yy=log10(eppow(selectInd)); % plot(xx',yy,'.');
+    xx=log10(freqs(selectInd));yy=log10(eppow(selectInd)); 
+    plot(xx',yy,'.');
     A=polyfit(xx',yy,1);
     beta=-A(1); % the slope, or beta, the first order polynomial coefficient from polyfit (same way with Hurst Componenet)
     % plot the fit
@@ -264,3 +265,16 @@ for condi=1:4
     hold on;
     plot(xx',FitValues,'r--');
     legend({'Data',['Fit (Beta=' num2str(beta) ')']},'Location','northeast');
+    hold off;
+    
+    
+    % DFA
+    figure;plot(data);
+    DATA=downsample(data,10); % downsample to 200Hz
+    figure; plot(DATA);
+    
+    tic
+    [D,Alpha1,n,F_n,FitValues]=DFA_main(DATA);
+    toc
+    % Elapsed time is 1189.036306 seconds.
+    % Elapsed time is 125.205380 seconds.
