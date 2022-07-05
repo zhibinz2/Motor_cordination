@@ -26,7 +26,7 @@ function [beta] = getEEGbeta(data,maxfreq,Fs);
         Selectfreqs=closetIndexStart:closetIndexEnd;
         closetIndexStart=closetIndexEnd;
         power = sum(abs(tempf(Selectfreqs,:)),1); 
-        pow(m) = power;
+        pow(m,:) = power;
     end
     
 %     plot(1:50,pow);
@@ -47,15 +47,18 @@ function [beta] = getEEGbeta(data,maxfreq,Fs);
     % plot(freqs(selectInd),eppow(selectInd),'.');
     % pow = squeeze(var(fcoef(1:nbins,:),[],3)); % figure; plot(pow)
     
-    xx=log10(15:50); yy=log10(pow(15:50));
-%     plot(xx',yy');
-    A=polyfit(xx',yy',1);
-    beta=-A(1); % the slope, or beta, the first order polynomial coefficient from polyfit (same way with Hurst Componenet)
-    % plot the fit
-%     FitValues=polyval(A,xx');
-%     hold on;
-%     plot(xx',FitValues,'r--');
-%     legend({'Data',['Fit (Beta=' num2str(beta) ')']},'Location','northeast');
-%     hold off;
+    beta=[];
+    for chan=1:size(data,2)
+        xx=log10(15:50); yy=log10(pow(15:50,chan));
+    %     plot(xx',yy');
+        A=polyfit(xx',yy,1);
+        beta(chan)=-A(1); % the slope, or beta, the first order polynomial coefficient from polyfit (same way with Hurst Componenet)
+        % plot the fit
+    %     FitValues=polyval(A,xx');
+    %     hold on;
+    %     plot(xx',FitValues,'r--');
+    %     legend({'Data',['Fit (Beta=' num2str(beta) ')']},'Location','northeast');
+    %     hold off;
+    end
 end
 

@@ -193,6 +193,7 @@ conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-1.3Hz'};
 
 
 tempEEG = load('/ssd/zhibin/1overf/20220610_2P/Segmented_data/1_50Hz_ICAautomized/EEG20220610.mat'); 
+tempEEG = load('/ssd/zhibin/1overf/20220609_2P/Segmented_data/1_50Hz_ICAautomized/EEG20220609.mat'); 
 % tempBP = load('/ssd/zhibin/1overf/20220610_2P/Segmented_data/1_50Hz_ICAautomized/BP20220610.mat'); 
 
 clear data
@@ -206,11 +207,17 @@ data(4,1).EEG = tempEEG.EEGCondi4L;
 data(4,2).EEG = tempEEG.EEGCondi4R;
 
 % number of samples for 100 taps
-sr=2000;
-hz=2; % hz=1.3; % tapping frequency
-Inter100=round(100/hz,3)*sr;
+Fs=2000;
+hz=1.3; % tapping frequency
+% hz=2; 
+Inter100=round(100/hz,3)*Fs;
 
-Fs=2000;chan=15;maxfreq=50;
+% chaninfo
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis
+run channels_info
+
+maxfreq=50;% chan=15;
+beta=[];
 for condi=1:4
 %     if condi==1; EEG_L=EEGCondi1L; EEG_R=EEGCondi1R; end 
 %     if condi==2; EEG_L=EEGCondi2L; EEG_R=EEGCondi2R; end 
@@ -231,8 +238,8 @@ for condi=1:4
     % loop through each window to compute each beta
     for i=1:nrepeat % i=15
     % segment into intervals
-    y1(i).EEGint=zscore(EEG_L((increment*(i-1)+1):((increment*(i-1)+1+Inter100-1)),chan));
-    y2(i).EEGint=zscore(EEG_R((increment*(i-1)+1):((increment*(i-1)+1+Inter100-1)),chan));
+    y1(i).EEGint=zscore(EEG_L((increment*(i-1)+1):((increment*(i-1)+1+Inter100-1)),:),[],1);
+    y2(i).EEGint=zscore(EEG_R((increment*(i-1)+1):((increment*(i-1)+1+Inter100-1)),:),[],1);
     
     % method 1: using my oneoverf function
     % [freqs,fcoef,beta,xx,yy,FitValues] = oneoverf(y1(i).EEGint,Fs);
@@ -252,8 +259,8 @@ for condi=1:4
     % method3: fft on the fly, using my getEEGbeta function
     [tempbeta1] = getEEGbeta(y1(i).EEGint,maxfreq,Fs);
     [tempbeta2] = getEEGbeta(y2(i).EEGint,maxfreq,Fs);
-    beta1=[beta1 tempbeta1];
-    beta2=[beta2 tempbeta2];
+    beta1=[beta1;tempbeta1];
+    beta2=[beta2;tempbeta2];
     
 %     % DFA (didn't work out very well, take too much time)
 %     figure;plot(data);
@@ -272,22 +279,30 @@ for condi=1:4
     
     data(condi,1).beta=beta1;
     data(condi,2).beta=beta2;
-    
 end
 
 % plot beta for the 4 conditions
-figure('units','normalized','outerposition',[0 0 1 0.5]);
-for condi=1:4
-    subplot(1,4,condi);
-    plot(data(condi,1).beta,'r');hold on;plot(data(condi,2).beta,'b');
-    xlabel('slinding window');ylabel('beta');
-    legend('Player L','Player R');
-    title(conditionNames(condi));
+cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots/EEG_beta
+for chan=1:32
+    figure('units','normalized','outerposition',[0 0 1 0.5]);
+    for condi=1:4
+        subplot(1,4,condi);
+        plot(data(condi,1).beta(:,chan),'r');hold on;plot(data(condi,2).beta(:,chan),'b');
+        xlabel('slinding window');ylabel('beta');
+        legend('Player L','Player R');
+        title(conditionNames(condi));
+    end
+    suptitle(['EEG beta ' labels{chan}  '  synchronization 20220610']);
+
+    % cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
+    figureName=['EEG_beta_' labels{chan}];
+    saveas(gcf,figureName,'jpg'); % saveas(gcf,figureName,'fig');
 end
-suptitle('EEG beta syncopation 20220610');
 
-% cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
-figureName=['EEG_beta'];
-saveas(gcf,figureName,'fig');
-
+close all;
 %% DFA sliding for 1-Person experiments
+open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/analysis.m
+
+
+
+
