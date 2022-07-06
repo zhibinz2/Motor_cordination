@@ -274,7 +274,7 @@ for condi=1:4
     % Elapsed time is 1189.036306 seconds. (N=5, down to 400Hz)
     % Elapsed time is 125.205380 seconds. (N=10, down to 200Hz)
     % Elapsed time is 37.622419 seconds. (N=20, down to 100Hz)
-    % Elapsed time is 125.205380 seconds. (10, down to 200Hz)
+    % Elapsed time is 125.205380 seconds. (N=10, down to 200Hz)
     end
     
     data(condi,1).beta=beta1;

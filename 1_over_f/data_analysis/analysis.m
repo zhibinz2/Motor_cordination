@@ -211,20 +211,39 @@ plot(1:length(diff(BottonPresTimeInd)), diff(BottonPresTimeInd)/sr,'r.');
 xlabel('key press');ylabel('Intervals (s)');
 title('Differences of Time indices for botton presses');
 
-% use a threshold to segment conditions
+% use a threshold based on botton press to segment conditions
 threshold2=max(diff(BottonPresTimeInd)/sr)/2; % automatic 
-threshold2=8; % manual inspection
+threshold2=10; % manual inspection
 hold on; yline(threshold2,'m'); % show on top of previous plot
 separationsInd=find((diff(BottonPresTimeInd)/sr)>threshold2); % indices of the first button press from the second condition in BottonPresTimeInd
 separationsInd=[1;separationsInd+1]; %  indices from the first button press in each condition in BottonPresTimeInd
 separationsTimeInd=BottonPresTimeInd(separationsInd);% indices in time 
 
-% plot to examine
+% plot to examine based on Button press 
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(time,Photocell);xlabel('time');ylabel('photocell signal');
 hold on; xline(time(separationsTimeInd(1)),'r');
 xline(time(separationsTimeInd(2)),'r');
-xline(time(separationsTimeInd(3)),'r');hold off;
+xline(time(separationsTimeInd(3)),'r');
+hold off;
+
+% use a threshold based on photocell to segment conditions
+threshold2=max(diff(PhotocellTime)/sr)/2; % automatic 
+separationsInd=find((diff(PhotocellTime)/sr)>threshold2); % indices of the first button press from the second condition in BottonPresTimeInd
+separationsInd=[1;separationsInd+1]; %  indices from the first button press in each condition in BottonPresTimeInd
+
+
+% plot to examine based on photocell
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(time,Photocell);xlabel('time');ylabel('photocell signal');
+hold on; xline(PhotocellTime(separationsInd(1)),'r');
+xline(PhotocellTime(separationsInd(2)),'r');
+xline(PhotocellTime(separationsInd(3)),'r');
+xline(PhotocellTime(separationsInd(4)),'r');
+xline(PhotocellTime(separationsInd(5)),'r');
+hold off;
+% select 3 of them
+separationsInd=separationsInd([1 2 4]);
 
 %% Compute errors
 open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/1P_testing/Error_3plots.m

@@ -20,7 +20,9 @@ for condi=1:3
     hold on;
     plot(log10(n),FitValues,'r--');
     legend({'Data',['Fit (DFA=' num2str(Alpha1) ')']},'Location','southeast');
+    ylim([-1.4 0.4]);
 end
+suptitle(['DFA of errors' num2str(seed)]);
 
 %% plot DFA on intervals
 
@@ -31,6 +33,7 @@ StartStim1=4+240*(find(allPerm==1)-1)+1; % the starting photocell of condition 1
 % find the time difference with the closest botton press 
 [minValue1,closetIndex1]=min(abs(BottonPressTime-PhotocellTime(StartStim1))); % closetIndex in BottonPressTime
 [minValue2,closetIndex2]=min(abs(BottonPressTime-PhotocellTime(StartStim1+239))); 
+% [minValue2,closetIndex2]=min(abs(BottonPressTime-PhotocellTime(end))); 
 BP01=BottonPresTime01(BottonPresTimeInd(closetIndex1):BottonPresTimeInd(closetIndex2)); % plot(BP01)
 Intv1=Calinterval(BP01')/2000;% plot(BPint) % in seconds
 % condition 2
@@ -45,6 +48,7 @@ StartStim3=4+240*(find(allPerm==3)-1)+1; % the starting photocell of condition 3
 % find the time difference with the next botton press
 [minValue1,closetIndex1]=min(abs(BottonPressTime-PhotocellTime(StartStim3))); % closetIndex in BottonPressTime
 [minValue2,closetIndex2]=min(abs(BottonPressTime-PhotocellTime(StartStim3+239))); 
+[minValue2,closetIndex2]=min(abs(BottonPressTime-PhotocellTime(end))); 
 BP01=BottonPresTime01(BottonPresTimeInd(closetIndex1):BottonPresTimeInd(closetIndex2)); % plot(BP01)
 Intv3=Calinterval(BP01')/2000;% plot(Intv3) % in seconds
 
@@ -65,5 +69,7 @@ for condi=1:3
     hold on;
     plot(log10(n),FitValues,'r--');
     legend({'Data',['Fit (DFA=' num2str(Alpha1) ')']},'Location','southeast');
+    ylim([-1.4 0.4]);
 end
 
+suptitle(['DFA of tapping intervals' num2str(seed)]);

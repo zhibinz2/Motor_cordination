@@ -399,6 +399,8 @@ end
 suptitle('spectra of all channels')
 
 %% Plot on scalp map for the spectra (for my own examing)
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis
+run channels_info.m
 figure('units','normalized','outerposition',[0 0 1 1]);
 for chan=1:32
     subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.05 0.05]); % not showing, why
@@ -535,7 +537,7 @@ for i=1:length(ComponentsExam)
 end
 
 %% Deside which components to remove and mix back the signal and display
-ComponentRemove=I(1);
+ComponentRemove=I(1:5);
 
 A(:,ComponentRemove)=0; icasig(ComponentRemove,:)=0;
 
