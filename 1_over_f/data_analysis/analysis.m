@@ -14,6 +14,10 @@ d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220331/experiment_PILOT-20220331T1
 d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/20220408/JACK20220408-20220408T160904.DATA.Poly5');
 d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/2022041401/2020041401Patty-20220414T145516.DATA.Poly5');
 d = TMSiSAGA.Poly5.read('/ssd/zhibin/1overf/2022041402/Shane2022041402-20220414T160550.DATA.Poly5');
+cd /ssd/zhibin/Xidon_test
+d = TMSiSAGA.Poly5.read('6keys2lights-20220707T194528.DATA.Poly5');
+d = TMSiSAGA.Poly5.read('RB740_2L-20220708T135530.DATA.Poly5');
+
 
 samples=d.samples;
 sr=d.sample_rate;
