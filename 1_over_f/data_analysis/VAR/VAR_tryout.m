@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 %% https://www.mathworks.com/help/econ/varm.html
 % openExample('econ/CreateVAR0ModelExample')
 Mdl = varm
@@ -85,7 +84,9 @@ title('Quarterly Unemployment Rate: 1947 - 2009');
 ylabel('Unemployment rate');
 xlabel('Year');
 hold off
-=======
+
+%%
+
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/MSE-VARFI
 addpath(genpath('/home/zhibin/Documents/GitHub/granger'));
 addpath(genpath('/home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing'));
@@ -148,4 +149,3 @@ for i=1:3
 end
 suptitle(['Beta and H with different d repeating 100 times (ARFIMA([],d,[]); length of ' num2str(Ns) ')']);
 toc
->>>>>>> a2cc9ae (CommitName)
