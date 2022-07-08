@@ -1,4 +1,3 @@
-.
 % This version shows checkerboard on two hemi-fields and sends LSL markers
 % to the fNIRS laptop
 sca; clc; close all; clear all; clearvars; 
@@ -221,6 +220,8 @@ try
                 if (~isempty(find([1:2:numFrames]==n))) % every two frames
                     Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
                     Screen('FillRect', windowPtr, white, RightBottomSquare);
+                    Screen('FillRect', windowPtr, white, LeftUpperSquare);  % event type = 1200001
+                    Screen('FillRect', windowPtr, white, LeftBottomSquare);
                 end
         
                 % Flip to the screen
