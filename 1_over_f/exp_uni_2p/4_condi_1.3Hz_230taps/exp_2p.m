@@ -24,22 +24,20 @@ AssertOpenGL;
 % end
 
 %% Set trial conditions ****************************************************
-conditions = [1 2 3 4 5];
-conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-1.3Hz' 'mutual-2Hz'};  % conditionNames{1}
+conditions = [1 2 3 4];
+conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-1.3Hz'};  % conditionNames{1}
 % Instruction for the experimentor
-ConditionInstructions={'uncoupled-1.3Hz' 'L-lead-1.3Hz' 'R-lead-1.3Hz' 'mutual-1.3Hz' 'mutual-2Hz'}; 
+ConditionInstructions={'uncoupled-1.3Hz' 'L-lead-1.3Hz' 'R-lead-1.3Hz' 'mutual-1.3Hz'}; 
 % Instruction for the left player
 ConditionInstructionsL={'Tap on your own.\nPacer start at 1.3Hz.'... %  \nPacer 1.3Hz.
     'Tap on your own.\nPacer start at 1.3Hz.'... %  \nPacer 1.3Hz
     'Syn with player R in blue.'... % \nPacer 1.3Hz
-    'Pacer start at 1.3Hz.\nThen syn with each other.'... % 
-    'Pacer start at 2Hz.\nThen syn with each other.'}; 
+    'Pacer start at 1.3Hz.\nThen syn with each other.'}; 
 % Instruction for the right player
 ConditionInstructionsR={'Tap on your own.\nPacer start at 1.3Hz.'... %  \nPacer 1.3Hz.
     'Syn with player L in red.'... %  \nPacer 1.3Hz
     'Tap on your own.\nPacer start at 1.3Hz.'... % \nPacer 1.3Hz
-    'Pacer start at 1.3Hz.\nThen syn with each other.'... % 
-    'Pacer start at 2Hz.\nThen syn with each other.'}; 
+    'Pacer start at 1.3Hz.\nThen syn with each other.'}; 
 
 % Block & Trial number of the experiment **********************************
 % number of taps per trial/condition
@@ -59,18 +57,13 @@ numconditions=length(conditions);
 seed=input('enter the date in format YYYYMMDD:');
 rng(seed);
 
-% % how many semirandom permutation set in the experiment 
-% numPerm=numtotal/numconditions;
-% % create the whole set of random conditions for the experiment
-% allPerm=[];
-% for p=1:numPerm
-%     allPerm=[allPerm randperm(numconditions)];
-% end
-
-% if not randomized
-allPerm=[1 2 3 4 5];
-% ######################################### Randomization of the experiment 
-
+% how many semirandom permutation set in the experiment 
+numPerm=numtotal/numconditions;
+% create the whole set of random conditions for the experiment
+allPerm=[];
+for p=1:numPerm
+    allPerm=[allPerm randperm(numconditions)];
+end
 
 %% ########################################################################
 try      
@@ -203,15 +196,9 @@ try
     Showframes2=Showframes1;
     Showframes3=Showframes1;
     Showframes4=Showframes1;
-    
-    % Mean stimulus interval for 3Hz pacing
-    MeanTapInterval2Hz=0.5; % second
-    NumFramesInterval2Hz=round(MeanTapInterval2Hz/(ifi*waitframes));  % on average n frames per stimulus 
-    % condition 5
-    Showframes5=[1:NumFramesInterval2Hz:NumFramesInterval2Hz*30 zeros(1,570)]; 
 
-    % combine all 6 conditions
-    Showframes=[Showframes1;Showframes2;Showframes3;Showframes4;Showframes5];
+    % combine all 4 conditions
+    Showframes=[Showframes1;Showframes2;Showframes3;Showframes4];
 
     %% Setting time variables**********************************************
     % Length of one minute baseline
