@@ -32,3 +32,7 @@ CommitName=char(datetime('now'));
 % !git config --global credential.helper 'cache --timeout=600'
  
 % !git push
+
+%% open github desktop using SSH from home 
+!pkill github
+!github
