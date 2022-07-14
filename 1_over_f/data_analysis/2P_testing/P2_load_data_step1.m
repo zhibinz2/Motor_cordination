@@ -1,18 +1,19 @@
-%% tryout with calculation
-A=[0 0 0 0 1 1 0 0 1 1 1 1 0 0 0 0 1 1 1 1 1 0 0 0 ];
-pressInd=find([0 diff(A)]==1);
-pressIntervals=[pressInd(1) diff(pressInd)];
-
 %% load TMSi data
 clear;
 close all;
+
+% add load data functions
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing;
+
+% data directories
 cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/Plots
 cd /ssd/zhibin/1overf/20220517_2P/Segmented_data/Plots
 cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/Plots
 cd /ssd/zhibin/1overf/20220609_2P/Segmented_data/Plots
 cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
+cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots
+
 
 [EEGfileNameL]=uigetfile('*.Poly5');% select the Left player EEG
 Path_filenameL=[pwd '/' EEGfileNameL];
@@ -26,9 +27,29 @@ Path_filenameR=[pwd '/' EEGfileNameR];
 TriggersL=samplesL(TRIGGERindL,:)';unique(TriggersL)
 TriggersR=samplesR(TRIGGERindR,:)';unique(TriggersR)
 
+% Xidon2 - setting
+% Line 0: Key 1  (output = 255-2^0 = 255-1 =254)
+% Line 1: Key 2  (output = 255-2^1 = 255-2 =253)
+% Line 2: Key 3  (output = 255-2^2 = 255-4 =251)
+% Line 3: Key 4  (output = 255-2^3 = 255-8 =247) middle key
+% Line 4: Key 5  (output = 255-2^4 = 255-16 =239)
+% Line 5: Key 6  (output = 255-2^5 = 255-32 =223)
+% Line 6: Light Sensor 1 (Back light sensor) (output = 255-2^6=191)
+% Line 7: Light Sensor 2 (White light sensor) (output = 255-2^7=127)
+% 119=255-2^3-2^7 % middle key + light sensor 2
+% 183=255-2^3-2^6 % middle key + light sensor 1
+
 %% extract time points for key presses (maybe create a function to do the same for pacers,feedbacks)
 % Left player
-PresIndL=unique([find(TriggersL == 239);find(TriggersL == 235);find(TriggersL == 111 )]); % extract Index of real key presses in the values
+% Key presses (all 7 keys same value)
+PresIndL=unique([find(TriggersL == 239);...
+    find(TriggersL == 235);...
+    find(TriggersL == 111 )]); % extract Index of real key presses in the values
+% Key presses (6 different key values)
+PresIndL=unique([find(TriggersL == 247);...
+    find(TriggersL == 119);...
+    find(TriggersL == 183 )]); 
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PresIndL,ones(1,length(PresIndL)),'ro'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
 % determine a threshold of numbers of frames in the button press interval
@@ -39,12 +60,21 @@ BottonPresTimeIndL=PresIndL(find([0 diff(PresIndL')]>threshold)); % exact index 
 % create a time series that assign botton presses as 1, all other as 0
 BottonPresTimeL01=zeros(size(timeL));
 BottonPresTimeL01(BottonPresTimeIndL)=1;
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(BottonPresTimeL01,'r.')
 sum(BottonPresTimeL01) % num of button presses
 
 
 % Right player
-PresIndR=unique([find(TriggersR == 239);find(TriggersR == 235);find(TriggersR == 111 )]); % extract Index of real key presses in the values
+% Key presses (all 7 keys same value)
+PresIndR=unique([find(TriggersR == 239);...
+    find(TriggersR == 235);...
+    find(TriggersR == 111 )]); % extract Index of real key presses in the values
+% Key presses (6 different key values)
+PresIndR=unique([find(TriggersR == 247);...
+    find(TriggersR == 119);...
+    find(TriggersR == 183 )]); 
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PresIndR,ones(1,length(PresIndR)),'bo'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
 % determine a threshold of numbers of frames in the button press interval
@@ -55,13 +85,18 @@ BottonPresTimeInd=PresIndR(find([0 diff(PresIndR')]>threshold)); % exact index o
 % create a time series that assign botton presses as 1, all other as 0
 BottonPresTimeR01=zeros(size(timeR));
 BottonPresTimeR01(BottonPresTimeInd)=1;
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(BottonPresTimeR01,'b.')
 numPresR=sum(BottonPresTimeR01) % num of button presses
 
 
 %% extract time points for feedbacks from other
 % Left Player Recording
+% previous ANT_Neuro default
 FeedbIndL=unique([find(TriggersL == 251);find(TriggersL == 235)]); % extract Index of real key presses in the values
+% Light senor 1&2 on output line 7&8
+FeedbIndL=unique([find(TriggersL == );find(TriggersL == )]);
+
 plot(FeedbIndL,ones(1,length(FeedbIndL)),'bo'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
 % determine a threshold of numbers of frames in the button press interval
@@ -147,19 +182,19 @@ plot(PacersR, ones(length(PacersR)),'b.');
 ShiftPacer=PacerTimeIndL(end)-PacerTimeIndR(end);
 PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
 PacersL=PacersR+ShiftPacer;
-figure;
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacersL,ones(1,length(PacersL)),'r.');hold on;ylim([0 3]);
 plot(PacerTimeIndL,2*ones(1,length(PacerTimeIndL)),'r.');
 
 % Plot alligned (synchronization)
-figure;
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacersL-PacersL(1), ones(length(PacersL)),'r.');
 hold on;
 plot(PacersR-PacersR(1), ones(length(PacersR)),'b.');
 
 
 % Plot alligned (syncopation)
-figure;
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeIndL-PacerTimeIndL(1), ones(length(PacerTimeIndL)),'r.');
 hold on;
 plot(PacerTimeIndR-PacerTimeIndR(1), ones(length(PacerTimeIndR)),'b.');
@@ -185,7 +220,8 @@ ISOauxindR=find(channels_infoR.labels=='ISO aux');
 
 
 % examine the Left
-figure;subplot(2,1,1);
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+subplot(2,1,1);
 plot(samplesL(ISOauxindL(1),:),'r'); title('ISOauxind(1)')%  ISO aux = analog
 subplot(2,1,2);
 plot(samplesL(ISOauxindL(2),:),'b'); title('ISOauxind(2)')
