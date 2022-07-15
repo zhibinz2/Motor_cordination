@@ -1,6 +1,6 @@
 %% Local function
 % https://www.mathworks.com/help/matlab/matlab_prog/local-functions-in-scripts.html
-function [time,samples,TRIGGERind,sr,channels_info] = LoadTMSi(Path_filename);
+function [time,samples,TRIGGERind,sr,channels_info,labels] = LoadTMSi(Path_filename);
     % d = TMSiSAGA.Poly5.read([pwd '/Right20220504-20220504T143808.DATA.Poly5']);
     d = TMSiSAGA.Poly5.read(Path_filename);
 

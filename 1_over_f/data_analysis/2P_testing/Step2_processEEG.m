@@ -1,10 +1,13 @@
+%% Data directory
 cd /ssd/zhibin/1overf/20220515_2P
 cd /ssd/zhibin/1overf/20220517_2P
 cd /ssd/zhibin/1overf/20220518_2P
 open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/P2_Intervals.m
+
+cd /ssd/zhibin/1overf/20220713_2P
 %% plot raw EEG
-timeL;samplesL;TRIGGERindL;srL;channels_infoL;
-timeR;samplesR;TRIGGERindR;srR;channels_infoR;
+timeL;samplesL;TRIGGERindL;srL;channels_infoL;labelsL;
+timeR;samplesR;TRIGGERindR;srR;channels_infoR;labelsR;
 
 figure;
 subplot(2,1,1);plot(samplesL(1:32,:)');
@@ -82,15 +85,16 @@ filtered_dataL5(find(filtered_dataL5<-200))=-200;
 filtered_dataR5=filtered_dataR4;
 filtered_dataR5(find(filtered_dataR5>200))=200;
 filtered_dataR5(find(filtered_dataR5<-200))=-200;
+% or try interpolation method for a section of the time series?
 
 figure('units','normalized','outerposition',[0 0 1 0.6]);
 subplot(2,1,1);plot(filtered_dataL5);ylim([-300 300]);title('truncated L');
-% plot the segmentation events
+% mark the segmentation events
 for i=1:length(PacersL);
     xline(PacersL(i),'r');
 end
 subplot(2,1,2);plot(filtered_dataR5);ylim([-300 300]);title('truncated R');
-% plot the segmentation events
+% mark the segmentation events
 for i=1:length(PacersR);
     xline(PacersR(i),'b');
 end
@@ -98,7 +102,8 @@ end
 
 %% load channel info for topoplots
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info
-load('chaninfo.mat')
+load('chaninfo.mat');
+chaninfo;
 
 %% ICA for L Left player
 filtered_dataL5;
@@ -113,6 +118,9 @@ plot(1:size(AL,2),SqAL,'ro');ylabel('sum of square of column in A');xlabel('ICs'
 title('all components for L');
 [BL,IL]=sort(SqAL,'descend');
 ComponentsExam=IL(1:10);
+% hold on; 
+% textString=sprintf('(%d, %d)',IL(1),BL(1));
+% text(IL(1),BL(1),textString,'FontSize',7);
 % Take a look at the first 10 components in topoplots
 figure('units','normalized','outerposition',[0 0 1 0.6]);
 suptitle('first 10 components L');
@@ -146,9 +154,8 @@ for i=1:length(ComponentsExamL)
     end
 end
 ComponentRemoveL=ComponentsExamL(TentativeRemoveL);
-
 % Examine component to remove
-figure('units','normalized','outerposition',[0 0 1 0.3]);
+figure('units','normalized','outerposition',[0 0 1 0.5]);
 suptitle('Component to remove: L - ComponentRemoveL');
 for i=1:length(ComponentRemoveL)
     subplot(1,length(ComponentRemoveL),i);
@@ -203,9 +210,8 @@ for i=1:length(ComponentsExamR)
     end
 end
 ComponentRemoveR=ComponentsExamR(TentativeRemoveR);
-
 % Examine component to remove
-figure('units','normalized','outerposition',[0 0 1 0.3]);
+figure('units','normalized','outerposition',[0 0 1 0.5]);
 suptitle('Component to remove: R - ComponentRemoveR');
 for i=1:length(ComponentRemoveR)
     subplot(1,length(ComponentRemoveR),i);
@@ -293,10 +299,11 @@ hold on;hold off;ylim([-100 100]);
 title('Mixed Signal with ICs removed');
 
 
-%% examine power spectra on scalp map
+%% examine power spectra on scalp map (optional)
 
 % load scalp map coordinates
 run /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info.m
+open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info.m
 
 % select the data to plot
 Timeselected=timeL(ind1:ind2);
@@ -334,4 +341,8 @@ for chan=1:32
 end
 suptitle('spectra of all channels on scalp map')
 
+%% Organize extracted EEG variables
+labels;% for plotting
+chaninfo; % channel coordinates
+mixedsigL;mixedsigR;
 

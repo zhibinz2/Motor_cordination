@@ -20,11 +20,11 @@ load 20220713.mat
 
 [EEGfileNameL]=uigetfile('*.Poly5');% select the Left player EEG
 Path_filenameL=[pwd '/' EEGfileNameL];
-[timeL,samplesL,TRIGGERindL,srL,channels_infoL] = LoadTMSi(Path_filenameL);
+[timeL,samplesL,TRIGGERindL,srL,channels_infoL,labelsL] = LoadTMSi(Path_filenameL);
 
 [EEGfileNameR]=uigetfile('*.Poly5');% select the Right player EEG
 Path_filenameR=[pwd '/' EEGfileNameR];
-[timeR,samplesR,TRIGGERindR,srR,channels_infoR] = LoadTMSi(Path_filenameR);
+[timeR,samplesR,TRIGGERindR,srR,channels_infoR,labelsR] = LoadTMSi(Path_filenameR);
 
 %% Extract Trigger channel info
 TriggersL=samplesL(TRIGGERindL,:)';unique(TriggersL)
@@ -404,8 +404,8 @@ allPerm;conditionNames;
 ifi;
 
 % extracted EEG variables
-timeL;samplesL;TRIGGERindL;srL;channels_infoL;
-timeR;samplesR;TRIGGERindR;srR;channels_infoR;
+timeL;samplesL;TRIGGERindL;srL;channels_infoL;labelsL;
+timeR;samplesR;TRIGGERindR;srR;channels_infoR;labelsR;
 
 % extracted behaviral variables
 % BP from trigger chan (Response Pad)
