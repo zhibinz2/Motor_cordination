@@ -62,7 +62,7 @@ BottonPresTimeL01=zeros(size(timeL));
 BottonPresTimeL01(BottonPresTimeIndL)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(BottonPresTimeL01,'r.')
-sum(BottonPresTimeL01) % num of button presses
+numPresL=sum(BottonPresTimeL01) % num of button presses
 
 
 % Right player
@@ -94,9 +94,14 @@ numPresR=sum(BottonPresTimeR01) % num of button presses
 % Left Player Recording
 % previous ANT_Neuro default
 FeedbIndL=unique([find(TriggersL == 251);find(TriggersL == 235)]); % extract Index of real key presses in the values
-% Light senor 1&2 on output line 7&8
-FeedbIndL=unique([find(TriggersL == );find(TriggersL == )]);
+% Light senor 1(black,top)&2(white,bottom) on output line 6&7
+% Line 6: Light Sensor 1 (Back light sensor) (output = 255-2^6=191)
+% Line 7: Light Sensor 2 (White light sensor) (output = 255-2^7=127)
+% 119=255-2^3-2^7 % middle key + light sensor 2
+% 183=255-2^3-2^6 % middle key + light sensor 1
+FeedbIndL=unique([find(TriggersL == 127);find(TriggersL == 119)]);
 
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(FeedbIndL,ones(1,length(FeedbIndL)),'bo'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
 % determine a threshold of numbers of frames in the button press interval
@@ -107,11 +112,21 @@ FeedbTimeIndL=FeedbIndL(find([0 diff(FeedbIndL')]>threshold)); % exact index of 
 % create a time series that assign botton presses as 1, all other as 0
 FeedbTimeL01=zeros(size(timeL));
 FeedbTimeL01(FeedbTimeIndL)=1;
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(FeedbTimeL01,'b.')
 numFbL=sum(FeedbTimeL01) % num of feedbacks from the other plus 4+2x5 resting photocells
 
 % Right Player Recording
+% previous ANT_Neuro default
 FeedbIndR=unique([find(TriggersR == 251);find(TriggersR == 235)]); % extract Index of real key presses in the values
+% Light senor 1(black,top)&2(white,bottom) on output line 6&7
+% Line 6: Light Sensor 1 (Back light sensor) (output = 255-2^6=191)
+% Line 7: Light Sensor 2 (White light sensor) (output = 255-2^7=127)
+% 119=255-2^3-2^7 % middle key + light sensor 2
+% 183=255-2^3-2^6 % middle key + light sensor 1
+FeedbIndR=unique([find(TriggersR == 127);find(TriggersR == 119)]);
+
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(FeedbIndR,ones(1,length(FeedbIndR)),'ro'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
 % determine a threshold of numbers of frames in the button press interval
@@ -122,14 +137,24 @@ FeedbTimeIndR=FeedbIndR(find([0 diff(FeedbIndR')]>threshold)); % exact index of 
 % create a time series that assign botton presses as 1, all other as 0
 FeedbTimeR01=zeros(size(timeR));
 FeedbTimeR01(FeedbTimeIndR)=1;
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(FeedbTimeR01,'r.')
 numFbR=sum(FeedbTimeR01) % num of feedbacks from the other plus 4+2x5 resting photocells
 
 %% extract time points for pacers - synchronization (using this as index to segment data into conditions)
 % Left player
+% previous ANT_Neuro default
 % PacerIndL=unique([find(TriggersL == 127)]); % extract Index of real key presses in the values
 % PacerIndL=unique([find(TriggersL == 127);find(TriggersL == 111)); % extract Index of real key presses in the values
 PacerIndL=unique([find(TriggersL == 127);find(TriggersL == 111);find(TriggersL == 123)]); % extract Index of real key presses in the values
+% Light senor 1(black,top)&2(white,bottom) on output line 6&7
+% Line 6: Light Sensor 1 (Back light sensor) (output = 255-2^6=191)
+% Line 7: Light Sensor 2 (White light sensor) (output = 255-2^7=127)
+% 119=255-2^3-2^7 % middle key + light sensor 2
+% 183=255-2^3-2^6 % middle key + light sensor 1
+PacerIndL=unique([find(TriggersL == 191);find(TriggersL == 183)]);
+
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerIndL,ones(1,length(PacerIndL)),'ro'); % look at the above Index (one press produced several indices)
 % Pacer at 2Hz has intervals of 500ms (1000 samples)
 % Pacer at 3Hz has interval of 333ms (666.6 samples)
@@ -142,12 +167,22 @@ PacerTimeIndL=PacerIndL(find([diff([0 PacerIndL'])]>threshold)); % exact index o
 % create a time series that assign botton presses as 1, all other as 0
 PacerTimeL01=zeros(size(timeL));
 PacerTimeL01(PacerTimeIndL)=1;
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeL01,'r');
-sum(PacerTimeL01) % check if == 194
+sum(PacerTimeL01) % check if == 194 / 386
 % xlim([-1 length(PacerTimeL01)]);
 
 % Right player
+% previous ANT_Neuro default
 PacerIndR=unique([find(TriggersR == 127);find(TriggersR == 111)]); % extract Index of real key presses in the values
+% Light senor 1(black,top)&2(white,bottom) on output line 6&7
+% Line 6: Light Sensor 1 (Back light sensor) (output = 255-2^6=191)
+% Line 7: Light Sensor 2 (White light sensor) (output = 255-2^7=127)
+% 119=255-2^3-2^7 % middle key + light sensor 2
+% 183=255-2^3-2^6 % middle key + light sensor 1
+PacerIndR=unique([find(TriggersR == 191);find(TriggersR == 183)]);
+
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerIndR,ones(1,length(PacerIndR)),'bo'); % look at the above Index (one press produced several indices)
 % Pacer at 2Hz has intervals of 500ms (1000 samples)
 % Pacer at 3Hz has interval of 333ms (666.6 samples)
@@ -160,27 +195,43 @@ PacerTimeIndR=PacerIndR(find([diff([0 PacerIndR'])]>threshold)); % exact index o
 % create a time series that assign botton presses as 1, all other as 0
 PacerTimeR01=zeros(size(timeR));
 PacerTimeR01(PacerTimeIndR)=1;
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeR01,'b');
-sum(PacerTimeR01) % check if == 194
+sum(PacerTimeR01) % check if == 194 / 386
 
 % Plot not alligned
-figure; % for 6 conditions (synchronization)
+figure('units','normalized','outerposition',[0 0 1 0.3]); % for 6 conditions (synchronization)
 PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
 plot(PacersL, ones(length(PacersL)),'r.');
 hold on;
 PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
 plot(PacersR, ones(length(PacersR)),'b.');
 
-figure; % for 5 conditions (synchronization)
+figure('units','normalized','outerposition',[0 0 1 0.3]); % for 5 conditions (synchronization)
 PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162]);
 plot(PacersL, ones(length(PacersL)),'r.');
 hold on;
 PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162]);
 plot(PacersR, ones(length(PacersR)),'b.');
 
-% make shift for missming pacers (optional, only needed for 20220517_2P)
+figure('units','normalized','outerposition',[0 0 1 0.3]); % for 12 blocks (synchronization)
+PacersL=PacerTimeIndL([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);
+plot(PacersL, ones(length(PacersL)),'r.');
+hold on;
+PacersR=PacerTimeIndR([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);
+plot(PacersR, ones(length(PacersR)),'b.');
+
+% make shift for missming pacers on the left (optional) 
+% Only needed for 20220517_2P
 ShiftPacer=PacerTimeIndL(end)-PacerTimeIndR(end);
 PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
+PacersL=PacersR+ShiftPacer;
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(PacersL,ones(1,length(PacersL)),'r.');hold on;ylim([0 3]);
+plot(PacerTimeIndL,2*ones(1,length(PacerTimeIndL)),'r.');
+% Only needed for 20220713_2P (12 blocks)
+ShiftPacer=PacerTimeIndL(end)-PacerTimeIndR(end);
+PacersR=PacerTimeIndR([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);
 PacersL=PacersR+ShiftPacer;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacersL,ones(1,length(PacersL)),'r.');hold on;ylim([0 3]);
