@@ -34,5 +34,5 @@ CommitName=char(datetime('now'));
 % !git push
 
 %% open github desktop using SSH from home 
-!pkill github
-!github
+% !pkill github
+% !github

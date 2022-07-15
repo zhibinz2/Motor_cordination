@@ -1,4 +1,4 @@
-%% load TMSi data
+%% load behaviral data
 clear;
 close all;
 
@@ -14,6 +14,9 @@ cd /ssd/zhibin/1overf/20220609_2P/Segmented_data/Plots
 cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots
 
+load 20220713.mat
+
+%% load TMSi data
 
 [EEGfileNameL]=uigetfile('*.Poly5');% select the Left player EEG
 Path_filenameL=[pwd '/' EEGfileNameL];
@@ -63,7 +66,7 @@ BottonPresTimeL01(BottonPresTimeIndL)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(BottonPresTimeL01,'r.')
 numPresL=sum(BottonPresTimeL01) % num of button presses
-
+% 12 blocks *230 taps = 2760
 
 % Right player
 % Key presses (all 7 keys same value)
@@ -81,14 +84,14 @@ plot(PresIndR,ones(1,length(PresIndR)),'bo'); % look at the above Index (one pre
 threshold = 1*1.5; % interval larger than 1 consecutive samples
 % button presses recorded via DP port into stimtracker is sampled at 2000 Hz
 % feedback via photocell to stimtracker has minial interval every other waitframes (minmal of 1000 Hz)
-BottonPresTimeInd=PresIndR(find([0 diff(PresIndR')]>threshold)); % exact index of key press onset in datatimes (reduce several indices into one)
+BottonPresTimeIndR=PresIndR(find([0 diff(PresIndR')]>threshold)); % exact index of key press onset in datatimes (reduce several indices into one)
 % create a time series that assign botton presses as 1, all other as 0
 BottonPresTimeR01=zeros(size(timeR));
-BottonPresTimeR01(BottonPresTimeInd)=1;
+BottonPresTimeR01(BottonPresTimeIndR)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(BottonPresTimeR01,'b.')
 numPresR=sum(BottonPresTimeR01) % num of button presses
-
+% 12 blocks *230 taps = 2760
 
 %% extract time points for feedbacks from other
 % Left Player Recording
@@ -114,7 +117,8 @@ FeedbTimeL01=zeros(size(timeL));
 FeedbTimeL01(FeedbTimeIndL)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(FeedbTimeL01,'b.')
-numFbL=sum(FeedbTimeL01) % num of feedbacks from the other plus 4+2x5 resting photocells
+numFbL=sum(FeedbTimeL01) % num of feedbacks from the other plus 4+2x5 resting photocells 
+% 12 blocks *230 taps = 2760
 
 % Right Player Recording
 % previous ANT_Neuro default
@@ -140,6 +144,7 @@ FeedbTimeR01(FeedbTimeIndR)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(FeedbTimeR01,'r.')
 numFbR=sum(FeedbTimeR01) % num of feedbacks from the other plus 4+2x5 resting photocells
+% 12 blocks *230 taps = 2760
 
 %% extract time points for pacers - synchronization (using this as index to segment data into conditions)
 % Left player
@@ -169,7 +174,7 @@ PacerTimeL01=zeros(size(timeL));
 PacerTimeL01(PacerTimeIndL)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeL01,'r');
-sum(PacerTimeL01) % check if == 194 / 386
+numPacerL=sum(PacerTimeL01); % check if == 194 / 386
 % xlim([-1 length(PacerTimeL01)]);
 
 % Right player
@@ -197,7 +202,7 @@ PacerTimeR01=zeros(size(timeR));
 PacerTimeR01(PacerTimeIndR)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeR01,'b');
-sum(PacerTimeR01) % check if == 194 / 386
+numPacerR=sum(PacerTimeR01); % check if == 194 / 386
 
 % Plot not alligned
 figure('units','normalized','outerposition',[0 0 1 0.3]); % for 6 conditions (synchronization)
@@ -243,7 +248,6 @@ plot(PacersL-PacersL(1), ones(length(PacersL)),'r.');
 hold on;
 plot(PacersR-PacersR(1), ones(length(PacersR)),'b.');
 
-
 % Plot alligned (syncopation)
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeIndL-PacerTimeIndL(1), ones(length(PacerTimeIndL)),'r.');
@@ -269,7 +273,6 @@ SegtimeIndR=PacerTimeIndR(SegPacerIndR); % index in data time
 ISOauxindL=find(channels_infoL.labels=='ISO aux');
 ISOauxindR=find(channels_infoR.labels=='ISO aux');
 
-
 % examine the Left
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 subplot(2,1,1);
@@ -277,6 +280,7 @@ plot(samplesL(ISOauxindL(1),:),'r'); title('ISOauxind(1)')%  ISO aux = analog
 subplot(2,1,2);
 plot(samplesL(ISOauxindL(2),:),'b'); title('ISOauxind(2)')
 % select a good one
+Photocell_L=samplesL(ISOauxindL(1),:)';
 Photocell_L=samplesL(ISOauxindL(1),:)'.*-1;
 Photocell_L=samplesL(ISOauxindL(2),:)';
 
@@ -286,24 +290,27 @@ figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(Photocell_L);xlabel('time');ylabel('photocell signal');
 % plot EEG on top
 % hold on; plot(time,samples(2:33,:)'); % it zoom out the phtocell amplitude, too small to see
-% click and select the start and end point for peak extraction
+
+% click and select the start and end point for peak extraction (optional)
 [x, y] = ginput(2); % read two mouse clicks on the plot % x were index, y were real values
 Startpoint=round(x(1));Endpoint=round(x(2)); % Startpoint and Endpoint are sample number or index in time
 hold on;xline(x(1),'r');xline(x(2),'r');hold off;
 
-% replace the beginning and end with baseline value
+% replace the beginning and end with baseline value (optional)
 Photocell(1:Startpoint)=mean(y);Photocell(Endpoint:end)=mean(y); % plot(Photocell');
+figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(time,Photocell,'b'); 
 
 % Examine peaks detection in analog1
 Halfhigh1=3/4*(max(Photocell_L)-min(Photocell_L)); % value for 'MinPeakProminence'
 % Check if need to adjust the Halfhigh cutoff
-close;figure;
+close;figure('units','normalized','outerposition',[0 0 1 0.3]);
 findpeaks(Photocell_L,1:length(timeL),'MinPeakProminence',Halfhigh1,'Annotate','extents');
 yline(Halfhigh1,'m','MinPeakProminence');
 
 % locate the trial sessions % pks=value of the peak % locs=time of the peak
 [pksL,locsL] = findpeaks(Photocell_L,1:length(timeL),'MinPeakProminence',Halfhigh1,'Annotate','extents');
+% 12 blocks *230 taps = 2760
 
 % examine pks and locs (both are values of analog1data and datatimes, not indices)
 % i=1;
@@ -331,7 +338,8 @@ yline(Halfhigh1,'m','MinPeakProminence');
 
 
 % examine the Right
-figure;subplot(2,1,1);
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+subplot(2,1,1);
 plot(samplesR(ISOauxindR(1),:),'r'); title('ISOauxind(1)')%  ISO aux = analog
 subplot(2,1,2);
 plot(samplesR(ISOauxindR(2),:),'b'); title('ISOauxind(2)')
@@ -345,24 +353,26 @@ figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(Photocell_R);xlabel('time');ylabel('photocell signal');
 % plot EEG on top
 % hold on; plot(time,samples(2:33,:)'); % it zoom out the phtocell amplitude, too small to see
-% click and select the start and end point for peak extraction
+
+% click and select the start and end point for peak extraction (optional)
 [x, y] = ginput(2); % read two mouse clicks on the plot % x were index, y were real values
 Startpoint=round(x(1));Endpoint=round(x(2)); % Startpoint and Endpoint are sample number or index in time
 hold on;xline(x(1),'r');xline(x(2),'r');hold off;
 
-% replace the beginning and end with baseline value
+% replace the beginning and end with baseline value (optional)
 Photocell(1:Startpoint)=mean(y);Photocell(Endpoint:end)=mean(y); % plot(Photocell');
 plot(time,Photocell,'b'); 
 
 % Examine peaks detection in analog1
 Halfhigh1=3/4*(max(Photocell_R)-min(Photocell_R)); % value for 'MinPeakProminence'
 % Check if need to adjust the Halfhigh cutoff
-close;figure;
+close;figure('units','normalized','outerposition',[0 0 1 0.3]);
 findpeaks(Photocell_R,1:length(timeR),'MinPeakProminence',Halfhigh1,'Annotate','extents');
 yline(Halfhigh1,'m','MinPeakProminence');
 
 % locate the trial sessions % pks=value of the peak % locs=time of the peak
 [pksR,locsR] = findpeaks(Photocell_R,1:length(timeR),'MinPeakProminence',Halfhigh1,'Annotate','extents');
+% 12 blocks *230 taps = 2760
 
 % examine pks and locs (both are values of analog1data and datatimes, not indices)
 % i=1;
@@ -386,3 +396,46 @@ yline(Halfhigh1,'m','MinPeakProminence');
 % Highcutoff=180*mean(locsDurations);
 % hold on; yline(Lowcutoff,'m--','lowcut');hold off; % examine the cutoff line
 % hold on; yline(Highcutoff,'m--','highcut');hold off;
+
+
+%% Organize/Save all extracted variables
+% extracted experimental data
+allPerm;conditionNames;
+ifi;
+
+% extracted EEG variables
+timeL;samplesL;TRIGGERindL;srL;channels_infoL;
+timeR;samplesR;TRIGGERindR;srR;channels_infoR;
+
+% extracted behaviral variables
+% BP from trigger chan (Response Pad)
+BottonPresTimeIndL;BottonPresTimeL01;numPresL;
+BottonPresTimeIndR;BottonPresTimeR01;numPresR;
+% FB from trigger chan (light sensor 2)
+FeedbTimeIndL;FeedbTimeL01;numFbL;
+FeedbTimeIndR;FeedbTimeR01;numFbR;
+% Pacers and Makers (light sensor 1)
+PacerTimeIndL;PacerTimeL01;numPacerL;
+PacerTimeIndR;PacerTimeR01;numPacerR;
+% FB from light detector (ISO aux chan)
+locsL; % Index in datatime; should be same as FeedbTimeIndL
+locsR; % Index in datatime; should be same as FeedbTimeIndR
+
+%% Compare FB from light sensor 2 and from ISO aux
+close;figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(2,1,1);
+plot(FeedbTimeIndL,ones(length(FeedbTimeIndL),1),'r.');
+hold on;
+plot(locsL,ones(length(locsL),1),'g.');
+plot(locsL,ones(length(locsL),1).*1.1,'g.');
+plot(FeedbTimeIndL,ones(length(FeedbTimeIndL),1).*1.1,'r.');
+ylim([0 2]);legend('stimstracker','detector','detector','stimstracker','Location','southeast');
+subplot(2,1,2);
+plot(FeedbTimeIndR,ones(length(FeedbTimeIndR),1),'r.');
+hold on;
+plot(locsR,ones(length(locsR),1),'g.');
+plot(locsR,ones(length(locsR),1).*1.1,'g.');
+plot(FeedbTimeIndR,ones(length(FeedbTimeIndR),1).*1.1,'r.');
+ylim([0 2]);legend('stimstracker','detector','detector','stimstracker','Location','southeast');
+
+
