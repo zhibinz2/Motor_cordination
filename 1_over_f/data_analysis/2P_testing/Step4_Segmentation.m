@@ -28,8 +28,9 @@ end
 % Recording variables extracted =====================================
 timeL;samplesL;TRIGGERindL;srL;channels_infoL;labelsL;
 timeR;samplesR;TRIGGERindR;srR;channels_infoR;labelsR;
+if srL==srR; sr=srL; end;
 % add to mat file ***
-save(filename_variables,'timeL','TRIGGERindL','srL','channels_infoL','labelsL',...
+save(filename_variables,'sr','timeL','TRIGGERindL','srL','channels_infoL','labelsL',...
     'timeR','TRIGGERindR','srR','channels_infoR','labelsR','-append');
 % organize into data structure ***
 % data=[];
@@ -44,7 +45,7 @@ labels;% for plotting
 chaninfo; % channel coordinates
 mixedsigL;mixedsigR;
 % add to mat file ***
-save(filename_variables,'','-append');
+save(filename_variables,'labels','chaninfo','-append');
 % organize into data structure ***
 data(1,1).labels=labels; data(1,2).labels=labels;
 data(1,1).chaninfo=chaninfo; data(1,2).chaninfo=chaninfo;
