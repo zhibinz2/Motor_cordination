@@ -403,7 +403,7 @@ yline(Halfhigh1,'m','MinPeakProminence');
 allPerm;conditionNames;
 ifi;
 
-% extracted EEG variables
+% extracted recording variables
 timeL;samplesL;TRIGGERindL;srL;channels_infoL;labelsL;
 timeR;samplesR;TRIGGERindR;srR;channels_infoR;labelsR;
 
