@@ -206,6 +206,7 @@ save(filename_variables,'FBlocs','-append');
 %% Save data structure;
 filename_structure=['data_structure' num2str(seed) '.mat'];
 save(filename_structure,'data');
+
 %% syncopation segmentation below
 
 %% EEG - syncopation
