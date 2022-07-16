@@ -22,7 +22,7 @@ data=[]; % first dimension has to be 1 in order to explore field names in GUI
 for i=1:2 % first dimension has to be 1 in order to show field names when explore in GUI
     data(1,i).condiSeq=allPerm; % same as data(i).condiSeq=allPerm;
     data(1,i).condiNames=conditionNames;
-    data(1,i).refreshRate=ifi;
+    data(1,i).refreshRate=1/ifi;
 end
 
 % Recording variables extracted =====================================
@@ -203,6 +203,9 @@ FBlocs(1,1).FBlocs=data(1).FBlocs;
 FBlocs(2,1).FBlocs=data(2).FBlocs;
 save(filename_variables,'FBlocs','-append');
 
+%% Save data structure;
+filename_structure=['data_structure' num2str(seed) '.mat'];
+save(filename_structure,'data');
 %% syncopation segmentation below
 
 %% EEG - syncopation
