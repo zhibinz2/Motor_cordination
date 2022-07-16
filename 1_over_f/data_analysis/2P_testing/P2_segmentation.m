@@ -173,7 +173,7 @@ save(['EMG' num2str(seed) '.mat'],'EMGCondi1L','EMGCondi2L','EMGCondi3L',...
 %%  segment Photocell - synchronization
 locsL; locsR;
 locsL01=zeros(1,length(timeL)); 
-locsR01=zeros(1,length(timeL));
+locsR01=zeros(1,length(timeR));
 locsL01(locsL)=1; % plot(locsL01);
 locsR01(locsR)=1; % plot(locsR01);
 

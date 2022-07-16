@@ -20,7 +20,7 @@ data=[]; % first dimension has to be 1 in order to explore field names in GUI
 % data(1,1).condiSeq=allPerm; data(2,1).condiSeq=allPerm;
 % data(1,2).conditionNames=conditionNames; data(2,2).conditionNames=conditionNames;
 for i=1:2 % first dimension has to be 1 in order to show field names when explore in GUI
-    data(1,i).condiSeq=allPerm;
+    data(1,i).condiSeq=allPerm; % same as data(i).condiSeq=allPerm;
     data(1,i).condiNames=conditionNames;
     data(1,i).refreshRate=ifi;
 end
@@ -38,6 +38,8 @@ data(1,1).sr=srL; data(1,2).sr=srR;
 % data(2,1).samples=samplesL; data(2,2).samples=samplesR;
 % data=[];
 % data(1,1).time=timeL; data(2,1).time=timeR;
+data(1,1).time=timeL; data(1,2).time=timeR;
+data=rmfield(data,'time');% try remove the field
 % data(1,2).samples=samplesL; data(2,2).samples=samplesR;
 
 % EEG variables extracted ==========================================
@@ -47,8 +49,10 @@ mixedsigL;mixedsigR;
 % add to mat file ***
 save(filename_variables,'labels','chaninfo','-append');
 % organize into data structure ***
-data(1,1).labels=labels; data(1,2).labels=labels;
-data(1,1).chaninfo=chaninfo; data(1,2).chaninfo=chaninfo;
+for i=1:2
+    data(1,i).labels=labels; 
+    data(1,i).chaninfo=chaninfo; 
+end
 
 
 % Behaviral variables extracted =====================================
@@ -65,14 +69,14 @@ PacerTimeIndR;PacerTimeR01;numPacerR;
 locsL; % Index in datatime; should be same as FeedbTimeIndL
 locsR; % Index in datatime; should be same as FeedbTimeIndR
 % add to mat file ***
-save(filename_variables,'','-append');
+% save(filename_variables,'','-append');
 % organize into data structure ***
 
 % EMG variables needed =============================================
 filtered_EMGL;filtered_EMGR;
 loL;loR; % Hilbert envelop
 % add to mat file ***
-save(filename_variables,'','-append');
+% save(filename_variables,'','-append');
 % organize into data structure ***
 
 %% Select segmentation indicies to use
@@ -106,224 +110,100 @@ SegIndL=sort([SegIndL1;SegIndL2]);
 SegIndR=sort([SegIndR1;SegIndR2]);
 
 %% Segment EEG - synchronization
-% mixedsigL=mixedsigL';
-% mixedsigR=mixedsigR';
-% SegIndL;
-% SegIndR;
+mixedsigL=mixedsigL';
+mixedsigR=mixedsigR';
+SegIndL;
+SegIndR;
+
+% organize into data structure ***
+% EEGtemp1=[];EEGtemp2=[];
 for i=1:12
-    data(1,5,1,i)=mixedsigL(SegIndL(2*i-1):SegIndL(2*i),:);
-    data(1,5,2,i)=mixedsigR(SegIndR(i));
-data
+    data(1).EEG{i}=mixedsigL(SegIndL(2*i-1):SegIndL(2*i),:); % in cells
+    data(2).EEG{i}=mixedsigR(SegIndR(2*i-1):SegIndR(2*i),:);
+%     EEGtemp1(i).EEG=mixedsigL(SegIndL(2*i-1):SegIndL(2*i),:); % in sub-structure
+%     EEGtemp2(i).EEG=mixedsigR(SegIndR(2*i-1):SegIndR(2*i),:);
+end
+% data(1,1).EEG=EEGtemp1;
+% data(1,2).EEG=EEGtemp2;
 
-% PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
-% PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
-EEGOpenEyeRestingL=mixedsigL(PacersL(1):PacersL(2),:);
-EEGCloseEyeRestingL=mixedsigL(PacersL(3):PacersL(4),:);
-EEGCondi1L=mixedsigL(PacersL(6):PacersL(7),:);
-EEGResting2L=mixedsigL(PacersL(7):PacersL(8),:);
-EEGCondi2L=mixedsigL(PacersL(10):PacersL(11),:);
-EEGResting3L=mixedsigL(PacersL(11):PacersL(12),:);
-EEGCondi3L=mixedsigL(PacersL(14):PacersL(15),:);
-EEGResting4L=mixedsigL(PacersL(15):PacersL(16),:);
-EEGCondi4L=mixedsigL(PacersL(18):PacersL(19),:);
-EEGResting5L=mixedsigL(PacersL(19):PacersL(20),:);
-EEGCondi5L=mixedsigL(PacersL(22):PacersL(23),:);% EEGCondi5L=mixedsigL(PacersL(22):end,:); % if 5 conditions
-EEGResting6L=mixedsigL(PacersL(23):PacersL(24),:);
-EEGCondi6L=mixedsigL(PacersL(26):end,:);
-
-EEGOpenEyeRestingR=mixedsigR(PacersR(1):PacersR(2),:);
-EEGCloseEyeRestingR=mixedsigR(PacersR(3):PacersR(4),:);
-EEGCondi1R=mixedsigR(PacersR(6):PacersR(7),:);
-EEGResting2R=mixedsigR(PacersR(7):PacersR(8),:);
-EEGCondi2R=mixedsigR(PacersR(10):PacersR(11),:);
-EEGResting3R=mixedsigR(PacersR(11):PacersR(12),:);
-EEGCondi3R=mixedsigR(PacersR(14):PacersR(15),:);
-EEGResting4R=mixedsigR(PacersR(15):PacersR(16),:);
-EEGCondi4R=mixedsigR(PacersR(18):PacersR(19),:);
-EEGResting5R=mixedsigR(PacersR(19):PacersR(20),:);
-EEGCondi5R=mixedsigR(PacersR(22):PacersR(23),:); % EEGCondi5R=mixedsigR(PacersR(22):end,:);
-EEGResting6R=mixedsigR(PacersR(23):PacersR(24),:);
-EEGCondi6R=mixedsigR(PacersR(26):end,:);
-
-save(['EEG' num2str(seed) '.mat'],'EEGCondi1L','EEGCondi2L','EEGCondi3L',...
-    'EEGCondi4L','EEGCondi5L','EEGCondi6L',...
-    'EEGCondi1R','EEGCondi2R','EEGCondi3R',...
-    'EEGCondi4R','EEGCondi5R','EEGCondi6R');
-
-% if 5 conditions
-save(['EEG' num2str(seed) '.mat'],'EEGCondi1L','EEGCondi2L','EEGCondi3L',...
-    'EEGCondi4L','EEGCondi5L',...
-    'EEGCondi1R','EEGCondi2R','EEGCondi3R',...
-    'EEGCondi4R','EEGCondi5R');
+% add to mat file ***
+EEG=[];
+EEG(1,1).EEG=data(1).EEG;
+EEG(2,1).EEG=data(2).EEG;
+save(filename_variables,'EEG','-append');
 
 %% segment button presses - synchronization
 BottonPresTimeL01; BottonPresTimeR01;
+SegIndL; SegIndR;
 
-BPOpenEyeRestingL=BottonPresTimeL01(PacersL(1):PacersL(2),:);
-BPCloseEyeRestingL=BottonPresTimeL01(PacersL(3):PacersL(4),:);
-BPCondi1L=BottonPresTimeL01(PacersL(6):PacersL(7),:);
-BPResting2L=BottonPresTimeL01(PacersL(7):PacersL(8),:);
-BPCondi2L=BottonPresTimeL01(PacersL(10):PacersL(11),:);
-BPResting3L=BottonPresTimeL01(PacersL(11):PacersL(12),:);
-BPCondi3L=BottonPresTimeL01(PacersL(14):PacersL(15),:);
-BPResting4L=BottonPresTimeL01(PacersL(15):PacersL(16),:);
-BPCondi4L=BottonPresTimeL01(PacersL(18):PacersL(19),:);
-BPResting5L=BottonPresTimeL01(PacersL(19):PacersL(20),:);
-BPCondi5L=BottonPresTimeL01(PacersL(22):PacersL(23),:); % BPCondi5L=BottonPresTimeL01(PacersL(22):end,:); % if 5 conditions
-BPResting6L=BottonPresTimeL01(PacersL(23):PacersL(24),:);
-BPCondi6L=BottonPresTimeL01(PacersL(26):end,:);
+% organize into data structure ***
+for i=1:12
+    data(1).BP{i}=BottonPresTimeL01(SegIndL(2*i-1):SegIndL(2*i),:); % in cells
+    data(2).BP{i}=BottonPresTimeR01(SegIndR(2*i-1):SegIndR(2*i),:);
+end
 
-BPOpenEyeRestingR=BottonPresTimeR01(PacersR(1):PacersR(2),:);
-BPCloseEyeRestingR=BottonPresTimeR01(PacersR(3):PacersR(4),:);
-BPCondi1R=BottonPresTimeR01(PacersR(6):PacersR(7),:);
-BPResting2R=BottonPresTimeR01(PacersR(7):PacersR(8),:);
-BPCondi2R=BottonPresTimeR01(PacersR(10):PacersR(11),:);
-BPResting3R=BottonPresTimeR01(PacersR(11):PacersR(12),:);
-BPCondi3R=BottonPresTimeR01(PacersR(14):PacersR(15),:);
-BPResting4R=BottonPresTimeR01(PacersR(15):PacersR(16),:);
-BPCondi4R=BottonPresTimeR01(PacersR(18):PacersR(19),:);
-BPResting5R=BottonPresTimeR01(PacersR(19):PacersR(20),:);
-BPCondi5R=BottonPresTimeR01(PacersR(22):PacersR(23),:); % BPCondi5R=BottonPresTimeR01(PacersR(22):end,:); % if 5 conditions
-BPResting6R=BottonPresTimeR01(PacersR(23):PacersR(24),:);
-BPCondi6R=BottonPresTimeR01(PacersR(26):end,:);
-
-save(['BP' num2str(seed) '.mat'],'BPCondi1L','BPCondi2L','BPCondi3L',...
-    'BPCondi4L','BPCondi5L','BPCondi6L',...
-    'BPCondi1R','BPCondi2R','BPCondi3R',...
-    'BPCondi4R','BPCondi5R','BPCondi6R');
-% if 5 conditions
-save(['BP' num2str(seed) '.mat'],'BPCondi1L','BPCondi2L','BPCondi3L',...
-    'BPCondi4L','BPCondi5L',...
-    'BPCondi1R','BPCondi2R','BPCondi3R',...
-    'BPCondi4R','BPCondi5R');
+% add to mat file ***
+BP=[];
+BP(1,1).BP=data(1).BP;
+BP(2,1).BP=data(2).BP;
+save(filename_variables,'BP','-append');
 
 %% segment feedbacks from the other  - synchronization
 FeedbTimeL01; FeedbTimeR01;
+SegIndL; SegIndR;
 
-FBOpenEyeRestingL=FeedbTimeL01(PacersL(1):PacersL(2),:);
-FBCloseEyeRestingL=FeedbTimeL01(PacersL(3):PacersL(4),:);
-FBCondi1L=FeedbTimeL01(PacersL(6):PacersL(7),:);
-FBResting2L=FeedbTimeL01(PacersL(7):PacersL(8),:);
-FBCondi2L=FeedbTimeL01(PacersL(10):PacersL(11),:);
-FBResting3L=FeedbTimeL01(PacersL(11):PacersL(12),:);
-FBCondi3L=FeedbTimeL01(PacersL(14):PacersL(15),:);
-FBResting4L=FeedbTimeL01(PacersL(15):PacersL(16),:);
-FBCondi4L=FeedbTimeL01(PacersL(18):PacersL(19),:);
-FBResting5L=FeedbTimeL01(PacersL(19):PacersL(20),:);
-FBCondi5L=FeedbTimeL01(PacersL(22):PacersL(23),:); % FBCondi5L=FeedbTimeL01(PacersL(22):end,:); % if 5 conditions
-FBResting6L=FeedbTimeL01(PacersL(23):PacersL(24),:);
-FBCondi6L=FeedbTimeL01(PacersL(26):end,:);
+% organize into data structure ***
+for i=1:12
+    data(1).FB{i}=FeedbTimeL01(SegIndL(2*i-1):SegIndL(2*i),:); % in cells
+    data(2).FB{i}=FeedbTimeR01(SegIndR(2*i-1):SegIndR(2*i),:);
+end
 
-FBOpenEyeRestingR=FeedbTimeR01(PacersR(1):PacersR(2),:);
-FBCloseEyeRestingR=FeedbTimeR01(PacersR(3):PacersR(4),:);
-FBCondi1R=FeedbTimeR01(PacersR(6):PacersR(7),:);
-FBResting2R=FeedbTimeR01(PacersR(7):PacersR(8),:);
-FBCondi2R=FeedbTimeR01(PacersR(10):PacersR(11),:);
-FBResting3R=FeedbTimeR01(PacersR(11):PacersR(12),:);
-FBCondi3R=FeedbTimeR01(PacersR(14):PacersR(15),:);
-FBResting4R=FeedbTimeR01(PacersR(15):PacersR(16),:);
-FBCondi4R=FeedbTimeR01(PacersR(18):PacersR(19),:);
-FBResting5R=FeedbTimeR01(PacersR(19):PacersR(20),:);
-FBCondi5R=FeedbTimeR01(PacersR(22):PacersR(23),:); % FBCondi5R=FeedbTimeR01(PacersR(22):end,:); % if 5 conditions
-FBResting6R=FeedbTimeR01(PacersR(23):PacersR(24),:);
-FBCondi6R=FeedbTimeR01(PacersR(26):end,:);
-
-save(['FB' num2str(seed) '.mat'],'FBCondi1L','FBCondi2L','FBCondi3L',...
-    'FBCondi4L','FBCondi5L','FBCondi6L',...
-    'FBCondi1R','FBCondi2R','FBCondi3R',...
-    'FBCondi4R','FBCondi5R','FBCondi6R');
-% if 5 conditions
-save(['FB' num2str(seed) '.mat'],'FBCondi1L','FBCondi2L','FBCondi3L',...
-    'FBCondi4L','FBCondi5L',...
-    'FBCondi1R','FBCondi2R','FBCondi3R',...
-    'FBCondi4R','FBCondi5R');
+% add to mat file ***
+FB=[];
+FB(1,1).FB=data(1).FB;
+FB(2,1).FB=data(2).FB;
+save(filename_variables,'FB','-append');
 
 %% %% segment EMG - synchronization
 filtered_EMGL; filtered_EMGR; % before hilbert transform
 upL;upR; % after hilbert transform
+SegIndL; SegIndR;
 
-EMGOpenEyeRestingL=upL(PacersL(1):PacersL(2),:);
-EMGCloseEyeRestingL=upL(PacersL(3):PacersL(4),:);
-EMGCondi1L=upL(PacersL(6):PacersL(7),:);
-EMGResting2L=upL(PacersL(7):PacersL(8),:);
-EMGCondi2L=upL(PacersL(10):PacersL(11),:);
-EMGResting3L=upL(PacersL(11):PacersL(12),:);
-EMGCondi3L=upL(PacersL(14):PacersL(15),:);
-EMGResting4L=upL(PacersL(15):PacersL(16),:);
-EMGCondi4L=upL(PacersL(18):PacersL(19),:);
-EMGResting5L=upL(PacersL(19):PacersL(20),:);
-EMGCondi5L=upL(PacersL(22):PacersL(23),:); % EMGCondi5L=upL(PacersL(22):end,:);  %  if 5 conditions
-EMGResting6L=upL(PacersL(23):PacersL(24),:);
-EMGCondi6L=upL(PacersL(26):end,:);
+% organize into data structure ***
+for i=1:12
+    data(1).EMG{i}=upL(SegIndL(2*i-1):SegIndL(2*i),:); % in cells
+    data(2).EMG{i}=upR(SegIndR(2*i-1):SegIndR(2*i),:);
+end
 
-EMGOpenEyeRestingR=upR(PacersR(1):PacersR(2),:);
-EMGCloseEyeRestingR=upR(PacersR(3):PacersR(4),:);
-EMGCondi1R=upR(PacersR(6):PacersR(7),:);
-EMGResting2R=upR(PacersR(7):PacersR(8),:);
-EMGCondi2R=upR(PacersR(10):PacersR(11),:);
-EMGResting3R=upR(PacersR(11):PacersR(12),:);
-EMGCondi3R=upR(PacersR(14):PacersR(15),:);
-EMGResting4R=upR(PacersR(15):PacersR(16),:);
-EMGCondi4R=upR(PacersR(18):PacersR(19),:);
-EMGResting5R=upR(PacersR(19):PacersR(20),:);
-EMGCondi5R=upR(PacersR(22):PacersR(23),:); % EMGCondi5R=upR(PacersR(22):end,:);  % if 5 conditions
-EMGResting6R=upR(PacersR(23):PacersR(24),:);
-EMGCondi6R=upR(PacersR(26):end,:);
-
-save(['EMG' num2str(seed) '.mat'],'EMGCondi1L','EMGCondi2L','EMGCondi3L',...
-    'EMGCondi4L','EMGCondi5L','EMGCondi6L',...
-    'EMGCondi1R','EMGCondi2R','EMGCondi3R',...
-    'EMGCondi4R','EMGCondi5R','EMGCondi6R');
-% if 5 conditions
-save(['EMG' num2str(seed) '.mat'],'EMGCondi1L','EMGCondi2L','EMGCondi3L',...
-    'EMGCondi4L','EMGCondi5L',...
-    'EMGCondi1R','EMGCondi2R','EMGCondi3R',...
-    'EMGCondi4R','EMGCondi5R');
+% add to mat file ***
+EMG=[];
+EMG(1,1).filtered_EMG=filtered_EMGL;
+EMG(2,1).filtered_EMG=filtered_EMGR;
+EMG(1,1).up=upL;
+EMG(2,1).up=upR;
+save(filename_variables,'EMG','-append');
 
 %%  segment Photocell - synchronization
 locsL; locsR;
 locsL01=zeros(1,length(timeL)); 
-locsR01=zeros(1,length(timeL));
+locsR01=zeros(1,length(timeR));
 locsL01(locsL)=1; % plot(locsL01);
 locsR01(locsR)=1; % plot(locsR01);
+SegIndL; SegIndR;
 
-FBlocsOpenEyeRestingL=locsL01(PacersL(1):PacersL(2));
-FBlocsCloseEyeRestingL=locsL01(PacersL(3):PacersL(4));
-FBlocsCondi1L=locsL01(PacersL(6):PacersL(7));
-FBlocsResting2L=locsL01(PacersL(7):PacersL(8));
-FBlocsCondi2L=locsL01(PacersL(10):PacersL(11));
-FBlocsResting3L=locsL01(PacersL(11):PacersL(12));
-FBlocsCondi3L=locsL01(PacersL(14):PacersL(15));
-FBlocsResting4L=locsL01(PacersL(15):PacersL(16));
-FBlocsCondi4L=locsL01(PacersL(18):PacersL(19));
-FBlocsResting5L=locsL01(PacersL(19):PacersL(20));
-FBlocsCondi5L=locsL01(PacersL(22):PacersL(23)); % FBlocsCondi5L=locsL01(PacersL(22):end); % if 5 conditions
-FBlocsResting6L=locsL01(PacersL(23):PacersL(24));
-FBlocsCondi6L=locsL01(PacersL(26):end);
+% organize into data structure ***
+for i=1:12
+    data(1).FBlocs{i}=locsL01(SegIndL(2*i-1):SegIndL(2*i)); % in cells
+    data(2).FBlocs{i}=locsR01(SegIndR(2*i-1):SegIndR(2*i));
+end
 
-FBlocsOpenEyeRestingR=locsR01(PacersR(1):PacersR(2));
-FBlocsCloseEyeRestingR=locsR01(PacersR(3):PacersR(4));
-FBlocsCondi1R=locsR01(PacersR(6):PacersR(7));
-FBlocsResting2R=locsR01(PacersR(7):PacersR(8));
-FBlocsCondi2R=locsR01(PacersR(10):PacersR(11));
-FBlocsResting3R=locsR01(PacersR(11):PacersR(12));
-FBlocsCondi3R=locsR01(PacersR(14):PacersR(15));
-FBlocsResting4R=locsR01(PacersR(15):PacersR(16));
-FBlocsCondi4R=locsR01(PacersR(18):PacersR(19));
-FBlocsResting5R=locsR01(PacersR(19):PacersR(20));
-FBlocsCondi5R=locsR01(PacersR(22):PacersR(23)); % FBlocsCondi5R=locsR01(PacersR(22):end); % if 5 conditions
-FBlocsResting6R=locsR01(PacersR(23):PacersR(24));
-FBlocsCondi6R=locsR01(PacersR(26):end);
+% add to mat file ***
+FBlocs=[];
+FBlocs(1,1).FBlocs=data(1).FBlocs;
+FBlocs(2,1).FBlocs=data(2).FBlocs;
+save(filename_variables,'FBlocs','-append');
 
-save(['FBlocs' num2str(seed) '.mat'],'FBlocsCondi1L','FBlocsCondi2L','FBlocsCondi3L',...
-    'FBlocsCondi4L','FBlocsCondi5L','FBlocsCondi6L',...
-    'FBlocsCondi1R','FBlocsCondi2R','FBlocsCondi3R',...
-    'FBlocsCondi4R','FBlocsCondi5R','FBlocsCondi6R');
-% if 5 conditions
-save(['FBlocs' num2str(seed) '.mat'],'FBlocsCondi1L','FBlocsCondi2L','FBlocsCondi3L',...
-    'FBlocsCondi4L','FBlocsCondi5L',...
-    'FBlocsCondi1R','FBlocsCondi2R','FBlocsCondi3R',...
-    'FBlocsCondi4R','FBlocsCondi5R');
+%% syncopation segmentation below
 
 %% EEG - syncopation
 % mixedsigL=mixedsigL';
