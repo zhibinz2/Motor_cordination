@@ -111,7 +111,8 @@ SegIndR=sort([SegIndR1;SegIndR2]);
 % SegIndL;
 % SegIndR;
 for i=1:12
-    data(1,5
+    data(1,5,1,i)=mixedsigL(SegIndL(2*i-1):SegIndL(2*i),:);
+    data(1,5,2,i)=mixedsigR(SegIndR(i));
 data
 
 % PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
