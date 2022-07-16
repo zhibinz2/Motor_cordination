@@ -108,6 +108,8 @@ SegIndR=sort([SegIndR1;SegIndR2]);
 %% Segment EEG - synchronization
 % mixedsigL=mixedsigL';
 % mixedsigR=mixedsigR';
+% SegIndL;
+% SegIndR;
 for i=1:12
     data(1,5
 data
