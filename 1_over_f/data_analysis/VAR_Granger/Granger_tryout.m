@@ -11,9 +11,9 @@ condi=4; BP_L=BPCondi4L; FB_L=FBCondi4L; BP_R=BPCondi4R;FB_R=FBCondi4R;
 % syncopation expt
 conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-1.3Hz'};
 % cut off from the last bottom press
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 BP_L=cutofflast(BP_L);
 BP_R=cutofflast(BP_R);
-
 
 y1=Calinterval(BP_L')./2;
 y2=Calinterval(BP_R')./2;
@@ -64,7 +64,7 @@ fres      = [];     % frequency resolution (empty for automatic calculation)
 
 X=[];
 X=cat(1,Ytmp1',Ytmp2(1:575)');
-X=cat(3,X);
+X=cat(3,X); % over n trials
 seed      = 0;      % random seed (0 for unseeded)
 
 %% Model order estimation (<mvgc_schema.html#3 |A2|>)

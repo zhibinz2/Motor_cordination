@@ -2,7 +2,7 @@
 cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/1_50Hz_ICAautomized
 cd /ssd/zhibin/1overf/20220517_2P/Segmented_data/1_50Hz_ICAautomized
 
-cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/1.5_50Hz_ICAautomized
+cd /ssd/zhibin/1overf/20220713_2P/Segmented_data
 
 %% Collect all the variables
 % experimental data extracted =====================================
@@ -136,6 +136,7 @@ save(filename_variables,'EEG','-append');
 BottonPresTimeL01; BottonPresTimeR01;
 SegIndL; SegIndR;
 
+% data=rmfield(data,'BP');% try remove the field
 % organize into data structure ***
 for i=1:12
     data(1).BP{i}=BottonPresTimeL01(SegIndL(2*i-1):SegIndL(2*i),:); % in cells
