@@ -45,19 +45,19 @@ seed      = 0;      % random seed (0 for unseeded)
 % fprintf('\nbest model order (AIC) = %d\n',moAIC);
 % fprintf('best model order (BIC) = %d\n',moBIC);
 
-% % Select model order.
-% if     strcmpi(morder,'actual')
-%     morder = amo;
+% Select model order.
+if     strcmpi(morder,'actual')
+    morder = amo;
 %     fprintf('\nusing actual model order = %d\n',morder);
-% elseif strcmpi(morder,'AIC')
-%     morder = moAIC;
+elseif strcmpi(morder,'AIC')
+    morder = moAIC;
 %     fprintf('\nusing AIC best model order = %d\n',morder);
-% elseif strcmpi(morder,'BIC')
-%     morder = moBIC;
+elseif strcmpi(morder,'BIC')
+    morder = moBIC;
 %     fprintf('\nusing BIC best model order = %d\n',morder);
-% else
+else
 %     fprintf('\nusing specified model order = %d\n',morder);
-% end
+end
 
 % VAR model estimation (<mvgc_schema.html#3 |A2|>)
 

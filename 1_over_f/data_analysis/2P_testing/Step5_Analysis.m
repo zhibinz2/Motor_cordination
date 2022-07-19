@@ -11,6 +11,9 @@ load('data_variables20220713.mat')
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/MSE-VARFI
 % Granger Causality
 addpath(genpath('/home/zhibin/Documents/GitHub/MVGC1'));
+cd /home/zhibin/Documents/GitHub/MVGC1
+run startup
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/VAR_Granger
 
 % Calculation
 y1=[];y2=[];y12=[];XcorrR=[];
@@ -60,8 +63,11 @@ for i=1:nTrials
     y2(i).FitValues=FitValues;   
 
     % Granger causality
-    
-
+    F=[];pval=[];,sig=[];
+    [F,pval,sig] = mygranger(y1(i).BPint,y2(i).BPint);
+    y12(i).F=F;
+    y12(i).pval=pval;
+    y12(i).sig=sig;
 end
 
 % plotting
@@ -113,8 +119,8 @@ for i=1:nTrials
     ylabel('RMS [log10(F-n)]') % RMS values
     title('DFA')
     
-    subplot(4,6,[23]);
-    plot_pw(F);
+    subplot(4,6,[22]);
+    plot_pw(y12(i).F);
     title('Pairwise-conditional GC');
     % xticks([1 2]); xticklabels([{'L'} {'R'}]);% tickangle(90);
     set(gca,'XTick',1:2);
@@ -123,7 +129,7 @@ for i=1:nTrials
     set(gca,'YTickLabel',[{'L'} {'R'}]);
     
     subplot(4,6,[23]);
-    plot_pw(pval);
+    plot_pw(y12(i).pval);
     title(['p-values (' tstat '-test)']);
     set(gca,'XTick',1:2);
     set(gca,'XTickLabel',[{'L'} {'R'}]);
@@ -131,7 +137,7 @@ for i=1:nTrials
     set(gca,'YTickLabel',[{'L'} {'R'}]);
     
     subplot(4,6,[24]);
-    plot_pw(sig);
+    plot_pw(y12(i).sig);
     title(['Significant at \alpha = ' num2str(alpha)]);
     set(gca,'XTick',1:2);
     set(gca,'XTickLabel',[{'L'} {'R'}]);
