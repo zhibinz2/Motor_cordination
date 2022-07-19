@@ -158,7 +158,7 @@ for i=1:12
     data(1).FB{i}=FeedbTimeL01(SegIndL(2*i-1):SegIndL(2*i),:); % in cells
     data(2).FB{i}=FeedbTimeR01(SegIndR(2*i-1):SegIndR(2*i),:);
 end
-
+ 
 % add to mat file ***
 FB=[];
 FB(1,1).FB=data(1).FB;
