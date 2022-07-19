@@ -64,7 +64,7 @@ for i=1:nTrials
 
     % Granger causality
     F=[];pval=[];,sig=[];
-    [F,pval,sig] = mygranger(y1(i).BPint,y2(i).BPint);
+    [F,pval,sig] = statespace(y1(i).BPint,y2(i).BPint);
     y12(i).F=F;
     y12(i).pval=pval;
     y12(i).sig=sig;

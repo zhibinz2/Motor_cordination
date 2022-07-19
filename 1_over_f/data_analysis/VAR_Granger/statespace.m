@@ -1,6 +1,7 @@
-function [F,pval,sig] = mygranger(y1,y2);
+function [F,pval,sig] = statespace(y1,y2);
 % This function estimate and remove d in y1 and y2
 % Then compute Granger Causality
+% MVGC demo: state-space method.
 
 % d estimate
 d_min=-0.5; d_max=1;
@@ -21,18 +22,13 @@ icregmode = 'LWR';  % information criteria regression mode ('OLS', 'LWR' or empt
 morder    = 'AIC';  % model order to use ('actual', 'AIC', 'BIC' or supplied numerical value)
 momax     = 20;     % maximum model order for model order estimation
 
-acmaxlags = 100;   % maximum autocovariance lags (empty for automatic calculation)
-
 tstat     = 'F';    % statistical test for MVGC:  'F' for Granger's F-test (default) or 'chi2' for Geweke's chi2 test
 alpha     = 0.05;   % significance level for significance test
 mhtc      = 'FDRD'; % multiple hypothesis test correction (see routine 'significance')
 
-fs        = 1.3;    % sample rate (Hz)
-fres      = [];     % frequency resolution (empty for automatic calculation)
-
 X=[];
 X=cat(1,Ytmp1(1:nobs)',Ytmp2(1:nobs)');
-X=cat(3,X); % over n trials
+X=cat(3,X);         % over n trials
 seed      = 0;      % random seed (0 for unseeded)
 
 % Model order estimation (<mvgc_schema.html#3 |A2|>)
