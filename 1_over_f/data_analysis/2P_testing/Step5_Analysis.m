@@ -45,7 +45,7 @@ for i=1:nTrials
     y2(i).lags = lags;
     % Xcorr between y1 and y2
     r12=[];lags12=[];
-    [r12,lags12]=xcorr(y1(i).BPint(1:MinLength),y2(i).BPint(1:MinLength),MinLength,'normalized');
+    [r12,lags12]=xcorr(y1(i).BPint(1:MinLength),y2(i).BPint(1:MinLength),30,'normalized');
     y12(i).r12 = r12;
     y12(i).lags12 = lags12;
     % calculate H (or alpha) in DFA of y1 and y2

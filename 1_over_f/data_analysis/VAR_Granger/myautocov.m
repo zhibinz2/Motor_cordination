@@ -21,8 +21,8 @@ icregmode = 'LWR';  % information criteria regression mode ('OLS', 'LWR' or empt
 morder    = 'AIC';  % model order to use ('actual', 'AIC', 'BIC' or supplied numerical value)
 momax     = 20;     % maximum model order for model order estimation
 
-% recomended acmaxlags minimum = 122
-acmaxlags = 122;   % maximum autocovariance lags (empty for automatic calculation)
+% recomended acmaxlags minimum = 122 for some trials
+acmaxlags = 30;   % maximum autocovariance lags (empty for automatic calculation)
 
 tstat     = '';     % statistical test for MVGC:  'F' for Granger's F-test (default) or 'chi2' for Geweke's chi2 test
 alpha     = 0.05;   % significance level for significance test
