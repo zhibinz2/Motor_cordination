@@ -15,7 +15,7 @@ DownSampleRate = sr/FlipsFreq;
 AddshowframesDown=round(AddshowframesCum/DownSampleRate);
 
 % Aligned to the 30th tap
-MeanTapInterval13Hz=0.75; % second % Mean stimulus interval for 2Hz pacing
+MeanTapInterval13Hz=1/1.3; % second % Mean stimulus interval for 2Hz pacing
 NumFramesInterval13Hz=round(MeanTapInterval13Hz/(ifi*waitframes));  
 shift=AddshowframesDown(1)-(NumFramesInterval13Hz*29+1);
 AddshowframesDown=AddshowframesDown-shift;

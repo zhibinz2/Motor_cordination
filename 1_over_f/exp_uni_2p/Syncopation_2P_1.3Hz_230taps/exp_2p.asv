@@ -9,10 +9,8 @@ sca; clc; close all; clear all; clearvars;
 % Path_filename=[pwd '/' BPCondi_dataName];
 % load(Path_filename);
 cd /home/hnl/Acquisition/zhibin/20220713_2P/Segmented_data/
-% load('data_variables20220713.mat'); save('BP20220713.mat','BP');
 load('/home/hnl/Acquisition/zhibin/20220713_2P/Segmented_data/BP20220713.mat');
-% load data_structure20220713.mat; condiSeq=data(1).condiSeq; save('condiSeq20220713.mat','condiSeq');
-load 'condiSeq20220713.mat'
+load
 %% Go back to experimental directory
 cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/Syncopation_2P_1.3Hz_230taps
 
@@ -258,46 +256,46 @@ try
             % Showframeselected=Showframes(conditionSelected,:);
             
             % select color
-            if condiSeq(conditionSelected) == 1
+            if conditionSelected == 1
                 color = green;
-            elseif condiSeq(conditionSelected) == 2
+            elseif conditionSelected == 2
                 color = red;
-            elseif condiSeq(conditionSelected) == 3
+            elseif conditionSelected == 3
                 color = blue;
-            else condiSeq(conditionSelected) == 4
+            else conditionSelected == 4
                 color = megenta;
             end
 
             % show instruction for each trial / condition
             % for experimenter
-            ShowCondition=[ConditionInstructions{condiSeq(conditionSelected)}]; % Center monitor
+            ShowCondition=[ConditionInstructions{conditionSelected}]; % Center monitor
             DrawFormattedText2(ShowCondition,'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
             % for left player
-            if condiSeq(conditionSelected) == 1;
-                ShowCondition=[ConditionInstructionsL{condiSeq(conditionSelected)}]; % Left monitor
+            if conditionSelected == 1;
+                ShowCondition=[ConditionInstructionsL{conditionSelected}]; % Left monitor
                 DrawFormattedText2(ShowCondition,'win',windowPtr,...
                 'sx',xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',red);
-            elseif condiSeq(conditionSelected) == 4;
-                ShowCondition=[ConditionInstructionsL{condiSeq(conditionSelected)}]; % Left monitor
+            elseif conditionSelected == 4;
+                ShowCondition=[ConditionInstructionsL{conditionSelected}]; % Left monitor
                 DrawFormattedText2(ShowCondition,'win',windowPtr,...
                 'sx',xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',blue);
             else
-                ShowCondition=[ConditionInstructionsL{condiSeq(conditionSelected)}]; % Left monitor
+                ShowCondition=[ConditionInstructionsL{conditionSelected}]; % Left monitor
                 DrawFormattedText2(ShowCondition,'win',windowPtr,...
                 'sx',xCenterL,'sy', 'center','xalign','center','yalign','top','baseColor',color);
             end
             % for right player
-            if condiSeq(conditionSelected) == 1;
-                ShowCondition=[ConditionInstructionsR{condiSeq(conditionSelected)}]; % Right monitor
+            if conditionSelected == 1;
+                ShowCondition=[ConditionInstructionsR{conditionSelected}]; % Right monitor
                 DrawFormattedText2(ShowCondition,'win',windowPtr,...
                 'sx',xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',blue);
-            elseif condiSeq(conditionSelected) == 4;
-                ShowCondition=[ConditionInstructionsR{condiSeq(conditionSelected)}]; % Right monitor
+            elseif conditionSelected == 4;
+                ShowCondition=[ConditionInstructionsR{conditionSelected}]; % Right monitor
                 DrawFormattedText2(ShowCondition,'win',windowPtr,...
                 'sx',xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',red);
             else
-                ShowCondition=[ConditionInstructionsR{condiSeq(conditionSelected)}]; % Right monitor
+                ShowCondition=[ConditionInstructionsR{conditionSelected}]; % Right monitor
                 DrawFormattedText2(ShowCondition,'win',windowPtr,...
                 'sx',xCenterR,'sy', 'center','xalign','center','yalign','top','baseColor',color);
             end
@@ -318,7 +316,7 @@ try
             KbStrokeWait;
             Screen('Flip',windowPtr);% Reponse with a black screen
             pause(1); % given time to return the position of arm after key press (no need for 2p, experimentor control)
-            
+
 
             % flip to screen and pause for 1 sec
 %             vbl=Screen('Flip', windowPtr);
@@ -330,10 +328,7 @@ try
             % send markers into the outlet
 %             mrk = markers{3};
 %             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-            
-            % select the showframes for L and R players
-            ShowframesL=Showframes(1).Showframes{t};
-            ShowframesR=Showframes(2).Showframes{t};
+
             
             % get a timestamp and begin the trial
             vbl = Screen('Flip', windowPtr);

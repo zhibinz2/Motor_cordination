@@ -125,7 +125,7 @@ while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
             Screen('FillRect', windowPtr, white, LeftUpperSquare); % photocell
             Screen('FillRect', windowPtr, white, RightUpperSquare); % photocell
         end
-        if any([ShowframesL(1:30)+NumFramesInterval13Hz/2] == n); % Pace right subject get started
+        if any([ShowframesL(1:30)+NumFramesInterval13Hz/2] == n); % Pace right subject 
             Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
 %             Screen('FillRect', windowPtr, white, LeftUpperSquare); % photocell
 %             Screen('FillRect', windowPtr, white, RightUpperSquare); % photocell
