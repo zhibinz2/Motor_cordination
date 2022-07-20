@@ -1,9 +1,9 @@
-function [F,pval,sig] = statespace(y1,y2);
+function [F,pval,sig] = mystatespace(y1,y2);
 % This function estimate and remove d in y1 and y2
 % Then compute Granger Causality
 % MVGC demo: state-space method.
 
-% d estimate
+%% d estimate
 d_min=-0.5; d_max=1;
 est_d1=d_estimation(y1,d_min,d_max);
 est_d2=d_estimation(y2,d_min,d_max);
@@ -11,8 +11,7 @@ est_d2=d_estimation(y2,d_min,d_max);
 [Ytmp1,~]=remove_d(y1',est_d1); %filtered data
 [Ytmp2,~]=remove_d(y2',est_d2); %filtered data
 
-% Parameters
-
+%% Parameters
 ntrials   = 1;     % number of trials
 nobs      =  min([length(Ytmp1) length(Ytmp2)]);  % number of observations per trial
 
@@ -26,12 +25,13 @@ tstat     = 'F';    % statistical test for MVGC:  'F' for Granger's F-test (defa
 alpha     = 0.05;   % significance level for significance test
 mhtc      = 'FDRD'; % multiple hypothesis test correction (see routine 'significance')
 
+% combine the time series
 X=[];
 X=cat(1,Ytmp1(1:nobs)',Ytmp2(1:nobs)');
 X=cat(3,X);         % over n trials
 seed      = 0;      % random seed (0 for unseeded)
 
-% Model order estimation (<mvgc_schema.html#3 |A2|>)
+%% Model order estimation (<mvgc_schema.html#3 |A2|>)
 [AIC,BIC,moAIC,moBIC] = tsdata_to_infocrit(X,momax,icregmode);
 
 % % Plot information criteria.
@@ -55,8 +55,7 @@ else
 %     fprintf('\nusing specified model order = %d\n',morder);
 end
 
-% VAR model estimation (<mvgc_schema.html#3 |A2|>)
-
+%% VAR model estimation (<mvgc_schema.html#3 |A2|>)
 % Estimate VAR model of selected order from data.
 [A,SIG] = tsdata_to_var(X,morder,regmode);
 assert(~isbad(A),'VAR estimation failed - bailing out');
@@ -70,8 +69,7 @@ assert(~isbad(A),'VAR estimation failed - bailing out');
 info = var_info(A,SIG);
 assert(~info.error,'VAR error(s) found - bailing out');
 
-% Granger causality calculation: time domain  (<mvgc_schema.html#3 |A13|>)
-
+%% Granger causality calculation: time domain  (<mvgc_schema.html#3 |A13|>)
 % Calculate time-domain pairwise-conditional causalities from VAR model parameters
 % by state-space method [4]. The VAR model is transformed into an equivalent state-
 % space model for computation. Also return p-values for specified test (F-test or

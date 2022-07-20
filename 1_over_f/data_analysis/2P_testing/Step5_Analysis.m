@@ -64,7 +64,8 @@ for i=1:nTrials
 
     % Granger causality
     F=[];pval=[];,sig=[];
-    [F,pval,sig] = statespace(y1(i).BPint,y2(i).BPint);
+    %[F,pval,sig] = mystatespace(y1(i).BPint,y2(i).BPint); % Statespace method
+    [F,pval,sig] = myautocov(y1(i).BPint,y2(i).BPint); % Autocov method
     y12(i).F=F;
     y12(i).pval=pval;
     y12(i).sig=sig;
@@ -72,6 +73,7 @@ end
 
 % plotting
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Corr_DFA
+
 for i=1:nTrials
     
     figure('units','normalized','outerposition',[0 0 1 1]);
@@ -144,10 +146,10 @@ for i=1:nTrials
     set(gca,'YTick',1:2);
     set(gca,'YTickLabel',[{'L'} {'R'}]);
 
-    figureName=['Corr_DFA-trial-' num2str(i)];
-    saveas(gcf,figureName,'jpg');
+%     figureName=['Corr_DFA-trial-' num2str(i)];
+%     saveas(gcf,figureName,'jpg');
 
 end
 close all;
 
-%% PLOT 2 Granger Causality
+%% PLOT 2 

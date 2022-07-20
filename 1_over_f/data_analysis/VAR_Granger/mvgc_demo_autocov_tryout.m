@@ -1,23 +1,13 @@
-%% load some data for testing
-cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/1_50Hz_ICAautomized
-clear
-load('BP20220610.mat')
-load('FB20220610.mat')
+%% load some data to test
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/VAR_Granger
+clear;
+cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/
 
-condi=1; BP_L=BPCondi1L; FB_L=FBCondi1L; BP_R=BPCondi1R;FB_R=FBCondi1R;
-condi=2; BP_L=BPCondi2L; FB_L=FBCondi2L; BP_R=BPCondi2R;FB_R=FBCondi2R;
-condi=3; BP_L=BPCondi3L; FB_L=FBCondi3L; BP_R=BPCondi3R;FB_R=FBCondi3R;
-condi=4; BP_L=BPCondi4L; FB_L=FBCondi4L; BP_R=BPCondi4R;FB_R=FBCondi4R;
+open /home/zhibin/Documents/GitHub/MVGC1/demo/mvgc_demo_autocov.m
+load('data_variables20220713.mat')
 
-% syncopation expt
-conditionNames={'uncoupled' 'L-lead' 'R-lead' 'mutual-1.3Hz'};
-% cut off from the last bottom press
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
-BP_L=cutofflast(BP_L);
-BP_R=cutofflast(BP_R);
-
-y1=Calinterval(BP_L')./2;
-y2=Calinterval(BP_R')./2;
+y1=Calinterval(BP(1).BP{10}')./sr;
+y2=Calinterval(BP(2).BP{10}')./sr;
 
 %% estimate and remove d
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/MSE-VARFI
@@ -38,17 +28,16 @@ subplot(2,2,2);plot(y2); title(['before d removal: est-d = ' num2str(est_d2)]);
 subplot(2,2,4);plot(Ytmp2);title(['removed est-d: Now d= ' num2str(est_d22)]);
 
 %% try out granger causality on Ytemp1 and Ytemp2
-open /home/zhibin/Documents/GitHub/MVGC1/demo/mvgc_demo_statespace.m
 addpath(genpath('/home/zhibin/Documents/GitHub/MVGC1'));
 cd /home/zhibin/Documents/GitHub/MVGC1
 run startup
 cd /home/zhibin/Documents/GitHub/MVGC1/demo
-open mvgc_demo_statespace.m
+open mvgc_demo_autocov.m
 
 %% Parameters
 
 ntrials   = 1;     % number of trials
-nobs      = 575;   % number of observations per trial
+nobs      = min([length(Ytmp1) length(Ytmp2)]);  % number of observations per trial
 
 regmode   = 'LWR';  % VAR model estimation regression mode ('OLS', 'LWR' or empty for default)
 icregmode = 'LWR';  % information criteria regression mode ('OLS', 'LWR' or empty for default)
@@ -56,21 +45,23 @@ icregmode = 'LWR';  % information criteria regression mode ('OLS', 'LWR' or empt
 morder    = 'AIC';  % model order to use ('actual', 'AIC', 'BIC' or supplied numerical value)
 momax     = 20;     % maximum model order for model order estimation
 
-% acmaxlags is not needed in statespace method
-% acmaxlags = 100;   % maximum autocovariance lags (empty for automatic calculation)
+% recomended acmaxlags minimum = 105
+acmaxlags = 105;   % maximum autocovariance lags (empty for automatic calculation)
 
-tstat     = 'F';    % statistical test for MVGC:  'F' for Granger's F-test (default) or 'chi2' for Geweke's chi2 test
+tstat     = '';     % statistical test for MVGC:  'F' for Granger's F-test (default) or 'chi2' for Geweke's chi2 test
 alpha     = 0.05;   % significance level for significance test
-mhtc      = 'FDRD'; % multiple hypothesis test correction (see routine 'significance')
+mhtc      = 'FDR';  % multiple hypothesis test correction (see routine 'significance')
 
-% for plotting and freq domain only
+% for plotting only
 fs        = 1.3;    % sample rate (Hz)
 fres      = [];     % frequency resolution (empty for automatic calculation)
 
 % combine the time series
 X=[];
-X=cat(1,Ytmp1',Ytmp2(1:575)');
-X=cat(3,X); % over n trials
+X=cat(1,Ytmp1(1:nobs)',Ytmp2(1:nobs)');
+X=cat(3,X);         % over n trials
+
+nvars = size(X,1); % number of variables
 
 % % for VAR test data generation only
 % seed      = 0;      % random seed (0 for unseeded)
@@ -89,12 +80,15 @@ figure(1); clf;
 plot_tsdata([AIC BIC]',{'AIC','BIC'},1/fs);
 title('Model order estimation');
 
+% We don't know the acutal model order
+% amo = size(AT,3); % actual model order
+
 fprintf('\nbest model order (AIC) = %d\n',moAIC);
 fprintf('best model order (BIC) = %d\n',moBIC);
-
-% We don't know the acutal model order
+% fprintf('actual model order     = %d\n',amo);
 
 % Select model order.
+
 if     strcmpi(morder,'actual')
     morder = amo;
     fprintf('\nusing actual model order = %d\n',morder);
@@ -114,42 +108,52 @@ end
 
 ptic('\n*** tsdata_to_var... ');
 [A,SIG] = tsdata_to_var(X,morder,regmode);
-assert(~isbad(A),'VAR estimation failed - bailing out');
 ptoc;
 
-% Report information on the estimated VAR, and check for errors.
-%
-% _IMPORTANT:_ We check the VAR model for stability and symmetric
-% positive-definite residuals covariance matrix. _THIS CHECK SHOULD ALWAYS BE
-% PERFORMED!_ - subsequent routines may fail if there are errors here. If there
-% are problems with the data (e.g. non-stationarity, colinearity, etc.) there's
-% also a good chance they'll show up at this point - and the diagnostics may
-% supply useful information as to what went wrong.
+% Check for failed regression
 
-info = var_info(A,SIG);
-assert(~info.error,'VAR error(s) found - bailing out');
+assert(~isbad(A),'VAR estimation failed');
 
+% NOTE: at this point we have a model and are finished with the data! - all
+% subsequent calculations work from the estimated VAR parameters A and SIG.
+
+%% Autocovariance calculation (<mvgc_schema.html#3 |A5|>)
+
+% The autocovariance sequence drives many Granger causality calculations (see
+% next section). Now we calculate the autocovariance sequence G according to the
+% VAR model, to as many lags as it takes to decay to below the numerical
+% tolerance level, or to acmaxlags lags if specified (i.e. non-empty).
+
+ptic('*** var_to_autocov... ');
+[G,info] = var_to_autocov(A,SIG,acmaxlags);
+ptoc;
+
+% The above routine does a LOT of error checking and issues useful diagnostics.
+% If there are problems with your data (e.g. non-stationarity, colinearity,
+% etc.) there's a good chance it'll show up at this point - and the diagnostics
+% may supply useful information as to what went wrong. It is thus essential to
+% report and check for errors here.
+
+var_acinfo(info,true); % report results (and bail out on error)
 
 %% Granger causality calculation: time domain  (<mvgc_schema.html#3 |A13|>)
 
-% Calculate time-domain pairwise-conditional causalities from VAR model parameters
-% by state-space method [4]. The VAR model is transformed into an equivalent state-
-% space model for computation. Also return p-values for specified test (F-test or
-% likelihood-ratio test; this is optional - if p-values are not required, then it
-% is not necessary to supply time series |X|, regression mode |regmode|, or test
-% specification |tstat|).
+% Calculate time-domain pairwise-conditional causalities - this just requires
+% the autocovariance sequence.
 
-ptic('*** var_to_pwcgc... ');
-[F,pval] = var_to_pwcgc(A,SIG,X,regmode,tstat);
+ptic('*** autocov_to_pwcgc... ');
+F = autocov_to_pwcgc(G);
 ptoc;
 
 % Check for failed GC calculation
 
-assert(~isbad(F,false),'GC calculation failed - bailing out');
+assert(~isbad(F,false),'GC calculation failed');
 
-% Significance-test p-values, correcting for multiple hypotheses.
+% Significance test using theoretical null distribution, adjusting for multiple
+% hypotheses.
 
-sig = significance(pval,alpha,mhtc);
+pval = mvgc_pval(F,morder,nobs,ntrials,1,1,nvars-2,tstat); % take careful note of arguments!
+sig  = significance(pval,alpha,mhtc);
 
 % Plot time-domain causal graph, p-values and significance.
 
@@ -160,33 +164,31 @@ plot_pw(F);
 title('Pairwise-conditional GC');
 subplot(1,3,2);
 plot_pw(pval);
-title(['p-values (' tstat '-test)']);
+title('p-values');
 subplot(1,3,3);
 plot_pw(sig);
-title(['Significant at \alpha = ' num2str(alpha)]);
+title(['Significant at p = ' num2str(alpha)])
+
+% For good measure we calculate Seth's causal density (cd) measure - the mean
+% pairwise-conditional causality. We don't have a theoretical sampling
+% distribution for this.
+
+cd = mean(F(~isnan(F)));
+
+fprintf('\ncausal density = %f\n',cd);
 
 %% Granger causality calculation: frequency domain  (<mvgc_schema.html#3 |A14|>)
 
-% If not specified, we set the frequency resolution to something sensible. Warn if
-% resolution is very large, as this may lead to excessively long computation times,
-% and/or out-of-memory issues.
-
-if isempty(fres)
-    fres = 2^nextpow2(info.acdec); % based on autocorrelation decay; alternatively, you could try fres = 2^nextpow2(nobs);
-	fprintf('\nfrequency resolution auto-calculated as %d (increments ~ %.2gHz)\n',fres,fs/2/fres);
-end
-if fres > 20000 % adjust to taste
-	fprintf(2,'\nWARNING: large frequency resolution = %d - may cause computation time/memory usage problems\nAre you sure you wish to continue [y/n]? ',fres);
-	istr = input(' ','s'); if isempty(istr) || ~strcmpi(istr,'y'); fprintf(2,'Aborting...\n'); return; end
-end
-
 % Calculate spectral pairwise-conditional causalities at given frequency
-% resolution by state-space method.
+% resolution - again, this only requires the autocovariance sequence.
 
-ptic('\n*** var_to_spwcgc... ');
-f = var_to_spwcgc(A,SIG,fres);
-assert(~isbad(f,false),'spectral GC calculation failed - bailing out');
+ptic('\n*** autocov_to_spwcgc... ');
+f = autocov_to_spwcgc(G,fres);
 ptoc;
+
+% Check for failed spectral GC calculation
+
+assert(~isbad(f,false),'spectral GC calculation failed');
 
 % Plot spectral causal graph.
 
@@ -209,3 +211,6 @@ if mre < 1e-5
 else
     fprintf(2,'WARNING: high maximum relative error ~ %.0e\n',mre);
 end
+
+%%
+% <mvgc_demo.html back to top>

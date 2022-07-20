@@ -3,6 +3,6 @@ function [pressIntervals] = Calinterval(A)
 % pressIntervals is the number of samples (zeros) between each button press (one)
 % A could be the button press or the feedback
 pressInd=find([0 diff(A)]==1);
-pressIntervals=[pressInd(1) diff(pressInd)];
+pressIntervals=[diff(pressInd)]; % pressIntervals=[pressInd(1) diff(pressInd)];
 end
 
