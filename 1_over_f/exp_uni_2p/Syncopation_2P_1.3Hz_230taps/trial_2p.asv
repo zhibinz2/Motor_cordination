@@ -1,5 +1,5 @@
 % run SuppressWarning.m 
-% Empty extra taps in the memory before the trial begin
+%% Empty extra taps in the memory before the trial begin
 i=1;
 while i<100
     try
@@ -11,7 +11,7 @@ while i<100
     i=i+1;
 end
 
-%initialize variables
+%% initialize variables
 pressedL1=[]; RBkeyL1=[]; 
 pressedL2=[]; RBkeyL2=[]; 
 pressedR1=[]; RBkeyR1=[];
@@ -25,11 +25,18 @@ n=1;
 % initialized number of taps recorded
 tapsRecordedL=0;tapsRecordedR=0;
 
-numFrames = NumFramesInterval13Hz*600*3; % add numFrames to allow more time
+numFrames = NumFramesInterval13Hz*600; % add numFrames to allow more time
 
 MaxTaps; numTaps;
 
-while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) % either one reach 600 taps  @@@@@@@@
+if condiSeq(conditionSelected) == 1 | 2 | 3 ;
+    MaxFrames=max([ShowframesL ShowframesR]+NumFramesInterval13Hz*5); % add 5 more taps
+else condiSeq(conditionSelected) == 4
+    MaxFrames=max([ShowframesL ShowframesR])*2; % double lengths of the recording
+end
+
+while (n < numFrames) & (n < MaxFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
+    % either one reach 600 taps / Maxframes of recording / MaxTaps @@@@@@@@
     % have to manually advance by experimentor anyway
     
     tic
@@ -119,13 +126,16 @@ while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
             Screen('FillRect', windowPtr, white, RightUpperSquare); % photocell
         end
     end
+    % show the other's resampled recording (only the first 30 taps)
     if (condiSeq(conditionSelected) == 4) ;
         if any(ShowframesR(1:30) == n); % Pace Left subject 
+            % show R's realtime feedbacks after ShowframesR(30) = 1103 frames
             Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Left monitor
             Screen('FillRect', windowPtr, white, LeftUpperSquare); % photocell
             Screen('FillRect', windowPtr, white, RightUpperSquare); % photocell
         end
-        if any([ShowframesL(1:30)+NumFramesInterval13Hz/2] == n); % Pace right subject 
+        if any([ShowframesL(1:30)+NumFramesInterval13Hz/2] == n); % Pace right subject get started
+            % show L's realtime feedbacks after ShowframesL(30)+NumFramesInterval13Hz/2=1122 frames
             Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
 %             Screen('FillRect', windowPtr, white, LeftUpperSquare); % photocell
 %             Screen('FillRect', windowPtr, white, RightUpperSquare); % photocell
@@ -152,7 +162,10 @@ while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
             Screen('FillRect', windowPtr, white, RightUpperSquare+[-screenXpixels/3+PhotosensorSize*2 0 -screenXpixels/3+PhotosensorSize*2 0]); 
 
             % feedback to the other paticipants
-            if (condiSeq(conditionSelected) == 2) | (condiSeq(conditionSelected) == 4) % show feedback to other
+            if (condiSeq(conditionSelected) == 2); % show feedback to other
+                Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
+            end
+            if (condiSeq(conditionSelected) == 4) & (n > ShowframesR(30)); % 1103 % show feedback to other
                 Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Right monitor
             end
 
@@ -182,7 +195,10 @@ while (n < numFrames) & (tapsRecordedL < MaxTaps ) & (tapsRecordedR < MaxTaps ) 
             Screen('FillRect', windowPtr, white, LeftUpperSquare+[+screenXpixels/3-PhotosensorSize*2 0 +screenXpixels/3-PhotosensorSize*2 0]); 
           
             % provide feedback stim to the other player 
-            if (condiSeq(conditionSelected) == 3) | (condiSeq(conditionSelected) == 4)
+            if (condiSeq(conditionSelected) == 3);
+                Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Left monitor
+            end
+            if (condiSeq(conditionSelected) == 4) & (n > ShowframesL(30)+NumFramesInterval13Hz/2); %1122
                 Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Left monitor
             end
            
