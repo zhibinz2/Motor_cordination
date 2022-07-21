@@ -132,10 +132,10 @@ try
 
     % Measure the vertical refresh rate of the monitor
     ifi = Screen('GetFlipInterval', windowPtr);
-    % Check if ifi=0.0167
-    if round(1/ifi)~=60
-      error('Error: Screen flash frequency is not set at 60Hz.');    
-    end
+%     % Check if ifi=0.0167
+%     if round(1/ifi)~=60
+%       error('Error: Screen flash frequency is not set at 60Hz.');    
+%     end
 
     % Numer of frames to wait when specifying good timing. Note: the use of
     % wait frames is to show a generalisable coding. For example, by using
@@ -222,6 +222,10 @@ try
                     Screen('FillRect', windowPtr, white, RightBottomSquare);
                     Screen('FillRect', windowPtr, white, LeftUpperSquare);  % event type = 1200001
                     Screen('FillRect', windowPtr, white, LeftBottomSquare);
+                    % show upperleft photocell on the other side undercovered - right monitor
+                    Screen('FillRect', windowPtr, white, RightUpperSquare+[-screenXpixels/3+PhotosensorSize*2 0 -screenXpixels/3+PhotosensorSize*2 0]); 
+                    % show upperleft photocell on the other side undercovered - left monitor
+                    Screen('FillRect', windowPtr, white, LeftUpperSquare+[+screenXpixels/3-PhotosensorSize*2 0 +screenXpixels/3-PhotosensorSize*2 0]); 
                 end
         
                 % Flip to the screen

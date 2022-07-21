@@ -207,6 +207,7 @@ try
         Showframes(1).Showframes{i} = resamBP(BP(1).BP{i},ifi,sr,waitframes);
         Showframes(2).Showframes{i} = resamBP(BP(2).BP{i},ifi,sr,waitframes);
     end
+    save(['Showframes' num2str(seed) '.mat'],'Showframes');
 
     % combine all 4 conditions
     MaxTaps=230*2; % allow for additional 230 taps in one trials; have to manually advance by experimentor anyway
