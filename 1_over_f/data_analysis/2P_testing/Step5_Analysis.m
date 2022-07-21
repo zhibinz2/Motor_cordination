@@ -170,9 +170,8 @@ run startup
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/VAR_Granger
 
 % window of time (ms) for 100 taps
-Inter100=round(100/1.3,3); % in second
-nSamInter100=Inter100*sr; % number of samples in each window
-nSamOverlap30=round(nSamInter100*0.3); % number of samples for each overlapping window of 30 taps
+winsize = 10*sr; % 10 Second with df of 0.1Hz
+overlapsize = round(winsize*0.3);% number of samples for each overlapping window of3.3 seconds
 
 % Calculation
 y1=[];y2=[];y12=[];XcorrR=[];
@@ -180,19 +179,37 @@ ys1=[];ys2=[];
 nTrials=12;
 for i=1:nTrials
     y1(i).BP01=(BP(1).BP{i})'; % in boolean
-    y2(i).BP01=(BP(2).BP{i})'; % in boolean     
+    y2(i).BP01=(BP(2).BP{i})'; % in boolean 
+    % open spectra2
+    y1(i).EEGPower=abs(fft(zscore(EEG(1).EEG{i},[],1)));
+    y2(i).EEGPower=abs(fft(zscore(EEG(2).EEG{i},[],1)));
+    
 %     y1(i).BPint=Calinterval(y1(i).BP01)./sr; % in second
 %     y2(i).BPint=Calinterval(y2(i).BP01)./sr; % in second
     
     % loop through each sliding window
      % determine how many sliding windows
      MinLength=min([length(y1(i).BP01) length(y2(i).BP01)]);
-     nWin=floor(MinLength-(nSamInter100-nSamOverlap30))/nSamOverlap30;
+     nwin=floor(MinLength-(winsize-overlapsize))/overlapsize;
      
-     
+     for k=1:nwin;
+         samples = (k-1)*overlapsize+1:k*winsize;
+%          open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/2P_EEG_sliding_power.m
+%          eegdata_L = y1(i).EEG(samples,:);
+%          eegdata_R = y2(i).EEG(samples,:);
+%          tempf_L = fft(eegdata_L,[],1);
+%          tempf_R = fft(eegdata_R,[],1);
+%          
+%          for m = 1:50 % 50 frequencies
+%             freqs = (m-1)*10+1:m*10; % downsample freq
+%             power_L = sum(abs(tempf_L(freqs,:)),1);
+%             power_R = sum(abs(tempf_R(freqs,:)),1);
+%             pow_L(j).EEG(m,:,k) = power_L; % freq x chan x time
+%             pow_R(j).EEG(m,:,k) = power_R;
+%          end
+        
     % @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-     
-     
+
      
     
     % remove the mean
