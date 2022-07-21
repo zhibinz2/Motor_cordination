@@ -13,7 +13,7 @@ CommitName=char(datetime('now'));
 % undo all current changes
 % !git restore .
 
-%get rid of untracked files
+% get rid of untracked files
 % !git clean -f
 
 %%
