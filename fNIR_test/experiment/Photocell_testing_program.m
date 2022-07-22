@@ -111,7 +111,10 @@ try
     RightUpperSquare= [screenXpixels-PhotosensorSize*2 0 screenXpixels PhotosensorSize*2];
     LeftBottomSquare= [0 screenYpixels-PhotosensorSize*2 PhotosensorSize*2 screenYpixels];
     LeftUpperSquare= [0 0 PhotosensorSize*2 PhotosensorSize*2];
-
+    % Positions of the two sides
+    RightSide = [screenXpixels-PhotosensorSize*2 0 screenXpixels screenYpixels];
+    LeftSide = [0 0 PhotosensorSize*2 screenYpixels];
+    
     % Enable alpha blending for anti-aliasing
     % For help see: Screen BlendFunction?
     % Also see: Chapter 6 of the OpenGL programming guide
@@ -221,16 +224,20 @@ try
 
                 % Flash photocell every other second during the whole trial (bottom left)
                 if (~isempty(find([1:2:numFrames]==n))) % every two frames
-                    Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-                    Screen('FillRect', windowPtr, white, RightBottomSquare);
-                    Screen('FillRect', windowPtr, white, LeftUpperSquare);  % event type = 1200001
-                    Screen('FillRect', windowPtr, white, LeftBottomSquare);
-                    % show upperleft photocell on the other side undercovered - right monitor
-                    Screen('FillRect', windowPtr, white, RightUpperSquare+[-screenXpixels/3+PhotosensorSize*2 0 -screenXpixels/3+PhotosensorSize*2 0]); 
-                    % show upperleft photocell on the other side undercovered - left monitor
-                    Screen('FillRect', windowPtr, white, LeftUpperSquare+[+screenXpixels/3-PhotosensorSize*2 0 +screenXpixels/3-PhotosensorSize*2 0]); 
+%                     Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
+%                     Screen('FillRect', windowPtr, white, RightBottomSquare);
+%                     Screen('FillRect', windowPtr, white, LeftUpperSquare);  % event type = 1200001
+%                     Screen('FillRect', windowPtr, white, LeftBottomSquare);
+%                     % show upperleft photocell on the other side undercovered - right monitor
+%                     Screen('FillRect', windowPtr, white, RightUpperSquare+[-screenXpixels/3+PhotosensorSize*2 0 -screenXpixels/3+PhotosensorSize*2 0]); 
+%                     % show upperleft photocell on the other side undercovered - left monitor
+%                     Screen('FillRect', windowPtr, white, LeftUpperSquare+[+screenXpixels/3-PhotosensorSize*2 0 +screenXpixels/3-PhotosensorSize*2 0]);
+                    % Show left and right side
+                    Screen('FillRect', windowPtr, white, LeftSide);  
+                    Screen('FillRect', windowPtr, white, RightSide);
                 end
         
+                
                 % Flip to the screen
                 vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
             
