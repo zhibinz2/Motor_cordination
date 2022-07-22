@@ -2,28 +2,28 @@
 % to the fNIRS laptop
 sca; clc; close all; clear all; clearvars; 
 
-% LSL #####################################################################
-% Addpath
-
-addpath(genpath('/home/hnl/Documents/GitHub/labstreaminglayer/LSL/liblsl-Matlab')); % for LSL
-% instantiate the library for LSL
-lib = lsl_loadlib();
-% make new stream outlets
-% info1 = lsl_streaminfo(lib,'BioSemi','EEG',8,100,'cf_float32','sdfwerr32432');
-% the name (here MyMarkerStream) is visible to the experimenter and should be chosen so that 
-% it is clearly recognizable as your MATLAB software's marker stream
-% The content-type should be Markers by convention, and the next three arguments indicate the 
-% data format (1 channel, irregular rate, string-formatted).
-% The so-called source id is an optional string that allows for uniquely identifying your 
-% marker stream across re-starts (or crashes) of your script (i.e., after a crash of your script 
-% other programs could continue to record from the stream with only a minor interruption).
-info2 = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','myuniquesourceid23443');
-% open the outlets
-% outlet1 = lsl_outlet(info1);
-outlet2 = lsl_outlet(info2);
-% Set markers
-% markers = {'Baseline-Start', 'Baseline-End', 'Trial-Start', 'Trial-End','Screen_Flip'};
-markers = {'C', 'C', 'A', 'B','Screen_Flip'};
+% % LSL #####################################################################
+% % Addpath
+% 
+% addpath(genpath('/home/hnl/Documents/GitHub/labstreaminglayer/LSL/liblsl-Matlab')); % for LSL
+% % instantiate the library for LSL
+% lib = lsl_loadlib();
+% % make new stream outlets
+% % info1 = lsl_streaminfo(lib,'BioSemi','EEG',8,100,'cf_float32','sdfwerr32432');
+% % the name (here MyMarkerStream) is visible to the experimenter and should be chosen so that 
+% % it is clearly recognizable as your MATLAB software's marker stream
+% % The content-type should be Markers by convention, and the next three arguments indicate the 
+% % data format (1 channel, irregular rate, string-formatted).
+% % The so-called source id is an optional string that allows for uniquely identifying your 
+% % marker stream across re-starts (or crashes) of your script (i.e., after a crash of your script 
+% % other programs could continue to record from the stream with only a minor interruption).
+% info2 = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','myuniquesourceid23443');
+% % open the outlets
+% % outlet1 = lsl_outlet(info1);
+% outlet2 = lsl_outlet(info2);
+% % Set markers
+% % markers = {'Baseline-Start', 'Baseline-End', 'Trial-Start', 'Trial-End','Screen_Flip'};
+% markers = {'C', 'C', 'A', 'B','Screen_Flip'};
 
 % ##################################################################### LSL
 
@@ -175,7 +175,7 @@ try
     % ************************************************ Baseline taking 60s 
 
     % initialize some variables
-    TrialDurations=[]
+    TrialDurations=[];
 
     %############################### Loop through block
     %*******************************Loop through block
@@ -193,12 +193,12 @@ try
             break;
             end
             
-            % LSL markers to the local network
-            % send data into the outlet, sample by sample
-        %     outlet1.push_sample(1); % send data number 1
-            % send markers into the outlet
-            mrk = markers{3};
-            outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+%             % LSL markers to the local network
+%             % send data into the outlet, sample by sample
+%         %     outlet1.push_sample(1); % send data number 1
+%             % send markers into the outlet
+%             mrk = markers{3};
+%             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
             
             % Run the trial #################
             % initial or reset trial frame number
@@ -234,9 +234,9 @@ try
                 n = n+1;
             end
 
-            %% send markers into the outlet
-            mrk = markers{4};
-            outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
+%             %% send markers into the outlet
+%             mrk = markers{4};
+%             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
 
         end
         
