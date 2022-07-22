@@ -33,7 +33,10 @@
 !xrandr --output DP-2 --auto --output DP-6 --auto --right-of DP-2
 
 %% to Set Your Monitor Refresh Rate
+% for BenQ in SBSG1507 (hnlstim1)
 !xrandr --output DVI-D-0 --mode 1920x1080 --rate 60.00
+!xrandr --output DP-1 --mode 1920x1080 --rate 60.00
+!xrandr --output DVI-D-1 --mode 1920x1080 --rate 60.00 --output DP-1 --mode 1920x1080 --rate 60.00
 % for BenQ in SBSG1507 (hnlstim1)
 !xrandr --output DVI-D-1 --mode 1920x1080 --rate 144.00 
 !xrandr --output DP-1 --mode 1920x1080 --rate 144.00

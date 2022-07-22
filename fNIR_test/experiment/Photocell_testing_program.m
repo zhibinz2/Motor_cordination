@@ -2,6 +2,10 @@
 % to the fNIRS laptop
 sca; clc; close all; clear all; clearvars; 
 
+% set the freq of photocell (waitframe method, not accurate)
+% Hz=input('enter the frequency:');
+
+
 % % LSL #####################################################################
 % % Addpath
 % 
@@ -146,13 +150,21 @@ try
     % waitframes = 2 one would flip on every other frame. See the PTB
     % documentation for details. In what follows we flip every frame. 
     % In order to reverse the checkerboard at 8Hz
-    % We have to reverse the checkerboard every (1/8)/ifi frames
-    % But fft of the photocell reveal that it is 4 Hz (I will need to try this on Neuroscan)
-    waitframes = (1/8)/ifi;
+    % We have to reverse the checkerboard every (1/8)/ifi video frames
+    % But realtime fft of the photocell show 4 Hz if flip ever other show frame
+    % I will need to try this on Neuroscan)
+%     waitframes = (1/8)/ifi;
+
+    % Hz=30; % flash at 30Hz
+    % waitframes = (1/Hz)/ifi;
+    
     
     % Setting time variables**********************************************
     % total number of frames per trial
-    numFrames=round(10/ifi/waitframes); % 10 seconds 
+    % numFrames=round(100/ifi/waitframes); % 100 seconds 
+    
+    % no waitframe,just flip every frame ASAP
+    numFrames=round((1/ifi)*100); % 100 seconds 
     % **********************************************Setting time variables
     
     % Hide Mice:****************************************************************
@@ -170,7 +182,7 @@ try
     HideCursor(windowPtr,mice);
     %HideCursor(windowPtr,mice(1));
 
-    instructionStart=['OK. Press a key to start!']; % Tell subject to open eye and start
+    instructionStart=['OK. Press Esc to start!']; % Tell subject to open eye and start
     DrawFormattedText2(instructionStart,'win',windowPtr,...
         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
     Screen('Flip',windowPtr);
@@ -223,7 +235,7 @@ try
                 end
 
                 % Flash photocell every other second during the whole trial (bottom left)
-                if (~isempty(find([1:2:numFrames]==n))) % every two frames
+                % if (~isempty(find([1:2:numFrames]==n))) % every two frames (reduced freq to half)
 %                     Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
 %                     Screen('FillRect', windowPtr, white, RightBottomSquare);
 %                     Screen('FillRect', windowPtr, white, LeftUpperSquare);  % event type = 1200001
@@ -235,12 +247,20 @@ try
                     % Show left and right side
                     Screen('FillRect', windowPtr, white, LeftSide);  
                     Screen('FillRect', windowPtr, white, RightSide);
-                end
+                % end
         
                 
-                % Flip to the screen
-                vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-            
+                
+%                 % Flip to the screen
+%                 vbl  = Screen('Flip', windowPtr, vbl + waitframes * ifi);
+%                 % Flip black screen at once after photocell
+%                 vbl  = Screen('Flip', windowPtr);
+                
+                % Flip the phtocell
+                Screen('Flip', windowPtr);
+                % Flip black screen at once after photocell
+                Screen('Flip', windowPtr);
+                
                 n = n+1;
             end
 
