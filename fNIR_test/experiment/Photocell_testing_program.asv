@@ -91,9 +91,8 @@ try
     % For help see: Screen Openwindow?
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
-%     [windowPt
-% scr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 600 400]); 
-    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 600 400]); 
+%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
     % For help see: Screen windowSize?
@@ -145,119 +144,7 @@ try
     % In order to reverse the checkerboard at 8Hz
     % We have to reverse the checkerboard every (1/8)/ifi frames
     % But fft of the photocell reveal that it is 4 Hz (I will need to try this on Neuroscan)
-    waitframes = (1/8)/ifi;
     
-    % Setting time variables**********************************************
-    % total number of frames per trial
-    numFrames=round(10/ifi/waitframes); % 10 seconds 
-    % **********************************************Setting time variables
-    
-    % Hide Mice:****************************************************************
-    % Get handles for all virtual pointing devices, aka cursors:
-    typeOnly='masterPointer'; 
-    mice = GetMouseIndices(typeOnly);  
-    % DuoMice: ***************************************************************
-    % Hide the system-generated cursors. We do this, because only the
-    % first mouse cursor is hardware-accelerated, HideCursorie., a GPU created
-    % hardware cursor. All other cursors are software-cursors, created
-    % by the Windowing system. These tend to flicker badly in our use
-    % case. Therefore we disable all system cursor images and draw our
-    % cursors ourselves for a more beautiful look:
-    % Hide the cursor
-    HideCursor(windowPtr,mice);
-    %HideCursor(windowPtr,mice(1));
-
-    instructionStart=['OK. Press a key to start!']; % Tell subject to open eye and start
-    DrawFormattedText2(instructionStart,'win',windowPtr,...
-        'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
-    Screen('Flip',windowPtr);
-    % hit a key to continue
-    %pause(1); 
-    KbStrokeWait;Screen('Flip',windowPtr);pause(2);
-    % ************************************************ Baseline taking 60s 
-
-    % initialize some variables
-    TrialDurations=[];
-
-    %############################### Loop through block
-    %*******************************Loop through block
-    for block=1:numBlock
-
-        
-        %******************** Within block loop
-        % how many trials 
-        for t=1:numTrials 
-
-            % Breakout by hitting esc
-            [keyIsDown, keysecs, keyCode] = KbCheck;  
-            if keyCode(KbName('escape'))
-            Screen('CloseAll');
-            break;
-            end
-            
-%             % LSL markers to the local network
-%             % send data into the outlet, sample by sample
-%         %     outlet1.push_sample(1); % send data number 1
-%             % send markers into the outlet
-%             mrk = markers{3};
-%             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-            
-            % Run the trial #################
-            % initial or reset trial frame number
-            n=1;
-            % get a timestamp and begin the trial
-            vbl = Screen('Flip', windowPtr);
-                        
-            
-            % while numberOfSecondsElapsed < 10;
-            while n <  numFrames 
-                % If esc is press, break out of the while loop and close the screen
-                [keyIsDown, keysecs, keyCode] = KbCheck;
-                if keyCode(KbName('escape'));
-                    Screen('CloseAll');
-                    
-                    break;
-                end
-
-                % Flash photocell every other second during the whole trial (bottom left)
-                if (~isempty(find([1:2:numFrames]==n))) % every two frames
-                    Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-                    Screen('FillRect', windowPtr, white, RightBottomSquare);
-                    Screen('FillRect', windowPtr, white, LeftUpperSquare);  % event type = 1200001
-                    Screen('FillRect', windowPtr, white, LeftBottomSquare);
-                    % show upperleft photocell on the other side undercovered - right monitor
-                    Screen('FillRect', windowPtr, white, RightUpperSquare+[-screenXpixels/3+PhotosensorSize*2 0 -screenXpixels/3+PhotosensorSize*2 0]); 
-                    % show upperleft photocell on the other side undercovered - left monitor
-                    Screen('FillRect', windowPtr, white, LeftUpperSquare+[+screenXpixels/3-PhotosensorSize*2 0 +screenXpixels/3-PhotosensorSize*2 0]); 
-                end
-        
-                % Flip to the screen
-                vbl  = Screen('Flip', windowPtr, vbl + (waitframes -0.5) * ifi);
-            
-                n = n+1;
-            end
-
-%             %% send markers into the outlet
-%             mrk = markers{4};
-%             outlet2.push_sample({mrk});   % note that the string is wrapped into a cell-array
-
-        end
-        
-    end
-% initials trial frame number
-% Show The End
-TheEnd = ['The End'];
-DrawFormattedText2(TheEnd,'win',windowPtr,...
-    'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',white);
-vbl=Screen('Flip',windowPtr);
-WaitSecs(3)
-% hit a key to continue
-% pause(1);
-KbStrokeWait;Screen('Flip',windowPtr);pause(2);
-
-%*************************************
-Priority(0);   
-sca;
 
 catch
     sca;
