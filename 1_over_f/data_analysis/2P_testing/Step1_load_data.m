@@ -7,14 +7,16 @@ cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_tes
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing;
 
 % data directories
-cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/Plots
-cd /ssd/zhibin/1overf/20220517_2P/Segmented_data/Plots
-cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/Plots
-cd /ssd/zhibin/1overf/20220609_2P/Segmented_data/Plots
-cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
-cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots
+cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/Plots % Kenta and Jenny: Synch 2 - 3 Hz
+cd /ssd/zhibin/1overf/20220517_2P/Segmented_data/Plots % Hiro and Kenta: Synch 2 - 3 Hz
+cd /ssd/zhibin/1overf/20220518_2P/Segmented_data/Plots % Jenny and Hiro: Synch 2 - 3 Hz
+cd /ssd/zhibin/1overf/20220609_2P/Segmented_data/Plots % Patty and Hojjat: Synch 1.3Hz 600taps
+cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots % Patty and Hojjat: Syncopate 1.3 Hz 600taps
+cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots % Patty and Shane: Synch 1.3Hz 230 taps
+cd /ssd/zhibin/1overf/20220721_2P/Segmented_data/Plots % Patty and Hojjat: Syncopate 1.3 Hz 230 taps
 
 load 20220713.mat
+load 20220721.mat
 
 %% load TMSi data
 
@@ -248,13 +250,21 @@ plot(PacersL-PacersL(1), ones(length(PacersL)),'r.');
 hold on;
 plot(PacersR-PacersR(1), ones(length(PacersR)),'b.');
 
-% Plot alligned (syncopation)
+% Plot alligned (for syncopation 20220610_2P)
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeIndL-PacerTimeIndL(1), ones(length(PacerTimeIndL)),'r.');
 hold on;
 plot(PacerTimeIndR-PacerTimeIndR(1), ones(length(PacerTimeIndR)),'b.');
 
-%% extract time points for pacers - syncopation
+
+% Plot alligned (for syncopation 20220721_2P)
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(PacerTimeIndL-PacerTimeIndL(1), ones(length(PacerTimeIndL)),'r.');
+hold on;
+plot(PacerTimeIndR-PacerTimeIndR(2), 0.9*ones(length(PacerTimeIndR)),'b.');
+ylim([0 2]);
+
+%% extract time points for pacers - syncopation -20220610_2P
 % PacerTimeIndL; PacerTimeIndR; % index in datatime
 % PacerTimeL01; PacerTimeR01;
 % figure; plot(PacerTimeR01,'b'); figure; plot(PacerTimeR01,'b');
@@ -267,6 +277,7 @@ thresholdR=2000*3; % after longer than 3 sec interval
 SegPacerIndR=[1 find([0 diff(PacerTimeIndR')]>thresholdR)]; % should be 14 values (first five should be 1 2 3 4 5)
 SegtimeIndR=PacerTimeIndR(SegPacerIndR); % index in data time
 
+%% extract time points for pacers - syncopation -20220721_2P
 
 %% Extract feedbacks from light detector ISO (skip for now)
 % look for the second ISO aux channel for the photocell 

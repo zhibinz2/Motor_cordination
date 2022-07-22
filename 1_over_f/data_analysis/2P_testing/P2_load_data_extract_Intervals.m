@@ -164,7 +164,7 @@ plot(PacerTimeIndL-PacerTimeIndL(1), ones(length(PacerTimeIndL)),'r.');
 hold on;
 plot(PacerTimeIndR-PacerTimeIndR(1), ones(length(PacerTimeIndR)),'b.');
 
-%% extract time points for pacers - syncopation
+%% extract time points for pacers - syncopation -20220610_2P
 % PacerTimeIndL; PacerTimeIndR; % index in datatime
 % PacerTimeL01; PacerTimeR01;
 % figure; plot(PacerTimeR01,'b'); figure; plot(PacerTimeR01,'b');
