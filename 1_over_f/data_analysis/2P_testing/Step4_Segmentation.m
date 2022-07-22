@@ -3,7 +3,7 @@ cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/1_50Hz_ICAautomized
 cd /ssd/zhibin/1overf/20220517_2P/Segmented_data/1_50Hz_ICAautomized
 
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data
-
+cd /ssd/zhibin/1overf/20220721_2P/Segmented_data
 %% Collect all the variables
 % experimental data extracted =====================================
 allPerm;conditionNames;seed;
@@ -80,14 +80,24 @@ loL;loR; % Hilbert envelop
 % organize into data structure ***
 
 %% Select segmentation indicies to use
+%  For synchronization (20220713_2P):
 % Select segmentation points based on pacers and phtotocells on light senor 1
 % 50 Pacer markers selected (2 resting + 12 blocks + 11 resting)
 % SegIndL=PacerTimeIndL([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);
-% 12 segmentation points of the last pacer (30th tap)
-% SegIndL1=PacerTimeIndL([4+[32*([1:12]-1)]+30]);
+% SegIndL1=PacerTimeIndL([4+[32*([1:12]-1)]+30]);% 12 segmentation points of the last pacer (30th pacer)
 % SegIndR1=PacerTimeIndR([4+[32*([1:12]-1)]+30]);
-SegIndL1=PacersL([6+[4*([1:12]-1)]]);
+SegIndL1=PacersL([6+[4*([1:12]-1)]]);% 12 segmentation points of the last pacer (30th pacer)
 SegIndR1=PacersR([6+[4*([1:12]-1)]]);
+% For syncopation (20220721_2P):
+SegIndL1=PacerTimeIndL(SegPacerIndL([[1:12]*3+2])+29);% the 30th pacer
+SegIndR1=PacerTimeIndR(SegPacerIndR([[1:12]*3+2])+29);% the 30th pacer
+% Examine 
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+plot(PacerTimeIndL-PacerTimeIndL(1),2*ones(1,length(PacerTimeIndL)),'ro');hold on;
+plot(SegIndL1-PacerTimeIndL(1),2.1*ones(length(SegIndL1),11,1),'ro'); 
+plot(PacerTimeIndR-PacerTimeIndR(1),ones(1,length(PacerTimeIndR)),'bo');hold on;
+plot(SegIndR1-PacerTimeIndR(1),1.1*ones(length(SegIndR1),11,1),'bo'); 
+ylim([-3 6]);
 
 % Select segmentation points of last BP in each trial
 % determine a threshold of numbers of samples in between trials
@@ -95,6 +105,7 @@ if srL==srR; sr=srL; end; threshold = sr*30;
 % 12 segmentation points of the last tap in each trial
 SegIndL2=[BottonPresTimeIndL(find([diff(BottonPresTimeIndL')]>threshold)); BottonPresTimeIndL(end)]; 
 SegIndR2=[BottonPresTimeIndR(find([diff(BottonPresTimeIndR')]>threshold)); BottonPresTimeIndR(end)]; 
+% Exam
 figure('units','normalized','outerposition',[0 0 1 0.6]);
 subplot(2,1,1);
 plot(BottonPresTimeIndL,ones(1,length(BottonPresTimeIndL)),'ro');hold on;
@@ -108,7 +119,22 @@ plot(SegIndR2,ones(length(SegIndR2),11,1).*1.1,'bo'); ylim([0 2]);
 % SegIndR=unique([SegIndR1;SegIndR2]);
 SegIndL=sort([SegIndL1;SegIndL2]);
 SegIndR=sort([SegIndR1;SegIndR2]);
+% Examine 
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+plot(PacerTimeIndL-PacerTimeIndL(1),2*ones(1,length(PacerTimeIndL)),'ro');hold on;
+plot(SegIndL-PacerTimeIndL(1),2.1*ones(length(SegIndL),11,1),'ro'); 
+plot(PacerTimeIndR-PacerTimeIndR(1),ones(1,length(PacerTimeIndR)),'bo');hold on;
+plot(SegIndR-PacerTimeIndR(1),1.1*ones(length(SegIndR),11,1),'bo'); 
+ylim([-2 5]);
 
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+plot(PacerTimeIndL-PacerTimeIndL(1),2*ones(1,length(PacerTimeIndL)),'ro');hold on;
+plot(SegIndL1-PacerTimeIndL(1),2.1*ones(length(SegIndL1),11,1),'ro'); 
+plot(SegIndL2-PacerTimeIndL(1),2.1*ones(length(SegIndL2),11,1),'ro'); 
+plot(PacerTimeIndR-PacerTimeIndR(1),ones(1,length(PacerTimeIndR)),'bo');hold on;
+plot(SegIndR1-PacerTimeIndR(1),1.1*ones(length(SegIndR1),11,1),'bo'); 
+plot(SegIndR2-PacerTimeIndR(1),1.1*ones(length(SegIndR2),11,1),'bo'); 
+ylim([-2 5]);
 %% Segment EEG - synchronization
 mixedsigL=mixedsigL';
 mixedsigR=mixedsigR';

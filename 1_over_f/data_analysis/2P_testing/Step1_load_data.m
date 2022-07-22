@@ -272,6 +272,13 @@ plot(PacerTimeIndL,1.6*ones(1,length(PacerTimeIndL)),'r.');hold on;ylim([0 3]);
 plot(PacerTimeIndR,1.4*ones(1,length(PacerTimeIndR)),'b.');
 legend('restored PacerTimeIndL', 'PacerTimeIndR');
 
+% Plot alligned again (for syncopation 20220721_2P)
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(PacerTimeIndL-PacerTimeIndL(1), ones(length(PacerTimeIndL)),'r.');
+hold on;
+plot(PacerTimeIndR-PacerTimeIndR(1), 0.9*ones(length(PacerTimeIndR)),'b.');
+ylim([0 2]);
+legend('alligned-PacerTimeIndL', 'alligned-PacerTimeIndR');
 %% extract time points for pacers with segmentation purpose - syncopation -20220610_2P
 % PacerTimeIndL; PacerTimeIndR; % index in datatime
 % PacerTimeL01; PacerTimeR01;
@@ -371,6 +378,7 @@ plot(samplesR(ISOauxindR(1),:),'r'); title('ISOauxind(1)')%  ISO aux = analog
 subplot(2,1,2);
 plot(samplesR(ISOauxindR(2),:),'b'); title('ISOauxind(2)')
 % select a good one
+Photocell_R=samplesR(ISOauxindR(1),:)';
 Photocell_R=samplesR(ISOauxindR(1),:)'.*-1;
 Photocell_R=samplesR(ISOauxindR(2),:)';
 
