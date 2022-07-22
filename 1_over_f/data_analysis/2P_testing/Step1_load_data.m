@@ -228,15 +228,15 @@ hold on;
 PacersR=PacerTimeIndR([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);
 plot(PacersR, ones(length(PacersR)),'b.');
 
-% make shift for missming pacers on the left (optional) 
-% Only needed for 20220517_2P
+%% make shift for missming pacers (optional) 
+% Make up for missing pacers on the left (for 20220517_2P) (synchronization)
 ShiftPacer=PacerTimeIndL(end)-PacerTimeIndR(end);
 PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
 PacersL=PacersR+ShiftPacer;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacersL,ones(1,length(PacersL)),'r.');hold on;ylim([0 3]);
 plot(PacerTimeIndL,2*ones(1,length(PacerTimeIndL)),'r.');
-% Only needed for 20220713_2P (12 blocks)
+% Make up for missing pacers on the left (for 20220713_2P) (synchronization 12 blocks)
 ShiftPacer=PacerTimeIndL(end)-PacerTimeIndR(end);
 PacersR=PacerTimeIndR([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);
 PacersL=PacersR+ShiftPacer;
@@ -256,15 +256,23 @@ plot(PacerTimeIndL-PacerTimeIndL(1), ones(length(PacerTimeIndL)),'r.');
 hold on;
 plot(PacerTimeIndR-PacerTimeIndR(1), ones(length(PacerTimeIndR)),'b.');
 
-
 % Plot alligned (for syncopation 20220721_2P)
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeIndL-PacerTimeIndL(1), ones(length(PacerTimeIndL)),'r.');
 hold on;
 plot(PacerTimeIndR-PacerTimeIndR(2), 0.9*ones(length(PacerTimeIndR)),'b.');
 ylim([0 2]);
+legend('alligned-PacerTimeIndL', 'alligned-PacerTimeIndR');
 
-%% extract time points for pacers - syncopation -20220610_2P
+% Make up for missing pacers on the left (for 20220721_2P) (sycopation 12 blocks)
+ShiftPacer=PacerTimeIndL(1)-PacerTimeIndR(2);
+PacerTimeIndL=PacerTimeIndR+ShiftPacer;
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(PacerTimeIndL,1.6*ones(1,length(PacerTimeIndL)),'r.');hold on;ylim([0 3]);
+plot(PacerTimeIndR,1.4*ones(1,length(PacerTimeIndR)),'b.');
+legend('restored PacerTimeIndL', 'PacerTimeIndR');
+
+%% extract time points for pacers with segmentation purpose - syncopation -20220610_2P
 % PacerTimeIndL; PacerTimeIndR; % index in datatime
 % PacerTimeL01; PacerTimeR01;
 % figure; plot(PacerTimeR01,'b'); figure; plot(PacerTimeR01,'b');
@@ -277,7 +285,15 @@ thresholdR=2000*3; % after longer than 3 sec interval
 SegPacerIndR=[1 find([0 diff(PacerTimeIndR')]>thresholdR)]; % should be 14 values (first five should be 1 2 3 4 5)
 SegtimeIndR=PacerTimeIndR(SegPacerIndR); % index in data time
 
-%% extract time points for pacers - syncopation -20220721_2P
+%% extract time points for pacers with segmentation purpose - syncopation -20220721_2P (12 blocks)
+% L player pacer
+thresholdL=2000*3; % after longer than 3 sec interval
+SegPacerIndL=[1 find([0 diff(PacerTimeIndL')]>thresholdL)]; % should be 38 values (first five should be 1 2 3 4 5)
+SegtimeIndL=PacerTimeIndL(SegPacerIndL); % index in data time
+% R player pacer
+thresholdR=2000*3; % after longer than 3 sec interval
+SegPacerIndR=[1 find([0 diff(PacerTimeIndR')]>thresholdR)]; % should be 38 values (first five should be 1 2 3 4 5)
+SegtimeIndR=PacerTimeIndR(SegPacerIndR); % index in data time
 
 %% Extract feedbacks from light detector ISO (skip for now)
 % look for the second ISO aux channel for the photocell 
