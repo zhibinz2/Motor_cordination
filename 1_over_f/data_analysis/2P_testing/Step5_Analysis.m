@@ -239,19 +239,27 @@ end
 % Calculation on EEG in sliding window
 % window of time (ms) for 100 taps
 winsize = 10*sr; % 10 Second with df of 0.1Hz
-overlapsize = round(winsize*0.3);% number of samples for each overlapping window of3.3 seconds
+% winsize = 2*sr; % 2 Second with df of 0.5 Hz
+% overlapsize = round(winsize*0.3);% number of samples for each overlapping window of3.3 seconds
+
 
 for i=1:nTrials
     y1(i).EEG=zscore(EEG(1).EEG{i},[],1);
     y2(i).EEG=zscore(EEG(2).EEG{i},[],1);
+    
+    % create a function that reorganize EEG into time x chan x chunks
+    
+    % feed it to allspectra (for 2 s chunks) or spectra3 (for 10s chunks)
+    % examine pow eppow corr cprod in imagesc and create myallspectra
+    
 
     % loop through each sliding window
      % determine how many sliding windows
-     MinLength=min([length(y1(i).BP01) length(y2(i).BP01)]);
-     nwin=floor(MinLength-(winsize-overlapsize))/overlapsize;
+%      MinLength=min([length(y1(i).BP01) length(y2(i).BP01)]);
+%      nwin=floor(MinLength-(winsize-overlapsize))/overlapsize;
      
-     for k=1:nwin;
-         samples = (k-1)*overlapsize+1:k*winsize;
+%      for k=1:nwin;
+%          samples = (k-1)*overlapsize+1:k*winsize;
 %          open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/P2_EEG_sliding_power.m
 %          eegdata_L = y1(i).EEG(samples,:);
 %          eegdata_R = y2(i).EEG(samples,:);
@@ -265,10 +273,10 @@ for i=1:nTrials
 %             pow_L(j).EEG(m,:,k) = power_L; % freq x chan x time
 %             pow_R(j).EEG(m,:,k) = power_R;
 %          end
-        
+%       end
     % @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-     
+end
     
 % plotting
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Corr_DFA

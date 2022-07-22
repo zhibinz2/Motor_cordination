@@ -2,10 +2,10 @@ function [P1,P2,Px,coh,phase,freqs,xx1,xx2] = spectra(x1,x2,maxfreq,sr,win);
 % x1 and x2 should be of the same length in the first dimension
 % This function can be used for Powerspectra or Cross spectra
 % It reorgainze the timeseries into chunks and then fft
-% It was used in
+% It was used in plot 14-4 of
 % /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/P2_Syncopate_plots.m
 
-if win=[]; win=10; end % chunck of 10 seconds
+if win==[]; win=10; end % chunck of 10 seconds
 SamplesLength=sr*win; % number of samples in the window
 
 % maximum number of 10 second windows (# of chuncks)
@@ -14,7 +14,7 @@ nTrials=min([floor(length(x1)/SamplesLength) floor(length(x2)/SamplesLength)]);
 % zcore transform
 x1=zscore(x1);x2=zscore(x2);
 
-% reorganize the time series into trials (time x chan x chunks)
+% reorganize the time series into trials (time x chunks)
 xx1=[];xx2=[];
 for i=1:nTrials
     xx1(:,i)=x1((SamplesLength*(i-1)+1):(SamplesLength*i),:);
