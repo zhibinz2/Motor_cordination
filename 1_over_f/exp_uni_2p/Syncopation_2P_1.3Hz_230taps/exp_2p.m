@@ -54,8 +54,8 @@ ConditionInstructionsR={'Tap between blue.'... %  \nPacer 2Hz.
 
 
 % Block & Trial number of the experiment **********************************
-% number of taps per trial/condition
-numTaps=600; % 600 @@@@@@@@ 
+% % number of taps per trial/condition
+% numTaps=600; % 600 @@@@@@@@ 
 % number of trials per block
 numTrials=12;
 % number of blocks
@@ -120,8 +120,8 @@ try
     % For help see: Screen Openwindow?
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
-%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3*60/59 330*40/33]); 
-    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3*60/59 330*40/33]); 
+%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
     % For help see: Screen windowSize?
@@ -210,8 +210,6 @@ try
     save(['Showframes' num2str(seed) '.mat'],'Showframes');
 
     % combine all 4 conditions
-    MaxTaps=230*2; % allow for additional 230 taps in one trials; have to manually advance by experimentor anyway
-    % MaxTaps=max([length(ShowframesL) length(ShowframesR)]);
 %     Showframes=zeros(4,MaxTaps);
 %     Showframes(1,1:length(ShowframesL))= ShowframesL; 
 %     Showframes(2,1:length(ShowframesR))= ShowframesR;

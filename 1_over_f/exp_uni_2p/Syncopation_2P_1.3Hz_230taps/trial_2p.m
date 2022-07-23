@@ -28,12 +28,14 @@ tapsRecordedL=0;tapsRecordedR=0;
 %% Set time limit for the trial loop
 numFrames = NumFramesInterval13Hz*600; % add numFrames to allow more time
 
-MaxTaps; numTaps;
+MaxTaps=230+230; % allow for additional 230 taps in one trials; have to manually advance by experimentor anyway
+    % MaxTaps=max([length(ShowframesL) length(ShowframesR)]);
+% numTaps;
 
-if condiSeq(conditionSelected) == 1 | 2 | 3 ;
+if (condiSeq(conditionSelected) == 1) | (condiSeq(conditionSelected) == 2)  | (condiSeq(conditionSelected) == 3);
     MaxFrames=max([ShowframesL ShowframesR]+NumFramesInterval13Hz*5); % add 5 more taps
-else condiSeq(conditionSelected) == 4
-    MaxFrames=max([ShowframesL ShowframesR])*2; % double lengths of the recording
+else (condiSeq(conditionSelected) == 4);
+    MaxFrames=max([ShowframesL ShowframesR]+NumFramesInterval13Hz*5);  % add 5 more taps
 end
 
 %% trial loop
