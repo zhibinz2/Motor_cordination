@@ -5,6 +5,7 @@ cd /ssd/zhibin/1overf/20220518_2P
 open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/P2_Intervals.m
 
 cd /ssd/zhibin/1overf/20220713_2P
+cd /ssd/zhibin/1overf/20220721_2P
 %% plot raw EEG
 timeL;samplesL;TRIGGERindL;srL;channels_infoL;labelsL;
 timeR;samplesR;TRIGGERindR;srR;channels_infoR;labelsR;
