@@ -3,6 +3,7 @@ timeL;samplesL;TRIGGERindL;srL;channels_infoL;labelsL;
 timeR;samplesR;TRIGGERindR;srR;channels_infoR;labelsR;
 % find EMG chan (BIP 01, BIP 02)
 EMGindL=find(labelsL=='BIP 01');
+EMGindL=find(labelsL=='BIP 02'); % for 20220721_2P
 EMGindR=find(labelsR=='BIP 01');
 % EMGindR=find(labelsR=='BIP 02');
 figure;
@@ -28,8 +29,9 @@ Hd = makefilter(srR,0.2,0.15,6,20,0);
 filtered_EMGR=filtfilthd(Hd,detrend_EMGR);
 figure('units','normalized','outerposition',[0 0 1 0.6]);
 subplot(2,1,1);plot(timeL,filtered_EMGL,'r'); title('filtered-EMGL');% move to zero level
+ylim([-2000 2000]);
 subplot(2,1,2);plot(timeR,filtered_EMGR,'b'); title('filtered-EMGR');
-
+ylim([-2000 2000]);
 %% Hilbert transform - synchronization
 % method 4 *******  spline interpolation over local maxima (best)
 np = 50; % N-tap Hilbert filter

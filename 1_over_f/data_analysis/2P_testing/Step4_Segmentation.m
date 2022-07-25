@@ -129,12 +129,13 @@ ylim([-2 5]);
 
 figure('units','normalized','outerposition',[0 0 1 0.6]);
 plot(PacerTimeIndL-PacerTimeIndL(1),2*ones(1,length(PacerTimeIndL)),'ro');hold on;
-plot(SegIndL1-PacerTimeIndL(1),2.1*ones(length(SegIndL1),11,1),'ro'); 
-plot(SegIndL2-PacerTimeIndL(1),2.1*ones(length(SegIndL2),11,1),'ro'); 
+plot(SegIndL1-PacerTimeIndL(1),2.1*ones(length(SegIndL1),11,1),'rx'); 
+plot(SegIndL2-PacerTimeIndL(1),2.1*ones(length(SegIndL2),11,1),'rx'); 
 plot(PacerTimeIndR-PacerTimeIndR(1),ones(1,length(PacerTimeIndR)),'bo');hold on;
-plot(SegIndR1-PacerTimeIndR(1),1.1*ones(length(SegIndR1),11,1),'bo'); 
-plot(SegIndR2-PacerTimeIndR(1),1.1*ones(length(SegIndR2),11,1),'bo'); 
-ylim([-2 5]);
+plot(SegIndR1-PacerTimeIndR(1),1.1*ones(length(SegIndR1),11,1),'bx'); 
+plot(SegIndR2-PacerTimeIndR(1),1.1*ones(length(SegIndR2),11,1),'bx'); 
+ylim([-1 4]);
+
 %% Segment EEG - synchronization
 mixedsigL=mixedsigL';
 mixedsigR=mixedsigR';
@@ -234,9 +235,9 @@ save(filename_variables,'FBlocs','-append');
 filename_structure=['data_structure' num2str(seed) '.mat'];
 save(filename_structure,'data');
 
-%% syncopation segmentation below
+%% syncopation segmentation below (for 20220610_2P)
 
-%% EEG - syncopation
+%% EEG - syncopation (for 20220610_2P)
 % mixedsigL=mixedsigL';
 % mixedsigR=mixedsigR';
 % SegtimeIndL; SegtimeIndR;
@@ -266,7 +267,7 @@ save(['EEG' num2str(seed) '.mat'],'EEGCondi1L','EEGCondi2L','EEGCondi3L',...
     'EEGCondi1R','EEGCondi2R','EEGCondi3R',...
     'EEGCondi4R');
 
-%% BP - syncopation
+%% BP - syncopation (for 20220610_2P)
 BottonPresTimeL01; BottonPresTimeR01;
 
 BPOpenEyeRestingL=BottonPresTimeL01(SegtimeIndL(1):SegtimeIndL(2),:);
@@ -294,7 +295,7 @@ save(['BP' num2str(seed) '.mat'],'BPCondi1L','BPCondi2L','BPCondi3L',...
     'BPCondi1R','BPCondi2R','BPCondi3R',...
     'BPCondi4R');
 
-%% FB - syncopation
+%% FB - syncopation (for 20220610_2P)
 FeedbTimeL01; FeedbTimeR01;
 
 FBOpenEyeRestingL=FeedbTimeL01(SegtimeIndL(1):SegtimeIndL(2),:);
@@ -322,7 +323,7 @@ save(['FB' num2str(seed) '.mat'],'FBCondi1L','FBCondi2L','FBCondi3L',...
     'FBCondi1R','FBCondi2R','FBCondi3R',...
     'FBCondi4R');
 
-%% EMG - syncopation
+%% EMG - syncopation (for 20220610_2P)
 filtered_EMGL; filtered_EMGR; % before hilbert transform
 upL;upR; % after hilbert transform
 
@@ -351,7 +352,7 @@ save(['EMG' num2str(seed) '.mat'],'EMGCondi1L','EMGCondi2L','EMGCondi3L',...
     'EMGCondi1R','EMGCondi2R','EMGCondi3R',...
     'EMGCondi4R');
 
-%% segment Photocell -  syncopation
+%% segment Photocell -  syncopation (for 20220610_2P)
 locsL; locsR;
 locsL01=zeros(1,length(timeL)); 
 locsR01=zeros(1,length(timeR));
@@ -383,7 +384,7 @@ save(['FBlocs' num2str(seed) '.mat'],'FBlocsCondi1L','FBlocsCondi2L','FBlocsCond
     'FBlocsCondi1R','FBlocsCondi2R','FBlocsCondi3R',...
     'FBlocsCondi4R');
 
-%% segment Pacers (for calculating errors) -  syncopation
+%% segment Pacers (for calculating errors) -  syncopation (for 20220610_2P)
 PacerTimeIndL; PacerTimeIndR;
 PacerTimeL01; PacerTimeR01;
 

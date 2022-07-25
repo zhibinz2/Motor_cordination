@@ -100,6 +100,18 @@ for i=1:length(PacersR);
     xline(PacersR(i),'b');
 end
     
+% Examine plot for 20220721_2P
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(2,1,1);plot(filtered_dataL5);ylim([-300 300]);title('truncated L');
+% mark the segmentation events
+for i=1:length(SegPacerIndL);
+    xline(PacerTimeIndL(SegPacerIndL(i)),'r');
+end
+subplot(2,1,2);plot(filtered_dataR5);ylim([-300 300]);title('truncated R');
+% mark the segmentation events
+for i=1:length(SegPacerIndR);
+    xline(PacerTimeIndR(SegPacerIndR(i)),'b');
+end
 
 %% load channel info for topoplots
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info
