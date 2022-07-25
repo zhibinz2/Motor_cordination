@@ -347,4 +347,6 @@ for i=1:nTrials
 
 end
 close all;
+
+%% Count and display number of BP in each trials
  
