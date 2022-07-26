@@ -6,11 +6,12 @@ cd /ssd/zhibin/1overf/20220713_2P/Segmented_data
 cd /ssd/zhibin/1overf/20220721_2P/Segmented_data
 %% Collect all the variables
 % experimental data extracted =====================================
-allPerm;conditionNames;seed;
+allPerm;conditionNames;seed;condiSeq;
 ifi;
 % add to mat file ***
 filename_variables=['data_variables' num2str(seed) '.mat'];
-save(filename_variables,'allPerm');
+save(filename_variables,'allPerm'); % for synchronization
+save(filename_variables,'condiSeq'); % for syncopation
 save(filename_variables,'conditionNames','ifi','-append');
 % organize into data structure ***
 data=[]; % first dimension has to be 1 in order to explore field names in GUI
@@ -20,7 +21,8 @@ data=[]; % first dimension has to be 1 in order to explore field names in GUI
 % data(1,1).condiSeq=allPerm; data(2,1).condiSeq=allPerm;
 % data(1,2).conditionNames=conditionNames; data(2,2).conditionNames=conditionNames;
 for i=1:2 % first dimension has to be 1 in order to show field names when explore in GUI
-    data(1,i).condiSeq=allPerm; % same as data(i).condiSeq=allPerm;
+    % data(1,i).condiSeq=allPerm; % same as data(i).condiSeq=allPerm;
+    data(1,i).condiSeq=condiSeq; % for syncopation
     data(1,i).condiNames=conditionNames;
     data(1,i).refreshRate=1/ifi;
 end
