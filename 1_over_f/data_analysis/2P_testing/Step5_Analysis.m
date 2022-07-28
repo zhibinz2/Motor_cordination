@@ -4,8 +4,12 @@ cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
+
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data
+cd /ssd/zhibin/1overf/20220721_2P/Segmented_data
+
 load('data_variables20220713.mat')
+load('data_variables20220721.mat')
 
 % d estimate and removal
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/MSE-VARFI
@@ -158,8 +162,13 @@ cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
+
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data
+cd /ssd/zhibin/1overf/20220721_2P/Segmented_data
+
 load('data_variables20220713.mat')
+load('data_variables20220721.mat')
+
 
 % d estimate and removal
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/MSE-VARFI
