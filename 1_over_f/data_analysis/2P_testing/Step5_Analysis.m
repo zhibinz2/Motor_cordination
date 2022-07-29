@@ -371,6 +371,13 @@ maxfreq=50; win=10; % 10 Second with df of 0.1Hz
 
 % Sliding win on BP01 for DFA and GC
 y1;y2;
+% Calculation of sliding window
+% window of time (ms) for 100 taps
+winsize = 80*sr; % 80 Second with df of 0.0125 Hz, about 104 taps
+% winsize = 10*sr; % 10 Second with df of 0.1Hz
+% winsize = 2*sr; % 2 Second with df of 0.5 Hz
+overlapsize = round(winsize*0.3);% number of samples for each overlapping window of3.3 seconds
+
 
 ys1=[];ys2=[];
 nTrials=12;
@@ -383,16 +390,23 @@ for i=1:nTrials
     % loop through each sliding window
      % determine how many sliding windows
      MinLength=min([length(y1(i).BP01) length(y2(i).BP01)]);
-     nwin=floor(MinLength-(winsize-overlapsize))/overlapsize;
+     nwin=floor((MinLength-(winsize-overlapsize))/overlapsize);
      
      for k=1:nwin;
          samples = (k-1)*overlapsize+1:k*winsize;
+         
+          % extract BP intervals
+            ys1(i).BPint{k}=Calinterval(y1(i).BP01(samples))./sr; % in second
+            ys2(i).BPint{k}=Calinterval(y2(i).BP01(samples))./sr; % in second
+            
+            % remove the mean
+            ys1(i).BPint{k} = ys1(i).BPint{k}-mean(y1(i).BPint{k});
+            ys2(i).BPint{k} = ys2(i).BPint{k}-mean(y2(i).BPint{k});
 
     % BP intervals
-    y1(i).BPint; % in second
-    y2(i).BPint; % in second
-    
-    MinLength=min([length(y1(i).BPint) length(y2(i).BPint)]);
+    y1s(i).BPint{k}; % in second
+    y2s(i).BPint{k}; % in second
+    %@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     % calculate H (or alpha) in DFA of y1 and y2
     n=[];F_n=[];FitValues=[];
@@ -417,13 +431,8 @@ for i=1:nTrials
     y12(i).sig=sig;
 end
 
-% Calculation on EEG in sliding window
-% window of time (ms) for 100 taps
-winsize = 10*sr; % 10 Second with df of 0.1Hz
-% winsize = 2*sr; % 2 Second with df of 0.5 Hz
-% overlapsize = round(winsize*0.3);% number of samples for each overlapping window of3.3 seconds
 
-% Calculate EEG Power of the whole trial
+% Calculate EEG Power in sliding win as well?
 for i=1:nTrials
     y1(i).EEG=zscore(EEG(1).EEG{i},[],1);
     y2(i).EEG=zscore(EEG(2).EEG{i},[],1);
