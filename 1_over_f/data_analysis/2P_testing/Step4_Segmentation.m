@@ -12,7 +12,7 @@ ifi;
 filename_variables=['data_variables' num2str(seed) '.mat'];
 save(filename_variables,'allPerm'); % for synchronization
 save(filename_variables,'condiSeq'); % for syncopation
-save(filename_variables,'conditionNames','ifi','-append');
+save(filename_variables,'conditionNames','ifi','seed','-append');
 % organize into data structure ***
 data=[]; % first dimension has to be 1 in order to explore field names in GUI
 % data.condiSeq=allPerm;
@@ -23,6 +23,7 @@ data=[]; % first dimension has to be 1 in order to explore field names in GUI
 for i=1:2 % first dimension has to be 1 in order to show field names when explore in GUI
     % data(1,i).condiSeq=allPerm; % same as data(i).condiSeq=allPerm;
     data(1,i).condiSeq=condiSeq; % for syncopation
+    data(1,i).seed=seed;
     data(1,i).condiNames=conditionNames;
     data(1,i).refreshRate=1/ifi;
 end

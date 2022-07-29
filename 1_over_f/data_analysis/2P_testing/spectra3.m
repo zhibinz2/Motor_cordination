@@ -1,4 +1,4 @@
-function [xx, fcoef, pow, eppow] = spectra3(x,sr,maxfreq,win)
+function [xx, freqs, fcoef, pow, eppow] = spectra3(x,sr,maxfreq,win)
 % Reorganize EEG into time x chan x chunks
 % Then fft and get power freq x chan
 % Use a window of 10s with df 0.1Hz and sum up each one Hz range
@@ -30,9 +30,10 @@ end
 %% fft
 df=1/win;
 nbins = ceil(maxfreq/df) + 1;
+freqs=(0:1:nbins-1)*df;
 fcoef = fft(xx,[],1);
 pow= squeeze(var(fcoef(1:nbins,:,:),[],3));
-eppow = abs(squeeze(mean(fceof(1:nbins,:,:),3)));
+eppow = abs(squeeze(mean(fcoef(1:nbins,:,:),3)));
 % for m = 1:50 % 50 frequencies
 %     freqs = [(m-1)*10+1:m*10]+1; % downsample freq
 %     pow (m,:) = sum(squeeze(var(coef(freqs,:,:),[],3)));

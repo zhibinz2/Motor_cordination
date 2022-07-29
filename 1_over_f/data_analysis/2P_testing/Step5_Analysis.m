@@ -186,6 +186,7 @@ maxfreq=50; win=10; % 10 Second with df of 0.1Hz
 y1=[];y2=[];y12=[];XcorrR=[];
 ys1=[];ys2=[];
 nTrials=12;
+alpha = 0.05; 
 for i=1:nTrials
     % extract BP01
     y1(i).BP01=(BP(1).BP{i})'; % in boolean
@@ -200,6 +201,8 @@ for i=1:nTrials
     % extract BP intervals
     y1(i).BPint=Calinterval(y1(i).BP01)./sr; % in second
     y2(i).BPint=Calinterval(y2(i).BP01)./sr; % in second
+    
+    MinLength=min([length(y1(i).BPint) length(y2(i).BPint)]);
 
     % remove the mean
     y1(i).BPint = y1(i).BPint-mean(y1(i).BPint);
@@ -211,17 +214,20 @@ for i=1:nTrials
     y1(i).acf = acf;
     y1(i).bounds = bounds;
     y1(i).lags = lags;
+    
     % Autocorr of y2
     acf=[];lags=[];bounds=[];
     [acf,lags,bounds] = autocorr(y2(i).BPint(1:MinLength),MinLength-1);
     y2(i).acf = acf;
     y2(i).bounds = bounds;
     y2(i).lags = lags;
+    
     % Xcorr between y1 and y2
     r12=[];lags12=[];
     [r12,lags12]=xcorr(y1(i).BPint(1:MinLength),y2(i).BPint(1:MinLength),30,'normalized');
     y12(i).r12 = r12;
     y12(i).lags12 = lags12;
+    
     % calculate H (or alpha) in DFA of y1 and y2
     n=[];F_n=[];FitValues=[];
     [~,Alpha,n,F_n,FitValues]=DFA_main(y1(i).BPint(1:MinLength));
@@ -251,15 +257,17 @@ winsize = 10*sr; % 10 Second with df of 0.1Hz
 % winsize = 2*sr; % 2 Second with df of 0.5 Hz
 % overlapsize = round(winsize*0.3);% number of samples for each overlapping window of3.3 seconds
 
-
+% Calculate EEG Power of the whole trial
 for i=1:nTrials
     y1(i).EEG=zscore(EEG(1).EEG{i},[],1);
     y2(i).EEG=zscore(EEG(2).EEG{i},[],1);
     
     % create a function that reorganize EEG into time x chan x chunks
-    
     % feed it to allspectra (for 2 s chunks) or spectra3 (for 10s chunks)
-    % examine pow eppow corr cprod in imagesc and create myallspectra
+    [~,freqs, ~, y1(i).pow, ~] = spectra3(y1(i).EEG,sr,maxfreq,win);
+    [~,freqs, ~, y2(i).pow, ~] = spectra3(y2(i).EEG,sr,maxfreq,win);
+    % later examine pow eppow corr cprod in imagesc and create myallspectra
+end
     
 
     % loop through each sliding window
@@ -288,7 +296,8 @@ for i=1:nTrials
 end
     
 % plotting
-cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Corr_DFA
+cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Corr_DFA_GC_SPA
+cd /ssd/zhibin/1overf/20220721_2P/Segmented_data/Plots/
 
 for i=1:nTrials
     
@@ -340,22 +349,39 @@ for i=1:nTrials
     subplot(4,6,[12]);
     bar([y12(i).F(2) y12(i).F(3)]);set(gca, 'XTickLabel', {'L -> R' 'R -> L'});
     axis([0.25 2.75 0 max([y12(i).F(2) y12(i).F(3)])+0.02]); % xlim([0.25 2.75]); 
-    text((find(y12(i).sig==1)-1-0.25), y12(i).F(find(sig==1))+0.01, ['* P = ' num2str(round(y12(i).pval(find(y12(i).sig==1)),3))]);
-    text((find(y12(i).sig==0)-1-0.25), y12(i).F(find(sig==0))+0.01, ['P = ' num2str(round(y12(i).pval(find(y12(i).sig==0)),3))]);
+    if length(find(y12(i).sig==1))==0;
+        tempF=y12(i).F(find(y12(i).sig==0));
+        tempP=round(y12(i).pval(find(y12(i).sig==0)),3);
+        text((2-1-0.25), tempF(1), ['P = ' num2str(tempP(1))]);
+        text((3-1-0.25), tempF(2), ['P = ' num2str(tempP(2))]);
+    end
+    if length(find(y12(i).sig==1))==1;
+        text((find(y12(i).sig==1)-1-0.25), y12(i).F(find(y12(i).sig==1))+0.01, ['* P = ' num2str(round(y12(i).pval(find(y12(i).sig==1)),3))]);
+        text((find(y12(i).sig==0)-1-0.25), y12(i).F(find(y12(i).sig==0))+0.01, ['P = ' num2str(round(y12(i).pval(find(y12(i).sig==0)),3))]);
+    end
+    if length(find(y12(i).sig==1))==2;
+        tempF=y12(i).F(find(y12(i).sig==1));
+        tempP=round(y12(i).pval(find(y12(i).sig==1)),3);
+        text((2-1-0.25), tempF(1), ['P = ' num2str(tempP(1))]);
+        text((3-1-0.25), tempF(2), ['P = ' num2str(tempP(2))]);
+    end
     title('Pairwise-conditional GC');
     xlabel(['Significant at \alpha = ' num2str(alpha)]);
 
     subplot(4,12,[31:33 43:45]);
-    imagesc(rand(4));colorbar;
+    imagesc(y1(i).pow);colorbar;
+    yticks([0:10:500]);yticklabels(string(0:1:50));
     title('Power');ylabel('Frequencies');xlabel('Channels (L player)');
     subplot(4,12,[34:36 46:48]);
-    imagesc(rand(4));colorbar;
+    imagesc(y2(i).pow);colorbar;
+    yticks([0:10:500]);yticklabels(string(0:1:50));
     title('Power');xlabel('Channels (R player)'); %ylabel('Frequencies');
-%     figureName=['Corr_DFA-trial-' num2str(i)];
-%     saveas(gcf,figureName,'jpg');
-
+    
+    figureName=['Corr_DFA_GC_SPA-trial-' num2str(i)];
+    saveas(gcf,figureName,'jpg');
+    close all;
 end
-close all;
+
 
 %% Count and display number of BP in each trials
  
