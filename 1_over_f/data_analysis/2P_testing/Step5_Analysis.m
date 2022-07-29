@@ -184,20 +184,13 @@ maxfreq=50; win=10; % 10 Second with df of 0.1Hz
 
 % Calculation on BP
 y1=[];y2=[];y12=[];XcorrR=[];
-ys1=[];ys2=[];
 nTrials=12;
 alpha = 0.05; 
 for i=1:nTrials
     % extract BP01
     y1(i).BP01=(BP(1).BP{i})'; % in boolean
     y2(i).BP01=(BP(2).BP{i})'; % in boolean 
-    
-%     % extract EEGpower (fft the whole trial, not good, df too fine)
-%     y1(i).EEGPower=abs(fft(zscore(EEG(1).EEG{i},[],1)));
-%     y2(i).EEGPower=abs(fft(zscore(EEG(2).EEG{i},[],1)));
-    
-    % open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/spectra2
-    
+   
     % extract BP intervals
     y1(i).BPint=Calinterval(y1(i).BP01)./sr; % in second
     y2(i).BPint=Calinterval(y2(i).BP01)./sr; % in second
@@ -251,12 +244,6 @@ for i=1:nTrials
     y12(i).sig=sig;
 end
 
-% Calculation on EEG in sliding window
-% window of time (ms) for 100 taps
-winsize = 10*sr; % 10 Second with df of 0.1Hz
-% winsize = 2*sr; % 2 Second with df of 0.5 Hz
-% overlapsize = round(winsize*0.3);% number of samples for each overlapping window of3.3 seconds
-
 % Calculate EEG Power of the whole trial
 for i=1:nTrials
     y1(i).EEG=zscore(EEG(1).EEG{i},[],1);
@@ -267,32 +254,6 @@ for i=1:nTrials
     [~,freqs, ~, y1(i).pow, ~] = spectra3(y1(i).EEG,sr,maxfreq,win);
     [~,freqs, ~, y2(i).pow, ~] = spectra3(y2(i).EEG,sr,maxfreq,win);
     % later examine pow eppow corr cprod in imagesc and create myallspectra
-end
-    
-
-    % loop through each sliding window
-     % determine how many sliding windows
-%      MinLength=min([length(y1(i).BP01) length(y2(i).BP01)]);
-%      nwin=floor(MinLength-(winsize-overlapsize))/overlapsize;
-     
-%      for k=1:nwin;
-%          samples = (k-1)*overlapsize+1:k*winsize;
-%          open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/P2_EEG_sliding_power.m
-%          eegdata_L = y1(i).EEG(samples,:);
-%          eegdata_R = y2(i).EEG(samples,:);
-%          tempf_L = fft(eegdata_L,[],1);
-%          tempf_R = fft(eegdata_R,[],1);
-%          
-%          for m = 1:50 % 50 frequencies
-%             freqs = (m-1)*10+1:m*10; % downsample freq
-%             power_L = sum(abs(tempf_L(freqs,:)),1);
-%             power_R = sum(abs(tempf_R(freqs,:)),1);
-%             pow_L(j).EEG(m,:,k) = power_L; % freq x chan x time
-%             pow_R(j).EEG(m,:,k) = power_R;
-%          end
-%       end
-    % @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
 end
     
 % plotting
@@ -382,7 +343,7 @@ for i=1:nTrials
     close all;
 end
 
-%% PLOT 3 slinding window: DFA and Autocov Granger Causality and PSA for each trial
+%% PLOT 3 slinding window: DFA and Autocov Granger Causality for each trial
  
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA/Sim_plots
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
@@ -408,52 +369,31 @@ addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/V
 % open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/spectra2
 maxfreq=50; win=10; % 10 Second with df of 0.1Hz
 
-% Calculation on BP
-y1=[];y2=[];y12=[];XcorrR=[];
+% Sliding win on BP01 for DFA and GC
+y1;y2;
+
 ys1=[];ys2=[];
 nTrials=12;
 alpha = 0.05; 
 for i=1:nTrials
-    % extract BP01
-    y1(i).BP01=(BP(1).BP{i})'; % in boolean
-    y2(i).BP01=(BP(2).BP{i})'; % in boolean 
+    % BP01
+    y1(i).BP01; % in boolean
+    y2(i).BP01; % in boolean 
     
-%     % extract EEGpower (fft the whole trial, not good, df too fine)
-%     y1(i).EEGPower=abs(fft(zscore(EEG(1).EEG{i},[],1)));
-%     y2(i).EEGPower=abs(fft(zscore(EEG(2).EEG{i},[],1)));
-    
-    % open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/spectra2
-    
-    % extract BP intervals
-    y1(i).BPint=Calinterval(y1(i).BP01)./sr; % in second
-    y2(i).BPint=Calinterval(y2(i).BP01)./sr; % in second
+    % loop through each sliding window
+     % determine how many sliding windows
+     MinLength=min([length(y1(i).BP01) length(y2(i).BP01)]);
+     nwin=floor(MinLength-(winsize-overlapsize))/overlapsize;
+     
+     for k=1:nwin;
+         samples = (k-1)*overlapsize+1:k*winsize;
+
+    % BP intervals
+    y1(i).BPint; % in second
+    y2(i).BPint; % in second
     
     MinLength=min([length(y1(i).BPint) length(y2(i).BPint)]);
 
-    % remove the mean
-    y1(i).BPint = y1(i).BPint-mean(y1(i).BPint);
-    y2(i).BPint = y2(i).BPint-mean(y2(i).BPint);
-    
-    % Autocorr of y1
-    acf=[];lags=[];bounds=[];
-    [acf,lags,bounds] = autocorr(y1(i).BPint(1:MinLength),MinLength-1);
-    y1(i).acf = acf;
-    y1(i).bounds = bounds;
-    y1(i).lags = lags;
-    
-    % Autocorr of y2
-    acf=[];lags=[];bounds=[];
-    [acf,lags,bounds] = autocorr(y2(i).BPint(1:MinLength),MinLength-1);
-    y2(i).acf = acf;
-    y2(i).bounds = bounds;
-    y2(i).lags = lags;
-    
-    % Xcorr between y1 and y2
-    r12=[];lags12=[];
-    [r12,lags12]=xcorr(y1(i).BPint(1:MinLength),y2(i).BPint(1:MinLength),30,'normalized');
-    y12(i).r12 = r12;
-    y12(i).lags12 = lags12;
-    
     % calculate H (or alpha) in DFA of y1 and y2
     n=[];F_n=[];FitValues=[];
     [~,Alpha,n,F_n,FitValues]=DFA_main(y1(i).BPint(1:MinLength));
@@ -518,8 +458,6 @@ end
 %          end
 %       end
     % @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-end
     
 % plotting
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
