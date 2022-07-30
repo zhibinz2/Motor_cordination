@@ -402,6 +402,8 @@ for i=1:nTrials
             % remove the mean
             ys1(i).BPint{k} = ys1(i).BPint{k}-mean(y1(i).BPint{k});
             ys2(i).BPint{k} = ys2(i).BPint{k}-mean(y2(i).BPint{k});
+     end
+end
 
     % BP intervals
     y1s(i).BPint{k}; % in second
