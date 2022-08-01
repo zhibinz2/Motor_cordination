@@ -378,8 +378,7 @@ y1;y2;
 winsize = 80*sr; % 80 Second with df of 0.0125 Hz, about 104 taps
 % winsize = 10*sr; % 10 Second with df of 0.1Hz
 % winsize = 2*sr; % 2 Second with df of 0.5 Hz
-overlapsize = round(winsize*0.3);% number of samples for each overlapping window of3.3 seconds
-
+overlapsize = round(winsize*0.3); % number of samples for each overlapping window of3.3 seconds
 
 ys1=[];ys2=[];
 nTrials=12;
@@ -390,20 +389,24 @@ for i=1:nTrials
     y2(i).BP01; % in boolean 
     
     % loop through each sliding window
-     % determine how many sliding windows
+     % determine how many sliding windows needed for EEG
      MinLength=min([length(y1(i).BP01) length(y2(i).BP01)]);
      nwin=floor((MinLength-winsize)/overlapsize);
      
+     % extract BP intervals
+     temp1=Calinterval(y1(i).BP01(samples))./sr; % in second
+     temp2=Calinterval(y2(i).BP01(samples))./sr; % in second
+
+    % remove the mean
+     ys1(i,k).BPint = temp1-mean(temp1);
+     ys2(i,k).BPint = temp2-mean(temp2);
+            
      for k=1:nwin;
          samples = ((k-1)*overlapsize+1):(k*overlapsize+winsize);
          
-          % extract BP intervals
-            temp1=Calinterval(y1(i).BP01(samples))./sr; % in second
-            temp2=Calinterval(y2(i).BP01(samples))./sr; % in second
             
-            % remove the mean
-            ys1(i,k).BPint = temp1-mean(temp1);
-            ys2(i,k).BPint = temp2-mean(temp2);
+            
+            %
      end
 end
 
