@@ -169,7 +169,6 @@ cd /ssd/zhibin/1overf/20220721_2P/Segmented_data
 load('data_variables20220713.mat')
 load('data_variables20220721.mat')
 
-
 % d estimate and removal
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/MSE-VARFI
 % Granger Causality
@@ -258,7 +257,10 @@ end
     
 % plotting
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
-cd /ssd/zhibin/1overf/20220721_2P/Segmented_data/Plots/
+cd /ssd/zhibin/1overf/20220721_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
+
+% check condiSeq
+condiSeq;
 
 for i=1:nTrials
     
@@ -272,7 +274,7 @@ for i=1:nTrials
     yticks(1); yticklabels('button pressed');ylim([0 1.5]);
     hold off;
     legend('Player L','Player R');
-    title(['Tapping sequences of 2 players in Trial - ' num2str(i) ': Condition - ' conditionNames{allPerm(i)} ]);
+    title(['Tapping sequences of 2 players in Trial - ' num2str(i) ': Condition - ' conditionNames{condiSeq(i)} ]);
 
     subplot(4,2,3);
     stem(y1(i).lags,y1(i).acf,'r'); xlabel('Lag');ylabel('\rho(k)');
@@ -330,15 +332,15 @@ for i=1:nTrials
     xlabel(['Significant at \alpha = ' num2str(alpha)]);
 
     subplot(4,12,[31:33 43:45]);
-    imagesc(y1(i).pow);colorbar;
+    imagesc(y1(i).pow);colorbar;caxis([0 1e6]);
     yticks([0:10:500]);yticklabels(string(0:1:50));
-    title('Power');ylabel('Frequencies');xlabel('Channels (L player)');
+    title('Power');ylabel('Frequencies (Hz)');xlabel('Channels (L player)');
     subplot(4,12,[34:36 46:48]);
-    imagesc(y2(i).pow);colorbar;
+    imagesc(y2(i).pow);colorbar;caxis([0 1e6]);
     yticks([0:10:500]);yticklabels(string(0:1:50));
     title('Power');xlabel('Channels (R player)'); %ylabel('Frequencies');
     
-    figureName=['Corr_DFA_GC_SPA-trial-' num2str(i)];
+    figureName=['Corr_DFA_GC_PSA-trial-' num2str(i)];
     saveas(gcf,figureName,'jpg');
     close all;
 end
@@ -390,18 +392,18 @@ for i=1:nTrials
     % loop through each sliding window
      % determine how many sliding windows
      MinLength=min([length(y1(i).BP01) length(y2(i).BP01)]);
-     nwin=floor((MinLength-(winsize-overlapsize))/overlapsize);
+     nwin=floor((MinLength-winsize)/overlapsize);
      
      for k=1:nwin;
-         samples = (k-1)*overlapsize+1:k*winsize;
+         samples = ((k-1)*overlapsize+1):(k*overlapsize+winsize);
          
           % extract BP intervals
-            ys1(i).BPint{k}=Calinterval(y1(i).BP01(samples))./sr; % in second
-            ys2(i).BPint{k}=Calinterval(y2(i).BP01(samples))./sr; % in second
+            temp1=Calinterval(y1(i).BP01(samples))./sr; % in second
+            temp2=Calinterval(y2(i).BP01(samples))./sr; % in second
             
             % remove the mean
-            ys1(i).BPint{k} = ys1(i).BPint{k}-mean(y1(i).BPint{k});
-            ys2(i).BPint{k} = ys2(i).BPint{k}-mean(y2(i).BPint{k});
+            ys1(i,k).BPint = temp1-mean(temp1);
+            ys2(i,k).BPint = temp2-mean(temp2);
      end
 end
 
