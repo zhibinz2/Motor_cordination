@@ -172,8 +172,16 @@ load('data_variables20220721.mat')
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/MSE-VARFI
 % Granger Causality
 addpath(genpath('/home/zhibin/Documents/GitHub/MVGC1'));
-cd /home/zhibin/Documents/GitHub/MVGC1
-run startup
+% rmpath('/home/zhibin/Documents/GitHub/MVGC1'); % remove duplecate startup file from path
+
+% Structure viewer not showing properly after running the following 2 lines
+% No need to run the following 2 lines
+% cd /home/zhibin/Documents/GitHub/MVGC1
+% run startup
+
+% remove this path to recover structure viewing
+% rmpath(genpath('/home/zhibin/Documents/GitHub/MVGC1')); 
+
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/VAR_Granger
 
 % parameters for powers
@@ -186,18 +194,18 @@ nTrials=12;
 alpha = 0.05; 
 for i=1:nTrials
     % extract BP01
-    y1(i).BP01=(BP(1).BP{i})'; % in boolean
-    y2(i).BP01=(BP(2).BP{i})'; % in boolean 
+    y1(1,i).BP01=(BP(1).BP{i})'; % in boolean
+    y2(1,i).BP01=(BP(2).BP{i})'; % in boolean 
    
     % extract BP intervals
-    y1(i).BPint=Calinterval(y1(i).BP01)./sr; % in second
-    y2(i).BPint=Calinterval(y2(i).BP01)./sr; % in second
+    y1(1,i).BPint=Calinterval(y1(1,i).BP01)./sr; % in second
+    y2(1,i).BPint=Calinterval(y2(i).BP01)./sr; % in second
     
     MinLength=min([length(y1(i).BPint) length(y2(i).BPint)]);
 
     % remove the mean
-    y1(i).BPint = y1(i).BPint-mean(y1(i).BPint);
-    y2(i).BPint = y2(i).BPint-mean(y2(i).BPint);
+    y1(1,i).BPint = y1(i).BPint-mean(y1(i).BPint);
+    y2(1,i).BPint = y2(i).BPint-mean(y2(i).BPint);
     
     % Autocorr of y1
     acf=[];lags=[];bounds=[];
@@ -244,8 +252,8 @@ end
 
 % Calculate EEG Power of the whole trial
 for i=1:nTrials
-    y1(i).EEG=zscore(EEG(1).EEG{i},[],1);
-    y2(i).EEG=zscore(EEG(2).EEG{i},[],1);
+    y1(1,i).EEG=zscore(EEG(1).EEG{i},[],1);
+    y2(1,i).EEG=zscore(EEG(2).EEG{i},[],1);
     
     % create a function that reorganize EEG into time x chan x chunks
     % feed it to allspectra (for 2 s chunks) or spectra3 (for 10s chunks)
@@ -309,24 +317,27 @@ for i=1:nTrials
     title('DFA')
     
     subplot(4,6,[12]);
-    bar([y12(i).F(2) y12(i).F(3)]);set(gca, 'XTickLabel', {'L -> R' 'R -> L'});
-    axis([0.25 2.75 0 max([y12(i).F(2) y12(i).F(3)])+0.02]); % xlim([0.25 2.75]); 
+    b=bar([y12(i).F(2) y12(i).F(3)]);set(gca, 'XTickLabel', {'L -> R' 'R -> L'});
+    b.FaceColor='flat';b.CData(1,:) = [1 0 0];b.CData(2,:) = [0 0 1];
+    % axis([0.25 2.75 0 max([y12(i).F(2) y12(i).F(3)])+0.05]); 
+    xlim([0.25 2.75]); ylim([0 2]);
     if length(find(y12(i).sig==1))==0;
         tempF=y12(i).F(find(y12(i).sig==0));
         tempP=round(y12(i).pval(find(y12(i).sig==0)),3);
-        text((2-1-0.25), tempF(1), ['P = ' num2str(tempP(1))]);
-        text((3-1-0.25), tempF(2), ['P = ' num2str(tempP(2))]);
+        text((2-1-0.5), tempF(1)+0.1, ['P = ' num2str(tempP(1))],'Color',[1 0 0]);
+        text((3-1-0.5), tempF(2)+0.1, ['P = ' num2str(tempP(2))],'Color',[0 0 1]);
     end
     if length(find(y12(i).sig==1))==1;
-        text((find(y12(i).sig==1)-1-0.25), y12(i).F(find(y12(i).sig==1))+0.01, ['* P = ' num2str(round(y12(i).pval(find(y12(i).sig==1)),3))]);
-        text((find(y12(i).sig==0)-1-0.25), y12(i).F(find(y12(i).sig==0))+0.01, ['P = ' num2str(round(y12(i).pval(find(y12(i).sig==0)),3))]);
+        text((find(y12(i).sig==1)-1-0.5), y12(i).F(find(y12(i).sig==1))+0.1, ['* P = ' num2str(round(y12(i).pval(find(y12(i).sig==1)),3))],'Color',[1 0 0]);
+        text((find(y12(i).sig==0)-1-0.5), y12(i).F(find(y12(i).sig==0))+0.1, ['P = ' num2str(round(y12(i).pval(find(y12(i).sig==0)),3))],'Color',[0 0 1]);
     end
     if length(find(y12(i).sig==1))==2;
         tempF=y12(i).F(find(y12(i).sig==1));
         tempP=round(y12(i).pval(find(y12(i).sig==1)),3);
-        text((2-1-0.25), tempF(1), ['P = ' num2str(tempP(1))]);
-        text((3-1-0.25), tempF(2), ['P = ' num2str(tempP(2))]);
+        text((2-1-0.5), tempF(1)+0.1, ['* P = ' num2str(tempP(1))],'Color',[1 0 0]);
+        text((3-1-0.5), tempF(2)+0.1, ['* P = ' num2str(tempP(2))],'Color',[0 0 1]);
     end
+    
     title('Pairwise-conditional GC');
     xlabel(['Significant at \alpha = ' num2str(alpha)]);
 
@@ -379,25 +390,30 @@ winsize = 80*sr; % 80 Second with df of 0.0125 Hz, about 104 taps
 % winsize = 2*sr; % 2 Second with df of 0.5 Hz
 overlapsize = round(winsize*0.3); % number of samples for each overlapping window of3.3 seconds
 
-ys1=[];ys2=[];
+ys1=[];ys2=[];ys12=[];
 nTrials=12;
 alpha = 0.05; 
 for i=1:nTrials
     % BP01
-    y1(i).BP01; % in boolean
-    y2(i).BP01; % in boolean 
+%     y1(i).BP01; % in boolean
+%     y2(i).BP01; % in boolean 
+    BP(1).BP{i}; % in boolean
+    BP(2).BP{i}; % in boolean 
     
     % loop through each sliding window
     % determine how many sliding windows needed for EEG
-    MinLength=min([length(y1(i).BP01) length(y2(i).BP01)]); % cut to same length
+%     MinLength=min([length(BP(i).BP01) length(y2(i).BP01)]); % cut to same length
+    MinLength=min([length(BP(1).BP{i}) length(BP(2).BP{i})]);
     nwin=floor((MinLength-winsize)/overlapsize);
 
      for k=1:nwin;
         samples = ((k-1)*overlapsize+1):(k*overlapsize+winsize);
         
         % extract BP intervals
-        temp1=Calinterval(y1(i).BP01(samples))./sr; % in second
-        temp2=Calinterval(y2(i).BP01(samples))./sr; % in second
+%         temp1=Calinterval(y1(i).BP01(samples))./sr; % in second
+%         temp2=Calinterval(y2(i).BP01(samples))./sr; % in second
+        temp1=Calinterval((BP(1).BP{i})')./sr; % in second
+        temp2=Calinterval((BP(2).BP{i})')./sr; % in second
         
         % remove the mean
         ys1(i,k).BPint = temp1-mean(temp1);
@@ -420,41 +436,60 @@ for i=1:nTrials
         ys2(i,k).F_n=F_n;
         ys2(i,k).FitValues=FitValues;   
 
-
-
-
-         
-
+        % Granger causality
+        F=[];pval=[];sig=[];
+        %[F,pval,sig] = mystatespace(y1(i).BPint,y2(i).BPint); % Statespace method
+        [F,pval,sig] = myautocov(ys1(i,k).BPint,ys2(i,k).BPint); % Autocov method
+        ys12(i,k).F=F;
+        ys12(i,k).pval=pval;
+        ys12(i,k).sig=sig;
      end
 end
 
-    % BP intervals
-    y1s(i).BPint{k}; % in second
-    y2s(i).BPint{k}; % in second
-    %@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+% Different structure
+ys1=[];ys2=[];ys12=[];
+nTrials=12;
+alpha = 0.05; 
+for i=1:nTrials
+    % BP01
+    y1(i).BP01; % in boolean
+    y2(i).BP01; % in boolean 
+    
+    % loop through each sliding window
+    % determine how many sliding windows needed for EEG
+    MinLength=min([length(y1(i).BP01) length(y2(i).BP01)]); % cut to same length
+    nwin=floor((MinLength-winsize)/overlapsize);
 
-    % calculate H (or alpha) in DFA of y1 and y2
-    n=[];F_n=[];FitValues=[];
-    [~,Alpha,n,F_n,FitValues]=DFA_main(y1(i).BPint(1:MinLength));
-    y1(i).Alpha=Alpha;
-    y1(i).n=n;
-    y1(i).F_n=F_n;
-    y1(i).FitValues=FitValues;
-    n=[];F_n=[];FitValues=[];
-    [~,Alpha,n,F_n,FitValues]=DFA_main(y2(i).BPint(1:MinLength));
-    y2(i).Alpha=Alpha;
-    y2(i).n=n;
-    y2(i).F_n=F_n;
-    y2(i).FitValues=FitValues;   
+     for k=1:nwin;
+        samples = ((k-1)*overlapsize+1):(k*overlapsize+winsize);
+        
+        % extract BP intervals
+        temp1=Calinterval(y1(i).BP01(samples))./sr; % in second
+        temp2=Calinterval(y2(i).BP01(samples))./sr; % in second
+        
+        % remove the mean
+        ys1(1,i).BPint{k} = temp1-mean(temp1);
+        ys2(1,i).BPint{k} = temp2-mean(temp2);
+        
+        % cut to same length again
+        MinLengthys=min([length(temp1) length(temp2)]);
 
-    % Granger causality
-    F=[];pval=[];,sig=[];
-    %[F,pval,sig] = mystatespace(y1(i).BPint,y2(i).BPint); % Statespace method
-    [F,pval,sig] = myautocov(y1(i).BPint,y2(i).BPint); % Autocov method
-    y12(i).F=F;
-    y12(i).pval=pval;
-    y12(i).sig=sig;
+        % calculate H (or alpha) in DFA of y1 and y2
+        n=[];F_n=[];FitValues=[];
+        [~,Alpha,n,F_n,FitValues]=DFA_main(ys1(i).BPint{k}(1:MinLengthys));
+        ys1(1,i).Alpha{k}=Alpha;
+        n=[];F_n=[];FitValues=[];
+        [~,Alpha,n,F_n,FitValues]=DFA_main(ys2(i).BPint{k}(1:MinLengthys));
+        ys2(1,i).Alpha{k}=Alpha;
 
+        % Granger causality
+        F=[];pval=[];sig=[];
+        [F,pval,sig] = myautocov(ys1(i).BPint{k}(1:MinLengthys),ys2(i).BPint{k}(1:MinLengthys)); % Autocov method
+        ys12(1,i).F{k}=F;
+        ys12(1,i).pval{k}=pval;
+        ys12(1,i).sig{k}=sig;
+     end
+end
 
 
 % Calculate EEG Power in sliding win as well?
@@ -493,7 +528,7 @@ end
 %       end
     % @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     
-% plotting
+%% PLOT 3: plotting
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
 cd /ssd/zhibin/1overf/20220721_2P/Segmented_data/Plots/
 
