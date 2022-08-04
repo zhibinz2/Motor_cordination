@@ -74,14 +74,22 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     
     %% show stimulus(pacer) and photocells on the top at the same time
     if any(Showframeselected(:) == n)
-        % Show the pacer 
+        % Show the pacer on center monitor
         Screen('FrameOval', windowPtr,green, [xCenter-screenXpixels/24-screenYpixels/35 yCenter-screenYpixels/35 xCenter-screenXpixels/24+screenYpixels/35 yCenter+screenYpixels/35],1,1); % green pacer center monitor left
         Screen('FrameOval', windowPtr,green, [xCenter+screenXpixels/24-screenYpixels/35 yCenter-screenYpixels/35 xCenter+screenXpixels/24+screenYpixels/35 yCenter+screenYpixels/35],1,1); % green pacer center monitor right
+        % Show pacer on the left monitor
          if (conditionSelected == 1) | (conditionSelected == 2) | (conditionSelected == 4)| (conditionSelected == 5) % shown on left monitor
+            % Green outer circle
             Screen('FrameOval', windowPtr,green, [xCenter-screenXpixels/3-screenYpixels/35 yCenter-screenYpixels/35 xCenter-screenXpixels/3+screenYpixels/35 yCenter+screenYpixels/35],1,1);
-            end
+            % Red dot to pace oneself on the left monitor (this might be confusing)
+            % Screen('DrawDots', windowPtr, [xCenter-screenXpixels/3;yCenter], screenYpixels/20-2, red, [0 0], 2); % Left monitor
+         end
+        % Show pacer on the right monitor 
          if (conditionSelected == 1) | (conditionSelected == 3) | (conditionSelected == 4) | (conditionSelected == 5) % shown on right monitor
+            % Green outer circle
             Screen('FrameOval', windowPtr,green, [xCenter+screenXpixels/3-screenYpixels/35 yCenter-screenYpixels/35 xCenter+screenXpixels/3+screenYpixels/35 yCenter+screenYpixels/35],1,1);
+            % Blue dot to pace oneself on the left monitor (this might be confusing)
+            % Screen('DrawDots', windowPtr, [xCenter+screenXpixels/3;yCenter], screenYpixels/20-2, blue, [0 0], 2); % Left monitor
          end
         % Flash the photocell to indicate the pacers
         Screen('FillRect', windowPtr, white, LeftUpperSquare);
