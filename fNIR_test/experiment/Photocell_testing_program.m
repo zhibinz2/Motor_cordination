@@ -1,10 +1,11 @@
+
 cd /home/hnl/Documents/GitHub/Motor_cordination/fNIR_test/experiment
 % This version shows checkerboard on two hemi-fields and sends LSL markers
 % to the fNIRS laptop
 sca; clc; close all; clear all; clearvars; 
 
 % set the freq of photocell (waitframe method, not accurate)
-% Hz=input('enter the frequency:');
+Hz=input('enter the frequency:');
 
 
 % % LSL #####################################################################
@@ -155,17 +156,19 @@ try
     % But realtime fft of the photocell show 4 Hz if flip ever other show frame
     % I will need to try this on Neuroscan)
 %     waitframes = (1/8)/ifi;
-
-    % Hz=30; % flash at 30Hz
-    % waitframes = (1/Hz)/ifi;
+    
+    % set photocell frequency
+    % Hz=4;% 30; % flash at 30Hz
+    waitframes = (1/Hz)/ifi;
     
     
     % Setting time variables**********************************************
-    % total number of frames per trial
-    % numFrames=round(100/ifi/waitframes); % 100 seconds 
+%     total number of frames per trial
+
+    numFrames=round(100/ifi/waitframes); % 100 seconds 
     
-    % no waitframe,just flip every frame ASAP
-    numFrames=round((1/ifi)*100); % 100 seconds 
+%     % no waitframe,just flip every frame ASAP
+%     numFrames=round((1/ifi)*100); % 100 seconds 
     % **********************************************Setting time variables
     
     % Hide Mice:****************************************************************
@@ -183,7 +186,7 @@ try
     HideCursor(windowPtr,mice);
     %HideCursor(windowPtr,mice(1));
 
-    instructionStart=['OK. Press Esc to start!']; % Tell subject to open eye and start
+    instructionStart=['OK. Press Enter to start!']; % Tell subject to open eye and start
     DrawFormattedText2(instructionStart,'win',windowPtr,...
         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
     Screen('Flip',windowPtr);
@@ -237,30 +240,33 @@ try
 
                 % Flash photocell every other second during the whole trial (bottom left)
                 % if (~isempty(find([1:2:numFrames]==n))) % every two frames (reduced freq to half)
-%                     Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-%                     Screen('FillRect', windowPtr, white, RightBottomSquare);
-%                     Screen('FillRect', windowPtr, white, LeftUpperSquare);  % event type = 1200001
-%                     Screen('FillRect', windowPtr, white, LeftBottomSquare);
+                    Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
+                    Screen('FillRect', windowPtr, white, RightBottomSquare);
+                    Screen('FillRect', windowPtr, white, LeftUpperSquare);  % event type = 1200001
+                    Screen('FillRect', windowPtr, white, LeftBottomSquare);
+                    
+%                     % show upperright photocell on the other side undercovered - left monitor
+%                     Screen('FillRect', windowPtr, white, LeftUpperSquare+[+screenXpixels/3-PhotosensorSize*2 0 +screenXpixels/3-PhotosensorSize*2 0]);
 %                     % show upperleft photocell on the other side undercovered - right monitor
 %                     Screen('FillRect', windowPtr, white, RightUpperSquare+[-screenXpixels/3+PhotosensorSize*2 0 -screenXpixels/3+PhotosensorSize*2 0]); 
-%                     % show upperleft photocell on the other side undercovered - left monitor
-%                     Screen('FillRect', windowPtr, white, LeftUpperSquare+[+screenXpixels/3-PhotosensorSize*2 0 +screenXpixels/3-PhotosensorSize*2 0]);
-                    % Show left and right side
-                    Screen('FillRect', windowPtr, white, LeftSide);  
-                    Screen('FillRect', windowPtr, white, RightSide);
+
+%                     % Show left and right side
+%                     Screen('FillRect', windowPtr, white, LeftSide);  
+%                     Screen('FillRect', windowPtr, white, RightSide);
                 % end
         
                 
                 
-%                 % Flip to the screen
-%                 vbl  = Screen('Flip', windowPtr, vbl + waitframes * ifi);
-%                 % Flip black screen at once after photocell
-%                 vbl  = Screen('Flip', windowPtr);
-                
-                % Flip the phtocell
-                Screen('Flip', windowPtr);
+                % Flip to the screen
+                vbl  = Screen('Flip', windowPtr, vbl + waitframes * ifi);
                 % Flip black screen at once after photocell
-                Screen('Flip', windowPtr);
+                vbl  = Screen('Flip', windowPtr);
+                
+
+%                 % Flip the phtocell
+%                 Screen('Flip', windowPtr);
+%                 % Flip black screen at once after photocell
+%                 Screen('Flip', windowPtr);
                 
                 n = n+1;
             end
