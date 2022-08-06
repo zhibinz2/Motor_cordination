@@ -51,7 +51,7 @@ TriggersR=samplesR(TRIGGERindR,:)';valuesR=unique(TriggersR)
 % 119=255-2^3-2^7 % middle key + light sensor 2
 % 183=255-2^3-2^6 % middle key + light sensor 1
 
-% 192=255-63=255-32-16-8-2 % only happen when psychtoolbox display starts
+% 192=255-63=255-32-16-8-2 % only happen when you restarted the 
 
 
 %% extract time points for key presses (maybe create a function to do the same for pacers,feedbacks)
