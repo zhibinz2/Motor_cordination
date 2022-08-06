@@ -240,19 +240,21 @@ try
 
                 % Flash photocell every other second during the whole trial (bottom left)
                 % if (~isempty(find([1:2:numFrames]==n))) % every two frames (reduced freq to half)
-                    Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-                    Screen('FillRect', windowPtr, white, RightBottomSquare);
-                    Screen('FillRect', windowPtr, white, LeftUpperSquare);  % event type = 1200001
-                    Screen('FillRect', windowPtr, white, LeftBottomSquare);
+%                     Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
+%                     Screen('FillRect', windowPtr, white, RightBottomSquare);
+%                     Screen('FillRect', windowPtr, white, LeftUpperSquare);  % event type = 1200001
+%                     Screen('FillRect', windowPtr, white, LeftBottomSquare);
                     
 %                     % show upperright photocell on the other side undercovered - left monitor
 %                     Screen('FillRect', windowPtr, white, LeftUpperSquare+[+screenXpixels/3-PhotosensorSize*2 0 +screenXpixels/3-PhotosensorSize*2 0]);
 %                     % show upperleft photocell on the other side undercovered - right monitor
 %                     Screen('FillRect', windowPtr, white, RightUpperSquare+[-screenXpixels/3+PhotosensorSize*2 0 -screenXpixels/3+PhotosensorSize*2 0]); 
 
-%                     % Show left and right side
-%                     Screen('FillRect', windowPtr, white, LeftSide);  
-%                     Screen('FillRect', windowPtr, white, RightSide);
+                    % Show left and right side bar
+                    Screen('FillRect', windowPtr, white, LeftSide);  
+                    Screen('FillRect', windowPtr, white, RightSide);
+                    
+
                 % end
         
                 
