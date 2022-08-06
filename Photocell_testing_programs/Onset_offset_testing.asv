@@ -4,9 +4,12 @@ cd /home/hnl/Documents/GitHub/Motor_cordination/fNIR_test/experiment
 % to the fNIRS laptop
 sca; clc; close all; clear all; clearvars; 
 
-% set the freq of photocell (waitframe method, not accurate)
-Hz=input('enter the frequency:');
+% % set the freq of photocell (waitframe method, not accurate)
+% Hz=input('enter the frequency:'); % 0.5Hz, once every 2 seconds
 
+% set the duration of the photocell
+duration=input('enter the duration in second:'); % 2, show photocell on for 2 s
+waitframes=1;
 
 % % LSL #####################################################################
 % % Addpath
@@ -137,7 +140,7 @@ try
     % Retreive the maximum priority number
     topPriorityLevel = MaxPriority(windowPtr) ; 
     % topPriorityLevel0 = MaxPriority(windowPtr0); 
-    % set Priority once at the start of a script after setting up onscreen window.
+    % set Priority once at the start of a script after 10setting up onscreen window.
     Priority(topPriorityLevel);
 
     % Measure the vertical refresh rate of the monitor
@@ -157,15 +160,15 @@ try
     % I will need to try this on Neuroscan)
 %     waitframes = (1/8)/ifi;
     
-    % set photocell frequency
-    % Hz=4;% 30; % flash at 30Hz
-    waitframes = (1/Hz)/ifi;
+%     % set photocell frequency
+%     % Hz=4;% 30; % flash at 30Hz
+%     waitframes = (1/Hz)/ifi;
     
     
     % Setting time variables**********************************************
 %     total number of frames per trial
 
-    numFrames=round(100/ifi/waitframes); % 100 seconds 
+    numFrames=round(duration/ifi/waitframes); % duration= 2 seconds per trial
     
 %     % no waitframe,just flip every frame ASAP
 %     numFrames=round((1/ifi)*100); % 100 seconds 
@@ -186,7 +189,7 @@ try
     HideCursor(windowPtr,mice);
     %HideCursor(windowPtr,mice(1));
 
-    instructionStart=['OK. Press Enter to start!']; % Tell subject to open eye and start
+    instructionStart=['OK. Press any key to start!']; % Tell subject to open eye and start
     DrawFormattedText2(instructionStart,'win',windowPtr,...
         'sx','center','sy','center','xalign','center','yalign','center','baseColor',white);
     Screen('Flip',windowPtr);
@@ -224,55 +227,63 @@ try
             % Run the trial #################
             % initial or reset trial frame number
             n=1;
-            % get a timestamp and begin the trial
-            vbl = Screen('Flip', windowPtr);
+%             % get a timestamp and begin the trial
+%             vbl = Screen('Flip', windowPtr);
                         
-            
-            % while numberOfSecondsElapsed < 10;
-            while n <  numFrames 
-                % If esc is press, break out of the while loop and close the screen
-                [keyIsDown, keysecs, keyCode] = KbCheck;
-                if keyCode(KbName('escape'));
-                    Screen('CloseAll');
+            % Show photocell only in odd trials
+            if mod(t,2) == 1;
+                % while numberOfSecondsElapsed < 10;
+                while n <  numFrames 
+                    % If esc is press, break out of the while loop and close the screen
+                    [keyIsDown, keysecs, keyCode] = KbCheck;
+                    if keyCode(KbName('escape'));
+                        Screen('CloseAll');
+                        
+                        break;
+                    end
+    
+                    % Flash photocell every other second during the whole trial (bottom left)
+                    % if (~isempty(find([1:2:numFrames]==n))) % every two frames (reduced freq to half)
+    %                     Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
+    %                     Screen('FillRect', windowPtr, white, RightBottomSquare);
+    %                     Screen('FillRect', windowPtr, white, LeftUpperSquare);  % event type = 1200001
+    %                     Screen('FillRect', windowPtr, white, LeftBottomSquare);
+                        
+    %                     % show upperright photocell on the other side undercovered - left monitor
+    %                     Screen('FillRect', windowPtr, white, LeftUpperSquare+[+screenXpixels/3-PhotosensorSize*2 0 +screenXpixels/3-PhotosensorSize*2 0]);
+    %                     % show upperleft photocell on the other side undercovered - right monitor
+    %                     Screen('FillRect', windowPtr, white, RightUpperSquare+[-screenXpixels/3+PhotosensorSize*2 0 -screenXpixels/3+PhotosensorSize*2 0]); 
+    
+    %                     % Show left and right side bar
+    %                     Screen('FillRect', windowPtr, white, LeftSide);  
+    %                     Screen('FillRect', windowPtr, white, RightSide);
+    
+                        % Flash only upper two corners 
+                        Screen('FillRect', windowPtr, white, LeftUpperSquare); % event type = 1200001
+                        Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
+    
+    %                     % Flash only botton two corners
+    %                     Screen('FillRect', windowPtr, white, LeftBottomSquare);
+    %                     Screen('FillRect', windowPtr, white, RightBottomSquare);
+    
                     
-                    break;
+    %                 % Flip to the screen
+    %                 vbl  = Screen('Flip', windowPtr, vbl + waitframes * ifi);
+                    % Flip black screen at once after photocell
+    %                 vbl  = Screen('Flip', windowPtr);
+    
+                    % Flip the phtocell
+                    Screen('Flip', windowPtr);
+    %                 % Flip black screen at once after photocell
+    %                 Screen('Flip', windowPtr);
+                    
+                    n = n+1;
                 end
+            end
 
-                % Flash photocell every other second during the whole trial (bottom left)
-                % if (~isempty(find([1:2:numFrames]==n))) % every two frames (reduced freq to half)
-%                     Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
-%                     Screen('FillRect', windowPtr, white, RightBottomSquare);
-%                     Screen('FillRect', windowPtr, white, LeftUpperSquare);  % event type = 1200001
-%                     Screen('FillRect', windowPtr, white, LeftBottomSquare);
-                    
-%                     % show upperright photocell on the other side undercovered - left monitor
-%                     Screen('FillRect', windowPtr, white, LeftUpperSquare+[+screenXpixels/3-PhotosensorSize*2 0 +screenXpixels/3-PhotosensorSize*2 0]);
-%                     % show upperleft photocell on the other side undercovered - right monitor
-%                     Screen('FillRect', windowPtr, white, RightUpperSquare+[-screenXpixels/3+PhotosensorSize*2 0 -screenXpixels/3+PhotosensorSize*2 0]); 
-
-                    % Show left and right side bar
-                    Screen('FillRect', windowPtr, white, LeftSide);  
-                    Screen('FillRect', windowPtr, white, RightSide);
-
-                    % Flash upper two corners and botton two corners in 
-
-
-                % end
-        
-                
-                
-                % Flip to the screen
-                vbl  = Screen('Flip', windowPtr, vbl + waitframes * ifi);
-                % Flip black screen at once after photocell
-                vbl  = Screen('Flip', windowPtr);
-                
-
-%                 % Flip the phtocell
-%                 Screen('Flip', windowPtr);
-%                 % Flip black screen at once after photocell
-%                 Screen('Flip', windowPtr);
-                
-                n = n+1;
+            % Show black screen during even trials
+            if mod(t,2)==0;
+                Screen('Flip', windowPtr);
             end
 
 %             %% send markers into the outlet
