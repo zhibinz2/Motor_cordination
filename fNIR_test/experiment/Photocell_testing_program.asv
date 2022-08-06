@@ -250,18 +250,16 @@ try
 %                     % show upperleft photocell on the other side undercovered - right monitor
 %                     Screen('FillRect', windowPtr, white, RightUpperSquare+[-screenXpixels/3+PhotosensorSize*2 0 -screenXpixels/3+PhotosensorSize*2 0]); 
 
-%                     % Show left and right side bar
-%                     Screen('FillRect', windowPtr, white, LeftSide);  
-%                     Screen('FillRect', windowPtr, white, RightSide);
+                    % Show left and right side bar
+                    Screen('FillRect', windowPtr, white, LeftSide);  
+                    Screen('FillRect', windowPtr, white, RightSide);
 
-                    % Flash only upper two corners 
-                    Screen('FillRect', windowPtr, white, LeftUpperSquare); % event type = 1200001
-                    Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
+                    % Flash upper two corners and botton two corners in 
 
-%                     % Flash only botton two corners
-%                     Screen('FillRect', windowPtr, white, LeftBottomSquare);
-%                     Screen('FillRect', windowPtr, white, RightBottomSquare);
 
+                % end
+        
+                
                 
                 % Flip to the screen
                 vbl  = Screen('Flip', windowPtr, vbl + waitframes * ifi);
