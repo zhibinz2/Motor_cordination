@@ -3,7 +3,7 @@ timeL;samplesL;TRIGGERindL;srL;channels_infoL;labelsL;
 timeR;samplesR;TRIGGERindR;srR;channels_infoR;labelsR;
 % find EMG chan (BIP 01, BIP 02)
 EMGindL=find(labelsL=='BIP 01');
-EMGindL=find(labelsL=='BIP 02'); % for 20220721_2P
+% EMGindL=find(labelsL=='BIP 02'); % for 20220721_2P
 EMGindR=find(labelsR=='BIP 01');
 % EMGindR=find(labelsR=='BIP 02');
 figure;

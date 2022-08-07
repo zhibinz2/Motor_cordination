@@ -37,7 +37,8 @@ which filtfilt -all
 cd D:\Program Files\MATLAB\R2019b\toolbox\signal\signal\filtfilt.m   
 
 % high pass (no paddings needed)
-Hd = makefilter(srL,1.5,1,6,20,0); 
+Hd = makefilter(srL,0.25,0.01,6,20,0); % for keeping readiness potential
+% Hd = makefilter(srL,1.5,1,6,20,0); 
 filtered_dataL1=filtfilthd(Hd,detrend_dataL);
 filtered_dataR1=filtfilthd(Hd,detrend_dataR);
 
@@ -100,7 +101,7 @@ for i=1:length(PacersR);
     xline(PacersR(i),'b');
 end
     
-% Examine plot for 20220721_2P
+% Examine plot for 20220721_2P (syncopation)
 figure('units','normalized','outerposition',[0 0 1 0.6]);
 subplot(2,1,1);plot(filtered_dataL5);ylim([-300 300]);title('truncated L');
 % mark the segmentation events
@@ -113,6 +114,18 @@ for i=1:length(SegPacerIndR);
     xline(PacerTimeIndR(SegPacerIndR(i)),'b');
 end
 
+% Examine plot for 20220804_2P (synchronization)
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(2,1,1);plot(filtered_dataL5);ylim([-300 300]);title('truncated L');
+% mark the segmentation events
+for i=1:length(SegIndL);
+    xline(SegIndL(i),'r');
+end
+subplot(2,1,2);plot(filtered_dataR5);ylim([-300 300]);title('truncated R');
+% mark the segmentation events
+for i=1:length(SegIndR);
+    xline(SegIndR(i),'b');
+end
 %% load channel info for topoplots
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info
 load('chaninfo.mat');
@@ -136,7 +149,7 @@ ComponentsExam=IL(1:10);
 % text(IL(1),BL(1),textString,'FontSize',7);
 % Take a look at the first 10 components in topoplots
 figure('units','normalized','outerposition',[0 0 1 0.6]);
-suptitle('first 10 components L');
+sgtitle('first 10 components L'); % similar func: subtitle, sgtitle, suptitle
 for i=1:length(ComponentsExam)
     subplot(2,5,i);
     topoplot(AL(:,ComponentsExam(i)),chaninfo,'nosedir','+X');title(['component' num2str(ComponentsExam(i))]);colorbar;
@@ -151,7 +164,7 @@ end
 ComponentsExamL=unique([I1(1:5) I3(1:5)])
 % Take a look at each of the 5 most correlated components to FP1&FP2
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-suptitle('FP1&FP2 correlated components L -ComponentsExamL');
+sgtitle('FP1&FP2 correlated components L -ComponentsExamL');
 for i=1:length(ComponentsExamL)
     subplot(1,length(ComponentsExamL),i);
     topoplot(AL(:,ComponentsExamL(i)),chaninfo,'nosedir','+X');
@@ -169,7 +182,7 @@ end
 ComponentRemoveL=ComponentsExamL(TentativeRemoveL);
 % Examine component to remove
 figure('units','normalized','outerposition',[0 0 1 0.5]);
-suptitle('Component to remove: L - ComponentRemoveL');
+sgtitle('Component to remove: L - ComponentRemoveL');
 for i=1:length(ComponentRemoveL)
     subplot(1,length(ComponentRemoveL),i);
     topoplot(AL(:,ComponentRemoveL(i)),chaninfo,'nosedir','+X');
@@ -192,7 +205,7 @@ title('all components for R');
 ComponentsExam=IR(1:10);
 % Take a look at the first 10 components in topoplots
 figure('units','normalized','outerposition',[0 0 1 0.6]);
-suptitle('first 10 components R');
+sgtitle('first 10 components R');
 for i=1:length(ComponentsExam)
     subplot(2,5,i);
     topoplot(AR(:,ComponentsExam(i)),chaninfo,'nosedir','+X');title(['component' num2str(ComponentsExam(i))]);colorbar;
@@ -207,7 +220,7 @@ end
 ComponentsExamR=unique([I1(1:5) I3(1:5)])
 % Take a look at each of the 5 most correlated components to FP1&FP2
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-suptitle('FP1&FP2 correlated components R -ComponentsExamR');
+sgtitle('FP1&FP2 correlated components R -ComponentsExamR');
 for i=1:length(ComponentsExamR)
     subplot(1,length(ComponentsExamR),i);
     topoplot(AR(:,ComponentsExamR(i)),chaninfo,'nosedir','+X');
@@ -225,7 +238,7 @@ end
 ComponentRemoveR=ComponentsExamR(TentativeRemoveR);
 % Examine component to remove
 figure('units','normalized','outerposition',[0 0 1 0.5]);
-suptitle('Component to remove: R - ComponentRemoveR');
+sgtitle('Component to remove: R - ComponentRemoveR');
 for i=1:length(ComponentRemoveR)
     subplot(1,length(ComponentRemoveR),i);
     topoplot(AR(:,ComponentRemoveR(i)),chaninfo,'nosedir','+X');
