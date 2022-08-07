@@ -216,6 +216,7 @@ figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeR01,'b');
 numPacerR=sum(PacerTimeR01); % check if == 194 / 386
 
+%% Select segment points
 % Plot selected segment points (not alligned)
 figure('units','normalized','outerposition',[0 0 1 0.3]); % for 6 conditions (synchronization)
 PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
@@ -303,14 +304,48 @@ PacerTimeIndL=PacerTimeIndR+ShiftPacer;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeIndL,1.6*ones(1,length(PacerTimeIndL)),'r.');hold on;ylim([0 3]);
 plot(PacerTimeIndR,1.4*ones(1,length(PacerTimeIndR)),'b.');
+xline(0,'y');
 legend('restored PacerTimeIndL', 'PacerTimeIndR');
+% Plot alligned again (for synchronization 20220804_2P)
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(PacerTimeIndL-PacerTimeIndL(1), ones(length(PacerTimeIndL)),'r.');
+hold on;
+plot(PacerTimeIndR-PacerTimeIndR(1), 0.9*ones(length(PacerTimeIndR)),'b.');
+ylim([0 2]);
+legend('alligned-PacerTimeIndL', 'alligned-PacerTimeIndR');
 
+%% examine time points for pacers with segmentation purpose - synchronization -20220804_2P (12 blocks)
+validIndL=find(PacerTimeIndL>0); % first pacer start from 67
+validPacerTimeIndL=PacerTimeIndL(validIndL(1):end); % start from frist valid pacer 
+validPacerTimeIndR=PacerTimeIndR(validIndL(1):end); % first corresponding pacer start from 67
+% should both have 2*10+30*10+4+1+2+30+2+30+1=390 elements
+% but both have 389, missing one photocell for the resting interval start before trial 8 (no idea why)
+% make up for that one missing photocell 
+value_diff=validPacerTimeIndL(2)-validPacerTimeIndL(1) % sample length of the first resting interval =60003
+validPacerTimeIndL(34)-validPacerTimeIndL(33) % sample length of the 2nd resting interval =60003
+validPacerTimeIndL(66)-validPacerTimeIndL(65) % sample length of the 3rd resting interval =60002
+(validPacerTimeIndL(2)-validPacerTimeIndL(1))/2000 % varify that it is about 30 seconds
+Ind_missing=2*(7-2)+30*(7-2)+1 % index for the resting itnerval end before trial 8
+value_missingL=validPacerTimeIndL(Ind_missing)-value_diff; % value for the resting itnerval start before trial 8
+value_missingR=validPacerTimeIndR(Ind_missing)-value_diff; % value for the resting itnerval start before trial 8
+finalPacerTimeIndL=[validPacerTimeIndL(1:Ind_missing-1);value_missingL;validPacerTimeIndL(Ind_missing:end)];  % now 390 elements
+finalPacerTimeIndR=[validPacerTimeIndR(1:Ind_missing-1);value_missingR;validPacerTimeIndR(Ind_missing:end)];  % now 390 elements
+% plot final PacerTimeInd to make sure they look right
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(finalPacerTimeIndL,1.6*ones(1,length(finalPacerTimeIndL)),'r.');hold on;ylim([0 3]);
+plot(finalPacerTimeIndR,1.4*ones(1,length(finalPacerTimeIndR)),'b.');
+xline(0,'y');
+legend('final PacerTimeIndL', 'final PacerTimeIndR');
+
+%% Select segment points (20220804_2P)
 figure('units','normalized','outerposition',[0 0 1 0.3]); % for 12 blocks (synchronization)
 PacersL=PacerTimeIndL([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);
+[repelem([32*([1:10]-1)],4)+repmat([1 2 3 32],1,10)] 321:324 328:328+29)
 plot(PacersL, ones(length(PacersL)),'r.');
 hold on;
 PacersR=PacerTimeIndR([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);
 plot(PacersR, ones(length(PacersR)),'b.');
+
 
 
 %% extract time points for pacers with segmentation purpose - syncopation -20220610_2P
@@ -335,6 +370,7 @@ SegtimeIndL=PacerTimeIndL(SegPacerIndL); % index in data time
 thresholdR=2000*3; % after longer than 3 sec interval
 SegPacerIndR=[1 find([0 diff(PacerTimeIndR')]>thresholdR)]; % should be 38 values (first five should be 1 2 3 4 5)
 SegtimeIndR=PacerTimeIndR(SegPacerIndR); % index in data time
+
 
 %% Extract feedbacks from light detector ISO (skip for now)
 % look for the second ISO aux channel for the photocell 
