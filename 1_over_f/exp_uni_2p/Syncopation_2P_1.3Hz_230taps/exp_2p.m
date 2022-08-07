@@ -264,20 +264,20 @@ try
             % Showframeselected=Showframes(conditionSelected,:);
             
             % select color
-            if condiSeq(conditionSelected) == 1
+            if condiSeq(conditionSelected) == 1;
                 color = green;
-            elseif condiSeq(conditionSelected) == 2
+            elseif condiSeq(conditionSelected) == 2;
                 color = red;
-            elseif condiSeq(conditionSelected) == 3
+            elseif condiSeq(conditionSelected) == 3;
                 color = blue;
-            else condiSeq(conditionSelected) == 4
+            else condiSeq(conditionSelected) == 4;
                 color = megenta;
             end
 
             % show instruction for each trial / condition
             % for experimenter
             ShowCondition=[ConditionInstructions{condiSeq(conditionSelected)}]; % Center monitor
-            DrawFormattedText2(ShowCondition,'win',windowPtr,...
+            DrawFormattedText2([ShowCondition ' trial ' num2str(t)],'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
             % for left player
             if condiSeq(conditionSelected) == 1;

@@ -97,7 +97,7 @@ while (n < numFrames) & (n < MaxFrames) & (tapsRecordedL < MaxTaps ) & (tapsReco
 %     'sx',xCenter+screenYpixels/4,'sy',yCenter-screenYpixels/15,'xalign','center','yalign','top','baseColor',color);
 
     %% Flash photocell every other second during the whole trial (bottom right)
-    if (~isempty(find(([1:2:numFrames]==n)))) % every two frames
+    if (~isempty(find(([1:2:numFrames]==n)))); % every two frames
     Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3*2 0 -screenXpixels/3*2 0]); % Left monitor (Right Bottom)
     Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3 0 -screenXpixels/3 0]); % Middle monitor (Right Bottom)
     Screen('FillRect', windowPtr, white, RightBottomSquare+[-screenXpixels/3+PhotosensorSize*2 0 -screenXpixels/3+PhotosensorSize*2 0]); % Right monitor (Left Bottom)
@@ -188,7 +188,7 @@ while (n < numFrames) & (n < MaxFrames) & (tapsRecordedL < MaxTaps ) & (tapsReco
     end
 
     % Right player (leader, providing feedback)
-    if pressedR1 ==1 %| pressedR2 == 1  % at least one key press detected in the frist two events of the previous buffer
+    if pressedR1 ==1; %| pressedR2 == 1  % at least one key press detected in the frist two events of the previous buffer
         % if RBkeyR1 == 3 %| RBkeyR2 == 3  % confirm it is the middle key on RB740
             % show feedback for the experimentor 
             % Screen('DrawDots', windowPtr, [xCenter;yCenter], screenYpixels/20-2, blue, [0 0], 2); % center monitor 
