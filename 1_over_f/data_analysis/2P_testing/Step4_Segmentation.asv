@@ -85,7 +85,7 @@ loL;loR; % Hilbert envelop
 % save(filename_variables,'','-append');
 % organize into data structure ***
 
-%% Select segmentation indicies to use
+%% Select segmentation indicies to use (20220713_2P and 20220721_2P)
 %  For synchronization (20220713_2P):
 % Select segmentation points based on pacers and phtotocells on light senor 1
 % 50 Pacer markers selected (2 resting + 12 blocks + 11 resting)
@@ -128,7 +128,7 @@ SegIndR=sort([SegIndR1;SegIndR2]);
 % Examine 
 figure('units','normalized','outerposition',[0 0 1 0.6]);
 plot(PacerTimeIndL-PacerTimeIndL(1),2*ones(1,length(PacerTimeIndL)),'ro');hold on;
-plot(SegIndL-PacerTimeIndL(1),2.1*ones(length(SegIndL),11,1),'ro'); 
+plot(SegIndL-PacerTimeIndL(1),2.1*ones(1,length(SegIndL),'ro'); 
 plot(PacerTimeIndR-PacerTimeIndR(1),ones(1,length(PacerTimeIndR)),'bo');hold on;
 plot(SegIndR-PacerTimeIndR(1),1.1*ones(length(SegIndR),11,1),'bo'); 
 ylim([-2 5]);
@@ -142,6 +142,64 @@ plot(SegIndR1-PacerTimeIndR(1),1.1*ones(length(SegIndR1),11,1),'bx');
 plot(SegIndR2-PacerTimeIndR(1),1.1*ones(length(SegIndR2),11,1),'bx'); 
 ylim([-1 4]);
 
+%% Select segmentation indicies to use (202200804_2P)
+%  For synchronization (20220804_2P):
+% Select segmentation points based on pacers and phtotocells on light senor 1
+% 50 Pacer markers selected (2 resting + 12 blocks + 11 resting)
+SegIndL1=PacersL([[4+[4*([1:10]-1)]] 46 50]);% 12 segmentation points of the last pacer (30th pacer)
+SegIndR1=PacersR([[4+[4*([1:10]-1)]] 46 50]);
+% Examine 
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+plot(finalPacerTimeIndL-finalPacerTimeIndL(1),2*ones(1,length(finalPacerTimeIndL)),'ro');hold on;
+plot(SegIndL1-finalPacerTimeIndL(1),2.1*ones(length(SegIndL1),11,1),'ro'); 
+plot(finalPacerTimeIndR-finalPacerTimeIndR(1),ones(1,length(finalPacerTimeIndR)),'bo');hold on;
+plot(SegIndR1-finalPacerTimeIndR(1),1.1*ones(length(SegIndR1),11,1),'bo'); 
+ylim([-3 6]);
+
+% Select segmentation points of last BP in each trial
+% determine a threshold of numbers of samples in between trials
+if srL==srR; sr=srL; end; threshold = sr*30; 
+% 12 segmentation points of the last tap in each trial
+SegIndL2=[BottonPresTimeIndL(find([diff(BottonPresTimeIndL')]>threshold)); BottonPresTimeIndL(end)]; 
+SegIndR2=[BottonPresTimeIndR(find([diff(BottonPresTimeIndR')]>threshold)); BottonPresTimeIndR(end)]; 
+% Exam
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+subplot(2,1,1);
+plot(BottonPresTimeIndL,ones(1,length(BottonPresTimeIndL)),'ro');hold on;
+plot(SegIndL2,ones(length(SegIndL2),11,1).*1.1,'ro'); ylim([0 2]);
+subplot(2,1,2);
+plot(BottonPresTimeIndR,ones(1,length(BottonPresTimeIndR)),'bo');hold on;
+plot(SegIndR2,ones(length(SegIndR2),11,1).*1.1,'bo'); ylim([0 2]);
+% remove the first ending BP of L and first 2 ending BP of R
+SegIndL2=SegIndL2(2:end);
+SegIndR2=SegIndR2(3:end);
+
+% Combine last pacer and last tap indicies
+% SegIndL=unique([SegIndL1;SegIndL2]);
+% SegIndR=unique([SegIndR1;SegIndR2]);
+SegIndL=sort([SegIndL1;SegIndL2]);
+SegIndR=sort([SegIndR1;SegIndR2]);
+% Move the last 2 trials to the front (for 20220804_2P)
+SegIndL=SegIndL([end-3:end 1:end-4]);
+SegIndR=SegIndR([end-3:end 1:end-4]);
+
+% Examine 
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+plot(finalPacerTimeIndL-finalPacerTimeIndL(1),2*ones(1,length(finalPacerTimeIndL)),'ro');hold on;
+plot(SegIndL-finalPacerTimeIndL(1),2.1*ones(1,length(SegIndL)),'ro'); 
+plot(finalPacerTimeIndR-finalPacerTimeIndR(1),ones(1,length(finalPacerTimeIndR)),'bo');hold on;
+plot(SegIndR-finalPacerTimeIndR(1),1.1*ones(1,length(SegIndR)),'bo'); 
+ylim([-2 5]);
+
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+plot(finalPacerTimeIndL-finalPacerTimeIndL(1),2*ones(1,length(finalPacerTimeIndL)),'ro');hold on;
+plot(SegIndL1-finalPacerTimeIndL(1),2.1*ones(1,length(SegIndL1))','r.'); 
+plot(SegIndL2-finalPacerTimeIndL(1),2.1*ones(1,length(SegIndL2)),'rx'); 
+plot(finalPacerTimeIndR-finalPacerTimeIndR(1),ones(1,length(finalPacerTimeIndR)),'bo');hold on;
+plot(SegIndR1-finalPacerTimeIndR(1),1.1*ones(1,length(SegIndR1)),'b.'); 
+plot(SegIndR2-finalPacerTimeIndR(1),1.1*ones(1,length(SegIndR2)),'bx'); 
+legend('L pacers','L seg start','L seg end','R pacers','R seg start','R seg end')
+ylim([-1 4]);
 %% Segment EEG - synchronization
 mixedsigL=mixedsigL';
 mixedsigR=mixedsigR';
