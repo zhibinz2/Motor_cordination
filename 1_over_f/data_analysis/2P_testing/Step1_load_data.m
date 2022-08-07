@@ -163,7 +163,7 @@ numFbR=sum(FeedbTimeR01) % num of feedbacks from the other plus 4+2x5 resting ph
 % previous ANT_Neuro default
 % PacerIndL=unique([find(TriggersL == 127)]); % extract Index of real key presses in the values
 % PacerIndL=unique([find(TriggersL == 127);find(TriggersL == 111)); % extract Index of real key presses in the values
-PacerIndL=unique([find(TriggersL == 127);find(TriggersL == 111);find(TriggersL == 123)]); % extract Index of real key presses in the values
+% PacerIndL=unique([find(TriggersL == 127);find(TriggersL == 111);find(TriggersL == 123)]); % extract Index of real key presses in the values
 % Light senor 1(black,top)&2(white,bottom) on output line 6&7
 % Line 6: Light Sensor 1 (Back light sensor) (output = 255-2^6=191)
 % Line 7: Light Sensor 2 (White light sensor) (output = 255-2^7=127)
@@ -186,12 +186,12 @@ PacerTimeL01=zeros(size(timeL));
 PacerTimeL01(PacerTimeIndL)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeL01,'r');
-numPacerL=sum(PacerTimeL01); % check if == 194 / 386
+numPacerL=sum(PacerTimeL01) % check if == 194 / 386
 % xlim([-1 length(PacerTimeL01)]);
 
 % Right player
 % previous ANT_Neuro default
-PacerIndR=unique([find(TriggersR == 127);find(TriggersR == 111)]); % extract Index of real key presses in the values
+% PacerIndR=unique([find(TriggersR == 127);find(TriggersR == 111)]); % extract Index of real key presses in the values
 % Light senor 1(black,top)&2(white,bottom) on output line 6&7
 % Line 6: Light Sensor 1 (Back light sensor) (output = 255-2^6=191)
 % Line 7: Light Sensor 2 (White light sensor) (output = 255-2^7=127)
@@ -216,7 +216,7 @@ figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeR01,'b');
 numPacerR=sum(PacerTimeR01); % check if == 194 / 386
 
-% Plot not alligned
+% Plot selected segment points (not alligned)
 figure('units','normalized','outerposition',[0 0 1 0.3]); % for 6 conditions (synchronization)
 PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
 plot(PacersL, ones(length(PacersL)),'r.');
@@ -273,7 +273,6 @@ hold on;
 plot(PacerTimeIndR-PacerTimeIndR(2), 0.9*ones(length(PacerTimeIndR)),'b.');
 ylim([0 2]);
 legend('alligned-PacerTimeIndL', 'alligned-PacerTimeIndR');
-
 % Make up for missing pacers on the left (for 20220721_2P) (sycopation 12 blocks)
 ShiftPacer=PacerTimeIndL(1)-PacerTimeIndR(2);
 PacerTimeIndL=PacerTimeIndR+ShiftPacer;
@@ -281,7 +280,6 @@ figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeIndL,1.6*ones(1,length(PacerTimeIndL)),'r.');hold on;ylim([0 3]);
 plot(PacerTimeIndR,1.4*ones(1,length(PacerTimeIndR)),'b.');
 legend('restored PacerTimeIndL', 'PacerTimeIndR');
-
 % Plot alligned again (for syncopation 20220721_2P)
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeIndL-PacerTimeIndL(1), ones(length(PacerTimeIndL)),'r.');
@@ -289,6 +287,33 @@ hold on;
 plot(PacerTimeIndR-PacerTimeIndR(1), 0.9*ones(length(PacerTimeIndR)),'b.');
 ylim([0 2]);
 legend('alligned-PacerTimeIndL', 'alligned-PacerTimeIndR');
+
+% plot pacers alligned (for synchronization 20220804_2P)
+PacerTimeIndL;% might contain missing photocells, need to be recovered from R, should have about 30*12
+PacerTimeIndR;% should have 4+2*11+30*12+4+2+30*2+2+1=455, alligned to last photocell in L
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(PacerTimeIndL-PacerTimeIndL(end), ones(length(PacerTimeIndL)),'r.');
+hold on;
+plot(PacerTimeIndR-PacerTimeIndR(end), 0.9*ones(length(PacerTimeIndR)),'b.');
+ylim([0 2]);
+legend('alligned-PacerTimeIndL', 'alligned-PacerTimeIndR');
+% Make up for missing pacers on the left (for synchronization 20220804_2P)
+ShiftPacer=PacerTimeIndL(end)-PacerTimeIndR(end);
+PacerTimeIndL=PacerTimeIndR+ShiftPacer;
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(PacerTimeIndL,1.6*ones(1,length(PacerTimeIndL)),'r.');hold on;ylim([0 3]);
+plot(PacerTimeIndR,1.4*ones(1,length(PacerTimeIndR)),'b.');
+xline(0,'y');
+legend('restored PacerTimeIndL', 'PacerTimeIndR');
+% Plot alligned again (for synchronization 20220804_2P)
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(PacerTimeIndL-PacerTimeIndL(1), ones(length(PacerTimeIndL)),'r.');
+hold on;
+plot(PacerTimeIndR-PacerTimeIndR(1), 0.9*ones(length(PacerTimeIndR)),'b.');
+ylim([0 2]);
+legend('alligned-PacerTimeIndL', 'alligned-PacerTimeIndR');
+
+
 %% extract time points for pacers with segmentation purpose - syncopation -20220610_2P
 % PacerTimeIndL; PacerTimeIndR; % index in datatime
 % PacerTimeL01; PacerTimeR01;
@@ -311,6 +336,9 @@ SegtimeIndL=PacerTimeIndL(SegPacerIndL); % index in data time
 thresholdR=2000*3; % after longer than 3 sec interval
 SegPacerIndR=[1 find([0 diff(PacerTimeIndR')]>thresholdR)]; % should be 38 values (first five should be 1 2 3 4 5)
 SegtimeIndR=PacerTimeIndR(SegPacerIndR); % index in data time
+
+%% extract time points for pacers with segmentation purpose - synchronization -20220804_2P (12 blocks)
+validIndL=find(PacerTimeIndL>0); % first pacer start from 67
 
 %% Extract feedbacks from light detector ISO (skip for now)
 % look for the second ISO aux channel for the photocell 
