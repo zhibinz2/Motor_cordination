@@ -127,8 +127,8 @@ try
     % For help see: Screen Openwindow?
     % This will draw on a black backgroud with a size of [0 0 500 1000] and
     % return a window pointer windowPtr
-    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3*60/59 330*40/33]); 
-%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
+%     [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black, [0 0 590*3*60/59 330*40/33]); 
+    [windowPtr, windowRect] = PsychImaging('Openwindow', screenNumber, black); 
 
     % Get the size of the on screen windowPtr in pixels
     % For help see: Screen windowSize?
