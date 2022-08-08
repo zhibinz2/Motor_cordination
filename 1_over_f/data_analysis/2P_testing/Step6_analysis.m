@@ -77,6 +77,7 @@ end
 
 %% PLOT 1:  plotting
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Corr_DFA
+cd /ssd/zhibin/1overf/20220804_2P/Segmented_data/Plots/Corr_DFA
 
 for i=1:nTrials
     
@@ -164,7 +165,7 @@ addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/D
 
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data
 cd /ssd/zhibin/1overf/20220721_2P/Segmented_data
-
+cd /ssd/zhibin/1overf/20220804_2P/Segmented_data
 load('data_variables20220713.mat')
 load('data_variables20220721.mat')
 
