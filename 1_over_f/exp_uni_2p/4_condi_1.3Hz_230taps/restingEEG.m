@@ -31,8 +31,7 @@ pause(1); % given time to return the position of arm after key press
 Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
 Screen('FillRect', windowPtr, white, LeftUpperSquare);
 Screen('Flip',windowPtr);
-
-
+pause(0.02); % enable left monitor to detect it.
 
 % get a timestamp and begin taking resting EEG ****************************
 vbl = Screen('Flip', windowPtr);
@@ -73,6 +72,7 @@ end
 Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
 Screen('FillRect', windowPtr, white, LeftUpperSquare);
 Screen('Flip',windowPtr);
+pause(0.02); % enable left monitor to detect it.
 
 %****************************************************************************
 instructionStart=['Rest with eyes closed for ' num2str(TimeRestingEEG/60) 'min'...
@@ -104,6 +104,7 @@ pause(1); % given time to return the position of arm after key press
 Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
 Screen('FillRect', windowPtr, white, LeftUpperSquare);
 Screen('Flip',windowPtr);
+pause(0.02); % enable left monitor to detect it.
 
 % get a timestamp and begin taking resting EEG
 vbl = Screen('Flip', windowPtr);
@@ -141,6 +142,7 @@ while i < 2;
     Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
     Screen('FillRect', windowPtr, white, LeftUpperSquare);
     Screen('Flip',windowPtr);
+    pause(0.02); % enable left monitor to detect it.
     i=i+1;
 end
 
