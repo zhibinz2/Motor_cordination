@@ -21,7 +21,7 @@ load('/home/hnl/Acquisition/zhibin/20220810_2P/Segmented_data/BP20220810.mat');
 % load data_structure20220713.mat; condiSeq=data(1).condiSeq; save('condiSeq20220713.mat','condiSeq');
 % load 'condiSeq20220713.mat';
 % load data_structure20220804.mat; save('condiSeq20220804.mat','condiSeq');
-load '/home/hnl/Acquisition/zhibin/20220804_2P/Segmented_data/condiSeq20220804.mat';
+% load '/home/hnl/Acquisition/zhibin/20220804_2P/Segmented_data/condiSeq20220804.mat';
 % save('condiSeq20220810.mat','condiSeq');
 load '/home/hnl/Acquisition/zhibin/20220810_2P/Segmented_data/condiSeq20220810.mat';
 %% Go back to experimental directory
@@ -281,7 +281,7 @@ try
             % show instruction for each trial / condition
             % for experimenter
             ShowCondition=[ConditionInstructions{condiSeq(conditionSelected)}]; % Center monitor
-            DrawFormattedText2([ShowCondition ' trial ' num2str(t)],'win',windowPtr,...
+            DrawFormattedText2([ShowCondition ' -- trial ' num2str(t)],'win',windowPtr,...
             'sx','center','sy', 'center','xalign','center','yalign','top','baseColor',color);
             % for left player
             if condiSeq(conditionSelected) == 1;

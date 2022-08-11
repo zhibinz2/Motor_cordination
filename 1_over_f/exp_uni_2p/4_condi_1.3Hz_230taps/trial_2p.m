@@ -42,7 +42,7 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
         
     %% draw instruction for each trial / condition with different color
     % for experimentor
-    DrawFormattedText2(ConditionInstructions{conditionSelected},'win',windowPtr,...
+    DrawFormattedText2([ConditionInstructions{conditionSelected} ' -- block ' num2str(block) ' trial ' num2str(t)],'win',windowPtr,...
     'sx','center','sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',color);
     % for player L
     DrawFormattedText2(ConditionInstructionsL{conditionSelected},'win',windowPtr,...
@@ -110,7 +110,12 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     if pressedL1 ==1 %| pressedL2 == 1 % at least one key press detected in the frist two events of the previous buffer
         % if RBkeyL1 == 3 %| RBkeyL2 == 3 % confirm it is the middle key on RB740
             % For the experimentor (feedback and its photocell)
-            Screen('DrawDots', windowPtr, [xCenter-screenXpixels/24;yCenter], screenYpixels/20-2, red, [0 0], 2); % center monitor (left shift -screenYpixels/24)
+            if RBkeyL1==6;
+                % show warning dot if last key was pressed
+                Screen('DrawDots', windowPtr, [xCenter-screenXpixels/24;yCenter], screenYpixels/20-2, yellow, [0 0], 2); % center monitor (left shift -screenYpixels/24)
+            else
+                Screen('DrawDots', windowPtr, [xCenter-screenXpixels/24;yCenter], screenYpixels/20-2, red, [0 0], 2); % center monitor (left shift -screenYpixels/24)
+            end
             % show bottomright photocell on the other side undercovered - right monitor
             Screen('FillRect', windowPtr, white, RightBottomSquare); 
             % show upperleft photocell on the other side undercovered - right monitor
@@ -163,8 +168,13 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     if pressedR1 ==1 %| pressedR2 == 1  % at least one key press detected in the frist two events of the previous buffer
         % if RBkeyR1 == 3 %| RBkeyR2 == 3  % confirm it is the middle key on RB740
             % show feedback for the experimentor 
-            % Screen('DrawDots', windowPtr, [xCenter;yCenter], screenYpixels/20-2, blue, [0 0], 2); % center monitor 
-            Screen('DrawDots', windowPtr, [xCenter+screenXpixels/24;yCenter], screenYpixels/20-2, blue, [0 0], 2); % center monitor (right shift +screenYpixels/24)
+            if RBkeyR1==6;
+                % Screen('DrawDots', windowPtr, [xCenter;yCenter], screenYpixels/20-2, blue, [0 0], 2); % center monitor 
+                % show warning dot if last key was pressed
+                Screen('DrawDots', windowPtr, [xCenter+screenXpixels/24;yCenter], screenYpixels/20-2, yellow, [0 0], 2); % center monitor (right shift +screenYpixels/24)
+            else
+                Screen('DrawDots', windowPtr, [xCenter+screenXpixels/24;yCenter], screenYpixels/20-2, blue, [0 0], 2); % center monitor (right shift +screenYpixels/24)
+            end
             % show bottomleft photocell on the other side undercovered - left monitor
             Screen('FillRect', windowPtr, white, LeftBottomSquare);
             % show upperleft photocell on the other side undercovered - left monitor

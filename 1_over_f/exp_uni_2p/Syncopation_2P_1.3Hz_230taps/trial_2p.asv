@@ -56,8 +56,8 @@ while (n < numFrames) & (n < MaxFrames) & (tapsRecordedL < MaxTaps ) & (tapsReco
     end
         
     %% draw instruction for each trial / condition with different color
-    % for experimentor 
-    DrawFormattedText2([ConditionInstructions{condiSeq(conditionSelected)} ' -- trial ' num2str(t)],'win',windowPtr,...
+    % for experimentor [ShowCondition ' trial ' num2str(t)]
+    DrawFormattedText2([ConditionInstructions{condiSeq(conditionSelected)},'win',windowPtr,...
     'sx','center','sy', screenYpixels*0.8,'xalign','center','yalign','top','baseColor',color);
     % for player L
     if condiSeq(conditionSelected) == 1;
