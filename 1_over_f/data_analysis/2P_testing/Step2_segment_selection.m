@@ -1,5 +1,5 @@
-%% Select segmentation indicies to use (20220713_2P and 20220721_2P)
-%  For synchronization (20220713_2P):
+%% Select segmentation indicies to use (20220713_2P and 20220721_2P and 20220810_2P)
+%  For synchronization (20220713_2P and 20220810_2P):
 % Select segmentation points based on pacers and phtotocells on light senor 1
 % 50 Pacer markers selected (2 resting + 12 blocks + 11 resting)
 % SegIndL=PacerTimeIndL([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);
@@ -32,6 +32,8 @@ plot(SegIndL2,ones(length(SegIndL2),11,1).*1.1,'ro'); ylim([0 2]);
 subplot(2,1,2);
 plot(BottonPresTimeIndR,ones(1,length(BottonPresTimeIndR)),'bo');hold on;
 plot(SegIndR2,ones(length(SegIndR2),11,1).*1.1,'bo'); ylim([0 2]);
+% For 20220810_2P, select the last 12 elements from L side
+SegIndL2=SegIndL2(6:end);
 
 % Combine last pacer and last tap indicies
 % SegIndL=unique([SegIndL1;SegIndL2]);
@@ -48,10 +50,10 @@ ylim([-2 5]);
 
 figure('units','normalized','outerposition',[0 0 1 0.6]);
 plot(PacerTimeIndL-PacerTimeIndL(1),2*ones(1,length(PacerTimeIndL)),'ro');hold on;
-plot(SegIndL1-PacerTimeIndL(1),2.1*ones(1,length(SegIndL1)),'rx'); 
+plot(SegIndL1-PacerTimeIndL(1),2.1*ones(1,length(SegIndL1)),'r.'); 
 plot(SegIndL2-PacerTimeIndL(1),2.1*ones(1,length(SegIndL2)),'rx'); 
 plot(PacerTimeIndR-PacerTimeIndR(1),ones(1,length(PacerTimeIndR)),'bo');hold on;
-plot(SegIndR1-PacerTimeIndR(1),1.1*ones(1,length(SegIndR1)),'bx'); 
+plot(SegIndR1-PacerTimeIndR(1),1.1*ones(1,length(SegIndR1)),'b.'); 
 plot(SegIndR2-PacerTimeIndR(1),1.1*ones(1,length(SegIndR2)),'bx'); 
 ylim([-1 4]);
 
@@ -113,3 +115,29 @@ plot(SegIndR1-finalPacerTimeIndR(1),1.1*ones(1,length(SegIndR1)),'b.');
 plot(SegIndR2-finalPacerTimeIndR(1),1.1*ones(1,length(SegIndR2)),'bx'); 
 legend('L pacers','L seg start','L seg end','R pacers','R seg start','R seg end')
 ylim([-1 4]);
+
+%% select the first 30 pacers intervals (202200804_2P)
+PacersL;PacersR; % each has 50 elements (2*10+2*10+4+2+2+2=50)
+Seg30IndL1=PacersL([[3+[4*([1:10]-1)]] 45 49]);% 12 segmentation points of the first pacer (30th pacer)
+Seg30IndR1=PacersR([[3+[4*([1:10]-1)]] 45 49]);
+Seg30IndL2=PacersL([[4+[4*([1:10]-1)]] 46 50]);% 12 segmentation points of the last pacer (30th pacer)
+Seg30IndR2=PacersR([[4+[4*([1:10]-1)]] 46 50]);
+
+% Combine first pacer and last pacer indicies
+Seg30IndL=sort([SegIndL1;SegIndL2]);
+Seg30IndR=sort([SegIndR1;SegIndR2]);
+% Move the last 2 trials to the front (for 20220804_2P)
+Seg30IndL=Seg30IndL([end-3:end 1:end-4]);
+Seg30IndR=Seg30IndR([end-3:end 1:end-4]);
+% Examine 
+figure('units','normalized','outerposition',[0 0 1 0.6]);
+plot(finalPacerTimeIndL-finalPacerTimeIndL(1),2*ones(1,length(finalPacerTimeIndL)),'ro');hold on;
+plot(Seg30IndL1-finalPacerTimeIndL(1),2.1*ones(length(Seg30IndL1),11,1),'r.'); 
+plot(Seg30IndL2-finalPacerTimeIndL(1),2.1*ones(1,length(SegIndL2)),'rx'); 
+plot(finalPacerTimeIndR-finalPacerTimeIndR(1),ones(1,length(finalPacerTimeIndR)),'bo');hold on;
+plot(Seg30IndR1-finalPacerTimeIndR(1),1.1*ones(length(Seg30IndR1),11,1),'b.'); 
+plot(Seg30IndR2-finalPacerTimeIndR(1),1.1*ones(1,length(SegIndR2)),'bx'); 
+ylim([-3 6]);
+
+
+%% select the resting interval

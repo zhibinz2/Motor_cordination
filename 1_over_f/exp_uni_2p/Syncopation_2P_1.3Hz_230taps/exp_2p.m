@@ -15,11 +15,15 @@ sca; clc; close all; clear all; clearvars;
 % load('/home/hnl/Acquisition/zhibin/20220713_2P/Segmented_data/BP20220713.mat');
 % cd /home/hnl/Acquisition/zhibin/20220804_2P/Segmented_data/
 % load('data_variables20220804.mat'); save('BP20220804.mat','BP');
-load('/home/hnl/Acquisition/zhibin/20220804_2P/Segmented_data/BP20220804.mat');
+% load('/home/hnl/Acquisition/zhibin/20220804_2P/Segmented_data/BP20220804.mat');
+% save('BP20220810.mat','BP');
+load('/home/hnl/Acquisition/zhibin/20220810_2P/Segmented_data/BP20220810.mat');
 % load data_structure20220713.mat; condiSeq=data(1).condiSeq; save('condiSeq20220713.mat','condiSeq');
 % load 'condiSeq20220713.mat';
 % load data_structure20220804.mat; save('condiSeq20220804.mat','condiSeq');
 load '/home/hnl/Acquisition/zhibin/20220804_2P/Segmented_data/condiSeq20220804.mat';
+% save('condiSeq20220810.mat','condiSeq');
+load '/home/hnl/Acquisition/zhibin/20220810_2P/Segmented_data/condiSeq20220810.mat';
 %% Go back to experimental directory
 cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/Syncopation_2P_1.3Hz_230taps
 
