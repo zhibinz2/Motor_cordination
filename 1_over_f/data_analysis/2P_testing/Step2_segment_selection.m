@@ -1,5 +1,5 @@
-%% Select segmentation indicies to use (20220713_2P and 20220721_2P)
-%  For synchronization (20220713_2P):
+%% Select segmentation indicies to use (20220713_2P and 20220721_2P and 20220810_2P)
+%  For synchronization (20220713_2P and 20220810_2P):
 % Select segmentation points based on pacers and phtotocells on light senor 1
 % 50 Pacer markers selected (2 resting + 12 blocks + 11 resting)
 % SegIndL=PacerTimeIndL([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);
@@ -32,6 +32,8 @@ plot(SegIndL2,ones(length(SegIndL2),11,1).*1.1,'ro'); ylim([0 2]);
 subplot(2,1,2);
 plot(BottonPresTimeIndR,ones(1,length(BottonPresTimeIndR)),'bo');hold on;
 plot(SegIndR2,ones(length(SegIndR2),11,1).*1.1,'bo'); ylim([0 2]);
+% For 20220810_2P, select the last 12 elements from L side
+SegIndL2=SegIndL2(6:end);
 
 % Combine last pacer and last tap indicies
 % SegIndL=unique([SegIndL1;SegIndL2]);
@@ -48,10 +50,10 @@ ylim([-2 5]);
 
 figure('units','normalized','outerposition',[0 0 1 0.6]);
 plot(PacerTimeIndL-PacerTimeIndL(1),2*ones(1,length(PacerTimeIndL)),'ro');hold on;
-plot(SegIndL1-PacerTimeIndL(1),2.1*ones(1,length(SegIndL1)),'rx'); 
+plot(SegIndL1-PacerTimeIndL(1),2.1*ones(1,length(SegIndL1)),'r.'); 
 plot(SegIndL2-PacerTimeIndL(1),2.1*ones(1,length(SegIndL2)),'rx'); 
 plot(PacerTimeIndR-PacerTimeIndR(1),ones(1,length(PacerTimeIndR)),'bo');hold on;
-plot(SegIndR1-PacerTimeIndR(1),1.1*ones(1,length(SegIndR1)),'bx'); 
+plot(SegIndR1-PacerTimeIndR(1),1.1*ones(1,length(SegIndR1)),'b.'); 
 plot(SegIndR2-PacerTimeIndR(1),1.1*ones(1,length(SegIndR2)),'bx'); 
 ylim([-1 4]);
 

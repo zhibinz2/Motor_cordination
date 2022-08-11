@@ -151,8 +151,8 @@ for i=1:nTrials
     set(gca,'YTick',1:2);
     set(gca,'YTickLabel',[{'L'} {'R'}]);
 
-%     figureName=['Corr_DFA-trial-' num2str(i)];
-%     saveas(gcf,figureName,'jpg');
+    figureName=['Corr_DFA-trial-' num2str(i)];
+    saveas(gcf,figureName,'jpg');
 
 end
 close all;

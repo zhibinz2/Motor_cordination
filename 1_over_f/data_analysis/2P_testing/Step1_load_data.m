@@ -137,7 +137,7 @@ numPresR=sum(BottonPresTimeR01) % num of button presses
 %% extract time points for feedbacks from other
 % Left Player Recording
 % previous ANT_Neuro default
-FeedbIndL=unique([find(TriggersL == 251);find(TriggersL == 235)]); % extract Index of real key presses in the values
+% FeedbIndL=unique([find(TriggersL == 251);find(TriggersL == 235)]); % extract Index of real key presses in the values
 % Light senor 1(black,top)&2(white,bottom) on output line 6&7
 % Line 6: Light Sensor 1 (Back light sensor) (output = 255-2^6=191)
 % Line 7: Light Sensor 2 (White light sensor) (output = 255-2^7=127)
@@ -163,7 +163,7 @@ numFbL=sum(FeedbTimeL01) % num of feedbacks from the other plus 4+2x5 resting ph
 
 % Right Player Recording
 % previous ANT_Neuro default
-FeedbIndR=unique([find(TriggersR == 251);find(TriggersR == 235)]); % extract Index of real key presses in the values
+% FeedbIndR=unique([find(TriggersR == 251);find(TriggersR == 235)]); % extract Index of real key presses in the values
 % Light senor 1(black,top)&2(white,bottom) on output line 6&7
 % Line 6: Light Sensor 1 (Back light sensor) (output = 255-2^6=191)
 % Line 7: Light Sensor 2 (White light sensor) (output = 255-2^7=127)
@@ -227,6 +227,7 @@ numPacerL=sum(PacerTimeL01) % check if == 194 / 386
 % 119=255-2^3-2^7 % middle key + light sensor 2
 % 183=255-2^3-2^6 % middle key + light sensor 1
 PacerIndR=unique([find(TriggersR == 191);find(TriggersR == 183)]);
+% For 20220810_2P, it counted 517. (30*17=510 + 2 + 5)
 
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerIndR,ones(1,length(PacerIndR)),'bo'); % look at the above Index (one press produced several indices)
@@ -244,7 +245,7 @@ PacerTimeR01(PacerTimeIndR)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeR01,'b');
 numPacerR=sum(PacerTimeR01); % check if == 194 / 386
-
+% For 20220810_2P, it counted 552. (30*17=510 + 2*15 + 4 + 8)
 %% Select segment points
 % Plot selected segment points (not alligned)
 figure('units','normalized','outerposition',[0 0 1 0.3]); % for 6 conditions (synchronization)
@@ -322,9 +323,9 @@ legend('alligned-PacerTimeIndL', 'alligned-PacerTimeIndR');
 PacerTimeIndL;% might contain missing photocells, need to be recovered from R, should have about 30*12
 PacerTimeIndR;% should have 4+2*11+30*12+4+2+30*2+2+1=455, alligned to last photocell in L
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(PacerTimeIndL-PacerTimeIndL(end), ones(length(PacerTimeIndL)),'r.');
+plot(PacerTimeIndL-PacerTimeIndL(end), ones(1,length(PacerTimeIndL)),'r.');
 hold on;
-plot(PacerTimeIndR-PacerTimeIndR(end), 0.9*ones(length(PacerTimeIndR)),'b.');
+plot(PacerTimeIndR-PacerTimeIndR(end), 0.9*ones(1,length(PacerTimeIndR)),'b.');
 ylim([0 2]);
 legend('alligned-PacerTimeIndL', 'alligned-PacerTimeIndR');
 % Make up for missing pacers on the left (for synchronization 20220804_2P)
@@ -342,6 +343,32 @@ hold on;
 plot(PacerTimeIndR-PacerTimeIndR(1), 0.9*ones(length(PacerTimeIndR)),'b.');
 ylim([0 2]);
 legend('alligned-PacerTimeIndL', 'alligned-PacerTimeIndR');
+
+% plot pacers alligned (for synchronization 20220810_2P)
+PacerTimeIndL;% contain missing photocells, need to be recovered from R, should have about 30*12
+PacerTimeIndR;% should have 4+2*4+30*5+4+4+30*12+2*11=552, alligned to last photocell in L
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot([PacerTimeIndL-PacerTimeIndL(end)], ones(1,length(PacerTimeIndL)),'r.');
+hold on;
+plot([PacerTimeIndR-PacerTimeIndR(end)], 0.9*ones(1,length(PacerTimeIndR)),'b.');
+ylim([0 2]);
+legend('alligned-PacerTimeIndL', 'alligned-PacerTimeIndR');
+% Make up for missing pacers on the left (for synchronization 20220810_2P)
+ShiftPacer=PacerTimeIndL(end)-PacerTimeIndR(end);
+PacerTimeIndL=PacerTimeIndR+ShiftPacer;
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(PacerTimeIndL,1.6*ones(1,length(PacerTimeIndL)),'r.');hold on;ylim([0 3]);
+plot(PacerTimeIndR,1.4*ones(1,length(PacerTimeIndR)),'b.');
+xline(0,'y');
+legend('restored PacerTimeIndL', 'PacerTimeIndR');
+% Plot alligned again (for synchronization 20220810_2P)
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(PacerTimeIndL-PacerTimeIndL(1), ones(length(PacerTimeIndL)),'r.');
+hold on;
+plot(PacerTimeIndR-PacerTimeIndR(1), 0.9*ones(length(PacerTimeIndR)),'b.');
+ylim([0 2]);
+legend('alligned-PacerTimeIndL', 'alligned-PacerTimeIndR');
+
 
 %% examine time points for pacers with segmentation purpose - synchronization -20220804_2P (12 blocks)
 validIndL=find(PacerTimeIndL>0); % first pacer start from 67
@@ -366,6 +393,21 @@ plot(finalPacerTimeIndR,1.4*ones(1,length(finalPacerTimeIndR)),'b.');
 xline(0,'y');
 legend('final PacerTimeIndL', 'final PacerTimeIndR');
 
+%% examine time points for pacers with segmentation purpose - synchronization -20220810_2P (12 blocks)
+% valid pacers are first 4 + first pacer for trial 1 (start from 4+5*30+4*2+4+4+1=171) to the end
+validPacerTimeIndL=PacerTimeIndL([1:4 171:end]); % start from frist valid pacer 
+validPacerTimeIndR=PacerTimeIndR([1:4 171:end]); % first corresponding pacer start from 67
+% should both have 4+30*12+11*2=386 elements
+% value for the resting itnerval start before trial 8
+finalPacerTimeIndL=validPacerTimeIndL;  % now 386 elements
+finalPacerTimeIndR=validPacerTimeIndR;  % now 386 elements
+% plot final PacerTimeInd to make sure they look right
+figure('units','normalized','outerposition',[0 0 1 0.3]);
+plot(finalPacerTimeIndL,1.6*ones(1,length(finalPacerTimeIndL)),'r.');hold on;ylim([0 3]);
+plot(finalPacerTimeIndR,1.4*ones(1,length(finalPacerTimeIndR)),'b.');
+xline(0,'y');
+legend('final PacerTimeIndL', 'final PacerTimeIndR');
+
 %% Select segment points (20220804_2P)
 figure('units','normalized','outerposition',[0 0 1 0.3]); % for 12 blocks (synchronization)
 PacersL=finalPacerTimeIndL([[repelem([32*([1:10]-1)],4)+repmat([1 2 3 32],1,10)] 321:324 328 (328+29):(328+29+2+1) (360+29)]);
@@ -375,6 +417,14 @@ PacersR=finalPacerTimeIndR([[repelem([32*([1:10]-1)],4)+repmat([1 2 3 32],1,10)]
 plot(PacersR, 1.1*ones(length(PacersR)),'b.');
 ylim([0 2]);
 
+%% Select segment points (20220810_2P)
+figure('units','normalized','outerposition',[0 0 1 0.3]); % for 12 blocks (synchronization)
+PacersL=finalPacerTimeIndL([1:2 [repelem([32*([1:12]-1)],4)+repmat([3 4 5 34],1,12)] ]); % should have 4+2*12+2*11=50 elements
+plot(PacersL, ones(length(PacersL)),'r.');
+hold on;
+PacersR=finalPacerTimeIndR([1:2 [repelem([32*([1:12]-1)],4)+repmat([3 4 5 34],1,12)] ]); % should have 4+2*12+2*11=50 elements
+plot(PacersR, 1.1*ones(length(PacersR)),'b.');
+ylim([0 2]);
 
 
 %% extract time points for pacers with segmentation purpose - syncopation -20220610_2P
