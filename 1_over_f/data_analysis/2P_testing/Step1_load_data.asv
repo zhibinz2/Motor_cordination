@@ -55,14 +55,13 @@ hold off;
 subplot(2,1,2);
 plot(TriggersR,'b');
 hold on; 
-yline(95,'k','95 = light sensor 2 + key 6 '); 
-plot(find(TriggersR==95),100*ones(length(find(TriggersR==95)),1),'mo'); % only happen in trial 1, to be discarded anyway
+yline(95,'k','95 = light sensor 2 + key 6 ');
 yline(247,'k','247 = middle key');
 plot(find(TriggersR==247),100*ones(length(find(TriggersR==247)),1),'mo'); 
 yline(223,'k','223 = key 6'); % R20220810 Issac pushes a lot of key 6 in trial 1 then move to key 7 until trial 5
-plot(find(TriggersR==223),100*ones(length(find(TriggersR==223)),1),'mo'); % just in trial 1, to be discarded anyway
+plot(find(TriggersR==223),100*ones(length(find(TriggersR==223)),1),'mo'); 
 yline(239,'k','239 = key 5'); % see how many key 5 pushes there
-plot(find(TriggersR==239),100*ones(length(find(TriggersR==239)),1),'mo'); % just one additional wrong push (can be ignored)
+plot(find(TriggersR==239),100*ones(length(find(TriggersR==239)),1),'mo'); % just one wrong push
 hold off;
 
 % Xidon2 - setting
