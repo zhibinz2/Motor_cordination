@@ -155,12 +155,7 @@ try
     Screen('ColorRange', windowPtr, 1, -1,1);
 
     % Set text display options for operating system other than Linux.
-    % For help see: Screen TextFont?cd /home/hnl/Documents/GitHub/Motor_cordination % hnlstim2
-! git status
-! git add .
-CommitName=char(datetime('now'));
-!git commit -a -m "CommitName"
-% https://docs.github.com/en/get
+    % For help see: Screen TextFont?
     if ~IsLinux
         Screen('TextFont', windowPtr, 'Arial');
         Screen('TextSize', windowPtr, 18);
