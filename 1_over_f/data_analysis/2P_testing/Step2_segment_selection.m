@@ -1,4 +1,4 @@
-%% Select segmentation indicies to use (20220713_2P and 20220721_2P and 20220810_2P)
+%% Select segmentation indicies to use (20220713_2P and 20220721_2P and 20220810_2P and 20220815_2P)
 %  For synchronization (20220713_2P and 20220810_2P):
 % Select segmentation points based on pacers and phtotocells on light senor 1
 % 50 Pacer markers selected (2 resting + 12 blocks + 11 resting)

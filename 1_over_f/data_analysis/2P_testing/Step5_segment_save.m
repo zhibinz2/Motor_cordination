@@ -6,6 +6,7 @@ cd /ssd/zhibin/1overf/20220713_2P/Segmented_data
 cd /ssd/zhibin/1overf/20220721_2P/Segmented_data
 cd /ssd/zhibin/1overf/20220804_2P/Segmented_data/
 cd /ssd/zhibin/1overf/20220810_2P/Segmented_data/
+cd /ssd/zhibin/1overf/20220815_2P/Segmented_data/
 %% Collect all the variables
 % experimental data extracted =====================================
 allPerm;

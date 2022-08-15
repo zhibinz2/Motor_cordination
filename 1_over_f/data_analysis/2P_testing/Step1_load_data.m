@@ -18,6 +18,7 @@ cd /ssd/zhibin/1overf/20220804_2P % Wing and Mariya: Synch 1.3Hz 230 taps
 cd /ssd/zhibin/1overf/20220808_2P % Wing and Mariya: Synco 1.3Hz 230 taps
 cd /ssd/zhibin/1overf/20220810_2P % Jordan and Issac: Synch 1.3Hz 230 taps
 cd /ssd/zhibin/1overf/20220811_2P % Jordan and Issac: Synco 1.3Hz 230 taps
+cd /ssd/zhibin/1overf/20220815_2P % Ivy and Rajat
 
 load 20220713.mat
 load 20220721.mat
