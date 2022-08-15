@@ -110,10 +110,10 @@ numPresL=sum(BottonPresTimeL01) % num of button presses
 % 12 blocks *230 taps = 2760
 
 % Right player
-% % Key presses (all 7 keys same value)
-% PresIndR=unique([find(TriggersR == 239);...
-%     find(TriggersR == 235);...
-%     find(TriggersR == 111 )]); % extract Index of real key presses in the values
+% Key presses (all 7 keys same value)
+PresIndR=unique([find(TriggersR == 239);...
+    find(TriggersR == 235);...
+    find(TriggersR == 111 )]); % extract Index of real key presses in the values
 % Key presses (6 different key values)
 PresIndR=unique([find(TriggersR == 247);...
     find(TriggersR == 119);...
@@ -247,20 +247,20 @@ plot(PacerTimeR01,'b');
 numPacerR=sum(PacerTimeR01); % check if == 194 / 386
 % For 20220810_2P, it counted 552. (30*17=510 + 2*15 + 4 + 8)
 %% Select segment points
-% % Plot selected segment points (not alligned)
-% figure('units','normalized','outerposition',[0 0 1 0.3]); % for 6 conditions (synchronization)
-% PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
-% plot(PacersL, ones(length(PacersL)),'r.');
-% hold on;
-% PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
-% plot(PacersR, ones(length(PacersR)),'b.');
+% Plot selected segment points (not alligned)
+figure('units','normalized','outerposition',[0 0 1 0.3]); % for 6 conditions (synchronization)
+PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
+plot(PacersL, ones(length(PacersL)),'r.');
+hold on;
+PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
+plot(PacersR, ones(length(PacersR)),'b.');
 
-% figure('units','normalized','outerposition',[0 0 1 0.3]); % for 5 conditions (synchronization)
-% PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162]);
-% plot(PacersL, ones(length(PacersL)),'r.');
-% hold on;
-% PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162]);
-% plot(PacersR, ones(length(PacersR)),'b.');
+figure('units','normalized','outerposition',[0 0 1 0.3]); % for 5 conditions (synchronization)
+PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162]);
+plot(PacersL, ones(length(PacersL)),'r.');
+hold on;
+PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162]);
+plot(PacersR, ones(length(PacersR)),'b.');
 
 figure('units','normalized','outerposition',[0 0 1 0.3]); % for 12 blocks (synchronization)
 PacersL=PacerTimeIndL([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);
