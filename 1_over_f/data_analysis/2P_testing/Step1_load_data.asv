@@ -448,17 +448,13 @@ thresholdR=2000*3; % after longer than 3 sec interval
 SegPacerIndR=[1 find([0 diff(PacerTimeIndR')]>thresholdR)]; % should be 14 values (first five should be 1 2 3 4 5)
 SegtimeIndR=PacerTimeIndR(SegPacerIndR); % index in data time
 
-%% extract time points for pacers with segmentation purpose - syncopation -(12 blocks)
-% Work for 20220721_2P; 20220816_2P;
-
+%% extract time points for pacers with segmentation purpose - syncopation -20220721_2P (12 blocks)
 % L player pacer
-% % thresholdL=2000*3; % after longer than 3 sec interval; for 20220721_2P;
-thresholdL=2000*2.5; % after longer than 2.5 sec interval; for 20220816_2P;
+thresholdL=2000*2.5; % after longer than 3 sec interval
 SegPacerIndL=[1 find([0 diff(PacerTimeIndL')]>thresholdL)]; % should be 38 values (first five should be 1 2 3 4 5)
 SegtimeIndL=PacerTimeIndL(SegPacerIndL); % index in data time
 % R player pacer
-thresholdR=2000*3; % after longer than 3 sec interval; for 20220721_2P;
-thresholdR=2000*2.5; % after longer than 3 sec interval; for 20220816_2P;
+thresholdR=2000*2.5; % after longer than 3 sec interval
 SegPacerIndR=[1 find([0 diff(PacerTimeIndR')]>thresholdR)]; % should be 38 values (first five should be 1 2 3 4 5)
 SegtimeIndR=PacerTimeIndR(SegPacerIndR); % index in data time
 
