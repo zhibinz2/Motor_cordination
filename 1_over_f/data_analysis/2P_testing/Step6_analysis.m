@@ -266,7 +266,7 @@ end
 %% PLOT 2: plotting
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
 cd /ssd/zhibin/1overf/20220721_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
-
+cd /ssd/zhibin/1overf/20220811_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
 cd /ssd/zhibin/1overf/20220816_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
 
 % check condiSeq for synchronization
