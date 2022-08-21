@@ -7,7 +7,7 @@ cd /ssd/zhibin/1overf/20220721_2P/Segmented_data
 cd /ssd/zhibin/1overf/20220804_2P/Segmented_data/
 
 cd /ssd/zhibin/1overf/20220810_2P/Segmented_data/
-
+cd /ssd/zhibin/1overf/20220811_2P/Segmented_data/
 cd /ssd/zhibin/1overf/20220815_2P/Segmented_data/
 cd /ssd/zhibin/1overf/20220816_2P/Segmented_data/
 %% Collect all the variables
@@ -15,6 +15,7 @@ cd /ssd/zhibin/1overf/20220816_2P/Segmented_data/
 allPerm;
 condiSeq=allPerm; % for synchronization
 conditionNames;seed;ifi;
+
 % add to mat file ***
 filename_variables=['data_variables' num2str(seed) '.mat'];
 % save(filename_variables,'allPerm'); % for synchronization

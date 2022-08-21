@@ -373,9 +373,8 @@ fV=linspace(0,srR/2,halfN+1); % same df
 fcoef=2*fcoef(1:halfN,:);
 amplitude = abs(fcoef);
 % Plot on scalp map for the spectra (for my own examing)
-% figure('units','normalized','outerposition',[0 0 1 1]);
-canvas(0.5,0.5);
-% sgtitle('spectra of all channels on scalp map');
+figure('units','normalized','outerposition',[0 0 1 1]);
+suptitle('spectra of all channels on scalp map')
 for chan=1:32
     subplot('Position',[XXPLOT(chan) YYPLOT(chan) 0.05 0.05]); % not showing, why
     % plot([1 1],[1 1],'ro');
