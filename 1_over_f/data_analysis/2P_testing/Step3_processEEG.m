@@ -6,6 +6,7 @@ open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_t
 
 cd /ssd/zhibin/1overf/20220713_2P
 cd /ssd/zhibin/1overf/20220721_2P
+cd /ssd/zhibin/1overf/20220816_2P
 %% plot raw EEG
 timeL;samplesL;TRIGGERindL;srL;channels_infoL;labelsL;
 timeR;samplesR;TRIGGERindR;srR;channels_infoR;labelsR;
@@ -14,9 +15,9 @@ figure;
 subplot(2,1,1);plot(samplesL(1:32,:)');
 subplot(2,1,2);plot(samplesR(1:32,:)');
 
-figure; % look at the bad chan P8
-subplot(2,1,1);plot(samplesL(28,:)');
-subplot(2,1,2);plot(samplesR(28,:)');
+% figure; % look at the bad chan P8
+% subplot(2,1,1);plot(samplesL(28,:)');
+% subplot(2,1,2);plot(samplesR(28,:)');
 
 %% Extract EEG
 EEGL=samplesL(1:32,:)';
@@ -26,7 +27,9 @@ EEGR=samplesR(1:32,:)';
 detrend_dataL=detrend(EEGL,2);
 detrend_dataR=detrend(EEGR,2);
 
-figure('units','normalized','outerposition',[0 0 1 0.6]);
+ScreenSize=get(0,'MonitorPositions');
+FigureXpixels=ScreenSize(3);FigureYpixels=ScreenSize(4);
+figure('units','pixels','position',[0 0 FigureXpixels/2 FigureYpixels/4]);
 subplot(2,1,1);plot(detrend_dataL); ylim([-1000 1000]);title('detrend L');
 subplot(2,1,2);plot(detrend_dataR); ylim([-1000 1000]);title('detrend R');
 
@@ -42,7 +45,8 @@ Hd = makefilter(srL,0.25,0.01,6,20,0); % for keeping readiness potential
 filtered_dataL1=filtfilthd(Hd,detrend_dataL);
 filtered_dataR1=filtfilthd(Hd,detrend_dataR);
 
-figure('units','normalized','outerposition',[0 0 1 0.6]);
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
 subplot(2,1,1);plot(filtered_dataL1); ylim([-300 300]);title('high pass L');
 subplot(2,1,2);plot(filtered_dataR1); ylim([-300 300]);title('high pass R');
 
@@ -52,9 +56,10 @@ paddingL=zeros(round(size(filtered_dataL1,1)/10), size(filtered_dataL1,2));
 filtered_dataL2=cat(1,paddingL,filtered_dataL1,paddingL);
 paddingR=zeros(round(size(filtered_dataR1,1)/10), size(filtered_dataR1,2));
 filtered_dataR2=cat(1,paddingR,filtered_dataR1,paddingR);
-figure('units','normalized','outerposition',[0 0 1 0.6]);
-subplot(2,1,1);plot(filtered_dataL2);ylim([-300 300]);title('filtered-dataL2');
-subplot(2,1,2);plot(filtered_dataR2);ylim([-300 300]);title('filtered-dataR2');
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
+subplot(2,1,1);plot(filtered_dataL2);ylim([-300 300]);title('filtered-dataL2 + paddings');
+subplot(2,1,2);plot(filtered_dataR2);ylim([-300 300]);title('filtered-dataR2 + paddings');
 
 % low pass 
 % (this will create short edge artifact)
@@ -64,15 +69,17 @@ subplot(2,1,2);plot(filtered_dataR2);ylim([-300 300]);title('filtered-dataR2');
 Hd = makefilter(srL,50,51,6,20,0);  
 filtered_dataL3=filtfilthd(Hd,filtered_dataL2);
 filtered_dataR3=filtfilthd(Hd,filtered_dataR2);
-figure('units','normalized','outerposition',[0 0 1 0.6]);
-subplot(2,1,1);plot(filtered_dataL3);ylim([-300 300]);title('band pass L');
-subplot(2,1,2);plot(filtered_dataR3);ylim([-300 300]);title('band pass R');
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
+subplot(2,1,1);plot(filtered_dataL3);ylim([-300 300]);title('band pass L + paddings');
+subplot(2,1,2);plot(filtered_dataR3);ylim([-300 300]);title('band pass R + paddings');
 % plotx(filtered_dataR3(ind1:ind2,:));ylim([-300 300]); % channel 30 bad
 
 % remove padding
 filtered_dataL4=filtered_dataL3((size(paddingL,1)+1):(size(paddingL,1)+size(detrend_dataL,1)),:);
 filtered_dataR4=filtered_dataR3((size(paddingR,1)+1):(size(paddingR,1)+size(detrend_dataR,1)),:);
-figure('units','normalized','outerposition',[0 0 1 0.6]);
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
 subplot(2,1,1);plot(filtered_dataL4);ylim([-300 300]);title('band pass L');
 subplot(2,1,2);plot(filtered_dataR4);ylim([-300 300]);title('band pass R');
 % ylim([-100 100]);
@@ -89,7 +96,8 @@ filtered_dataR5(find(filtered_dataR5>200))=200;
 filtered_dataR5(find(filtered_dataR5<-200))=-200;
 % or try interpolation method for a section of the time series?
 
-figure('units','normalized','outerposition',[0 0 1 0.6]);
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
 subplot(2,1,1);plot(filtered_dataL5);ylim([-300 300]);title('truncated L');
 % mark the segmentation events
 for i=1:length(PacersL);
@@ -101,8 +109,9 @@ for i=1:length(PacersR);
     xline(PacersR(i),'b');
 end
     
-% Examine plot for 20220721_2P (syncopation)
-figure('units','normalized','outerposition',[0 0 1 0.6]);
+% Examine plot for 20220721_2P; 20220816_2P(syncopation)
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
 subplot(2,1,1);plot(filtered_dataL5);ylim([-300 300]);title('truncated L');
 % mark the segmentation events
 for i=1:length(SegPacerIndL);
@@ -115,7 +124,8 @@ for i=1:length(SegPacerIndR);
 end
 
 % Examine plot for 20220804_2P (synchronization)
-figure('units','normalized','outerposition',[0 0 1 0.6]);
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
 subplot(2,1,1);plot(filtered_dataL5);ylim([-300 300]);title('truncated L');
 % mark the segmentation events
 for i=1:length(SegIndL);
@@ -148,7 +158,8 @@ ComponentsExam=IL(1:10);
 % textString=sprintf('(%d, %d)',IL(1),BL(1));
 % text(IL(1),BL(1),textString,'FontSize',7);
 % Take a look at the first 10 components in topoplots
-figure('units','normalized','outerposition',[0 0 1 0.6]);
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
 sgtitle('first 10 components L'); % similar func: subtitle, sgtitle, suptitle
 for i=1:length(ComponentsExam)
     subplot(2,5,i);
@@ -163,7 +174,8 @@ end
 [B1,I1]=sort(abs(RHO1),'descend');[B3,I3]=sort(abs(RHO3),'descend');
 ComponentsExamL=unique([I1(1:5) I3(1:5)])
 % Take a look at each of the 5 most correlated components to FP1&FP2
-figure('units','normalized','outerposition',[0 0 1 0.3]);
+% figure('units','normalized','outerposition',[0 0 1 0.3]);
+canvas(0.5,0.125);
 sgtitle('FP1&FP2 correlated components L -ComponentsExamL');
 for i=1:length(ComponentsExamL)
     subplot(1,length(ComponentsExamL),i);
@@ -181,7 +193,8 @@ for i=1:length(ComponentsExamL)
 end
 ComponentRemoveL=ComponentsExamL(TentativeRemoveL);
 % Examine component to remove
-figure('units','normalized','outerposition',[0 0 1 0.5]);
+% figure('units','normalized','outerposition',[0 0 1 0.5]);
+canvas(0.5,0.2);
 sgtitle('Component to remove: L - ComponentRemoveL');
 for i=1:length(ComponentRemoveL)
     subplot(1,length(ComponentRemoveL),i);
@@ -190,6 +203,7 @@ for i=1:length(ComponentRemoveL)
 end
 ComponentRemoveL; % ComponentRemoveL=ComponentsExamL;
 
+ComponentRemoveL=32;
 %% ICA for Right player
  filtered_dataR5;
 % run ICA
@@ -204,7 +218,8 @@ title('all components for R');
 [BR,IR]=sort(SqAR,'descend');
 ComponentsExam=IR(1:10);
 % Take a look at the first 10 components in topoplots
-figure('units','normalized','outerposition',[0 0 1 0.6]);
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
 sgtitle('first 10 components R');
 for i=1:length(ComponentsExam)
     subplot(2,5,i);
@@ -219,7 +234,8 @@ end
 [B1,I1]=sort(abs(RHO1),'descend');[B3,I3]=sort(abs(RHO3),'descend');
 ComponentsExamR=unique([I1(1:5) I3(1:5)])
 % Take a look at each of the 5 most correlated components to FP1&FP2
-figure('units','normalized','outerposition',[0 0 1 0.3]);
+% figure('units','normalized','outerposition',[0 0 1 0.3]);
+canvas(0.5,0.125);
 sgtitle('FP1&FP2 correlated components R -ComponentsExamR');
 for i=1:length(ComponentsExamR)
     subplot(1,length(ComponentsExamR),i);
@@ -237,7 +253,8 @@ for i=1:length(ComponentsExamR)
 end
 ComponentRemoveR=ComponentsExamR(TentativeRemoveR);
 % Examine component to remove
-figure('units','normalized','outerposition',[0 0 1 0.5]);
+% figure('units','normalized','outerposition',[0 0 1 0.5]);
+canvas(0.5,0.2);
 sgtitle('Component to remove: R - ComponentRemoveR');
 for i=1:length(ComponentRemoveR)
     subplot(1,length(ComponentRemoveR),i);
@@ -253,7 +270,8 @@ mixedsigL=ALrm*icasigLrm;
 mixedsigL=mixedsigL';
 
 % Comparison Plot before and after ICA removal 
-figure('units','normalized','outerposition',[0 0 1 1]);
+% figure('units','normalized','outerposition',[0 0 1 1]);
+canvas(0.5,0.5);
 % before ICA
 subplot(2,1,1);
 plot(filtered_dataL5);
@@ -272,7 +290,8 @@ ind1=round(x(1))
 ind2=round(x(2))
 
 % zoom in and plot again
-figure('units','normalized','outerposition',[0 0 1 1]);
+% figure('units','normalized','outerposition',[0 0 1 1]);
+canvas(0.5,0.5);
 % before ICA
 subplot(2,1,1);
 plotx(filtered_dataL5(ind1:ind2,:));
@@ -291,7 +310,8 @@ mixedsigR=ARrm*icasigRrm;
 mixedsigR=mixedsigR';
 
 % Comparison Plot before and after ICA removal 
-figure('units','normalized','outerposition',[0 0 1 1]);
+% figure('units','normalized','outerposition',[0 0 1 1]);
+canvas(0.5,0.5);
 % before ICA
 subplot(2,1,1);
 plotx(filtered_dataR5);
@@ -310,7 +330,8 @@ ind1=round(x(1))
 ind2=round(x(2))
 
 % zoom in and plot again
-figure('units','normalized','outerposition',[0 0 1 1]);
+% figure('units','normalized','outerposition',[0 0 1 1]);
+canvas(0.5,0.5);
 % before ICA
 subplot(2,1,1);
 plotx(filtered_dataR5(ind1:ind2,:));

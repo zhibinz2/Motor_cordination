@@ -18,8 +18,8 @@ cd /ssd/zhibin/1overf/20220804_2P % Wing and Mariya: Synch 1.3Hz 230 taps
 cd /ssd/zhibin/1overf/20220808_2P % Wing and Mariya: Synco 1.3Hz 230 taps
 cd /ssd/zhibin/1overf/20220810_2P % Jordan and Issac: Synch 1.3Hz 230 taps
 cd /ssd/zhibin/1overf/20220811_2P % Jordan and Issac: Synco 1.3Hz 230 taps
-cd /ssd/zhibin/1overf/20220815_2P % Ivy and Rajat
-cd /ssd/zhibin/1overf/20220816_2P
+cd /ssd/zhibin/1overf/20220815_2P % Ivy and Rajat: Synch 1.3Hz 230 taps
+cd /ssd/zhibin/1overf/20220816_2P % Ivy and Rajat: Synco 1.3Hz 230 taps
 
 load 20220713.mat
 load 20220721.mat
@@ -254,7 +254,7 @@ figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeR01,'b');
 numPacerR=sum(PacerTimeR01); % check if == 194 / 386 for synchronization % 4+2*11+30*3+230*9=2186 for syncopation
 % For 20220810_2P, it counted 552. (30*17=510 + 2*15 + 4 + 8)
-%% Select segment points
+%% Select segment points  (synchronization)
 % % Plot selected segment points (not alligned)
 % figure('units','normalized','outerposition',[0 0 1 0.3]); % for 6 conditions (synchronization)
 % PacersL=PacerTimeIndL([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
@@ -448,20 +448,37 @@ thresholdR=2000*3; % after longer than 3 sec interval
 SegPacerIndR=[1 find([0 diff(PacerTimeIndR')]>thresholdR)]; % should be 14 values (first five should be 1 2 3 4 5)
 SegtimeIndR=PacerTimeIndR(SegPacerIndR); % index in data time
 
+% plot to examine
+ScreenSize=get(0,'MonitorPositions');
+FigureXpixels=ScreenSize(3);FigureYpixels=ScreenSize(4);
+figure('units','pixels','position',[0 0 FigureXpixels/2 FigureYpixels/4]);
+subplot(2,1,1);
+plot(SegtimeIndL,ones(1,length(SegtimeIndL)),'ro');
+subplot(2,1,2);
+plot(SegtimeIndR,ones(1,length(SegtimeIndR)),'bo');
+
 %% extract time points for pacers with segmentation purpose - syncopation -(12 blocks)
 % Work for 20220721_2P; 20220816_2P;
 
 % L player pacer
 % % thresholdL=2000*3; % after longer than 3 sec interval; for 20220721_2P;
 thresholdL=2000*2.5; % after longer than 2.5 sec interval; for 20220816_2P;
-SegPacerIndL=[1 find([0 diff(PacerTimeIndL')]>thresholdL)]; % should be 38 values (first five should be 1 2 3 4 5)
+SegPacerIndL=[1 find([0 diff(PacerTimeIndL')]>thresholdL)]; % should be 4+2*11+12=38 values (first five should be 1 2 3 4 5)
 SegtimeIndL=PacerTimeIndL(SegPacerIndL); % index in data time
 % R player pacer
-thresholdR=2000*3; % after longer than 3 sec interval; for 20220721_2P;
+% thresholdR=2000*3; % after longer than 3 sec interval; for 20220721_2P;
 thresholdR=2000*2.5; % after longer than 3 sec interval; for 20220816_2P;
 SegPacerIndR=[1 find([0 diff(PacerTimeIndR')]>thresholdR)]; % should be 38 values (first five should be 1 2 3 4 5)
 SegtimeIndR=PacerTimeIndR(SegPacerIndR); % index in data time
 
+% plot to examine
+ScreenSize=get(0,'MonitorPositions');
+FigureXpixels=ScreenSize(3);FigureYpixels=ScreenSize(4);
+figure('units','pixels','position',[0 0 FigureXpixels/2 FigureYpixels/4]);
+subplot(2,1,1);
+plot(SegtimeIndL,ones(1,length(SegtimeIndL)),'ro');
+subplot(2,1,2);
+plot(SegtimeIndR,ones(1,length(SegtimeIndR)),'bo');
 
 %% Extract feedbacks from light detector ISO (skip for now)
 % look for the second ISO aux channel for the photocell 

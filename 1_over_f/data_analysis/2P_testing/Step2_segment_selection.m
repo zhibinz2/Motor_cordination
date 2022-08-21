@@ -1,5 +1,8 @@
-%% Select segmentation indicies to use (20220713_2P and 20220721_2P and 20220810_2P and 20220815_2P)
-%  For synchronization (20220713_2P and 20220810_2P):
+%% Select segmentation indicies to use 
+% Work for 20220713_2P; 20220721_2P; 20220810_2P; 20220815_2P
+
+%  For synchronization
+% Work for 20220713_2P; 20220810_2P:
 % Select segmentation points based on pacers and phtotocells on light senor 1
 % 50 Pacer markers selected (2 resting + 12 blocks + 11 resting)
 % SegIndL=PacerTimeIndL([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);
@@ -7,11 +10,14 @@
 % SegIndR1=PacerTimeIndR([4+[32*([1:12]-1)]+30]);
 SegIndL1=PacersL([6+[4*([1:12]-1)]]);% 12 segmentation points of the last pacer (30th pacer)
 SegIndR1=PacersR([6+[4*([1:12]-1)]]);
-% For syncopation (20220721_2P):
+
+% For syncopation 
+% Work for 20220721_2P; 20220816_2P;
 SegIndL1=PacerTimeIndL(SegPacerIndL([[1:12]*3+2])+29);% the 30th pacer
 SegIndR1=PacerTimeIndR(SegPacerIndR([[1:12]*3+2])+29);% the 30th pacer
 % Examine 
-figure('units','normalized','outerposition',[0 0 1 0.6]);
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
 plot(PacerTimeIndL-PacerTimeIndL(1),2*ones(1,length(PacerTimeIndL)),'ro');hold on;
 plot(SegIndL1-PacerTimeIndL(1),2.1*ones(length(SegIndL1),11,1),'ro'); 
 plot(PacerTimeIndR-PacerTimeIndR(1),ones(1,length(PacerTimeIndR)),'bo');hold on;
@@ -21,11 +27,13 @@ ylim([-3 6]);
 % Select segmentation points of last BP in each trial
 % determine a threshold of numbers of samples in between trials
 if srL==srR; sr=srL; end; threshold = sr*30; 
+% threshold = sr*15; % for 20220811_2P
 % 12 segmentation points of the last tap in each trial
 SegIndL2=[BottonPresTimeIndL(find([diff(BottonPresTimeIndL')]>threshold)); BottonPresTimeIndL(end)]; 
 SegIndR2=[BottonPresTimeIndR(find([diff(BottonPresTimeIndR')]>threshold)); BottonPresTimeIndR(end)]; 
 % Exam
-figure('units','normalized','outerposition',[0 0 1 0.6]);
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
 subplot(2,1,1);
 plot(BottonPresTimeIndL,ones(1,length(BottonPresTimeIndL)),'ro');hold on;
 plot(SegIndL2,ones(length(SegIndL2),11,1).*1.1,'ro'); ylim([0 2]);
@@ -34,6 +42,8 @@ plot(BottonPresTimeIndR,ones(1,length(BottonPresTimeIndR)),'bo');hold on;
 plot(SegIndR2,ones(length(SegIndR2),11,1).*1.1,'bo'); ylim([0 2]);
 % For 20220810_2P, select the last 12 elements from L side
 SegIndL2=SegIndL2(6:end);
+% For 20220811_2P, remove the 3rd elements from R side
+SegIndR2(3)=[];
 
 % Combine last pacer and last tap indicies
 % SegIndL=unique([SegIndL1;SegIndL2]);
@@ -41,14 +51,16 @@ SegIndL2=SegIndL2(6:end);
 SegIndL=sort([SegIndL1;SegIndL2]);
 SegIndR=sort([SegIndR1;SegIndR2]);
 % Examine 
-figure('units','normalized','outerposition',[0 0 1 0.6]);
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
 plot(PacerTimeIndL-PacerTimeIndL(1),2*ones(1,length(PacerTimeIndL)),'ro');hold on;
 plot(SegIndL-PacerTimeIndL(1),2.1*ones(1,length(SegIndL)),'ro'); 
 plot(PacerTimeIndR-PacerTimeIndR(1),ones(1,length(PacerTimeIndR)),'bo');hold on;
 plot(SegIndR-PacerTimeIndR(1),1.1*ones(1,length(SegIndR)),'bo'); 
 ylim([-2 5]);
 
-figure('units','normalized','outerposition',[0 0 1 0.6]);
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
 plot(PacerTimeIndL-PacerTimeIndL(1),2*ones(1,length(PacerTimeIndL)),'ro');hold on;
 plot(SegIndL1-PacerTimeIndL(1),2.1*ones(1,length(SegIndL1)),'r.'); 
 plot(SegIndL2-PacerTimeIndL(1),2.1*ones(1,length(SegIndL2)),'rx'); 

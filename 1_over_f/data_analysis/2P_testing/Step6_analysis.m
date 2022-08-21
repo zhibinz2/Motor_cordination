@@ -267,12 +267,15 @@ end
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
 cd /ssd/zhibin/1overf/20220721_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
 
-% check condiSeq
+cd /ssd/zhibin/1overf/20220816_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
+
+% check condiSeq for synchronization
 condiSeq=allPerm;
 
 for i=1:nTrials
     
-    figure('units','normalized','outerposition',[0 0 1 1]);
+    % figure('units','normalized','outerposition',[0 0 1 1]);
+    canvas(0.5,0.5);
 
     subplot(4,1,1);
     plot([1:length(BP(1).BP{i})]./sr,BP(1).BP{i},'r');
