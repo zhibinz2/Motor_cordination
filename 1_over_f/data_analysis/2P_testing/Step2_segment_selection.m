@@ -121,7 +121,8 @@ plot(finalPacerTimeIndR-finalPacerTimeIndR(1),ones(1,length(finalPacerTimeIndR))
 plot(SegIndR-finalPacerTimeIndR(1),1.1*ones(1,length(SegIndR)),'bo'); 
 ylim([-2 5]);
 
-figure('units','normalized','outerposition',[0 0 1 0.6]);
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
 plot(finalPacerTimeIndL-finalPacerTimeIndL(1),2*ones(1,length(finalPacerTimeIndL)),'ro');hold on;
 plot(SegIndL1-finalPacerTimeIndL(1),2.1*ones(1,length(SegIndL1))','r.'); 
 plot(SegIndL2-finalPacerTimeIndL(1),2.1*ones(1,length(SegIndL2)),'rx'); 
@@ -139,13 +140,14 @@ Seg30IndL2=PacersL([[4+[4*([1:10]-1)]] 46 50]);% 12 segmentation points of the l
 Seg30IndR2=PacersR([[4+[4*([1:10]-1)]] 46 50]);
 
 % Combine first pacer and last pacer indicies
-Seg30IndL=sort([SegIndL1;SegIndL2]);
-Seg30IndR=sort([SegIndR1;SegIndR2]);
+Seg30IndL=sort([Seg30IndL1;Seg30IndL2]);
+Seg30IndR=sort([Seg30IndR1;Seg30IndR2]);
 % Move the last 2 trials to the front (for 20220804_2P)
 Seg30IndL=Seg30IndL([end-3:end 1:end-4]);
 Seg30IndR=Seg30IndR([end-3:end 1:end-4]);
 % Examine 
-figure('units','normalized','outerposition',[0 0 1 0.6]);
+% figure('units','normalized','outerposition',[0 0 1 0.6]);
+canvas(0.5,0.25);
 plot(finalPacerTimeIndL-finalPacerTimeIndL(1),2*ones(1,length(finalPacerTimeIndL)),'ro');hold on;
 plot(Seg30IndL1-finalPacerTimeIndL(1),2.1*ones(length(Seg30IndL1),11,1),'r.'); 
 plot(Seg30IndL2-finalPacerTimeIndL(1),2.1*ones(1,length(SegIndL2)),'rx'); 
@@ -155,4 +157,5 @@ plot(Seg30IndR2-finalPacerTimeIndR(1),1.1*ones(1,length(SegIndR2)),'bx');
 ylim([-3 6]);
 
 
-%% select the resting interval
+%% select the resting interval (maybe not, they are too noisy)
+%% select the eye open/close resting eeg (later if needed)

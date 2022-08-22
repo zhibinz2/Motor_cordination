@@ -126,10 +126,10 @@ for i=1:12
 end
 
 % add to mat file ***
-EEG_pacing=[];
-EEG_pacing(1,1).EEG_pacing=data(1).EEG_pacing;
-EEG_pacing(2,1).EEG_pacing=data(2).EEG_pacing;
-save(filename_variables,'EEG_pacing','-append');
+EEG=[];
+EEG(1,1).EEG=data(1).EEG;
+EEG(2,1).EEG=data(2).EEG;
+save(filename_variables,'EEG','-append');
 
 %% segment button presses - synchronization
 BottonPresTimeL01; BottonPresTimeR01;
