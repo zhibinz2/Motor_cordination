@@ -35,12 +35,12 @@ Path_filenameR=[pwd '/' EEGfileNameR];
 [timeR,samplesR,TRIGGERindR,srR,channels_infoR,labelsR] = LoadTMSi(Path_filenameR);
 
 %% Extract Trigger channel info
-TriggersL=samplesL(TRIGGERindL,:)';valuesL=unique(TriggersL)
-TriggersR=samplesR(TRIGGERindR,:)';valuesR=unique(TriggersR)
+TriggersL=samplesL(TRIGGERindL,:)';valuesL=unique(TriggersL)'
+TriggersR=samplesR(TRIGGERindR,:)';valuesR=unique(TriggersR)'
 
 % Check if values are as expected
-([valuesL'] ==[0 119 127 183 191 247 255])
-([valuesR'] ==[0 119 127 183 191 247 255])
+([valuesL] ==[0 119 127 183 191 247 255])
+([valuesR] ==[0 119 127 183 191 247 255])
 
 % Examine Trigger signals
 % Method1: this method might normalize it to the other monitor
@@ -52,25 +52,27 @@ figure('units','pixels','position',[0 0 FigureXpixels/2 FigureYpixels/4]);
 subplot(2,1,1);
 plot(TriggersL,'r');
 hold on;
+yline(63,'k','63 = light sensor 1+2'); 
+plot(find(TriggersL==63),63*ones(length(find(TriggersL==63)),1),'mo'); 
 yline(192,'k','192 = psychtoolbox display starts'); 
-plot(find(TriggersL==192),100*ones(length(find(TriggersL==192)),1),'mo'); 
+plot(find(TriggersL==192),192*ones(length(find(TriggersL==192)),1),'mo'); 
 hold off;
 subplot(2,1,2);
 plot(TriggersR,'b');
 hold on; 
 yline(192,'k','192 = psychtoolbox display starts'); 
-plot(find(TriggersR==192),100*ones(length(find(TriggersR==192)),1),'mo'); 
+plot(find(TriggersR==192),192*ones(length(find(TriggersR==192)),1),'mo'); 
 hold off;
 
 hold on;
 yline(95,'k','95 = light sensor 2 + key 6 '); 
-plot(find(TriggersR==95),100*ones(length(find(TriggersR==95)),1),'mo'); % only happen in trial 1, to be discarded anyway
+plot(find(TriggersR==95),95*ones(length(find(TriggersR==95)),1),'mo'); % only happen in trial 1, to be discarded anyway
 yline(247,'k','247 = middle key');
-plot(find(TriggersR==247),100*ones(length(find(TriggersR==247)),1),'mo'); 
+plot(find(TriggersR==247),247*ones(length(find(TriggersR==247)),1),'mo'); 
 yline(223,'k','223 = key 6'); % R20220810 Issac pushes a lot of key 6 in trial 1 then move to key 7 until trial 5
-plot(find(TriggersR==223),100*ones(length(find(TriggersR==223)),1),'mo'); % just in trial 1, to be discarded anyway
+plot(find(TriggersR==223),223*ones(length(find(TriggersR==223)),1),'mo'); % just in trial 1, to be discarded anyway
 yline(239,'k','239 = key 5'); % see how many key 5 pushes there
-plot(find(TriggersR==239),100*ones(length(find(TriggersR==239)),1),'mo'); % just one additional wrong push (can be ignored)
+plot(find(TriggersR==239),239*ones(length(find(TriggersR==239)),1),'mo'); % just one additional wrong push (can be ignored)
 hold off;
 
 % Xidon2 - setting
@@ -86,7 +88,7 @@ hold off;
 % 183=255-2^3-2^6 % middle key + light sensor 1
 
 % 192=255-63=255-32-16-8-2 % only happen when psychtoolbox display starts
-
+% 63 = 255-192=255-(128+64) % light senosor 1 + 2
 % 95 = 255-160 = 255-(128+32) % light sensor 2 + key 6
 % 223 = key 6
 % 239 = key 5
@@ -115,7 +117,8 @@ BottonPresTimeL01(BottonPresTimeIndL)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(BottonPresTimeL01,'r.')
 numPresL=sum(BottonPresTimeL01) % num of button presses
-% 12 blocks *230 taps = 2760
+% 12 blocks *230 taps = 2760 (synchronization) 
+% subject might ommit a few hundred taps for syncopation
 
 % Right player
 % % Key presses (all 7 keys same value)
@@ -140,7 +143,8 @@ BottonPresTimeR01(BottonPresTimeIndR)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(BottonPresTimeR01,'b.')
 numPresR=sum(BottonPresTimeR01) % num of button presses
-% 12 blocks *230 taps = 2760
+% 12 blocks *230 taps = 2760 (synchronization)
+% subject might ommit a few hundred taps for syncopation
 
 %% extract time points for feedbacks from other
 % Left Player Recording
@@ -152,6 +156,7 @@ numPresR=sum(BottonPresTimeR01) % num of button presses
 % 119=255-2^3-2^7 % middle key + light sensor 2
 % 183=255-2^3-2^6 % middle key + light sensor 1
 FeedbIndL=unique([find(TriggersL == 127);find(TriggersL == 119)]);
+FeedbIndL=unique([find(TriggersL == 127);find(TriggersL == 119);find(TriggersL == 63)]); % for 20220808_2P
 
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(FeedbIndL,ones(1,length(FeedbIndL)),'bo'); % look at the above Index (one press produced several indices)
@@ -207,8 +212,10 @@ numFbR=sum(FeedbTimeR01) % num of feedbacks from the other plus 4+2x5 resting ph
 % 119=255-2^3-2^7 % middle key + light sensor 2
 % 183=255-2^3-2^6 % middle key + light sensor 1
 PacerIndL=unique([find(TriggersL == 191);find(TriggersL == 183)]);
+PacerIndL=unique([find(TriggersL == 191);find(TriggersL == 183);find(TriggersL == 63)]); % for 20220808_2P
 
-figure('units','normalized','outerposition',[0 0 1 0.3]);
+% figure('units','normalized','outerposition',[0 0 1 0.3]);
+canvas(0.5,0.125);
 plot(PacerIndL,ones(1,length(PacerIndL)),'ro'); % look at the above Index (one press produced several indices)
 % Pacer at 2Hz has intervals of 500ms (1000 samples)
 % Pacer at 3Hz has interval of 333ms (666.6 samples)
@@ -221,7 +228,8 @@ PacerTimeIndL=PacerIndL(find([diff([0 PacerIndL'])]>threshold)); % exact index o
 % create a time series that assign botton presses as 1, all other as 0
 PacerTimeL01=zeros(size(timeL));
 PacerTimeL01(PacerTimeIndL)=1;
-figure('units','normalized','outerposition',[0 0 1 0.3]);
+% figure('units','normalized','outerposition',[0 0 1 0.3]);
+canvas(0.5,0.125);
 plot(PacerTimeL01,'r');
 numPacerL=sum(PacerTimeL01) % check if == 194 / 386 for synchronization % 4+2*11+30*3+230*9=2186 for syncopation
 % xlim([-1 length(PacerTimeL01)]);
@@ -237,7 +245,8 @@ numPacerL=sum(PacerTimeL01) % check if == 194 / 386 for synchronization % 4+2*11
 PacerIndR=unique([find(TriggersR == 191);find(TriggersR == 183)]);
 % For 20220810_2P, it counted 517. (30*17=510 + 2 + 5)
 
-figure('units','normalized','outerposition',[0 0 1 0.3]);
+% figure('units','normalized','outerposition',[0 0 1 0.3]);
+canvas(0.5,0.125);
 plot(PacerIndR,ones(1,length(PacerIndR)),'bo'); % look at the above Index (one press produced several indices)
 % Pacer at 2Hz has intervals of 500ms (1000 samples)
 % Pacer at 3Hz has interval of 333ms (666.6 samples)
@@ -250,7 +259,8 @@ PacerTimeIndR=PacerIndR(find([diff([0 PacerIndR'])]>threshold)); % exact index o
 % create a time series that assign botton presses as 1, all other as 0
 PacerTimeR01=zeros(size(timeR));
 PacerTimeR01(PacerTimeIndR)=1;
-figure('units','normalized','outerposition',[0 0 1 0.3]);
+% figure('units','normalized','outerposition',[0 0 1 0.3]);
+canvas(0.5,0.125);
 plot(PacerTimeR01,'b');
 numPacerR=sum(PacerTimeR01); % check if == 194 / 386 for synchronization % 4+2*11+30*3+230*9=2186 for syncopation
 % For 20220810_2P, it counted 552. (30*17=510 + 2*15 + 4 + 8)
@@ -278,6 +288,12 @@ PacersR=PacerTimeIndR([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12
 plot(PacersR, ones(length(PacersR)),'b.');
 
 %% make shift for missming pacers (optional) 
+% examine first and then pick one pacer from both recordings to calculate shift
+canvas(0.5,0.25);
+plot(PacerTimeIndL,1.1*ones(1,length(PacerTimeIndL)),'ro');hold on;
+plot(PacerTimeIndR,ones(1,length(PacerTimeIndR)),'bo');
+ylim([0 3]);
+
 % Make up for missing pacers on the left (for 20220517_2P) (synchronization)
 ShiftPacer=PacerTimeIndL(end)-PacerTimeIndR(end);
 PacersR=PacerTimeIndR([1 2 3 4 5 34 35 36 37 66 67 68 69 98 99 100 101 130 131 132 133 162 163 164 165 194]);
@@ -327,7 +343,7 @@ plot(PacerTimeIndR-PacerTimeIndR(1), 0.9*ones(length(PacerTimeIndR)),'b.');
 ylim([0 2]);
 legend('alligned-PacerTimeIndL', 'alligned-PacerTimeIndR');
 
-% plot pacers alligned (for synchronization 20220804_2P)
+% plot pacers alligned (for 20220804_2P and 20220808_2P)
 PacerTimeIndL;% might contain missing photocells, need to be recovered from R, should have about 30*12
 PacerTimeIndR;% should have 4+2*11+30*12+4+2+30*2+2+1=455, alligned to last photocell in L
 figure('units','normalized','outerposition',[0 0 1 0.3]);
@@ -336,7 +352,7 @@ hold on;
 plot(PacerTimeIndR-PacerTimeIndR(end), 0.9*ones(1,length(PacerTimeIndR)),'b.');
 ylim([0 2]);
 legend('alligned-PacerTimeIndL', 'alligned-PacerTimeIndR');
-% Make up for missing pacers on the left (for synchronization 20220804_2P)
+% Make up for missing pacers on the left (for 20220804_2P and 20220808_2P)
 ShiftPacer=PacerTimeIndL(end)-PacerTimeIndR(end);
 PacerTimeIndL=PacerTimeIndR+ShiftPacer;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
@@ -344,7 +360,7 @@ plot(PacerTimeIndL,1.6*ones(1,length(PacerTimeIndL)),'r.');hold on;ylim([0 3]);
 plot(PacerTimeIndR,1.4*ones(1,length(PacerTimeIndR)),'b.');
 xline(0,'y');
 legend('restored PacerTimeIndL', 'PacerTimeIndR');
-% Plot alligned again (for synchronization 20220804_2P)
+% Plot alligned again (for 20220804_2P and 20220808_2P)
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PacerTimeIndL-PacerTimeIndL(1), ones(length(PacerTimeIndL)),'r.');
 hold on;
@@ -479,6 +495,39 @@ subplot(2,1,1);
 plot(SegtimeIndL,ones(1,length(SegtimeIndL)),'ro');
 subplot(2,1,2);
 plot(SegtimeIndR,ones(1,length(SegtimeIndR)),'bo');
+
+%% extract time points for pacers with segmentation purpose - syncopation -(12 blocks)(20220808_2P)
+% Work for 20220808_2P;
+
+% L player pacer
+thresholdL=2000*3; % after longer than 6 sec interval; for 20220808_2P;
+SegPacerIndL=[1 find([0 diff(PacerTimeIndL')]>thresholdL)]; % should be 2*11+12+1+3=38 values
+SegtimeIndL=PacerTimeIndL(SegPacerIndL); % index in data time
+% R player pacer
+thresholdR=2000*3; % after longer than 3 sec interval; for 20220808_2P;
+SegPacerIndR=[1 find([0 diff(PacerTimeIndR')]>thresholdR)]; % should be 2*11+12+1+3=38 values
+SegtimeIndR=PacerTimeIndR(SegPacerIndR); % index in data time
+
+% plot to examine
+ScreenSize=get(0,'MonitorPositions');
+FigureXpixels=ScreenSize(3);FigureYpixels=ScreenSize(4);
+figure('units','pixels','position',[0 0 FigureXpixels/2 FigureYpixels/4]);
+subplot(2,1,1);
+plot(PacerTimeIndL,ones(1,length(PacerTimeIndL)),'ro');
+hold on;
+plot(SegtimeIndL,1.1*ones(1,length(SegtimeIndL)),'ro');
+ylim([0 2]);
+subplot(2,1,2);
+plot(PacerTimeIndR,ones(1,length(PacerTimeIndR)),'bo');
+hold on;
+plot(SegtimeIndR,1.1*ones(1,length(SegtimeIndR)),'bo');
+ylim([0 2]);
+
+% remove the 17th and 36th pacer from both sides
+SegtimeIndL([17 36])=[];
+SegtimeIndR([17 36])=[];
+% plot to examine again 
+% the last two pacers mark the start and end of resting eye eeg period 
 
 %% Extract feedbacks from light detector ISO (skip for now)
 % look for the second ISO aux channel for the photocell 

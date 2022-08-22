@@ -5,7 +5,7 @@ cd /ssd/zhibin/1overf/20220517_2P/Segmented_data/1_50Hz_ICAautomized
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data
 cd /ssd/zhibin/1overf/20220721_2P/Segmented_data
 cd /ssd/zhibin/1overf/20220804_2P/Segmented_data/
-
+cd /ssd/zhibin/1overf/20220808_2P/Segmented_data/
 cd /ssd/zhibin/1overf/20220810_2P/Segmented_data/
 cd /ssd/zhibin/1overf/20220811_2P/Segmented_data/
 cd /ssd/zhibin/1overf/20220815_2P/Segmented_data/

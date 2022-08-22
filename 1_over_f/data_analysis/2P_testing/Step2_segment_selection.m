@@ -15,6 +15,9 @@ SegIndR1=PacersR([6+[4*([1:12]-1)]]);
 % Work for 20220721_2P; 20220816_2P;
 SegIndL1=PacerTimeIndL(SegPacerIndL([[1:12]*3+2])+29);% the 30th pacer
 SegIndR1=PacerTimeIndR(SegPacerIndR([[1:12]*3+2])+29);% the 30th pacer
+% Work for 20220808_2P;
+SegIndL1=PacerTimeIndL(SegPacerIndL([[1:12]*3]-2)+29);% the 30th pacer
+SegIndR1=PacerTimeIndR(SegPacerIndR([[1:12]*3]-2)+29);% the 30th pacer
 % Examine 
 % figure('units','normalized','outerposition',[0 0 1 0.6]);
 canvas(0.5,0.25);

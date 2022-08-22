@@ -109,7 +109,7 @@ for i=1:length(PacersR);
     xline(PacersR(i),'b');
 end
     
-% Examine plot for 20220721_2P; 20220811_2P; 20220816_2P(syncopation)
+% Examine plot for 20220721_2P; 20220808_2P; 20220811_2P; 20220816_2P(syncopation)
 % figure('units','normalized','outerposition',[0 0 1 0.6]);
 canvas(0.5,0.25);
 subplot(2,1,1);plot(filtered_dataL5);ylim([-300 300]);title('truncated L');
@@ -264,7 +264,7 @@ end
 ComponentRemoveR; % ComponentRemoveL=ComponentsExamL;
 
 ComponentRemoveR=[19 14]; %for 20220811_2P
-
+ComponentRemoveR=[11 15 14 29 32]; %for 20220811_2P
 %% Remove ICA components for Left player
 ALrm=AL;icasigLrm=icasigL; % make new, backup AL, icasigL
 ALrm(:,ComponentRemoveL)=0; icasigLrm(ComponentRemoveL,:)=0;
