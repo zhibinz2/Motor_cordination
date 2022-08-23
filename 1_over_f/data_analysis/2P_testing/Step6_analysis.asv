@@ -484,7 +484,7 @@ for i=1:nTrials
     xlabel('Channels (R player)'); %ylabel('Frequencies');
 end
 sgtitle(['Session - ' num2str(seed)]);
-figureName=['EEG_spectra'];
+figureName=['EEG_spectra];
 saveas(gcf,figureName,'fig');
 close all;
 
