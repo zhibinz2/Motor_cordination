@@ -135,24 +135,12 @@ ylim([-1 4]);
 %% select the first 30 pacers intervals
 % work for 202200713_2P;
 
-PacersL;PacersR; % each has 50 elements (4+2*11+2*12=50)
-Seg30IndL1=PacersL([5+[4*([1:12]-1)]]);% 12 segmentation points of the first pacer (30th pacer)
-Seg30IndR1=PacersR([5+[4*([1:12]-1)]]);
-Seg30IndL2=PacersL([6+[4*([1:12]-1)]]);% 12 segmentation points of the last pacer (30th pacer)
-Seg30IndR2=PacersR([6+[4*([1:12]-1)]]);
-% Combine first pacer and last pacer indicies
-Seg30IndL=sort([Seg30IndL1;Seg30IndL2]);
-Seg30IndR=sort([Seg30IndR1;Seg30IndR2]);
-% Examine 
-% figure('units','normalized','outerposition',[0 0 1 0.6]);
-canvas(0.5,0.25);
-plot(PacerTimeIndL-PacerTimeIndL(1),2*ones(1,length(PacerTimeIndL)),'ro');hold on;
-plot(Seg30IndL1-PacerTimeIndL(1),2.1*ones(length(Seg30IndL1),11,1),'r.'); 
-plot(Seg30IndL2-PacerTimeIndL(1),2.1*ones(1,length(SegIndL2)),'rx'); 
-plot(PacerTimeIndR-PacerTimeIndR(1),ones(1,length(PacerTimeIndR)),'bo');hold on;
-plot(Seg30IndR1-PacerTimeIndR(1),1.1*ones(length(Seg30IndR1),11,1),'b.'); 
-plot(Seg30IndR2-PacerTimeIndR(1),1.1*ones(1,length(SegIndR2)),'bx'); 
-ylim([-3 6]);
+PacersL;PacersR; % each has 50 elements (2*10+2*10+4+2+2+2=50)
+Seg30IndL1=PacersL([3+[4*([1:12]-1)]]);% 12 segmentation points of the first pacer (30th pacer)
+Seg30IndR1=PacersR([3+[4*([1:10]-1)]]);
+Seg30IndL2=PacersL([4+[4*([1:10]-1)]]);% 12 segmentation points of the last pacer (30th pacer)
+Seg30IndR2=PacersR([4+[4*([1:10]-1)]]);
+
 
 %% select the first 30 pacers intervals (202200804_2P)
 PacersL;PacersR; % each has 50 elements (2*10+2*10+4+2+2+2=50)

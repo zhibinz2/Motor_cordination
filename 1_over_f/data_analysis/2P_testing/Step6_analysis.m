@@ -424,7 +424,7 @@ end
 sgtitle(['Session - ' num2str(seed)]);
 figureName=['Autocorr_DFA'];
 saveas(gcf,figureName,'fig');
-close all;
+
 
 
 % Xcorr & GC 2X12 subplots
@@ -464,7 +464,7 @@ end
 sgtitle(['Session - ' num2str(seed)]);
 figureName=['Xcorr_GC'];
 saveas(gcf,figureName,'fig');
-close all;
+
 
     
 % EEG power spectra
@@ -486,7 +486,6 @@ end
 sgtitle(['Session - ' num2str(seed)]);
 figureName=['EEG_spectra'];
 saveas(gcf,figureName,'fig');
-close all;
 
 
 %% PLOT 3: slinding window: DFA and Autocov Granger Causality for each trial
