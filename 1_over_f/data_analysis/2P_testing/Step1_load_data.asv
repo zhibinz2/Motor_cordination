@@ -526,8 +526,7 @@ plot(SegtimeIndR,1.1*ones(1,length(SegtimeIndR)),'bo');
 ylim([0 2]);
 
 % remove the 17th and 36th pacer from both sides
-SegPacerIndL([17 36])=[];
-SegPacerIndR([17 36])=[];
+SegPacerIndL
 SegtimeIndL([17 36])=[];
 SegtimeIndR([17 36])=[];
 

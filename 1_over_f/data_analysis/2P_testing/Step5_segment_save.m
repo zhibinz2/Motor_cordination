@@ -171,16 +171,18 @@ SegIndL; SegIndR;
 
 % organize into data structure ***
 for i=1:12
-    data(1).EMG{i}=upL(SegIndL(2*i-1):SegIndL(2*i),:); % in cells
-    data(2).EMG{i}=upR(SegIndR(2*i-1):SegIndR(2*i),:);
+    data(1).EMG_env{i}=upL(SegIndL(2*i-1):SegIndL(2*i),:); % in cells
+    data(2).EMG_env{i}=upR(SegIndR(2*i-1):SegIndR(2*i),:);
+    data(1).EMG{i}=filtered_EMGL(SegIndL(2*i-1):SegIndL(2*i),:); % in cells
+    data(2).EMG{i}=filtered_EMGR(SegIndR(2*i-1):SegIndR(2*i),:);
 end
 
 % add to mat file ***
 EMG=[];
-EMG(1,1).filtered_EMG=filtered_EMGL;
-EMG(2,1).filtered_EMG=filtered_EMGR;
-EMG(1,1).up=upL;
-EMG(2,1).up=upR;
+EMG(1,1).EMG_env=data(1).EMG_env;
+EMG(2,1).EMG_env=data(2).EMG_env;
+EMG(1,1).EMG=data(1).EMG;
+EMG(2,1).EMG=data(2).EMG;
 save(filename_variables,'EMG','-append');
 
 %%  segment Photocell - synchronization
@@ -204,8 +206,11 @@ FBlocs(2,1).FBlocs=data(2).FBlocs;
 save(filename_variables,'FBlocs','-append');
 
 %% Save data structure;
+tic
 filename_structure=['data_structure' num2str(seed) '.mat'];
 save(filename_structure,'data');
+toc
+% takes about 45s
 
 %% syncopation segmentation below (for 20220610_2P)
 

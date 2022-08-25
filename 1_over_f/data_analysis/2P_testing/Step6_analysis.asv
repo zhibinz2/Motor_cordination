@@ -362,7 +362,8 @@ end
 
 %% PLOT 2-1: plotting
 cd /ssd/zhibin/1overf/20220804_2P/Segmented_data/Plots/Plot2_1/
-
+mkdir Plot2_1
+cd Plot2_1
 % Plots - color scheme
 red   = [1 0 0];
 pink  = [1 0.65 0.75];
@@ -419,12 +420,12 @@ for i=1:nTrials
     ylabel('RMS [log10(F-n)]') % RMS values
     title('DFA','Color',condicolors(condiSeq(i),:));
     subtitle(['H_L=' num2str(y1(i).Alpha) ' H_R=' num2str(y2(i).Alpha)],'Color',condicolors(condiSeq(i),:))
-
+    ylim([-2 0.2]);
 end
 sgtitle(['Session - ' num2str(seed)]);
 figureName=['Autocorr_DFA'];
 saveas(gcf,figureName,'fig');
-close all;
+
 
 
 % Xcorr & GC 2X12 subplots
@@ -441,7 +442,7 @@ for i=1:nTrials
     b=bar([y12(i).F(2) y12(i).F(3)]);set(gca, 'XTickLabel', {'L -> R' 'R -> L'});
     b.FaceColor='flat';b.CData(1,:) = [1 0 0];b.CData(2,:) = [0 0 1];
     % axis([0.25 2.75 0 max([y12(i).F(2) y12(i).F(3)])+0.05]); 
-    xlim([0.25 2.75]); ylim([0 2]);
+    xlim([0.25 2.75]); ylim([0 1.2]);
     if length(find(y12(i).sig==1))==0;
         tempF=y12(i).F(find(y12(i).sig==0));
         tempP=round(y12(i).pval(find(y12(i).sig==0)),3);
@@ -458,35 +459,36 @@ for i=1:nTrials
         text((2-1-0.5), tempF(1)+0.1, ['* P = ' num2str(tempP(1))],'Color',[1 0 0]);
         text((3-1-0.5), tempF(2)+0.1, ['* P = ' num2str(tempP(2))],'Color',[0 0 1]);
     end
+    title([conditionNames{condiSeq(i)}],'Color',condicolors(condiSeq(i),:));
     subtitle('Pairwise-conditional GC','Color',condicolors(condiSeq(i),:));
     xlabel(['Significant at \alpha = ' num2str(alpha)]);
 end
 sgtitle(['Session - ' num2str(seed)]);
 figureName=['Xcorr_GC'];
 saveas(gcf,figureName,'fig');
-close all;
+
 
     
 % EEG power spectra
 canvas(0.5,0.5);
 for i=1:nTrials
     subplot(2,12,i);
-    imagesc(y1(i).pow);colorbar;caxis([0 1e6]);
+    imagesc(y1(i).pow);colorbar;caxis([0 1e6]);colormap('jet');
     yticks([0:10:500]);yticklabels(string(0:1:50));
     title([conditionNames{condiSeq(i)}],'Color',condicolors(condiSeq(i),:));
     subtitle('Power','Color',condicolors(condiSeq(i),:));
     ylabel('Frequencies (Hz)');xlabel('Channels (L player)');
 
     subplot(2,12,12+i);
-    imagesc(y2(i).pow);colorbar;caxis([0 1e6]);
+    imagesc(y2(i).pow);colorbar;caxis([0 1e6]);colormap('jet');
     yticks([0:10:500]);yticklabels(string(0:1:50));
+    title([conditionNames{condiSeq(i)}],'Color',condicolors(condiSeq(i),:));
     subtitle('Power','Color',condicolors(condiSeq(i),:));
     xlabel('Channels (R player)'); %ylabel('Frequencies');
 end
 sgtitle(['Session - ' num2str(seed)]);
-figureName=['EEG_spectra];
+figureName=['EEG_spectra'];
 saveas(gcf,figureName,'fig');
-close all;
 
 
 %% PLOT 3: slinding window: DFA and Autocov Granger Causality for each trial
@@ -692,3 +694,46 @@ for i=1:nTrials
     saveas(gcf,figureName,'jpg');
     close all;
 end
+
+
+%% saves all variables from the current workspace
+tic
+save([num2str(seed) 'workspace.mat']);
+toc
+% takes about 11 min
+
+
+%% Get variable names from mat file (faster)
+load("20220721.mat")
+
+tic
+load([num2str(seed) 'workspace.mat']);
+toc
+% takes about 
+varlist1 = who();
+
+% varlist1 = who('-file','20220811.mat');
+
+% matObj1 = matfile('20220811workspace.mat');
+% varlist1 = who(matObj1);
+
+varlist2 = who();
+
+varlist_diff = setdiff(varlist2,varlist1);
+
+clear varlist1
+
+% append new variables to the old mat files
+% tic
+% varlist_diff_string=string(varlist_diff);
+% for i=1:length(varlist_diff_string)
+%     save('20220811workspace.mat',varlist_diff_string(i),'-append');
+% end
+% toc
+
+tic 
+save('20220811workspace.mat',varlist_diff_string{:},'-append');
+toc
+
+% clear all new added variables
+clear(varlist_diff{:})
