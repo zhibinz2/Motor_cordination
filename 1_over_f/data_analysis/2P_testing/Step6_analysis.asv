@@ -709,7 +709,7 @@ load("20220721.mat")
 tic
 load([num2str(seed) 'workspace.mat']);
 toc
-% takes about 
+% takes about 3 min
 varlist1 = who();
 
 % varlist1 = who('-file','20220811.mat');
@@ -732,7 +732,7 @@ clear varlist1
 % toc
 
 tic 
-save('20220811workspace.mat',varlist_diff_string{:},'-append');
+save([num2str(seed) 'workspace.mat'],varlist_diff_string{:},'-append');
 toc
 
 % clear all new added variables

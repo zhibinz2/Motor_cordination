@@ -714,14 +714,16 @@ varlist1 = who();
 
 % varlist1 = who('-file','20220811.mat');
 
-% matObj1 = matfile('20220811workspace.mat');
+tic
+% matObj1 = matfile('20220721workspace.mat');
 % varlist1 = who(matObj1);
+toc
 
 varlist2 = who();
 
 varlist_diff = setdiff(varlist2,varlist1);
 
-clear varlist1
+% clear varlist1
 
 % append new variables to the old mat files
 % tic
@@ -732,8 +734,10 @@ clear varlist1
 % toc
 
 tic 
-save('20220811workspace.mat',varlist_diff_string{:},'-append');
+varlist_diff_string=string(varlist_diff);
+save([num2str(seed) 'workspace.mat'],varlist_diff_string{:},'-append');
 toc
+% takes about 1.5 min
 
 % clear all new added variables
 clear(varlist_diff{:})
