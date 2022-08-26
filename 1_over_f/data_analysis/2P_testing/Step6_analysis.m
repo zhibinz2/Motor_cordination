@@ -200,7 +200,7 @@ for i=1:nTrials
    
     % extract BP intervals
     y1(1,i).BPint=Calinterval(y1(1,i).BP01)./sr; % in second
-    y2(1,i).BPint=Calinterval(y2(i).BP01)./sr; % in second
+    y2(1,i).BPint=Calinterval(y2(1,i).BP01)./sr; % in second
     
     MinLength=min([length(y1(i).BPint) length(y2(i).BPint)]);
 
@@ -695,7 +695,66 @@ for i=1:nTrials
     close all;
 end
 
+%% PLOT 4: 500ms before BP
+% Calculation on BP
+y1=[];y2=[];y12=[];
+nTrials=12;
+alpha = 0.05; 
+for i=1:nTrials
+    % extract BP01
+    y1(1,i).BP01=(BP(1).BP{i})'; % in boolean
+    y2(1,i).BP01=(BP(2).BP{i})'; % in boolean 
+   
+    % extract the indices for time point of each BP 
+    y1(1,i).BPind=find(y1(1,i).BP01); % BPind=y1(1,i).BPind; plot(BPind,ones(1,length(BPind)),'bo');
+    y2(1,i).BPind=find(y2(1,i).BP01); % BPind=y2(1,i).BPind; plot(BPind,ones(1,length(BPind)),'bo');
+    
+    % compute error
+    y12(1,i).BPerr=y1(1,i).BPind-
+    % or syn.m corr method?
 
+    % count number of taps
+    y1(1,i).numtaps=length(y1(i).BPind);
+    y2(1,i).numtaps=length(y2(i).BPind);
+    MinTaps=min([y1(1,i).numtaps y2(1,i).numtaps]);
+    
+    % extract EEG in each condition
+    y1(1,i).EEG=zscore(EEG(1).EEG{i},[],1);
+    y2(1,i).EEG=zscore(EEG(2).EEG{i},[],1);
+    
+    % extract EEG from 500 ms before each tap
+    for j=2:y1(1,i).numtaps
+        BPind=y1(1,i).BPind(j);
+        y1(1,i).EEG500ms(1,j).EEG500ms=y1(1,i).EEG(BPind-999:BPind,:);
+        % fft to get power sum of delta, theta, alpha, beta, gamma 
+        % define delta, theta, alpha, beta, gamma band width as:
+        % https://www.sinhaclinic.com/what-are-brainwaves/
+        % delta 1-3, theta 4-7, alpha 8-12, beta 13-38, gamma 39-42
+        % https://nhahealth.com/brainwaves-the-language/
+        % delta 1-3, theta 4-7, alpha 8-12, beta 13-30, gamma 30-44
+        [delta, theta, alpha, beta, gamma]=sum5band(EEG;)
+
+    end
+
+    for j=2:y2(1,i).numtaps
+        BPind=y2(1,i).BPind(j);
+        y2(1,i).EEG500ms(1,j).EEG500ms=y2(1,i).EEG(BPind-999:BPind,:);
+    end
+end
+
+
+
+% Calculate EEG Power of the whole trial
+for i=1:nTrials
+    y1(1,i).EEG=zscore(EEG(1).EEG{i},[],1);
+    y2(1,i).EEG=zscore(EEG(2).EEG{i},[],1);
+    
+    % create a function that reorganize EEG into time x chan x chunks
+    % feed it to allspectra (for 2 s chunks) or spectra3 (for 10s chunks)
+    [~,freqs, ~, y1(i).pow, ~] = spectra3(y1(i).EEG,sr,maxfreq,win);
+    [~,freqs, ~, y2(i).pow, ~] = spectra3(y2(i).EEG,sr,maxfreq,win);
+    % later examine pow eppow corr cprod in imagesc and create myallspectra
+end
 %% saves all variables from the current workspace
 tic
 save([num2str(seed) 'workspace.mat']);

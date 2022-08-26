@@ -200,7 +200,7 @@ for i=1:nTrials
    
     % extract BP intervals
     y1(1,i).BPint=Calinterval(y1(1,i).BP01)./sr; % in second
-    y2(1,i).BPint=Calinterval(y2(i).BP01)./sr; % in second
+    y2(1,i).BPint=Calinterval(y2(1,i).BP01)./sr; % in second
     
     MinLength=min([length(y1(i).BPint) length(y2(i).BPint)]);
 
@@ -695,7 +695,108 @@ for i=1:nTrials
     close all;
 end
 
+%% PLOT 4: 500ms before BP
+% Calculation on BP
+y1=[];y2=[];y12=[];
+nTrials=12;
+alpha = 0.05; 
+for i=1:nTrials
+    % extract BP01
+    y1(1,i).BP01=(BP(1).BP{i})'; % in boolean
+    y2(1,i).BP01=(BP(2).BP{i})'; % in boolean 
+   
+    % extract the indices for time point of each BP 
+    y1(1,i).BPind=find(y1(1,i).BP01); % BPind=y1(1,i).BPind; plot(BPind,ones(1,length(BPind)),'bo');
+    y2(1,i).BPind=find(y2(1,i).BP01); % BPind=y2(1,i).BPind; plot(BPind,ones(1,length(BPind)),'bo');
+    
+    % compute error
+    y12(1,i).BPerr=y1(1,i).BPind-
+    % or syn.m corr method?
+    
+    % count number of taps
+    y1(1,i).numtaps=length(y1(i).BPind);
+    y2(1,i).numtaps=length(y2(i).BPind);
+    MinTaps=min([y1(1,i).numtaps y2(1,i).numtaps]);
+    
+    % extract EEG in each condition
+    y1(1,i).EEG=zscore(EEG(1).EEG{i},[],1);
+    y2(1,i).EEG=zscore(EEG(2).EEG{i},[],1);
+    
+    % extract EEG from 500 ms before each tap
+    for j=2:y1(1,i).numtaps
+        BPind=y1(1,i).BPind(j);
+        y1(1,i).EEG500ms(1,j).EEG500ms=y1(1,i).EEG(BPind-999:BPind,:);
+        % fft to get power sum of delta, theta, alpha, beta, gamma 
 
+    end
+    for j=2:y2(1,i).numtaps
+        BPind=y2(1,i).BPind(j);
+        y2(1,i).EEG500ms(1,j).EEG500ms=y2(1,i).EEG(BPind-999:BPind,:);
+    end
+end
+
+
+    
+
+
+    % remove the mean
+    y1(1,i).BPint = y1(i).BPint-mean(y1(i).BPint);
+    y2(1,i).BPint = y2(i).BPint-mean(y2(i).BPint);
+    
+    % Autocorr of y1
+    acf=[];lags=[];bounds=[];
+    [acf,lags,bounds] = autocorr(y1(i).BPint(1:MinLength),MinLength-1);
+    y1(i).acf = acf;
+    y1(i).bounds = bounds;
+    y1(i).lags = lags;
+    
+    % Autocorr of y2
+    acf=[];lags=[];bounds=[];
+    [acf,lags,bounds] = autocorr(y2(i).BPint(1:MinLength),MinLength-1);
+    y2(i).acf = acf;
+    y2(i).bounds = bounds;
+    y2(i).lags = lags;
+    
+    % Xcorr between y1 and y2
+    r12=[];lags12=[];
+    [r12,lags12]=xcorr(y1(i).BPint(1:MinLength),y2(i).BPint(1:MinLength),30,'normalized');
+    y12(i).r12 = r12;
+    y12(i).lags12 = lags12;
+    
+    % calculate H (or alpha) in DFA of y1 and y2
+    n=[];F_n=[];FitValues=[];
+    [~,Alpha,n,F_n,FitValues]=DFA_main(y1(i).BPint(1:MinLength));
+    y1(i).Alpha=Alpha;
+    y1(i).n=n;
+    y1(i).F_n=F_n;
+    y1(i).FitValues=FitValues;
+    n=[];F_n=[];FitValues=[];
+    [~,Alpha,n,F_n,FitValues]=DFA_main(y2(i).BPint(1:MinLength));
+    y2(i).Alpha=Alpha;
+    y2(i).n=n;
+    y2(i).F_n=F_n;
+    y2(i).FitValues=FitValues;   
+
+    % Granger causality
+    F=[];pval=[];,sig=[];
+    %[F,pval,sig] = mystatespace(y1(i).BPint,y2(i).BPint); % Statespace method
+    [F,pval,sig] = myautocov(y1(i).BPint,y2(i).BPint); % Autocov method
+    y12(i).F=F;
+    y12(i).pval=pval;
+    y12(i).sig=sig;
+end
+
+% Calculate EEG Power of the whole trial
+for i=1:nTrials
+    y1(1,i).EEG=zscore(EEG(1).EEG{i},[],1);
+    y2(1,i).EEG=zscore(EEG(2).EEG{i},[],1);
+    
+    % create a function that reorganize EEG into time x chan x chunks
+    % feed it to allspectra (for 2 s chunks) or spectra3 (for 10s chunks)
+    [~,freqs, ~, y1(i).pow, ~] = spectra3(y1(i).EEG,sr,maxfreq,win);
+    [~,freqs, ~, y2(i).pow, ~] = spectra3(y2(i).EEG,sr,maxfreq,win);
+    % later examine pow eppow corr cprod in imagesc and create myallspectra
+end
 %% saves all variables from the current workspace
 tic
 save([num2str(seed) 'workspace.mat']);
@@ -714,14 +815,16 @@ varlist1 = who();
 
 % varlist1 = who('-file','20220811.mat');
 
-% matObj1 = matfile('20220811workspace.mat');
+tic
+% matObj1 = matfile('20220721workspace.mat');
 % varlist1 = who(matObj1);
+toc
 
 varlist2 = who();
 
 varlist_diff = setdiff(varlist2,varlist1);
 
-clear varlist1
+% clear varlist1
 
 % append new variables to the old mat files
 % tic
@@ -732,8 +835,10 @@ clear varlist1
 % toc
 
 tic 
+varlist_diff_string=string(varlist_diff);
 save([num2str(seed) 'workspace.mat'],varlist_diff_string{:},'-append');
 toc
+% takes about 1.5 min
 
 % clear all new added variables
 clear(varlist_diff{:})
