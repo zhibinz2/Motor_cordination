@@ -699,19 +699,56 @@ end
 % Calculation on BP
 y1=[];y2=[];y12=[];
 nTrials=12;
-alpha = 0.05; 
 for i=1:nTrials
     % extract BP01
     y1(1,i).BP01=(BP(1).BP{i})'; % in boolean
     y2(1,i).BP01=(BP(2).BP{i})'; % in boolean 
-   
+    
+    % samples=1:min([length(y1(1,i).BP01) length(y2(1,i).BP01)]);
+    % open sync.m % corr method?
+    % y12(1,i).CorrBPint=corr(Calinterval(y1(1,i).BP01(samples)),Calinterval(y2(1,i).BP01(samples)));
+
+    % open P2_Syncopate_plots.m
+    % cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
+    y1(1,i).BPint=Calinterval(y1(1,i).BP01); 
+    y2(1,i).BPint=Calinterval(y2(1,i).BP01); 
+    BPwin=20;
+    BP_inter1=smoothing((y1(1,i).BPint)./2,BPwin); 
+    BP_inter2=smoothing((y2(1,i).BPint)./2,BPwin);
+    % Resample method
+    Maxlength=max([length(BP_inter1) length(BP_inter2)]);
+    resam_BP_inter1=round(resample(BP_inter1',Maxlength,length(BP_inter1)));
+    resam_BP_inter2=round(resample(BP_inter2',Maxlength,length(BP_inter2)));
+    figure;
+    plot(resam_BP_inter1,'r'); hold on; plot(resam_BP_inter2,'b'); hold off;
+    ylabel('interval (ms)','color','m'); xlabel('taps (resampled)');
+    title({['Condi ' conditionNames{condiSeq(i)}],['BPwin ' num2str(BPwin)]},'Color',condicolors(condiSeq(i),:));
+    legend({'BP-L','BP-R'});
+
+    % calculate correlation coeffiences win the same smoothing window
+    corrSeries=[];
+    for k=1:(Maxlength-BPwin+1)
+        corrSeries(k)=corr(resam_BP_inter1(k:k+BPwin-1),resam_BP_inter2(k:k+BPwin-1));
+    end
+    figure; 
+    plot(corrSeries,'k'); 
+    ylabel('corr coef'); xlabel('taps (resampled)');
+%     corrSeries = corrSeries(~isnan(corrSeries));
+%     median(corrSeries)
+    title(['corr coef smooth win ' num2str(BPwin)],'Color',condicolors(condiSeq(i),:));
+    ylim([-1 1]);
+    yline(0,'color',deepyellow);
+
     % extract the indices for time point of each BP 
     y1(1,i).BPind=find(y1(1,i).BP01); % BPind=y1(1,i).BPind; plot(BPind,ones(1,length(BPind)),'bo');
     y2(1,i).BPind=find(y2(1,i).BP01); % BPind=y2(1,i).BPind; plot(BPind,ones(1,length(BPind)),'bo');
+
     
-    % compute error
-    y12(1,i).BPerr=y1(1,i).BPind-
-    % or syn.m corr method?
+    % compute error or correlation over time
+    % https://towardsdatascience.com/four-ways-to-quantify-synchrony-between-time-series-data-b99136c4a9c9
+    
+    % y12(1,i).BPerr=y1(1,i).BPind-
+
 
     % count number of taps
     y1(1,i).numtaps=length(y1(i).BPind);
@@ -723,6 +760,7 @@ for i=1:nTrials
     y2(1,i).EEG=zscore(EEG(2).EEG{i},[],1);
     
     % extract EEG from 500 ms before each tap
+    EEGwin=0.5;
     for j=2:y1(1,i).numtaps
         BPind=y1(1,i).BPind(j);
         y1(1,i).EEG500ms(1,j).EEG500ms=y1(1,i).EEG(BPind-999:BPind,:);
@@ -732,13 +770,25 @@ for i=1:nTrials
         % delta 1-3, theta 4-7, alpha 8-12, beta 13-38, gamma 39-42
         % https://nhahealth.com/brainwaves-the-language/
         % delta 1-3, theta 4-7, alpha 8-12, beta 13-30, gamma 30-44
-        [delta, theta, alpha, beta, gamma]=sum5band(EEG;)
-
+        delta=[];theta=[];alpha=[];beta=[];gamma=[];
+        [delta, theta, alpha, beta, gamma]=sum5band(y1(1,i).EEG500ms(1,j).EEG500ms,sr,EEGwin);
+        y1(1,i).EEG500ms(1,j).delta=delta;
+        y1(1,i).EEG500ms(1,j).theta=theta;
+        y1(1,i).EEG500ms(1,j).alpha=alpha;
+        y1(1,i).EEG500ms(1,j).beta=beta;
+        y1(1,i).EEG500ms(1,j).gamma=gamma;
     end
 
     for j=2:y2(1,i).numtaps
         BPind=y2(1,i).BPind(j);
         y2(1,i).EEG500ms(1,j).EEG500ms=y2(1,i).EEG(BPind-999:BPind,:);
+        delta=[];theta=[];alpha=[];beta=[];gamma=[];
+        [delta, theta, alpha, beta, gamma]=sum5band(y2(1,i).EEG500ms(1,j).EEG500ms,sr,EEGwin);
+        y2(1,i).EEG500ms(1,j).delta=delta;
+        y2(1,i).EEG500ms(1,j).theta=theta;
+        y2(1,i).EEG500ms(1,j).alpha=alpha;
+        y2(1,i).EEG500ms(1,j).beta=beta;
+        y2(1,i).EEG500ms(1,j).gamma=gamma;
     end
 end
 
