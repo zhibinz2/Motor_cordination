@@ -699,6 +699,8 @@ end
 % Calculation on BP
 y1=[];y2=[];y12=[];
 nTrials=12;
+BPwin=20;
+EEGwin=0.5;
 for i=1:nTrials
     % extract BP01
     y1(1,i).BP01=(BP(1).BP{i})'; % in boolean
@@ -712,64 +714,53 @@ for i=1:nTrials
     % cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
     y1(1,i).BPint=Calinterval(y1(1,i).BP01); 
     y2(1,i).BPint=Calinterval(y2(1,i).BP01); 
-    BPwin=20;
-    BP_inter1=smoothing((y1(1,i).BPint)./2,BPwin); 
-    BP_inter2=smoothing((y2(1,i).BPint)./2,BPwin);
-    % Resample method
+    y1(1,i).BPwin=BPwin; y2(1,i).BPwin=BPwin;
+    BP_inter1=smoothing(((y1(1,i).BPint)./2)',BPwin); 
+    BP_inter2=smoothing(((y2(1,i).BPint)./2)',BPwin);
+    % Resample method 
     Maxlength=max([length(BP_inter1) length(BP_inter2)]);
-    resam_BP_inter1=round(resample(BP_inter1',Maxlength,length(BP_inter1)));
-    resam_BP_inter2=round(resample(BP_inter2',Maxlength,length(BP_inter2)));
-    figure;
-    plot(resam_BP_inter1,'r'); hold on; plot(resam_BP_inter2,'b'); hold off;
-    ylabel('interval (ms)','color','m'); xlabel('taps (resampled)');
-    title({['Condi ' conditionNames{condiSeq(i)}],['BPwin ' num2str(BPwin)]},'Color',condicolors(condiSeq(i),:));
-    legend({'BP-L','BP-R'});
+    y1(1,i).resam_BP_inter1=(resample(BP_inter1,Maxlength,length(BP_inter1)));
+    y2(1,i).resam_BP_inter2=(resample(BP_inter2,Maxlength,length(BP_inter2)));
+%     figure;
+%     plot(y1(1,i).resam_BP_inter1,'r'); hold on; plot(y2(1,i).resam_BP_inter2,'b'); hold off;
+%     ylabel('interval (ms)','color','m'); xlabel('taps (resampled)');
+%     title({['Condi ' conditionNames{condiSeq(i)}],['BPwin ' num2str(BPwin)]},'Color',condicolors(condiSeq(i),:));
+%     legend({'BP-L','BP-R'});
 
     % calculate correlation coeffiences win the same smoothing window
-    corrSeries=[];
+    BPint_corrSeries=[];
     for k=1:(Maxlength-BPwin+1)
-        corrSeries(k)=corr(resam_BP_inter1(k:k+BPwin-1),resam_BP_inter2(k:k+BPwin-1));
+        BPint_corrSeries(k)=corr(y1(1,i).resam_BP_inter1(k:k+BPwin-1),y2(1,i).resam_BP_inter2(k:k+BPwin-1));
     end
-    figure; 
-    plot(corrSeries,'k'); 
-    ylabel('corr coef'); xlabel('taps (resampled)');
+    y12(1,i).BPint_corrSeries=BPint_corrSeries;
+%     figure; 
+%     plot(corrSeries,'k'); 
+%     ylabel('corr coef'); xlabel('taps (resampled)');
 %     corrSeries = corrSeries(~isnan(corrSeries));
 %     median(corrSeries)
-    title(['corr coef smooth win ' num2str(BPwin)],'Color',condicolors(condiSeq(i),:));
-    ylim([-1 1]);
-    yline(0,'color',deepyellow);
+%     title(['corr coef smooth win ' num2str(BPwin)],'Color',condicolors(condiSeq(i),:));
+%     ylim([-1 1]);
+%     yline(0,'color',deepyellow);
 
     % extract the indices for time point of each BP 
     y1(1,i).BPind=find(y1(1,i).BP01); % BPind=y1(1,i).BPind; plot(BPind,ones(1,length(BPind)),'bo');
     y2(1,i).BPind=find(y2(1,i).BP01); % BPind=y2(1,i).BPind; plot(BPind,ones(1,length(BPind)),'bo');
 
-    
-    % compute error or correlation over time
-    % https://towardsdatascience.com/four-ways-to-quantify-synchrony-between-time-series-data-b99136c4a9c9
-    
-    % y12(1,i).BPerr=y1(1,i).BPind-
-
-
     % count number of taps
     y1(1,i).numtaps=length(y1(i).BPind);
     y2(1,i).numtaps=length(y2(i).BPind);
-    MinTaps=min([y1(1,i).numtaps y2(1,i).numtaps]);
+    % y12(1,i).MinTaps=min([y1(1,i).numtaps y2(1,i).numtaps]);
+    % y12(1,i).MaxTaps=max([y1(1,i).numtaps y2(1,i).numtaps]);
     
-    % extract EEG in each condition
-    y1(1,i).EEG=zscore(EEG(1).EEG{i},[],1);
-    y2(1,i).EEG=zscore(EEG(2).EEG{i},[],1);
-    
+    % extract EEG in each condition and normalized with pacing
+    y1(1,i).EEG=zscore(EEG(1).EEG{i}./repmat(mean(EEG_pacing(1).EEG_pacing{i},1),size(EEG(1).EEG{i},1),1),[],1);
+    y2(1,i).EEG=zscore(EEG(2).EEG{i}./repmat(mean(EEG_pacing(2).EEG_pacing{i},1),size(EEG(2).EEG{i},1),1),[],1);
+
     % extract EEG from 500 ms before each tap
-    EEGwin=0.5;
+    y1(1,i).EEGwin=EEGwin; y2(1,i).EEGwin=EEGwin;
     for j=2:y1(1,i).numtaps
         BPind=y1(1,i).BPind(j);
         y1(1,i).EEG500ms(1,j).EEG500ms=y1(1,i).EEG(BPind-999:BPind,:);
-        % fft to get power sum of delta, theta, alpha, beta, gamma 
-        % define delta, theta, alpha, beta, gamma band width as:
-        % https://www.sinhaclinic.com/what-are-brainwaves/
-        % delta 1-3, theta 4-7, alpha 8-12, beta 13-38, gamma 39-42
-        % https://nhahealth.com/brainwaves-the-language/
-        % delta 1-3, theta 4-7, alpha 8-12, beta 13-30, gamma 30-44
         delta=[];theta=[];alpha=[];beta=[];gamma=[];
         [delta, theta, alpha, beta, gamma]=sum5band(y1(1,i).EEG500ms(1,j).EEG500ms,sr,EEGwin);
         y1(1,i).EEG500ms(1,j).delta=delta;
@@ -792,19 +783,80 @@ for i=1:nTrials
     end
 end
 
-
-
-% Calculate EEG Power of the whole trial
+% Combine power from each tap into one matrix
+eeg1_mat=[];eeg2_mat=[];
 for i=1:nTrials
-    y1(1,i).EEG=zscore(EEG(1).EEG{i},[],1);
-    y2(1,i).EEG=zscore(EEG(2).EEG{i},[],1);
-    
-    % create a function that reorganize EEG into time x chan x chunks
-    % feed it to allspectra (for 2 s chunks) or spectra3 (for 10s chunks)
-    [~,freqs, ~, y1(i).pow, ~] = spectra3(y1(i).EEG,sr,maxfreq,win);
-    [~,freqs, ~, y2(i).pow, ~] = spectra3(y2(i).EEG,sr,maxfreq,win);
-    % later examine pow eppow corr cprod in imagesc and create myallspectra
+    for j=2:y1(1,i).numtaps
+        eeg1_mat(1,i).EEG500ms_mat(j,:,1)=y1(1,i).EEG500ms(1,j).delta;
+        eeg1_mat(1,i).EEG500ms_mat(j,:,2)=y1(1,i).EEG500ms(1,j).theta;
+        eeg1_mat(1,i).EEG500ms_mat(j,:,3)=y1(1,i).EEG500ms(1,j).alpha;
+        eeg1_mat(1,i).EEG500ms_mat(j,:,4)=y1(1,i).EEG500ms(1,j).beta;
+        eeg1_mat(1,i).EEG500ms_mat(j,:,5)=y1(1,i).EEG500ms(1,j).gamma;
+    end
+    for j=2:y2(1,i).numtaps
+        eeg2_mat(1,i).EEG500ms_mat(j,:,1)=y2(1,i).EEG500ms(1,j).delta;
+        eeg2_mat(1,i).EEG500ms_mat(j,:,2)=y2(1,i).EEG500ms(1,j).theta;
+        eeg2_mat(1,i).EEG500ms_mat(j,:,3)=y2(1,i).EEG500ms(1,j).alpha;
+        eeg2_mat(1,i).EEG500ms_mat(j,:,4)=y2(1,i).EEG500ms(1,j).beta;
+        eeg2_mat(1,i).EEG500ms_mat(j,:,5)=y2(1,i).EEG500ms(1,j).gamma;
+    end
 end
+% Resample power to MaxTaps
+for i=1:nTrials
+    MaxTaps=max([y1(1,i).numtaps y2(1,i).numtaps]);
+    eeg1_mat(1,i).EEG500ms_resam=resample(eeg1_mat(1,i).EEG500ms_mat,MaxTaps,y1(1,i).numtaps);
+    eeg2_mat(1,i).EEG500ms_resam=resample(eeg2_mat(1,i).EEG500ms_mat,MaxTaps,y2(1,i).numtaps);
+    eeg1_mat(1,i).EEG500ms_resam_smoo=smoothing(eeg1_mat(1,i).EEG500ms_resam,BPwin);
+    eeg2_mat(1,i).EEG500ms_resam_smoo=smoothing(eeg2_mat(1,i).EEG500ms_resam,BPwin);
+end
+
+%% PLOT 4: 500ms before BP (examine one eeg band at a time)
+mkdir('Plot4');cd Plot4
+eegbandNames={'delta','theta','alpha','beta','gamma'};
+selected_chan=[1:32]; % selected_chan=15;
+% seleted_band=4;
+
+for seleted_band=1:5
+    canvas(0.5,0.5);
+    for i=1:nTrials
+        subplot(4,12,i); % BPint
+        plot(y1(1,i).resam_BP_inter1,'r'); hold on; plot(y2(1,i).resam_BP_inter2,'b'); hold off;
+        ylabel('interval (ms)','color','m'); xlabel('taps (resampled)');
+        ylim([400 900]);
+        title({['Condi ' conditionNames{condiSeq(i)}],['BPwin ' num2str(BPwin)]},'Color',condicolors(condiSeq(i),:));
+        legend({'BP-L','BP-R'});
+        
+        subplot(4,12,12+i); % corrSeries
+        plot(y12(1,i).BPint_corrSeries,'k'); 
+        ylabel('corr coef'); xlabel(['taps (sum = ' num2str(sum(y12(1,i).BPint_corrSeries)) ')'])
+        % corrSeries = corrSeries(~isnan(corrSeries)); median(corrSeries)
+        title(['corr coef smooth win ' num2str(BPwin)],'Color',condicolors(condiSeq(i),:));
+        ylim([-1 1]);
+        yline(0,'color',deepyellow);
+        
+        subplot(4,12,24+i); % power of one eeg band in 32 channels evolved over time in Player L
+        plotx(eeg1_mat(1,i).EEG500ms_resam_smoo(:,selected_chan,seleted_band));
+        ylim([0 1500]);
+        title('L power','Color',condicolors(condiSeq(i),:));
+        
+        subplot(4,12,36+i); % power of one eeg band in 32 channels evolved over time in Player R
+        plotx(eeg2_mat(1,i).EEG500ms_resam_smoo(:,selected_chan,seleted_band));
+        ylim([0 1500]);
+        title('R power','Color',condicolors(condiSeq(i),:));
+    end
+    sgtitle(['session ' num2str(seed) ' power band ' eegbandNames{seleted_band} ' chan ' labels{selected_chan}]);
+    
+    figureName=['Plot4: power band ' eegbandNames{seleted_band} ' chan ' labels{selected_chan}];
+    saveas(gcf,figureName,'fig');
+end
+
+%% try out DFA on EEG
+ans(:,15)
+[D,Alpha1,n,F_n,FitValues]=DFA_main(ans(:,15));
+
+%% try out GC on EEG
+
+
 %% saves all variables from the current workspace
 tic
 save([num2str(seed) 'workspace.mat']);

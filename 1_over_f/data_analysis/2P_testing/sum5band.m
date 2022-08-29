@@ -1,7 +1,14 @@
 function [delta, theta, alpha, beta, gamma] = sum5band(EEG,sr,win,varargin)
 %This funciton get the valuses of power sum from the 5 EEG band width
-%   Detailed explanation goes here
 
+% fft to get power sum of delta, theta, alpha, beta, gamma 
+% define delta, theta, alpha, beta, gamma band width as:
+% https://www.sinhaclinic.com/what-are-brainwaves/
+% delta 1-3, theta 4-7, alpha 8-12, beta 13-38, gamma 39-42
+% https://nhahealth.com/brainwaves-the-language/
+% delta 1-3, theta 4-7, alpha 8-12, beta 13-30, gamma 30-44
+% my band class
+% delta 1-3, theta 4-7, alpha 8-12, beta 13-30, gamma 30-50
 %%
 % Input: EEG in time x chan
 % Output: xx is EEG in time x chan x chunks

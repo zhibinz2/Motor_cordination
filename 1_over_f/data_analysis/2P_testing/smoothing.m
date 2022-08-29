@@ -3,7 +3,7 @@ function [smoothx] = smoothing(x,win)
 % win is the number of samples in the smoothing window
 smoothx=[];
 for i=1:length(x)-win
-    smoothx(i)=median(x(i:i+win-1));
+    smoothx(i,:,:)=median(x(i:i+win-1,:,:));
 end
 end
 
