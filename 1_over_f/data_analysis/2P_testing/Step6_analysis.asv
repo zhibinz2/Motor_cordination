@@ -818,18 +818,21 @@ end
 
 %% PLOT 4: 500ms before BP (examine one eeg band at a time)
 mkdir('Plot4');cd Plot4
+eegbandNames={'delta','theta','alpha','beta','gamma'};
+selected_chan=[1:32]; % selected_chan=15;
+% seleted_band=4;
 
 % Plot behaviral correlation
 canvas(0.5,0.2);
 for i=1:nTrials
-    subplot(2,12,i); % BPint
+    subplot(4,12,i); % BPint
     plot(y1(1,i).resam_BP_inter1,'r'); hold on; plot(y2(1,i).resam_BP_inter2,'b'); hold off;
     ylabel('interval (ms)','color','m'); xlabel('taps (resampled)');
     ylim([400 900]);
     title({['Condi ' conditionNames{condiSeq(i)}],['BPwin ' num2str(BPwin)]},'Color',condicolors(condiSeq(i),:));
     legend({'BP-L','BP-R'});
     
-    subplot(2,12,12+i); % corrSeries
+    subplot(4,12,12+i); % corrSeries
     plot(y12(1,i).BPint_corrSeries,'k'); 
     ylabel('corr coef'); xlabel(['taps (sum = ' num2str(sum(y12(1,i).BPint_corrSeries)) ')'])
     % corrSeries = corrSeries(~isnan(corrSeries)); median(corrSeries)
@@ -842,13 +845,10 @@ sgtitle(['session ' num2str(seed) ' BPint corr']);
 figureName=['Plot4: BPint coor'];
 saveas(gcf,figureName,'fig');
 
-% Plot each power band
-eegbandNames={'delta','theta','alpha','beta','gamma'};
-selected_chan=[1:32]; % selected_chan=15;
-% seleted_band=4;
 canvas(0.5,0.2);
 for seleted_band=1:5;
     for i=1:nTrials
+        
         subplot(2,12,i); % power of one eeg band in 32 channels evolved over time in Player L
         plotx(eeg1_mat(1,i).EEG500ms_resam_smoo(:,selected_chan,seleted_band));
         ylim([0 1500]);
@@ -859,7 +859,7 @@ for seleted_band=1:5;
         ylim([0 1500]);
         title('R power','Color',condicolors(condiSeq(i),:));
     end
-    sgtitle({['session ' num2str(seed) ' power band ' eegbandNames{seleted_band} ],[' chan ' labels{selected_chan}]});
+    sgtitle(['session ' num2str(seed) ' power band ' eegbandNames{seleted_band} ' chan ' labels{selected_chan}]);
     
     figureName=['Plot4: power band ' eegbandNames{seleted_band} ' chan ' labels{selected_chan}];
     saveas(gcf,figureName,'fig');
