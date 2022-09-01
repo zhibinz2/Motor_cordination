@@ -187,7 +187,7 @@ addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/V
 
 % parameters for powers
 % open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/spectra2
-maxfreq=50; win=10; % 10 Second with df of 0.1Hz
+maxfreq=50; EEGwin=10; % 10 Second with df of 0.1Hz
 
 % Calculation on BP
 y1=[];y2=[];y12=[];XcorrR=[];
@@ -201,42 +201,47 @@ for i=1:nTrials
     % extract BP intervals
     y1(1,i).BPint=Calinterval(y1(1,i).BP01)./sr; % in second
     y2(1,i).BPint=Calinterval(y2(1,i).BP01)./sr; % in second
-    
-    MinLength=min([length(y1(i).BPint) length(y2(i).BPint)]);
+    % MinLength=min([length(y1(i).BPint) length(y2(i).BPint)]);
 
+    % Resample method 
+    Maxlength=max([length(y1(1,i).BPint) length(y2(1,i).BPint)]);
+    y1(1,i).resam_BP_inter=(resample(y1(1,i).BPint,Maxlength,length(y1(1,i).BPint)));
+    y2(1,i).resam_BP_inter=(resample(y2(1,i).BPint,Maxlength,length(y2(1,i).BPint)));
+        
     % remove the mean
-    y1(1,i).BPint = y1(i).BPint-mean(y1(i).BPint);
-    y2(1,i).BPint = y2(i).BPint-mean(y2(i).BPint);
+    y1(1,i).resam_BP_inter = y1(i).resam_BP_inter-mean(y1(i).resam_BP_inter);
+    y2(1,i).resam_BP_inter = y2(i).resam_BP_inter-mean(y2(i).resam_BP_inter);
     
     % Autocorr of y1
     acf=[];lags=[];bounds=[];
-    [acf,lags,bounds] = autocorr(y1(i).BPint(1:MinLength),MinLength-1);
+    [acf,lags,bounds] = autocorr(y1(i).resam_BP_inter,20);
     y1(i).acf = acf;
     y1(i).bounds = bounds;
     y1(i).lags = lags;
     
     % Autocorr of y2
     acf=[];lags=[];bounds=[];
-    [acf,lags,bounds] = autocorr(y2(i).BPint(1:MinLength),MinLength-1);
+    [acf,lags,bounds] = autocorr(y2(i).resam_BP_inter,20);
     y2(i).acf = acf;
     y2(i).bounds = bounds;
     y2(i).lags = lags;
     
     % Xcorr between y1 and y2
     r12=[];lags12=[];
-    [r12,lags12]=xcorr(y1(i).BPint(1:MinLength),y2(i).BPint(1:MinLength),30,'normalized');
+
+    [r12,lags12]=xcorr(y1(i).resam_BP_inter,y2(i).resam_BP_inter,10,'normalized');
     y12(i).r12 = r12;
     y12(i).lags12 = lags12;
     
     % calculate H (or alpha) in DFA of y1 and y2
     n=[];F_n=[];FitValues=[];
-    [~,Alpha,n,F_n,FitValues]=DFA_main(y1(i).BPint(1:MinLength));
+    [~,Alpha,n,F_n,FitValues]=DFA_main(y1(i).resam_BP_inter);
     y1(i).Alpha=Alpha;
     y1(i).n=n;
     y1(i).F_n=F_n;
     y1(i).FitValues=FitValues;
     n=[];F_n=[];FitValues=[];
-    [~,Alpha,n,F_n,FitValues]=DFA_main(y2(i).BPint(1:MinLength));
+    [~,Alpha,n,F_n,FitValues]=DFA_main(y2(i).resam_BP_inter);
     y2(i).Alpha=Alpha;
     y2(i).n=n;
     y2(i).F_n=F_n;
@@ -245,7 +250,7 @@ for i=1:nTrials
     % Granger causality
     F=[];pval=[];,sig=[];
     %[F,pval,sig] = mystatespace(y1(i).BPint,y2(i).BPint); % Statespace method
-    [F,pval,sig] = myautocov(y1(i).BPint,y2(i).BPint); % Autocov method
+    [F,pval,sig] = myautocov(y1(i).resam_BP_inter,y2(i).resam_BP_inter); % Autocov method
     y12(i).F=F;
     y12(i).pval=pval;
     y12(i).sig=sig;
@@ -262,8 +267,8 @@ for i=1:nTrials
     
     % create a function that reorganize EEG into time x chan x chunks
     % feed it to allspectra (for 2 s chunks) or spectra3 (for 10s chunks)
-    [~,freqs, ~, y1(i).pow, ~] = spectra3(y1(i).EEG,sr,maxfreq,win);
-    [~,freqs, ~, y2(i).pow, ~] = spectra3(y2(i).EEG,sr,maxfreq,win);
+    [~,freqs, ~, y1(i).pow, ~] = spectra3(y1(i).EEG,sr,maxfreq,EEGwin);
+    [~,freqs, ~, y2(i).pow, ~] = spectra3(y2(i).EEG,sr,maxfreq,EEGwin);
     % later examine pow eppow corr cprod in imagesc and create myallspectra
 end
     
@@ -387,14 +392,14 @@ HNLcolors = [darkgreen; deepyellow; pink];
 % imagesc(cat(3,showcolor(1),showcolor(2),showcolor(3)));
 
 % check condiSeq for synchronization
-condiSeq=allPerm;
+% condiSeq=allPerm;
 
 nTrials=12;
 alpha = 0.05; 
 
 % Autocorr L R and DFA, 3X12 subplots
 % figure('units','normalized','outerposition',[0 0 1 1]);
-canvas(0.5,0.4);
+canvas(0.5,0.3);
 for i=1:nTrials
     subplot(3,12,i); % Autocorr L
     stem(y1(i).lags,y1(i).acf,'r'); xlabel('Lag');ylabel('\rho(k)');
@@ -423,58 +428,58 @@ for i=1:nTrials
     xlabel('Scale [log10(n)]') % win_lengths 
     ylabel('RMS [log10(F-n)]') % RMS values
     title('DFA','Color',condicolors(condiSeq(i),:));
-    subtitle(['H_L=' num2str(y1(i).Alpha) ' H_R=' num2str(y2(i).Alpha)],'Color',condicolors(condiSeq(i),:))
+    subtitle(['H_L=' num2str(round(y1(i).Alpha,2)) ' H_R=' num2str(round(y2(i).Alpha,2))],'Color',condicolors(condiSeq(i),:))
     ylim([-2 0.2]);
 end
-sgtitle(['Session - ' num2str(seed)]);
+sgtitle(['Session - ' num2str(seed) ' ' sessionTypes{session}]);
 figureName=['Autocorr_DFA'];
 saveas(gcf,figureName,'fig');
 
 
 
 % Xcorr & GC 2X12 subplots
-canvas(0.5,0.25);
+canvas(0.5,0.2);
 for i=1:nTrials
     subplot(2,12,i);
     stem(y12(i).lags12,y12(i).r12,'color',[0 0.5 0]);xlabel('Lag');ylabel('\rho(k)');
     yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
     ylim([-0.3 1]); % axis([-MinLength/2 MinLength/2 -0.3 1]);
     title([conditionNames{condiSeq(i)}],'Color',condicolors(condiSeq(i),:));
-    subtitle(['Xcorr: Player L & R' ],'Color',condicolors(condiSeq(i),:));
+    subtitle(['Xcorr: L & R' ],'Color',condicolors(condiSeq(i),:));
 
     subplot(2,12,12+i);
     b=bar([y12(i).F(2) y12(i).F(3)]);set(gca, 'XTickLabel', {'L -> R' 'R -> L'});
     b.FaceColor='flat';b.CData(1,:) = [1 0 0];b.CData(2,:) = [0 0 1];
     % axis([0.25 2.75 0 max([y12(i).F(2) y12(i).F(3)])+0.05]); 
-    xlim([0.25 2.75]); ylim([0 1.2]);
+    xlim([0.25 2.75]); ylim([0 1.5]);
     if length(find(y12(i).sig==1))==0;
         tempF=y12(i).F(find(y12(i).sig==0));
         tempP=round(y12(i).pval(find(y12(i).sig==0)),3);
-        text((2-1-0.5), tempF(1)+0.1, ['P = ' num2str(tempP(1))],'Color',[1 0 0]);
-        text((3-1-0.5), tempF(2)+0.1, ['P = ' num2str(tempP(2))],'Color',[0 0 1]);
+        text((2-1-0.5), tempF(1)+0.1, [num2str(round(tempP(1),2))],'Color',[1 0 0]);
+        text((3-1-0.5), tempF(2)+0.1, [num2str(round(tempP(2),2))],'Color',[0 0 1]);
     end
     if length(find(y12(i).sig==1))==1;
-        text((find(y12(i).sig==1)-1-0.5), y12(i).F(find(y12(i).sig==1))+0.1, ['* P = ' num2str(round(y12(i).pval(find(y12(i).sig==1)),3))],'Color',[1 0 0]);
-        text((find(y12(i).sig==0)-1-0.5), y12(i).F(find(y12(i).sig==0))+0.1, ['P = ' num2str(round(y12(i).pval(find(y12(i).sig==0)),3))],'Color',[0 0 1]);
+        text((find(y12(i).sig==1)-1-0.5), y12(i).F(find(y12(i).sig==1))+0.1, ['*' num2str(round(y12(i).pval(find(y12(i).sig==1)),2))],'Color',[1 0 0]);
+        text((find(y12(i).sig==0)-1-0.5), y12(i).F(find(y12(i).sig==0))+0.1, [num2str(round(y12(i).pval(find(y12(i).sig==0)),2))],'Color',[0 0 1]);
     end
     if length(find(y12(i).sig==1))==2;
         tempF=y12(i).F(find(y12(i).sig==1));
         tempP=round(y12(i).pval(find(y12(i).sig==1)),3);
-        text((2-1-0.5), tempF(1)+0.1, ['* P = ' num2str(tempP(1))],'Color',[1 0 0]);
-        text((3-1-0.5), tempF(2)+0.1, ['* P = ' num2str(tempP(2))],'Color',[0 0 1]);
+        text((2-1-0.5), tempF(1)+0.1, ['*' num2str(round(tempP(1),2))],'Color',[1 0 0]);
+        text((3-1-0.5), tempF(2)+0.1, ['*' num2str(round(tempP(2),2))],'Color',[0 0 1]);
     end
     title([conditionNames{condiSeq(i)}],'Color',condicolors(condiSeq(i),:));
-    subtitle('Pairwise-conditional GC','Color',condicolors(condiSeq(i),:));
+    subtitle('GC','Color',condicolors(condiSeq(i),:));
     xlabel(['Significant at \alpha = ' num2str(alpha)]);
 end
-sgtitle(['Session - ' num2str(seed)]);
+sgtitle(['Session - ' num2str(seed) ' ' sessionTypes{session}]);
 figureName=['Xcorr_GC'];
 saveas(gcf,figureName,'fig');
 
 
     
 % EEG power spectra
-canvas(0.5,0.2);
+canvas(0.55,0.15);
 for i=1:nTrials
     subplot(2,12,i);
 %     imagesc(y1(i).pow);colorbar;caxis([0 1e6]);colormap('jet');
@@ -492,7 +497,7 @@ for i=1:nTrials
     subtitle('Power','Color',condicolors(condiSeq(i),:));
     xlabel('Chans (R)'); 
 end
-sgtitle(['Session - ' num2str(seed)]);
+sgtitle(['Session - ' num2str(seed) ' ' sessionTypes{session}]);
 figureName=['EEG_spectra'];
 saveas(gcf,figureName,'fig');
 
@@ -818,37 +823,42 @@ end
 
 %% PLOT 4: 500ms before BP (examine one eeg band at a time)
 mkdir('Plot4');cd Plot4
-eegbandNames={'delta','theta','alpha','beta','gamma'};
-selected_chan=[1:32]; % selected_chan=15;
-% seleted_band=4;
 
 % Plot behaviral correlation
-canvas(0.5,0.2);
+canvas(0.55,0.3);
 for i=1:nTrials
-    subplot(4,12,i); % BPint
-    plot(y1(1,i).resam_BP_inter1,'r'); hold on; plot(y2(1,i).resam_BP_inter2,'b'); hold off;
-    ylabel('interval (ms)','color','m'); xlabel('taps (resampled)');
+    subplot(3,12,i); % BPint
+    plot(y1(1,i).resam_BP_inter1,'r.'); hold on; plot(y2(1,i).resam_BP_inter2,'b.'); hold off;
+    ylabel('interval (ms)'); xlabel('taps (resampled)');
     ylim([400 900]);
-    title({['Condi ' conditionNames{condiSeq(i)}],['BPwin ' num2str(BPwin)]},'Color',condicolors(condiSeq(i),:));
-    legend({'BP-L','BP-R'});
+    title({[conditionNames{condiSeq(i)}],['BPwin ' num2str(BPwin)]},'Color',condicolors(condiSeq(i),:));
+    % legend({'L','R'});
     
-    subplot(4,12,12+i); % corrSeries
+    subplot(3,12,12+i); % corrSeries
     plot(y12(1,i).BPint_corrSeries,'k'); 
-    ylabel('corr coef'); xlabel(['taps (sum = ' num2str(sum(y12(1,i).BPint_corrSeries)) ')'])
+    ylabel('corr coef'); xlabel(['taps (sum ' num2str(round(sum(y12(1,i).BPint_corrSeries,2))) ')'])
     % corrSeries = corrSeries(~isnan(corrSeries)); median(corrSeries)
-    title(['corr coef smooth win ' num2str(BPwin)],'Color',condicolors(condiSeq(i),:));
-    ylim([-1 1]);
-    yline(0,'color',deepyellow);
+    title({['corr coef'], ['smoo win ' num2str(BPwin)]},'Color',condicolors(condiSeq(i),:));
+    ylim([-1 1]); yline(0,'color',deepyellow);
+
+    subplot(3,12,24+i); % BPint difference
+    plot(abs(y1(1,i).resam_BP_inter1-y2(1,i).resam_BP_inter2),'k'); 
+    ylabel('difference (ms)'); xlabel(['taps (sum ' num2str(round(sum(abs(y1(1,i).resam_BP_inter1-y2(1,i).resam_BP_inter2)))) ')'])
+    ylim([-10 150]); yline(0,'color',deepyellow);
+    title({[conditionNames{condiSeq(i)}],['BPwin ' num2str(BPwin)]},'Color',condicolors(condiSeq(i),:));
 end
 sgtitle(['session ' num2str(seed) ' BPint corr']);
     
 figureName=['Plot4: BPint coor'];
 saveas(gcf,figureName,'fig');
 
-canvas(0.5,0.2);
-for seleted_band=1:5;
+% Plot each power band
+eegbandNames={'delta','theta','alpha','beta','gamma'};
+selected_chan=[1:32]; % selected_chan=15;
+% seleted_band=4;
+canvas(0.55,0.2);
+for seleted_band=1:5
     for i=1:nTrials
-        
         subplot(2,12,i); % power of one eeg band in 32 channels evolved over time in Player L
         plotx(eeg1_mat(1,i).EEG500ms_resam_smoo(:,selected_chan,seleted_band));
         ylim([0 1500]);
@@ -859,7 +869,7 @@ for seleted_band=1:5;
         ylim([0 1500]);
         title('R power','Color',condicolors(condiSeq(i),:));
     end
-    sgtitle(['session ' num2str(seed) ' power band ' eegbandNames{seleted_band} ' chan ' labels{selected_chan}]);
+    sgtitle({['session ' num2str(seed) ' power band ' eegbandNames{seleted_band} ],[' chan ' labels{selected_chan}]});
     
     figureName=['Plot4: power band ' eegbandNames{seleted_band} ' chan ' labels{selected_chan}];
     saveas(gcf,figureName,'fig');
