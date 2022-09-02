@@ -193,6 +193,7 @@ maxfreq=50; EEGwin=10; % 10 Second with df of 0.1Hz
 y1=[];y2=[];y12=[];XcorrR=[];
 nTrials=12;
 alpha = 0.05; 
+d_min=-0.5; d_max=1;
 for i=1:nTrials
     % extract BP01
     y1(1,i).BP01=(BP(1).BP{i})'; % in boolean
@@ -211,7 +212,7 @@ for i=1:nTrials
     % remove the mean
     y1(1,i).resam_BP_inter = y1(i).resam_BP_inter-mean(y1(i).resam_BP_inter);
     y2(1,i).resam_BP_inter = y2(i).resam_BP_inter-mean(y2(i).resam_BP_inter);
-    
+
     % Autocorr of y1
     acf=[];lags=[];bounds=[];
     [acf,lags,bounds] = autocorr(y1(i).resam_BP_inter,20);
@@ -228,8 +229,14 @@ for i=1:nTrials
     
     % Xcorr between y1 and y2
     r12=[];lags12=[];
-
-    [r12,lags12]=xcorr(y1(i).resam_BP_inter,y2(i).resam_BP_inter,10,'normalized');
+    % d estimate
+    est_d1=d_estimation(y1(1,i).resam_BP_inter,d_min,d_max);
+    est_d2=d_estimation(y2(1,i).resam_BP_inter,d_min,d_max);
+    %d filter
+    [Ytmp1,~]=remove_d(y1(1,i).resam_BP_inter',est_d1); %filtered data
+    [Ytmp2,~]=remove_d(y2(1,i).resam_BP_inter',est_d2); %filtered data
+    % Xcorr
+    [r12,lags12]=xcorr(Ytmp1',Ytmp2',10,'normalized');
     y12(i).r12 = r12;
     y12(i).lags12 = lags12;
     
@@ -250,7 +257,7 @@ for i=1:nTrials
     % Granger causality
     F=[];pval=[];,sig=[];
     %[F,pval,sig] = mystatespace(y1(i).BPint,y2(i).BPint); % Statespace method
-    [F,pval,sig] = myautocov(y1(i).resam_BP_inter,y2(i).resam_BP_inter); % Autocov method
+    [F,pval,sig] = myautocov(Ytmp1,Ytmp2); % Autocov method
     y12(i).F=F;
     y12(i).pval=pval;
     y12(i).sig=sig;
@@ -261,9 +268,8 @@ for i=1:nTrials
 %     y1(1,i).EEG=zscore(EEG(1).EEG{i},[],1);
 %     y2(1,i).EEG=zscore(EEG(2).EEG{i},[],1);
     % extract EEG in each condition and normalized with pacing
-    y1(1,i).EEG=zscore(EEG(1).EEG{i}./repmat(mean(EEG_pacing(1).EEG_pacing{i},1),size(EEG(1).EEG{i},1),1),[],1);
-    y2(1,i).EEG=zscore(EEG(2).EEG{i}./repmat(mean(EEG_pacing(2).EEG_pacing{i},1),size(EEG(2).EEG{i},1),1),[],1);
-
+    y1(1,i).EEG=zscore(EEG(1).EEG{i}./repmat(mean(abs(EEG_pacing(1).EEG_pacing{i}),1),size(EEG(1).EEG{i},1),1),[],1);
+    y2(1,i).EEG=zscore(EEG(2).EEG{i}./repmat(mean(abs(EEG_pacing(2).EEG_pacing{i}),1),size(EEG(2).EEG{i},1),1),[],1);
     
     % create a function that reorganize EEG into time x chan x chunks
     % feed it to allspectra (for 2 s chunks) or spectra3 (for 10s chunks)
@@ -485,7 +491,7 @@ for i=1:nTrials
     subplot(2,12,i);
 %     imagesc(y1(i).pow);colorbar;caxis([0 1e6]);colormap('jet');
 %     yticks([0:100:500]);yticklabels(string(0:10:50));ylabel('Frequencies (Hz)');
-    logimagesc(y1(i).pow,freqs);caxis([0 1e7]);
+    logimagesc((y1(i).pow),freqs);% caxis([0 0.8e7]);
     title([conditionNames{condiSeq(i)}],'Color',condicolors(condiSeq(i),:));
     subtitle('Power','Color',condicolors(condiSeq(i),:));
     xlabel('Chans (L)');
@@ -493,7 +499,7 @@ for i=1:nTrials
     subplot(2,12,12+i);
 %     imagesc(y2(i).pow);colorbar;caxis([0 1e6]);colormap('jet');
 %     yticks([0:10:500]);yticklabels(string(0:1:50));ylabel('Frequencies (Hz)');
-    logimagesc(y2(i).pow,freqs);caxis([0 1e7]);
+    logimagesc((y2(i).pow),freqs);% caxis([0 0.8e7]);
     title([conditionNames{condiSeq(i)}],'Color',condicolors(condiSeq(i),:));
     subtitle('Power','Color',condicolors(condiSeq(i),:));
     xlabel('Chans (R)'); 
