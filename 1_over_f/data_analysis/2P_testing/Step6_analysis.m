@@ -897,21 +897,107 @@ for seleted_band=1:5
 end
 
 %% PLOT 5: GC between BPint and EEGpow
-
-
+GC1=[];GC2=[];
+eegbandNames={'delta','theta','alpha','beta','gamma'};
+selected_chan=15; % selected_chan=15;
+seleted_band=4;
 for i=1:nTrials
-    % 
-    Ytmp1=y1(1,i).BPint; % upsample to match other player's EEG then smooth
-    Ytmp2=eeg2_mat(1,i).EEG500ms_resam_smoo;
+    % L behaviral -> R EEG
+    Ytmp1=[];Ytmp2=[];
+    Ytmp1=y1(1,i).BPint; % length=numtaps-1
+    Ytmp2=eeg2_mat(1,i).EEG500ms_mat(2:end,:,:); % start from 2nd tap
+    MaxTaps=max([y1(1,i).numtaps-1 y2(1,i).numtaps-1]);
+    % resample then smooth
+    Ytmp1_resam=resample(Ytmp1,MaxTaps,length(Ytmp1));
+    Ytmp2_resam=resample(Ytmp2,MaxTaps,length(Ytmp2));
+    GC1(1,i).Ytmp1_resam_smoo=smoothing(Ytmp1_resam,BPwin);
+    GC1(1,i).Ytmp2_resam_smoo=smoothing(Ytmp2_resam,BPwin);
+    % d estimate and remove d from them
+    Ytmp1=[];Ytmp2=[];
+    [Ytmp1,Ytmp2] = rm_est_d(GC1(1,i).Ytmp1_resam_smoo,GC1(1,i).Ytmp2_resam_smoo(:,selected_chan,seleted_band));
     % Granger causality between BPint and EEGpow
     F=[];pval=[];,sig=[];
     [F,pval,sig] = myautocov(Ytmp1,Ytmp2); % Autocov method
-    y12(i).F=F;
-    y12(i).pval=pval;
-    y12(i).sig=sig;
+    GC1(i).F=F;
+    GC1(i).pval=pval;
+    GC1(i).sig=sig;
     
-    Ytmp1=y2(1,i).BPint; % upsample to match other player's EEG then smooth
-    Ytmp2=eeg1_mat(1,i).EEG500ms_resam_smoo;
+    % R behaviral -> L EEG
+    Ytmp1=[];Ytmp2=[];
+    Ytmp1=y2(1,i).BPint; % length=numtaps-1
+    Ytmp2=eeg1_mat(1,i).EEG500ms_mat(2:end,:,:); % start from 2nd tap
+    MaxTaps=max([y1(1,i).numtaps-1 y2(1,i).numtaps-1]);
+    % resample then smooth
+    Ytmp1_resam=resample(Ytmp1,MaxTaps,length(Ytmp1));
+    Ytmp2_resam=resample(Ytmp2,MaxTaps,length(Ytmp2));
+    GC2(1,i).Ytmp1_resam_smoo=smoothing(Ytmp1_resam,BPwin);
+    GC2(1,i).Ytmp2_resam_smoo=smoothing(Ytmp2_resam,BPwin);
+    % d estimate and remove d from them
+    Ytmp1=[];Ytmp2=[];
+    [Ytmp1,Ytmp2] = rm_est_d(GC1(1,i).Ytmp1_resam_smoo,GC1(1,i).Ytmp2_resam_smoo(:,selected_chan,seleted_band));
+    % Granger causality between BPint and EEGpow
+    F=[];pval=[];,sig=[];
+    [F,pval,sig] = myautocov(Ytmp1,Ytmp2); % Autocov method
+    GC2(i).F=F;
+    GC2(i).pval=pval;
+    GC2(i).sig=sig;
+end
+
+%% PLOT 5:
+mkdir('Plot5');cd Plot5
+
+canvas(0.5,0.5);
+for i=1:nTrials
+    subplot(2,12,i); % power of one eeg band in 32 channels evolved over time in Player L
+    b=bar([GC1(i).F(2) GC1(i).F(3)]);set(gca, 'XTickLabel', {'L BP -> R EEG' 'R EEG -> L BP'});
+    b.FaceColor='flat';b.CData(1,:) = pink;b.CData(2,:) = yellow;
+    xlim([0.25 2.75]); 
+    ylim([0 0.07]);
+    title(conditionNames{condiSeq(i)},'Color',condicolors(condiSeq(i),:));
+    if length(find(GC1(i).sig==1))==0;
+        tempF=GC1(i).F(find(GC1(i).sig==0));
+        tempP=round(GC1(i).pval(find(GC1(i).sig==0)),3);
+        text((2-1-0.5), tempF(1), [num2str(round(tempP(1),2))],'Color',[1 0 0]);
+        text((3-1-0.5), tempF(2), [num2str(round(tempP(2),2))],'Color',[0 0 1]);
+    end
+    if length(find(GC1(i).sig==1))==1;
+        text((find(GC1(i).sig==1)-1-0.5), GC1(i).F(find(GC1(i).sig==1)), ['*' num2str(round(GC1(i).pval(find(GC1(i).sig==1)),2))],'Color',[1 0 0]);
+        text((find(GC1(i).sig==0)-1-0.5), GC1(i).F(find(GC1(i).sig==0)), [num2str(round(GC1(i).pval(find(GC1(i).sig==0)),2))],'Color',[0 0 1]);
+    end
+    if length(find(GC1(i).sig==1))==2;
+        tempF=GC1(i).F(find(GC1(i).sig==1));
+        tempP=round(GC1(i).pval(find(GC1(i).sig==1)),3);
+        text((2-1-0.5), tempF(1), ['*' num2str(round(tempP(1),2))],'Color',[1 0 0]);
+        text((3-1-0.5), tempF(2), ['*' num2str(round(tempP(2),2))],'Color',[0 0 1]);
+    end
+
+    subplot(2,12,12+i); % power of one eeg band in 32 channels evolved over time in Player R
+    b=bar([GC2(i).F(2) GC2(i).F(3)]);set(gca, 'XTickLabel', {'R BP -> L EEG' 'L EEG -> R BP'});
+    b.FaceColor='flat';b.CData(1,:) = pink;b.CData(2,:) = yellow;
+    xlim([0.25 2.75]); 
+    ylim([0 0.07]);
+    title(conditionNames{condiSeq(i)},'Color',condicolors(condiSeq(i),:));
+    if length(find(GC2(i).sig==1))==0;
+        tempF=GC2(i).F(find(GC2(i).sig==0));
+        tempP=round(GC2(i).pval(find(GC2(i).sig==0)),3);
+        text((2-1-0.5), tempF(1), [num2str(round(tempP(1),2))],'Color',[1 0 0]);
+        text((3-1-0.5), tempF(2), [num2str(round(tempP(2),2))],'Color',[0 0 1]);
+    end
+    if length(find(GC2(i).sig==1))==1;
+        text((find(GC2(i).sig==1)-1-0.5), GC2(i).F(find(GC2(i).sig==1)), ['*' num2str(round(GC2(i).pval(find(GC2(i).sig==1)),2))],'Color',[1 0 0]);
+        text((find(GC2(i).sig==0)-1-0.5), GC2(i).F(find(GC2(i).sig==0)), [num2str(round(GC2(i).pval(find(GC2(i).sig==0)),2))],'Color',[0 0 1]);
+    end
+    if length(find(GC2(i).sig==1))==2;
+        tempF=GC2(i).F(find(GC2(i).sig==1));
+        tempP=round(GC2(i).pval(find(GC2(i).sig==1)),3);
+        text((2-1-0.5), tempF(1), ['*' num2str(round(tempP(1),2))],'Color',[1 0 0]);
+        text((3-1-0.5), tempF(2), ['*' num2str(round(tempP(2),2))],'Color',[0 0 1]);
+    end
+end
+sgtitle({['session ' num2str(seed) ' power band ' eegbandNames{seleted_band} ],[' chan ' labels{selected_chan}]});
+
+figureName=['Plot5: GC ' eegbandNames{seleted_band} ' chan ' labels{selected_chan}];
+saveas(gcf,figureName,'fig');
 
 
 
