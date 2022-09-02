@@ -723,22 +723,36 @@ for i=1:nTrials
     % extract BP01
     y1(1,i).BP01=(BP(1).BP{i})'; % in boolean
     y2(1,i).BP01=(BP(2).BP{i})'; % in boolean 
-    
+
+    % extract the indices for time point of each BP 
+    y1(1,i).BPind=find(y1(1,i).BP01); % BPind=y1(1,i).BPind; plot(BPind,ones(1,length(BPind)),'bo');
+    y2(1,i).BPind=find(y2(1,i).BP01); % BPind=y2(1,i).BPind; plot(BPind,ones(1,length(BPind)),'bo');
+
+    % count number of taps
+    y1(1,i).numtaps=size(y1(i).BPind,2);
+    y2(1,i).numtaps=size(y2(i).BPind,2);
+    % y12(1,i).MinTaps=min([y1(1,i).numtaps y2(1,i).numtaps]);
+    % y12(1,i).MaxTaps=max([y1(1,i).numtaps y2(1,i).numtaps]);
+
+    % open P2_Syncopate_plots.m
+    % cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
     % samples=1:min([length(y1(1,i).BP01) length(y2(1,i).BP01)]);
     % open sync.m % corr method?
     % y12(1,i).CorrBPint=corr(Calinterval(y1(1,i).BP01(samples)),Calinterval(y2(1,i).BP01(samples)));
 
-    % open P2_Syncopate_plots.m
-    % cd /ssd/zhibin/1overf/20220610_2P/Segmented_data/Plots
-    y1(1,i).BPint=Calinterval(y1(1,i).BP01); 
-    y2(1,i).BPint=Calinterval(y2(1,i).BP01); 
+    % convert to intervals (length=numtaps-1)
+    y1(1,i).BPint=Calinterval(y1(1,i).BP01)'; 
+    y2(1,i).BPint=Calinterval(y2(1,i).BP01)'; 
+
+    % Resample first then smooth (length=Maxlength of numtaps-1)
+    Maxlength=max([size(y1(1,i).BPint,1) size(y2(1,i).BPint,1)]);
+    y1(1,i).BPint_resam=resample(y1(1,i).BPint,Maxlength,size(y1(1,i).BPint,1));
+    y2(1,i).BPint_resam=resample(y2(1,i).BPint,Maxlength,size(y2(1,i).BPint,1));
+    % smooth (length=Maxlength-BPwin)
     y1(1,i).BPwin=BPwin; y2(1,i).BPwin=BPwin;
-    BP_inter1=smoothing(((y1(1,i).BPint)./2)',BPwin); 
-    BP_inter2=smoothing(((y2(1,i).BPint)./2)',BPwin);
-    % Resample method 
-    Maxlength=max([length(BP_inter1) length(BP_inter2)]);
-    y1(1,i).resam_BP_inter1=(resample(BP_inter1,Maxlength,length(BP_inter1)));
-    y2(1,i).resam_BP_inter2=(resample(BP_inter2,Maxlength,length(BP_inter2)));
+    y1(1,i).BPint_resam_smoo=smoothing(((y1(1,i).BPint_resam)./2),BPwin); 
+    y2(1,i).BPint_resam_smoo=smoothing(((y2(1,i).BPint_resam)./2),BPwin);
+
 %     figure;
 %     plot(y1(1,i).resam_BP_inter1,'r'); hold on; plot(y2(1,i).resam_BP_inter2,'b'); hold off;
 %     ylabel('interval (ms)','color','m'); xlabel('taps (resampled)');
@@ -747,10 +761,11 @@ for i=1:nTrials
 
     % calculate correlation coeffiences win the same smoothing window
     BPint_corrSeries=[];
-    for k=1:(Maxlength-BPwin+1)
-        BPint_corrSeries(k)=corr(y1(1,i).resam_BP_inter1(k:k+BPwin-1),y2(1,i).resam_BP_inter2(k:k+BPwin-1));
+    for k=1:(Maxlength-BPwin-BPwin+1)
+        BPint_corrSeries(k)=corr(y1(1,i).BPint_resam_smoo(k:k+BPwin-1),y2(1,i).BPint_resam_smoo(k:k+BPwin-1));
     end
-    y12(1,i).BPint_corrSeries=BPint_corrSeries;
+    y12(1,i).BPint_corrSeries=BPint_corrSeries; % (length=Maxlength-BPwin-BPwin+1)
+
 %     figure; 
 %     plot(corrSeries,'k'); 
 %     ylabel('corr coef'); xlabel('taps (resampled)');
@@ -760,23 +775,14 @@ for i=1:nTrials
 %     ylim([-1 1]);
 %     yline(0,'color',deepyellow);
 
-    % extract the indices for time point of each BP 
-    y1(1,i).BPind=find(y1(1,i).BP01); % BPind=y1(1,i).BPind; plot(BPind,ones(1,length(BPind)),'bo');
-    y2(1,i).BPind=find(y2(1,i).BP01); % BPind=y2(1,i).BPind; plot(BPind,ones(1,length(BPind)),'bo');
 
-    % count number of taps
-    y1(1,i).numtaps=length(y1(i).BPind);
-    y2(1,i).numtaps=length(y2(i).BPind);
-    % y12(1,i).MinTaps=min([y1(1,i).numtaps y2(1,i).numtaps]);
-    % y12(1,i).MaxTaps=max([y1(1,i).numtaps y2(1,i).numtaps]);
-    
     % extract EEG in each condition and normalized with pacing
     y1(1,i).EEG=zscore(EEG(1).EEG{i}./repmat(mean(EEG_pacing(1).EEG_pacing{i},1),size(EEG(1).EEG{i},1),1),[],1);
     y2(1,i).EEG=zscore(EEG(2).EEG{i}./repmat(mean(EEG_pacing(2).EEG_pacing{i},1),size(EEG(2).EEG{i},1),1),[],1);
 
     % extract EEG from 500 ms before each tap
     y1(1,i).EEGwin=EEGwin; y2(1,i).EEGwin=EEGwin;
-    for j=2:y1(1,i).numtaps
+    for j=2:y1(1,i).numtaps % start from the 2nd tap (length=numtap-1) (first element is empty)
         BPind=y1(1,i).BPind(j);
         y1(1,i).EEG500ms(1,j).EEG500ms=y1(1,i).EEG(BPind-999:BPind,:);
         delta=[];theta=[];alpha=[];beta=[];gamma=[];
@@ -819,11 +825,13 @@ for i=1:nTrials
         eeg2_mat(1,i).EEG500ms_mat(j,:,5)=y2(1,i).EEG500ms(1,j).gamma;
     end
 end
-% Resample power to MaxTaps
+% Downsample (not good) power to the same length as BPint_corrSerie (length=Maxlength-BPwin-BPwin+1) 
+% Resample the MaxTaps according to results from previous step
 for i=1:nTrials
-    MaxTaps=max([y1(1,i).numtaps y2(1,i).numtaps]);
-    eeg1_mat(1,i).EEG500ms_resam=resample(eeg1_mat(1,i).EEG500ms_mat,MaxTaps,y1(1,i).numtaps);
-    eeg2_mat(1,i).EEG500ms_resam=resample(eeg2_mat(1,i).EEG500ms_mat,MaxTaps,y2(1,i).numtaps);
+    % Resam_length=length(BPint_corrSeries); % this will downsample, not good
+    MaxTaps=max([y1(1,i).numtaps-1 y2(1,i).numtaps-1]); % start from 2nd tap
+    eeg1_mat(1,i).EEG500ms_resam=resample(eeg1_mat(1,i).EEG500ms_mat(2:end,:,:),MaxTaps,y1(1,i).numtaps-1);
+    eeg2_mat(1,i).EEG500ms_resam=resample(eeg2_mat(1,i).EEG500ms_mat(2:end,:,:),MaxTaps,y2(1,i).numtaps-1);
     eeg1_mat(1,i).EEG500ms_resam_smoo=smoothing(eeg1_mat(1,i).EEG500ms_resam,BPwin);
     eeg2_mat(1,i).EEG500ms_resam_smoo=smoothing(eeg2_mat(1,i).EEG500ms_resam,BPwin);
 end
@@ -832,12 +840,12 @@ end
 mkdir('Plot4');cd Plot4
 
 % Plot behaviral correlation
-canvas(0.55,0.3);
+canvas(0.5,0.3);
 for i=1:nTrials
     subplot(3,12,i); % BPint
-    plot(y1(1,i).resam_BP_inter1,'r.'); hold on; plot(y2(1,i).resam_BP_inter2,'b.'); hold off;
+    plot(y1(1,i).BPint_resam_smoo,'r.'); hold on; plot(y2(1,i).BPint_resam_smoo,'b.'); hold off;
     ylabel('interval (ms)'); xlabel('taps (resampled)');
-    ylim([400 900]);
+    ylim([400 900]);xlim([0 size(y1(1,i).BPint_resam_smoo,1)]);
     title({[conditionNames{condiSeq(i)}],['BPwin ' num2str(BPwin)]},'Color',condicolors(condiSeq(i),:));
     % legend({'L','R'});
     
@@ -847,11 +855,12 @@ for i=1:nTrials
     % corrSeries = corrSeries(~isnan(corrSeries)); median(corrSeries)
     title({['corr coef'], ['smoo win ' num2str(BPwin)]},'Color',condicolors(condiSeq(i),:));
     ylim([-1 1]); yline(0,'color',deepyellow);
+    xlim([0 size(y12(1,i).BPint_corrSeries,2)]);
 
     subplot(3,12,24+i); % BPint difference
-    plot(abs(y1(1,i).resam_BP_inter1-y2(1,i).resam_BP_inter2),'k'); 
-    ylabel('difference (ms)'); xlabel(['taps (sum ' num2str(round(sum(abs(y1(1,i).resam_BP_inter1-y2(1,i).resam_BP_inter2)))) ')'])
-    ylim([-10 200]); yline(0,'color',deepyellow);
+    plot(abs(y1(1,i).BPint_resam_smoo-y2(1,i).BPint_resam_smoo),'k'); 
+    ylabel('difference (ms)'); xlabel(['taps (sum ' num2str(round(sum(abs(y1(1,i).BPint_resam_smoo-y2(1,i).BPint_resam_smoo)))) ')'])
+    ylim([-10 200]); yline(0,'color',deepyellow);xlim([0 size(y1(1,i).BPint_resam_smoo,1)]);
     title({[conditionNames{condiSeq(i)}],['BPwin ' num2str(BPwin)]},'Color',condicolors(condiSeq(i),:));
 end
 sgtitle(['session ' num2str(seed) ' BPint corr']);
@@ -864,18 +873,21 @@ saveas(gcf,figureName,'fig');
 % Plot each power band
 eegbandNames={'delta','theta','alpha','beta','gamma'};
 selected_chan=[1:32]; % selected_chan=15;
+ylims=[500 700 1400 1800 2000];
 % seleted_band=4;
-canvas(0.55,0.2);
+canvas(0.5,0.2);
 for seleted_band=1:5
     for i=1:nTrials
         subplot(2,12,i); % power of one eeg band in 32 channels evolved over time in Player L
         plotx(eeg1_mat(1,i).EEG500ms_resam_smoo(:,selected_chan,seleted_band));
-        ylim([0 1500]);
+        ylim([0 ylims(seleted_band)]);
+        xlim([0 size(eeg1_mat(1,i).EEG500ms_resam_smoo,1)]);
         title('L power','Color',condicolors(condiSeq(i),:));
         
         subplot(2,12,12+i); % power of one eeg band in 32 channels evolved over time in Player R
         plotx(eeg2_mat(1,i).EEG500ms_resam_smoo(:,selected_chan,seleted_band));
-        ylim([0 1500]);
+        ylim([0 ylims(seleted_band)]);
+        xlim([0 size(eeg2_mat(1,i).EEG500ms_resam_smoo,1)]);
         title('R power','Color',condicolors(condiSeq(i),:));
     end
     sgtitle({['session ' num2str(seed) ' power band ' eegbandNames{seleted_band} ],[' chan ' labels{selected_chan}]});
@@ -884,11 +896,30 @@ for seleted_band=1:5
     saveas(gcf,figureName,'fig');
 end
 
+%% PLOT 5: GC between BPint and EEGpow
+
+
+for i=1:nTrials
+    % 
+    Ytmp1=y1(1,i).BPint; % upsample to match other player's EEG then smooth
+    Ytmp2=eeg2_mat(1,i).EEG500ms_resam_smoo;
+    % Granger causality between BPint and EEGpow
+    F=[];pval=[];,sig=[];
+    [F,pval,sig] = myautocov(Ytmp1,Ytmp2); % Autocov method
+    y12(i).F=F;
+    y12(i).pval=pval;
+    y12(i).sig=sig;
+    
+    Ytmp1=y2(1,i).BPint; % upsample to match other player's EEG then smooth
+    Ytmp2=eeg1_mat(1,i).EEG500ms_resam_smoo;
+
+
+
 %% try out DFA on EEG
 ans(:,15)
 [D,Alpha1,n,F_n,FitValues]=DFA_main(ans(:,15));
 
-%% try out GC on EEG
+
 
 
 %% saves all variables from the current workspace
