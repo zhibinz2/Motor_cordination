@@ -230,3 +230,9 @@ while (n < numFrames) & (tapsRecordedL < numTaps ) & (tapsRecordedR < numTaps ) 
     % fliptime=toc;
     % fliptimes=[fliptimes fliptime];
 end
+
+% Flash photocells once to mark the end of the trial ###### (upper left and bottom right)
+Screen('FillRect', windowPtr, white, RightUpperSquare);  % event type = 1200001
+Screen('FillRect', windowPtr, white, LeftUpperSquare);
+Screen('Flip',windowPtr);
+pause(0.02); % enable left monitor to detect it.
