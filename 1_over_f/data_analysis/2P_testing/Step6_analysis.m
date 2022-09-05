@@ -899,8 +899,9 @@ end
 %% PLOT 5: GC between BPint and EEGpow
 GC1=[];GC2=[];
 eegbandNames={'delta','theta','alpha','beta','gamma'};
-selected_chan=15; % selected_chan=15;
-seleted_band=4;
+% selected_chan=15; % selected_chan=15;
+% seleted_band=4;
+tic 
 for i=1:nTrials
     % L behaviral -> R EEG
     Ytmp1=[];Ytmp2=[];
@@ -912,15 +913,20 @@ for i=1:nTrials
     Ytmp2_resam=resample(Ytmp2,MaxTaps,length(Ytmp2));
     GC1(1,i).Ytmp1_resam_smoo=smoothing(Ytmp1_resam,BPwin);
     GC1(1,i).Ytmp2_resam_smoo=smoothing(Ytmp2_resam,BPwin);
-    % d estimate and remove d from them
-    Ytmp1=[];Ytmp2=[];
-    [Ytmp1,Ytmp2] = rm_est_d(GC1(1,i).Ytmp1_resam_smoo,GC1(1,i).Ytmp2_resam_smoo(:,selected_chan,seleted_band));
-    % Granger causality between BPint and EEGpow
-    F=[];pval=[];,sig=[];
-    [F,pval,sig] = myautocov(Ytmp1,Ytmp2); % Autocov method
-    GC1(i).F=F;
-    GC1(i).pval=pval;
-    GC1(i).sig=sig;
+    for seleted_band=1:5
+        for selected_chan=1:32
+            % d estimate and remove d from them
+            Ytmp1=[];Ytmp2=[];
+            [Ytmp1,Ytmp2] = rm_est_d(GC1(1,i).Ytmp1_resam_smoo,GC1(1,i).Ytmp2_resam_smoo(:,selected_chan,seleted_band));
+            % Granger causality between BPint and EEGpow
+            F=[];pval=[];,sig=[];
+            [F,pval,sig] = myautocov(Ytmp1,Ytmp2); % Autocov method
+            GC1(1,i).F(1,seleted_band).F(1,selected_chan).F=F;
+            GC1(1,i).pval(1,seleted_band).pval(1,selected_chan).pval=pval;
+            GC1(1,i).sig(1,seleted_band).sig(1,selected_chan).sig=sig;
+        end
+    end
+
     
     % R behaviral -> L EEG
     Ytmp1=[];Ytmp2=[];
@@ -932,19 +938,38 @@ for i=1:nTrials
     Ytmp2_resam=resample(Ytmp2,MaxTaps,length(Ytmp2));
     GC2(1,i).Ytmp1_resam_smoo=smoothing(Ytmp1_resam,BPwin);
     GC2(1,i).Ytmp2_resam_smoo=smoothing(Ytmp2_resam,BPwin);
-    % d estimate and remove d from them
-    Ytmp1=[];Ytmp2=[];
-    [Ytmp1,Ytmp2] = rm_est_d(GC1(1,i).Ytmp1_resam_smoo,GC1(1,i).Ytmp2_resam_smoo(:,selected_chan,seleted_band));
-    % Granger causality between BPint and EEGpow
-    F=[];pval=[];,sig=[];
-    [F,pval,sig] = myautocov(Ytmp1,Ytmp2); % Autocov method
-    GC2(i).F=F;
-    GC2(i).pval=pval;
-    GC2(i).sig=sig;
+    for seleted_band=1:5
+        for selected_chan=1:32
+            % d estimate and remove d from them
+            Ytmp1=[];Ytmp2=[];
+            [Ytmp1,Ytmp2] = rm_est_d(GC2(1,i).Ytmp1_resam_smoo,GC2(1,i).Ytmp2_resam_smoo(:,selected_chan,seleted_band));
+            % Granger causality between BPint and EEGpow
+            F=[];pval=[];,sig=[];
+            [F,pval,sig] = myautocov(Ytmp1,Ytmp2); % Autocov method
+            GC2(1,i).F(1,seleted_band).F(1,selected_chan).F=F;
+            GC2(1,i).pval(1,seleted_band).pval(1,selected_chan).pval=pval;
+            GC2(1,i).sig(1,seleted_band).sig(1,selected_chan).sig=sig;
+        end
+    end
+
+end
+toc
+
+% organize all F(2) into matrics of 12trialx5bandx32chan
+GC1mat=zeros(12,5,32);
+for i=1:nTrials
+    for seleted_band=1:5
+        for selected_chan=1:32
+            GC1mat(i,seleted_band,selected_chan)=GC1(i).F(seleted_band).F(selected_chan).F(2);
+            GC2mat(i,seleted_band,selected_chan)=GC2(i).F(seleted_band).F(selected_chan).F(2);
+        end
+    end
 end
 
 %% PLOT 5:
 mkdir('Plot5');cd Plot5
+
+cd (['/ssd/zhibin/1overf/' num2str(seed) '_2P/Segmented_data/Plots/Plot5']);
 
 canvas(0.5,0.5);
 for i=1:nTrials
@@ -999,8 +1024,50 @@ sgtitle({['session ' num2str(seed) ' power band ' eegbandNames{seleted_band} ],[
 figureName=['Plot5: GC ' eegbandNames{seleted_band} ' chan ' labels{selected_chan}];
 saveas(gcf,figureName,'fig');
 
+% bar plot of 12 trials
+% select a band and a chan for bar plot
+seleted_band=3;selected_chan=15;
+GC1vec=GC1mat(:,seleted_band,selected_chan);
+GC2vec=GC1mat(:,seleted_band,selected_chan);
+GC12=[GC1vec GC2vec];
+figure;
+b=bar(GC12);
+b(1).FaceColor=red;b(2).FaceColor=blue;
+ylabel('GC index');
+xticks([1:12]);
+xticklabels(conditionNames(condiSeq));
+title('red: L BPint -> R EEG;      blue: R BPint -> L EEG');
+
+% Topoplot 5 bands x 12trials (2 figures, one for each direction)
+cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Plot5
+for d=1:2
+    if d==1
+        GCmat=GC1mat;
+    else
+        GCmat=GC2mat;
+    end
+    canvas(0.8,0.5);
+    for seleted_band=1:5
+        for i=1:nTrials
+            subplot(5,12,12*(seleted_band-1)+i)
+            topoplot(squeeze(GCmat(i,seleted_band,:)),chaninfo,'nosedir','+X');
+            title(['\' eegbandNames{seleted_band} ' ' conditionNames{condiSeq(i)}],'Color',condicolors(condiSeq(i),:));
+            colorbar; caxis([-0.1 0.1]);
+        end
+    end
+    
+    if d==1
+        sgtitle({['session ' num2str(seed) ' ' sessionTypes{session}  ' L BPint -> R EEG']},'color','red');
+        figureName=['Plot5: GC  L BPint -> R EEG'];
+    else
+        sgtitle({['session ' num2str(seed) ' ' sessionTypes{session}  ' R BPint -> L EEG']},'color','blue');
+        figureName=['Plot5: GC R BPint -> L EEG'];
+    end
+    saveas(gcf,figureName,'fig')
+end
 
 
+%% PLOT 6 GC between corr BPint and EEG
 %% try out DFA on EEG
 ans(:,15)
 [D,Alpha1,n,F_n,FitValues]=DFA_main(ans(:,15));
