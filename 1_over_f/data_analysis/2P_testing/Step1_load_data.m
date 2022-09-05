@@ -304,6 +304,7 @@ plot(PacerTimeIndL,2*ones(1,length(PacerTimeIndL)),'r.');
 
 % Make up for missing pacers on the left (for 20220713_2P) (synchronization 12 blocks)
 ShiftPacer=PacerTimeIndL(end)-PacerTimeIndR(end);
+PacerTimeIndL=PacerTimeIndR+ShiftPacer;
 PacersR=PacerTimeIndR([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);
 PacersL=PacersR+ShiftPacer;
 figure('units','normalized','outerposition',[0 0 1 0.3]);

@@ -33,7 +33,8 @@ ylim([-3 6]);
 
 % Select segmentation points of last BP in each trial
 % determine a threshold of numbers of samples in between trials
-if srL==srR; sr=srL; end; threshold = sr*30; 
+if srL==srR; sr=srL; end; 
+threshold = sr*30; 
 % threshold = sr*15; % for 20220811_2P
 % 12 segmentation points of the last tap in each trial
 SegIndL2=[BottonPresTimeIndL(find([diff(BottonPresTimeIndL')]>threshold)); BottonPresTimeIndL(end)]; 
