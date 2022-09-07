@@ -383,6 +383,7 @@ cd Plot2_1
 red   = [1 0 0];
 pink  = [1 0.65 0.75];
 blue  = [0 0 1];
+mediumblue = [0 0.4 0.7];
 green = [0 1 0];
 darkgreen = [0 0.5 0];
 grey  = [0.5 0.5 0.5];
