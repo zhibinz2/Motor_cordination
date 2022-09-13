@@ -1461,6 +1461,8 @@ for r=1:8;
         [~,H_est2(2,j,r)]=DFA_main(int_dmean_drm{2,j,r});
     end
 end
+% plot H before and H_est2 after
+
 %% try out DFA on EEG
 ans(:,15)
 [D,Alpha1,n,F_n,FitValues]=DFA_main(ans(:,15));
