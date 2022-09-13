@@ -238,7 +238,7 @@ if plotlegend==1 & plotmean==1 | plotlegend==1 & plotmedian==1
         L=legend([p(1)],'Mean');
     end
     
-    set(L,'box','off','FontSize',14,'location','eastoutside');
+    set(L,'box','off','FontSize',14,'')
 else
     L=[];
 end

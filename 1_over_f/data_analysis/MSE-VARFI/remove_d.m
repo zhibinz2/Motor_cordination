@@ -1,5 +1,5 @@
 function [Y,H]=remove_d(X,d)
-
+% X must in colum?
     ftransf=reshape(fft(X),[],1);
     [H1,~]=freqz([1,-1],1,length(X),'whole');
     H=H1.^d;

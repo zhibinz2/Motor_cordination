@@ -2,6 +2,7 @@ function [Ytmp1,Ytmp2] = rm_est_d(y1,y2)
 % estimate d and remove d from 2 time series
 % y1 y2 must be a row vector
 % if not row vector, we now convert it
+% http://www.lucafaes.net/LMSE-MSE_VARFI.html
 if iscolumn(y1);    
     y1=y1';
 end;

@@ -12,6 +12,7 @@ load('data_variables20220713.mat')
 load('data_variables20220721.mat')
 
 % d estimate and removal
+% http://www.lucafaes.net/LMSE-MSE_VARFI.html
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/MSE-VARFI
 % Granger Causality
 addpath(genpath('/home/zhibin/Documents/GitHub/MVGC1'));
@@ -967,7 +968,7 @@ for i=1:nTrials
     end
 end
 
-%% PLOT 5:
+%% PLOT 5: GC between BPint and EEGpow
 mkdir('Plot5');cd Plot5
 
 cd (['/ssd/zhibin/1overf/' num2str(seed) '_2P/Segmented_data/Plots/Plot5']);
@@ -1068,7 +1069,7 @@ for d=1:2
 end
 
 
-%% PLOT 6 DFA H values
+%% PLOT 6 DFA H values for all sessions based on matched intervals
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
 H=zeros(2,12,8);
@@ -1110,22 +1111,356 @@ Table_H=table(Trials, H_L_synch1, H_R_synch1, H_L_synco1, H_R_synco1,...
     H_L_synch4, H_R_synch4, H_L_synco4, H_R_synco4);
 
 % plot
-figure;
+canvas(0.5, 0.5);
 for r=1:8
     subplot(8,1,r);
     y=[];
     y=[H(1,:,r)' H(2,:,r)'];
-    bar(y);
-    ylabel('H');ylim([0.4 1]);
+    b=bar(y);
+    b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
+    ylabel('H');ylim([0.2 1.5]);
     xticks(1:12);xticklabels(Trials);
     title([num2str(seeds(r,:)) '-' sessions{r}]);
+    hold on;
+    yline(1,'color',deepyellow);
+    yline(0.5,'color',deepyellow);
+    legend('L','R','1','0.5','location','eastoutside');
 end
 sgtitle('H from DFA in all sessions')
 
+% average all trials of the same condition
+H_L_uncouple_synch = reshape(H(1,[1:3],[1:2:7]),1,[])  % L,uncouple,synch
+H_L_Llead_synch    = reshape(H(1,[4:6],[1:2:7]),1,[])  % L,L lead,synch
+H_L_Rlead_synch    = reshape(H(1,[7:9],[1:2:7]),1,[])  % L,R lead,synch
+H_L_mutual_synch   = reshape(H(1,[10:12],[1:2:7]),1,[])% L, mutual,synch
+H_R_uncouple_synch = reshape(H(2,[1:3],[1:2:7]),1,[])  % R,uncouple,synch
+H_R_Llead_synch    = reshape(H(2,[4:6],[1:2:7]),1,[])  % R,L lead,synch
+H_R_Rlead_synch    = reshape(H(2,[7:9],[1:2:7]),1,[])  % R,R lead,synch
+H_R_mutual_synch   = reshape(H(2,[10:12],[1:2:7]),1,[])% R, mutual,synch
+H_LR_synch_mean = [mean(H_L_uncouple_synch) mean(H_R_uncouple_synch);...
+    mean(H_L_Llead_synch) mean(H_R_Llead_synch);...
+    mean(H_L_Rlead_synch) mean(H_R_Rlead_synch);...
+    mean(H_L_mutual_synch) mean(H_R_mutual_synch)];
 
 
+H_L_uncouple_synco = reshape(H(1,[1:3],[2:2:8]),1,[])  % R,uncouple,synco
+H_L_Llead_synco    = reshape(H(1,[4:6],[2:2:8]),1,[])  % R,L lead,synco
+H_L_Rlead_synco    = reshape(H(1,[7:9],[2:2:8]),1,[])  % R,R lead,synco
+H_L_mutual_synco   = reshape(H(1,[10:12],[2:2:8]),1,[])% R, mutual,synco
+H_R_uncouple_synco = reshape(H(2,[1:3],[2:2:8]),1,[])  % R,uncouple,synco
+H_R_Llead_synco    = reshape(H(2,[4:6],[2:2:8]),1,[])  % R,L lead,synco
+H_R_Rlead_synco    = reshape(H(2,[7:9],[2:2:8]),1,[]) % R,R lead,synco
+H_R_mutual_synco   = reshape(H(2,[10:12],[2:2:8]),1,[])% R, mutual,synco
+H_LR_synco_mean = [mean(H_L_uncouple_synco) mean(H_R_uncouple_synco);...
+    mean(H_L_Llead_synco) mean(H_R_Llead_synco);...
+    mean(H_L_Rlead_synco) mean(H_R_Rlead_synco);...
+    mean(H_L_mutual_synco) mean(H_R_mutual_synco)];
+
+figure;
+subplot(2,1,1);
+b=bar(H_LR_synch_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
+xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+ylabel('H');
+hold on;
+yline(1,'color',deepyellow);
+yline(0.5,'color',deepyellow);
+title('mean H in all synch sessions')
+subplot(2,1,2);
+b=bar(H_LR_synco_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
+xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+ylabel('H');
+hold on;
+yline(1,'color',deepyellow);
+yline(0.5,'color',deepyellow);
+title('mean H in all synco sessions')
+
+% combine synch and synco
+H_LR_syn_mean=[mean([H_L_uncouple_synch H_L_uncouple_synco H_R_uncouple_synch H_R_uncouple_synco]);...
+    mean([H_L_Llead_synch H_L_Llead_synco H_R_Rlead_synch H_R_Rlead_synco]);... 
+    mean([H_R_Llead_synch H_R_Llead_synco H_L_Rlead_synch H_L_Rlead_synco]);...
+    mean([H_L_mutual_synch H_L_mutual_synco H_R_mutual_synch H_R_mutual_synco])];
+figure;
+b=bar(H_LR_syn_mean);
+xticks(1:4);xticklabels({'uncouple','Leading','Following','mutual'});
+ylabel('H');
+hold on;
+ylim([0 0.9])
+yline(0.5,'color',deepyellow);
+title('mean H in all sessions');
+
+% violin plots
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/violin
+canvas(0.4,0.3);
+subplot(2,1,1);
+Y=[H_L_uncouple_synch', H_R_uncouple_synch', H_L_Llead_synch',H_R_Llead_synch',H_L_Rlead_synch',H_R_Rlead_synch',H_L_mutual_synch',H_R_mutual_synch'];
+v=violin(Y,...
+    'facecolor',[1 0 0;0 0 1;1 0 0;0 0 1;1 0 0;0 0 1;1 0 0;0 0 1],...
+    'edgecolor','b',...
+'bw',0.3,...
+'mc','k',...
+'medc','r--');
+set(gca,'XtickLabel',{'uncouple','uncouple','L-lead','L-lead','R-lead','R-lead','mutual','mutual'});
+ylabel('H');
+title('H synch (L - red; R - blue)');
+grid on;
+
+subplot(2,1,2);
+Y=[H_L_uncouple_synco', H_R_uncouple_synco', H_L_Llead_synco',H_R_Llead_synco',H_L_Rlead_synco',H_R_Rlead_synco',H_L_mutual_synco',H_R_mutual_synco'];
+v=violin(Y,...
+    'facecolor',[1 0 0;0 0 1;1 0 0;0 0 1;1 0 0;0 0 1;1 0 0;0 0 1],...
+    'edgecolor','b',...
+'bw',0.3,...
+'mc','k',...
+'medc','r--');
+set(gca,'XtickLabel',{'uncouple','uncouple','L-lead','L-lead','R-lead','R-lead','mutual','mutual'});
+ylabel('H');
+title('H synco (L - red; R - blue)');
+grid on;
+
+% combine synch and synco
+figure;
+Y={[H_L_uncouple_synch H_L_uncouple_synco H_R_uncouple_synch H_R_uncouple_synco]',...
+    [H_L_Llead_synch H_L_Llead_synco H_R_Rlead_synch H_R_Rlead_synco]',... 
+    [H_R_Llead_synch H_R_Llead_synco H_L_Rlead_synch H_L_Rlead_synco]',...
+    [H_L_mutual_synch H_L_mutual_synco H_R_mutual_synch H_R_mutual_synco]};
+v=violin(Y,...
+    'facecolor',[1 0 0;0 0 1;1 0 0;0 0 1;1 0 0;0 0 1;1 0 0;0 0 1],...
+    'edgecolor','b',...
+'bw',0.3,...
+'mc','k',...
+'medc','r--');
+set(gca,'XtickLabel',{'uncouple','Leading','Following','mutual'});
+ylabel('H');
+title('mean H in all sessions');
+grid on;
 
 
+%% PLOT 6-1 DFA H values for all sessions based on original intervals
+clear
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
+sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
+
+H=zeros(2,12,8);
+cd /ssd/zhibin/1overf/
+for r=1:8;
+    clear intervals conditions sortorders
+    runid = num2str(seeds(r,:));
+    path = [runid '_2P/Segmented_data/'];
+    load([path  'data_variables' runid '.mat']);
+    % sort order and plot results
+    [x,sortorder]=sort(condiSeq);
+    for j = 1:12
+        clear BPL BPR sampL sampR intL intR intL_dmean intR_dmean
+	    BPL = [BP(1).BP{sortorder(j)}];
+	    BPR = [BP(2).BP{sortorder(j)}];
+        sampL = find(BPL==1);
+        sampR = find(BPR==1);
+        intL=diff(sampL);
+        intR=diff(sampR);
+        % remove the mean
+        intL_dmean=intL-mean(intL);
+        intR_dmean=intR-mean(intR);
+        [~,H(1,j,r)]=DFA_main(intL_dmean);
+        [~,H(2,j,r)]=DFA_main(intR_dmean);
+    end
+end
+
+% run plots in previous section
+
+%% PLOT 7 Autocorr summary in all sessions
+clear
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
+sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
+
+Autocorrs=zeros(2,12,8);
+cd /ssd/zhibin/1overf/
+for r=1:8;
+    clear intervals conditions sortorders
+    runid = num2str(seeds(r,:));
+    path = [runid '_2P/Segmented_data/'];
+    load([path  'data_variables' runid '.mat']);
+    % sort order and plot results
+    [x,sortorder]=sort(condiSeq);
+    for j = 1:12
+        clear BPL BPR sampL sampR intL intR intL_dmean intR_dmean
+	    BPL = [BP(1).BP{sortorder(j)}];
+	    BPR = [BP(2).BP{sortorder(j)}];
+        sampL = find(BPL==1);
+        sampR = find(BPR==1);
+        intL=diff(sampL);
+        intR=diff(sampR);
+        % remove the mean
+        intL_dmean=intL-mean(intL);
+        intR_dmean=intR-mean(intR);
+        acf=[]; [acf] = autocorr(intL_dmean,20); Autocorrs(1,j,r)=sum(acf(2:end));
+        acf=[]; [acf] = autocorr(intR_dmean,20); Autocorrs(2,j,r)=sum(acf(2:end));
+    end
+end
+
+% print Autocorrs to a table
+Trials={'uncouple','uncouple','uncouple','L-lead','L-lead','L-lead',...
+    'R-lead','R-lead','R-lead','mutual','mutual','mutual'}';
+Autocorrs_L_synch1=Autocorrs(1,:,1)';Autocorrs_R_synch1=Autocorrs(2,:,1)';
+Autocorrs_L_synco1=Autocorrs(1,:,2)';Autocorrs_R_synco1=Autocorrs(2,:,2)';
+Autocorrs_L_synch2=Autocorrs(1,:,3)';Autocorrs_R_synch2=Autocorrs(2,:,3)';
+Autocorrs_L_synco2=Autocorrs(1,:,4)';Autocorrs_R_synco2=Autocorrs(2,:,4)';
+Autocorrs_L_synch3=Autocorrs(1,:,5)';Autocorrs_R_synch3=Autocorrs(2,:,5)';
+Autocorrs_L_synco3=Autocorrs(1,:,6)';Autocorrs_R_synco3=Autocorrs(2,:,6)';
+Autocorrs_L_synch4=Autocorrs(1,:,7)';Autocorrs_R_synch4=Autocorrs(2,:,7)';
+Autocorrs_L_synco4=Autocorrs(1,:,8)';Autocorrs_R_synco4=Autocorrs(2,:,8)';
+Table_Autocorrs=table(Trials, Autocorrs_L_synch1, Autocorrs_R_synch1, Autocorrs_L_synco1, Autocorrs_R_synco1,...
+    Autocorrs_L_synch2, Autocorrs_R_synch2, Autocorrs_L_synco2, Autocorrs_R_synco2,...
+    Autocorrs_L_synch3, Autocorrs_R_synch3, Autocorrs_L_synco3, Autocorrs_R_synco3,...
+    Autocorrs_L_synch4, Autocorrs_R_synch4, Autocorrs_L_synco4, Autocorrs_R_synco4);
+
+% run similar plots in previous section (PLOT 6)
+% plot
+canvas(0.5, 0.5);
+for r=1:8
+    subplot(8,1,r);
+    y=[];
+    y=[Autocorrs(1,:,r)' Autocorrs(2,:,r)'];
+    b=bar(y);
+    b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
+    ylabel('Autocorr'); ylim([0 15]);
+    xticks(1:12);xticklabels(Trials);
+    title([num2str(seeds(r,:)) '-' sessions{r}]);
+%     hold on;
+%     yline(1,'color',deepyellow);
+%     yline(0.5,'color',deepyellow);
+%     legend('L','R','1','0.5','location','eastoutside');
+end
+sgtitle('Sum of Autocorr (20 lags) in all sessions')
+
+% average all trials of the same condition
+Autocorrs_L_uncouple_synch = reshape(Autocorrs(1,[1:3],[1:2:7]),1,[])  % L,uncouple,synch
+Autocorrs_L_Llead_synch    = reshape(Autocorrs(1,[4:6],[1:2:7]),1,[])  % L,L lead,synch
+Autocorrs_L_Rlead_synch    = reshape(Autocorrs(1,[7:9],[1:2:7]),1,[])  % L,R lead,synch
+Autocorrs_L_mutual_synch   = reshape(Autocorrs(1,[10:12],[1:2:7]),1,[])% L, mutual,synch
+Autocorrs_R_uncouple_synch = reshape(Autocorrs(2,[1:3],[1:2:7]),1,[])  % R,uncouple,synch
+Autocorrs_R_Llead_synch    = reshape(Autocorrs(2,[4:6],[1:2:7]),1,[])  % R,L lead,synch
+Autocorrs_R_Rlead_synch    = reshape(Autocorrs(2,[7:9],[1:2:7]),1,[])  % R,R lead,synch
+Autocorrs_R_mutual_synch   = reshape(Autocorrs(2,[10:12],[1:2:7]),1,[])% R, mutual,synch
+Autocorrs_LR_synch_mean = [mean(Autocorrs_L_uncouple_synch) mean(Autocorrs_R_uncouple_synch);...
+    mean(Autocorrs_L_Llead_synch) mean(Autocorrs_R_Llead_synch);...
+    mean(Autocorrs_L_Rlead_synch) mean(Autocorrs_R_Rlead_synch);...
+    mean(Autocorrs_L_mutual_synch) mean(Autocorrs_R_mutual_synch)];
+
+
+Autocorrs_L_uncouple_synco = reshape(Autocorrs(1,[1:3],[2:2:8]),1,[])  % R,uncouple,synco
+Autocorrs_L_Llead_synco    = reshape(Autocorrs(1,[4:6],[2:2:8]),1,[])  % R,L lead,synco
+Autocorrs_L_Rlead_synco    = reshape(Autocorrs(1,[7:9],[2:2:8]),1,[])  % R,R lead,synco
+Autocorrs_L_mutual_synco   = reshape(Autocorrs(1,[10:12],[2:2:8]),1,[])% R, mutual,synco
+Autocorrs_R_uncouple_synco = reshape(Autocorrs(2,[1:3],[2:2:8]),1,[])  % R,uncouple,synco
+Autocorrs_R_Llead_synco    = reshape(Autocorrs(2,[4:6],[2:2:8]),1,[])  % R,L lead,synco
+Autocorrs_R_Rlead_synco    = reshape(Autocorrs(2,[7:9],[2:2:8]),1,[]) % R,R lead,synco
+Autocorrs_R_mutual_synco   = reshape(Autocorrs(2,[10:12],[2:2:8]),1,[])% R, mutual,synco
+Autocorrs_LR_synco_mean = [mean(Autocorrs_L_uncouple_synco) mean(Autocorrs_R_uncouple_synco);...
+    mean(Autocorrs_L_Llead_synco) mean(Autocorrs_R_Llead_synco);...
+    mean(Autocorrs_L_Rlead_synco) mean(Autocorrs_R_Rlead_synco);...
+    mean(Autocorrs_L_mutual_synco) mean(Autocorrs_R_mutual_synco)];
+
+figure;
+subplot(2,1,1);
+b=bar(Autocorrs_LR_synch_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
+xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+ylabel('\rho(k)');
+title('mean autocorr sum for 20 lags in all synch sessions')
+subplot(2,1,2);
+b=bar(Autocorrs_LR_synco_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
+xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+ylabel('\rho(k)');
+title('mean autocorr sum for 20 lags in all synco sessions')
+
+% combine synch and synco
+Autocorrs_LR_syn_mean=[mean([Autocorrs_L_uncouple_synch Autocorrs_L_uncouple_synco Autocorrs_R_uncouple_synch Autocorrs_R_uncouple_synco]);...
+    mean([Autocorrs_L_Llead_synch Autocorrs_L_Llead_synco Autocorrs_R_Rlead_synch Autocorrs_R_Rlead_synco]);... 
+    mean([Autocorrs_R_Llead_synch Autocorrs_R_Llead_synco Autocorrs_L_Rlead_synch Autocorrs_L_Rlead_synco]);...
+    mean([Autocorrs_L_mutual_synch Autocorrs_L_mutual_synco Autocorrs_R_mutual_synch Autocorrs_R_mutual_synco])];
+figure;
+b=bar(Autocorrs_LR_syn_mean);
+xticks(1:4);xticklabels({'uncouple','Leading','Following','mutual'});
+ylabel('\rho(k)');
+hold on;
+title('mean autocorr sum for 20 lags in all sessions');
+
+% combine synch and synco
+figure;
+Y={[Autocorrs_L_uncouple_synch Autocorrs_L_uncouple_synco Autocorrs_R_uncouple_synch Autocorrs_R_uncouple_synco]',...
+    [Autocorrs_L_Llead_synch Autocorrs_L_Llead_synco Autocorrs_R_Rlead_synch Autocorrs_R_Rlead_synco]',... 
+    [Autocorrs_R_Llead_synch Autocorrs_R_Llead_synco Autocorrs_L_Rlead_synch Autocorrs_L_Rlead_synco]',...
+    [Autocorrs_L_mutual_synch Autocorrs_L_mutual_synco Autocorrs_R_mutual_synch Autocorrs_R_mutual_synco]};
+v=violin(Y,...
+    'edgecolor','b',...
+'bw',0.3,...
+'mc','k',...
+'medc','r--');
+set(gca,'XtickLabel',{'uncouple','Leading','Following','mutual'});
+ylabel('\rho(k)');
+title('mean autocorr sum for 20 lags in all sessions');
+grid on;
+
+%% PLOT 8 DFA after d removed
+clear
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
+sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
+
+H=zeros(2,12,8);
+cd /ssd/zhibin/1overf/
+for r=1:8;
+    clear intervals conditions sortorders
+    runid = num2str(seeds(r,:));
+    path = [runid '_2P/Segmented_data/'];
+    load([path  'data_variables' runid '.mat']);
+    % sort order and plot results
+    [x,sortorder]=sort(condiSeq);
+    for j = 1:12
+        clear BPL BPR sampL sampR intL intR intL_dmean intR_dmean
+	    BPL = [BP(1).BP{sortorder(j)}];
+	    BPR = [BP(2).BP{sortorder(j)}];
+        sampL = find(BPL==1);
+        sampR = find(BPR==1);
+        intL=diff(sampL);
+        intR=diff(sampR);
+        % remove the mean
+        intL_dmean=intL-mean(intL);
+        intR_dmean=intR-mean(intR);
+        [~,H(1,j,r)]=DFA_main(intL_dmean);
+        [~,H(2,j,r)]=DFA_main(intR_dmean);
+    end
+end
+d=H-0.5;% estimate d using DFA method
+
+% d removal
+H_est2=zeros(2,12,8);
+int_dmean_drm=cell(2,12,8);
+cd /ssd/zhibin/1overf/
+for r=1:8;
+    clear intervals conditions sortorders
+    runid = num2str(seeds(r,:));
+    path = [runid '_2P/Segmented_data/'];
+    load([path  'data_variables' runid '.mat']);
+    % sort order and plot results
+    [x,sortorder]=sort(condiSeq);
+    for j = 1:12
+        clear BPL BPR sampL sampR intL intR intL_dmean intR_dmean
+	    BPL = [BP(1).BP{sortorder(j)}];
+	    BPR = [BP(2).BP{sortorder(j)}];
+        sampL = find(BPL==1);
+        sampR = find(BPR==1);
+        intL=diff(sampL);
+        intR=diff(sampR);
+        % remove the mean
+        intL_dmean=intL-mean(intL);
+        intR_dmean=intR-mean(intR);
+        % d removal
+        [int_dmean_drm{1,j,r}]=remove_d(intL_dmean,d(1,j,r));
+        [int_dmean_drm{2,j,r}]=remove_d(intR_dmean,d(2,j,r));
+        % H estimate again using DFA method
+        [~,H_est2(1,j,r)]=DFA_main(int_dmean_drm{1,j,r});
+        [~,H_est2(2,j,r)]=DFA_main(int_dmean_drm{2,j,r});
+    end
+end
 %% try out DFA on EEG
 ans(:,15)
 [D,Alpha1,n,F_n,FitValues]=DFA_main(ans(:,15));
