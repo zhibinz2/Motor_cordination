@@ -1069,7 +1069,7 @@ for d=1:2
 end
 
 
-%% PLOT 6 DFA H values for all sessions based on matched intervals
+%% PLOT 6 DFA H values for all sessions based on matched intervals (sorted order)
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
 H=zeros(2,12,8);
@@ -1235,7 +1235,7 @@ title('mean H in all sessions');
 grid on;
 
 
-%% PLOT 6-1 DFA H values for all sessions based on original intervals
+%% PLOT 6-1 DFA H values for all sessions based on original intervals (sorted order)
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
@@ -1267,7 +1267,7 @@ end
 
 % run plots in previous section
 
-%% PLOT 7 Autocorr summary in all sessions
+%% PLOT 7 Autocorr summary in all sessions (sorted order)
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
@@ -1400,7 +1400,7 @@ ylabel('\rho(k)');
 title('mean autocorr sum for 20 lags in all sessions');
 grid on;
 
-%% PLOT 8 DFA after d removed
+%% PLOT 8 DFA after d removed (sorted order)
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
@@ -1425,15 +1425,18 @@ for r=1:8;
         % remove the mean
         intL_dmean=intL-mean(intL);
         intR_dmean=intR-mean(intR);
+        % estimate H
         [~,H(1,j,r)]=DFA_main(intL_dmean);
         [~,H(2,j,r)]=DFA_main(intR_dmean);
     end
 end
-d=H-0.5;% estimate d using DFA method
+d1=H-0.5;% estimate d using DFA method (method1: based on DFA, d=h-0.5)
+d_min=-0.5; d_max=1; % (method2: open d_estimation)
 
 % d removal
+H_est1=zeros(2,12,8);
 H_est2=zeros(2,12,8);
-int_dmean_drm=cell(2,12,8);
+int_dmean_drm1=cell(2,12,8);
 cd /ssd/zhibin/1overf/
 for r=1:8;
     clear intervals conditions sortorders
@@ -1453,15 +1456,234 @@ for r=1:8;
         % remove the mean
         intL_dmean=intL-mean(intL);
         intR_dmean=intR-mean(intR);
-        % d removal
-        [int_dmean_drm{1,j,r}]=remove_d(intL_dmean,d(1,j,r));
-        [int_dmean_drm{2,j,r}]=remove_d(intR_dmean,d(2,j,r));
+        % d removal  (method1: based on DFA, d=h-0.5)
+        [int_dmean_drm1{1,j,r}]=remove_d(intL_dmean,d1(1,j,r));
+        [int_dmean_drm1{2,j,r}]=remove_d(intR_dmean,d1(2,j,r));
+        % % d removal  (method2: open d_estimation)
+        [int_dmean_drm2{1,j,r}]=remove_d(intL_dmean,d_estimation(intL_dmean,d_min,d_max));
+        [int_dmean_drm2{2,j,r}]=remove_d(intR_dmean,d_estimation(intR_dmean,d_min,d_max));
+        % H estimate again using DFA method
+        [~,H_est1(1,j,r)]=DFA_main(int_dmean_drm1{1,j,r});
+        [~,H_est1(2,j,r)]=DFA_main(int_dmean_drm1{2,j,r});
+        [~,H_est2(1,j,r)]=DFA_main(int_dmean_drm2{1,j,r});
+        [~,H_est2(2,j,r)]=DFA_main(int_dmean_drm2{2,j,r});
+    end
+end
+% d removal (based on DFA, d=h-0.5)
+
+
+% print H_est2 to a table
+Trials={'uncouple','uncouple','uncouple','L-lead','L-lead','L-lead',...
+    'R-lead','R-lead','R-lead','mutual','mutual','mutual'}';
+H_est2_L_synch1=H_est2(1,:,1)';H_est2_R_synch1=H_est2(2,:,1)';
+H_est2_L_synco1=H_est2(1,:,2)';H_est2_R_synco1=H_est2(2,:,2)';
+H_est2_L_synch2=H_est2(1,:,3)';H_est2_R_synch2=H_est2(2,:,3)';
+H_est2_L_synco2=H_est2(1,:,4)';H_est2_R_synco2=H_est2(2,:,4)';
+H_est2_L_synch3=H_est2(1,:,5)';H_est2_R_synch3=H_est2(2,:,5)';
+H_est2_L_synco3=H_est2(1,:,6)';H_est2_R_synco3=H_est2(2,:,6)';
+H_est2_L_synch4=H_est2(1,:,7)';H_est2_R_synch4=H_est2(2,:,7)';
+H_est2_L_synco4=H_est2(1,:,8)';H_est2_R_synco4=H_est2(2,:,8)';
+Table_H_est2=table(Trials, H_est2_L_synch1, H_est2_R_synch1, H_est2_L_synco1, H_est2_R_synco1,...
+    H_est2_L_synch2, H_est2_R_synch2, H_est2_L_synco2, H_est2_R_synco2,...
+    H_est2_L_synch3, H_est2_R_synch3, H_est2_L_synco3, H_est2_R_synco3,...
+    H_est2_L_synch4, H_est2_R_synch4, H_est2_L_synco4, H_est2_R_synco4);
+
+% plot H_est2 after
+canvas(0.5, 0.5);
+for r=1:8
+    subplot(8,1,r);
+    y=[];
+    y=[H_est2(1,:,r)' H_est2(2,:,r)'];
+    b=bar(y);
+    b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
+    ylabel('H');ylim([0 1.5]);
+    xticks(1:12);xticklabels(Trials);
+    title([num2str(seeds(r,:)) '-' sessions{r}]);
+    hold on;
+    yline(1,'color',deepyellow);
+    yline(0.5,'color',deepyellow);
+    legend('L','R','1','0.5','location','eastoutside');
+end
+sgtitle('H from DFA after d removal in all sessions (using Leites d estimation function)');
+
+
+%% PLOT 9 Xcorr after d removal and save new intervals (sorted order) 
+clear
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
+sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
+
+% d estimation from H (DFA method) based on the good matched intervals
+H=zeros(2,12,8);
+cd /ssd/zhibin/1overf/
+for r=1:8;
+    clear intervals conditions sortorders
+    runid = num2str(seeds(r,:));
+    path = [runid '_2P/Cleaned_data/'];
+    load([path  'clean_' runid '.mat']);
+    % sort order and plot results
+    [x,sortorder]=sort(conditions);
+    for j = 1:12
+        clear intL_good_dmean intR_good_dmean
+        % After aligment
+        % intervals{sortorder(j)}(:,1);
+        % intervals{sortorder(j)}(:,2);
+        % remove the mean
+        intL_good_dmean=intervals{sortorder(j)}(:,1)-mean(intervals{sortorder(j)}(:,1));
+        intR_good_dmean=intervals{sortorder(j)}(:,2)-mean(intervals{sortorder(j)}(:,2));
+        % estimate the d
+        [~,H(1,j,r)]=DFA_main(intL_good_dmean);
+        [~,H(2,j,r)]=DFA_main(intR_good_dmean);
+    end
+end
+eval(['save ' '/ssd/zhibin/1overf/all_session20220713_0816/H.mat H'])
+d1=H-0.5;% estimate d using DFA method (method1: based on DFA, d=h-0.5)
+        
+        
+% d removal
+H_est2=zeros(2,12,8);
+int_dmean_drm=cell(2,12,8);
+cd /ssd/zhibin/1overf/
+for r=1:8;
+    clear intervals conditions sortorders
+    runid = num2str(seeds(r,:));
+    path = [runid '_2P/Cleaned_data/'];
+    load([path  'clean_' runid '.mat']);
+    % sort order and plot results
+    [x,sortorder]=sort(conditions);
+    for j = 1:12
+        clear intL_good_dmean intR_good_dmean
+        % After aligment
+        % intervals{sortorder(j)}(:,1);
+        % intervals{sortorder(j)}(:,2);
+        % remove the mean
+        intL_good_dmean=intervals{sortorder(j)}(:,1)-mean(intervals{sortorder(j)}(:,1));
+        intR_good_dmean=intervals{sortorder(j)}(:,2)-mean(intervals{sortorder(j)}(:,2));
+        % d removal  (method1: based on DFA, d=h-0.5)
+        [int_dmean_drm{1,j,r}]=remove_d(intL_good_dmean,d1(1,j,r));
+        [int_dmean_drm{2,j,r}]=remove_d(intR_good_dmean,d1(2,j,r));
         % H estimate again using DFA method
         [~,H_est2(1,j,r)]=DFA_main(int_dmean_drm{1,j,r});
         [~,H_est2(2,j,r)]=DFA_main(int_dmean_drm{2,j,r});
     end
 end
-% plot H before and H_est2 after
+% save the "int_dmean_drm" under [/ssd/zhibin/1overf/all_session20220713_0816]
+eval(['save ' '/ssd/zhibin/1overf/all_session20220713_0816/int_dmean_drm.mat int_dmean_drm'])
+% plot H all session and compare like in PLOT 8
+
+% Xcorr based on int_dmean_drm
+XcorrPeakLag=zeros(12,8);XcorrPeak=zeros(12,8);
+for r=1:8;
+    for j = 1:12
+        r12=[];lags12=[];
+        [r12,lags12]=xcorr(int_dmean_drm{1,j,r},int_dmean_drm{2,j,r},10,'normalized');
+        XcorrPeakLag(j,r)=lags12(find(r12==max(r12)));
+        XcorrPeak(j,r)=max(r12);
+    end
+end
+% Plot XcorrPeakLag in all sessions
+canvas(0.3, 0.4);
+for r=1:8
+    subplot(8,1,r);
+    plot(1:12,XcorrPeakLag(:,r),'ko')
+    ylabel('lag');ylim([-10 10]);
+    yline(0,'color',deepyellow);set(gca, 'YDir','reverse')
+    xticks(1:12);xticklabels(Trials);
+    title([num2str(seeds(r,:)) '-' sessions{r}]);
+end
+sgtitle('peak lag from Xcorr in all sessions (-lag = L leading; +lag = R leading)')
+
+% print XcorrPeakLag to a table
+Trials={'uncouple','uncouple','uncouple','L-lead','L-lead','L-lead',...
+    'R-lead','R-lead','R-lead','mutual','mutual','mutual'}';
+XcorrPeakLag_synch1=XcorrPeakLag(:,1);
+XcorrPeakLag_synco1=XcorrPeakLag(:,2);
+XcorrPeakLag_synch2=XcorrPeakLag(:,3);
+XcorrPeakLag_synco2=XcorrPeakLag(:,4);
+XcorrPeakLag_synch3=XcorrPeakLag(:,5);
+XcorrPeakLag_synco3=XcorrPeakLag(:,6);
+XcorrPeakLag_synch4=XcorrPeakLag(:,7);
+XcorrPeakLag_synco4=XcorrPeakLag(:,8);
+Table_XcorrPeakLag=table(Trials, XcorrPeakLag_synch1,XcorrPeakLag_synco1,...
+    XcorrPeakLag_synch2, XcorrPeakLag_synco2,...
+    XcorrPeakLag_synch3, XcorrPeakLag_synco3,...
+    XcorrPeakLag_synch4, XcorrPeakLag_synco4);
+
+% average all trials of the same condition (lag of peak)
+XcorrPeakLag_uncouple_synch = reshape(XcorrPeakLag([1:3],[1:2:7]),1,[])  % uncouple,synch
+XcorrPeakLag_Llead_synch    = reshape(XcorrPeakLag([4:6],[1:2:7]),1,[])  % L lead,synch
+XcorrPeakLag_Rlead_synch    = reshape(XcorrPeakLag([7:9],[1:2:7]),1,[])  % R lead,synch
+XcorrPeakLag_mutual_synch   = reshape(XcorrPeakLag([10:12],[1:2:7]),1,[])% mutual,synch
+XcorrPeakLag_LR_synch_mean = [mean(XcorrPeakLag_uncouple_synch);...
+    mean(XcorrPeakLag_Llead_synch);...
+    mean(XcorrPeakLag_Rlead_synch);...
+    mean(XcorrPeakLag_mutual_synch)];
+
+XcorrPeakLag_uncouple_synco = reshape(XcorrPeakLag([1:3],[2:2:8]),1,[])  % R,uncouple,synco
+XcorrPeakLag_Llead_synco    = reshape(XcorrPeakLag([4:6],[2:2:8]),1,[])  % R,L lead,synco
+XcorrPeakLag_Rlead_synco    = reshape(XcorrPeakLag([7:9],[2:2:8]),1,[])  % R,R lead,synco
+XcorrPeakLag_mutual_synco   = reshape(XcorrPeakLag([10:12],[2:2:8]),1,[])% R, mutual,synco
+XcorrPeakLag_LR_synco_mean = [mean(XcorrPeakLag_uncouple_synco);...
+    mean(XcorrPeakLag_Llead_synco);...
+    mean(XcorrPeakLag_Rlead_synco);...
+    mean(XcorrPeakLag_mutual_synco)];
+% plot average lag of peak
+canvas(0.2, 0.3);
+subplot(2,1,1);
+plot(XcorrPeakLag_LR_synch_mean,'ko');
+xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+ylabel('average lag of the peak'); % ylabel('\rho(k)');
+ylim([-3 3]);yline(0,'color',deepyellow);set(gca, 'YDir','reverse');
+xlim([0 5]);
+title('average lag of xcorr peak in all synch sessions (-lag: L leading; +lag: R leading)')
+subplot(2,1,2);
+plot(XcorrPeakLag_LR_synco_mean,'ko');
+xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+ylabel('average lag of the peak'); % ylabel('\rho(k)');
+ylim([-3 3]);yline(0,'color',deepyellow);set(gca, 'YDir','reverse')
+xlim([0 5]);
+title('average lag of xcorr peak in all synco sessions (-lag: L leading; +lag: R leading)')
+
+% average all trials of the same condition (lag of peak)
+XcorrPeak_uncouple_synch = reshape(XcorrPeak([1:3],[1:2:7]),1,[])  % uncouple,synch
+XcorrPeak_Llead_synch    = reshape(XcorrPeak([4:6],[1:2:7]),1,[])  % L lead,synch
+XcorrPeak_Rlead_synch    = reshape(XcorrPeak([7:9],[1:2:7]),1,[])  % R lead,synch
+XcorrPeak_mutual_synch   = reshape(XcorrPeak([10:12],[1:2:7]),1,[])% mutual,synch
+XcorrPeak_LR_synch_mean = [mean(XcorrPeak_uncouple_synch);...
+    mean(XcorrPeak_Llead_synch);...
+    mean(XcorrPeak_Rlead_synch);...
+    mean(XcorrPeak_mutual_synch)];
+
+XcorrPeak_uncouple_synco = reshape(XcorrPeak([1:3],[2:2:8]),1,[])  % R,uncouple,synco
+XcorrPeak_Llead_synco    = reshape(XcorrPeak([4:6],[2:2:8]),1,[])  % R,L lead,synco
+XcorrPeak_Rlead_synco    = reshape(XcorrPeak([7:9],[2:2:8]),1,[])  % R,R lead,synco
+XcorrPeak_mutual_synco   = reshape(XcorrPeak([10:12],[2:2:8]),1,[])% R, mutual,synco
+XcorrPeak_LR_synco_mean = [mean(XcorrPeak_uncouple_synco);...
+    mean(XcorrPeak_Llead_synco);...
+    mean(XcorrPeak_Rlead_synco);...
+    mean(XcorrPeak_mutual_synco)];
+% plot average peak
+canvas(0.2, 0.3);
+subplot(2,1,1);
+stem(XcorrPeak_LR_synch_mean,'ko');
+xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+ylabel('\rho(k)');
+ylim([-0.1 0.65]);yline(0,'color',red);xlim([0 5]);
+title('average peak of xcorr in all synch sessions')
+subplot(2,1,2);
+stem(XcorrPeak_LR_synco_mean,'ko');
+xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+ylabel('\rho(k)');
+ylim([-0.1 0.65]);yline(0,'color',red);xlim([0 5]);
+title('average peak of xcorr in all synco sessions')
+
+
+%% PLOT 10 redo H and intervals_H_removed separately
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
+sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
+cd /ssd/zhibin/1overf/
+
+
+%% PLOT  PLS regression
 
 %% try out DFA on EEG
 ans(:,15)
@@ -1515,3 +1737,16 @@ toc
 
 % clear all new added variables
 clear(varlist_diff{:})
+
+%% moving files 
+
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
+cd /ssd/zhibin/1overf/
+for s=1:8
+    mkdir(['/ssd/zhibin/1overf/' num2str(seeds(s,:)) '_2P/Cleaned_data/Plots'])
+    cd(['/ssd/zhibin/1overf/' num2str(seeds(s,:)) '_2P/Cleaned_data'])
+    movefile cleanup*.png Plots
+    cd /ssd/zhibin/1overf/
+end
+
+%%

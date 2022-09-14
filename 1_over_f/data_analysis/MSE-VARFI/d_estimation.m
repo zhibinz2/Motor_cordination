@@ -1,5 +1,5 @@
 function d = d_estimation( x , d_min, d_max)
-
+% I use d_min=-0.5; d_max=1;
 % A. Leite, PhD Thesis page 80 
 
 d = fminbnd(@(d) myfun(x,d),d_min,d_max);
