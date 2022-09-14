@@ -1678,9 +1678,33 @@ title('average peak of xcorr in all synco sessions')
 
 
 %% PLOT 10 redo H and intervals_H_removed separately
+clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
 cd /ssd/zhibin/1overf/
+for s=1:8
+    clear 
+    runid=num2str(seeds(s,:));
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
+    H=[];intervals_H_removed=[];
+    for b=1:12
+%         % After aligment
+%         intervals{b}(:,1);
+%         intervals{b}(:,2);
+%         % remove the mean (no need for DFA)
+%         intL_good_dmean=intervals{b}(:,1)-mean(intervals{b}(:,1));
+%         intR_good_dmean=intervals{b}(:,2)-mean(intervals{b}(:,2));
+        [~,H(1,b)]=DFA_main(intervals{b}(:,1));
+        [~,H(2,b)]=DFA_main(intervals{b}(:,2));
+        % d removal
+        [intervals_H_removed{b}(:,1)]=remove_d(intervals{b}(:,1),H(1,b)-0.5);
+        [intervals_H_removed{b}(:,2)]=remove_d(intervals{b}(:,2),H(2,b)-0.5);
+        % save H and intervals_H_removed
+        eval(['save ' '/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/d_removal' runid '.mat H intervals_H_removed'])
+    end
+end
+
+
 
 
 %% PLOT  PLS regression
@@ -1739,9 +1763,14 @@ toc
 clear(varlist_diff{:})
 
 %% moving files 
+
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
-sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
 cd /ssd/zhibin/1overf/
 for s=1:8
     mkdir(['/ssd/zhibin/1overf/' num2str(seeds(s,:)) '_2P/Cleaned_data/Plots'])
     cd(['/ssd/zhibin/1overf/' num2str(seeds(s,:)) '_2P/Cleaned_data'])
+    movefile cleanup*.png Plots
+    cd /ssd/zhibin/1overf/
+end
+
+%%
