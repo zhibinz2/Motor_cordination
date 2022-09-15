@@ -1983,6 +1983,21 @@ H_alpha_LR_chan=[H_alpha_L_chan;H_alpha_R_chan];
 H_beta_LR_chan=[H_beta_L_chan;H_beta_R_chan];
 H_gamma_LR_chan=[H_gamma_L_chan;H_gamma_R_chan];
 
+% check how many H-EEG > 0.5 (showing complexity)
+% mean(H_delta_LR_chan)
+% mean(H_theta_LR_chan)
+% mean(H_alpha_LR_chan)
+% mean(H_beta_LR_chan)
+% mean(H_gamma_LR_chan)
+canvas(0.5,0.1);
+cmin=0.3;cmax=0.7;
+subplot(1,5,1);topoplot(mean(H_delta_LR_chan),channels,'nosedir','+X');title('H-delta');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,2);topoplot(mean(H_theta_LR_chan),channels,'nosedir','+X');title('H-theta');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,3);topoplot(mean(H_alpha_LR_chan),channels,'nosedir','+X');title('H-alpha');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,4);topoplot(mean(H_beta_LR_chan),channels,'nosedir','+X');title('H-beta');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,5);topoplot(mean(H_gamma_LR_chan),channels,'nosedir','+X');title('H-gamma');colorbar;colormap('jet');clim([cmin cmax]);
+sgtitle('mean H-EEG values')
+
 % Do the correlation between H-pow and H-interval
 % Combine L and R for correlation;
 for c=1:32
@@ -2002,6 +2017,8 @@ subplot(1,5,3);topoplot(H_alpha_LR_H_LR_corr,channels,'nosedir','+X');title('H-a
 subplot(1,5,4);topoplot(H_beta_LR_H_LR_corr,channels,'nosedir','+X');title('H-beta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,5);topoplot(H_gamma_LR_H_LR_corr,channels,'nosedir','+X');title('H-gamma & H-int');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle('corr of H-EEG and H-interval')
+
+
 
 %% PLOT  PLS regression
 
