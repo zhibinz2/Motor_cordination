@@ -1,0 +1,40 @@
+clear all
+close all
+
+%%
+seed=20220713;
+seed=20220721;
+seed=20220804;
+seed=20220808;
+seed=20220810;
+seed=20220811;
+seed=20220815;
+seed=20220816;
+
+%% 
+addpath /ssd/zhibin/1overf/20220808_2P/Copy_of_Ramesh20220909
+%%
+cd /ssd/zhibin/1overf
+
+tooshort = 700;
+runid = num2str(seed);
+path = [runid '_2P/Segmented_data/'];
+outpath = [runid '_2P/Cleaned_data/'];
+load([path 'data_variables' runid '.mat'])
+
+bpchan = [32]; %for python
+conditions = condiSeq;
+channels = chaninfo;
+
+for j = 1:12
+	BPL = BP(1).BP{j};
+	BPR = BP(2).BP{j};
+	[samples{j}, intervals{j}, BPL, BPR, intL{j}, intR{j}] = BP_nearest(BPL,BPR, tooshort);
+	dataL{j} = [EEG(1).EEG{j} BPL];
+	dataR{j} = [EEG(2).EEG{j} BPR];
+end;
+eval(['save ' outpath 'clean_' runid '.mat dataL dataR conditions channels sr bpchan samples intervals tooshort'...
+    ' seed session sessionTypes labels conditionNames'])
+
+
+

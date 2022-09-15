@@ -1677,13 +1677,13 @@ ylim([-0.1 0.65]);yline(0,'color',red);xlim([0 5]);
 title('average peak of xcorr in all synco sessions')
 
 
-%% PLOT 10 redo H and intervals_H_removed separately
+%% PLOT 10 redo H and intervals_H_removed separately (based on matched invervals)
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
 cd /ssd/zhibin/1overf/
 for s=1:8
-    clear 
+    clear intervals H intervals_H_removed
     runid=num2str(seeds(s,:));
     load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
     H=[];intervals_H_removed=[];
@@ -1704,6 +1704,99 @@ for s=1:8
     end
 end
 
+%% PLOT 11 Xcorr slinding window of 20 intervals I(based on the matched invervals)
+clear
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
+sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
+% sliding win
+BPwin=20;
+% pick one session to analyze
+s=1;
+runid=num2str(seeds(s,:));
+load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
+BPint_corrSeries={};intNum=[];BPint_xcorrSeries={}
+for b=1:12
+    % remove the mean (no need for DFA)
+    intL_good_dmean=intervals{b}(:,1)-mean(intervals{b}(:,1));
+    intR_good_dmean=intervals{b}(:,2)-mean(intervals{b}(:,2));
+    % sliding window of 20 to compute xcorr at lag 0
+    intNum(b)=size(intervals{b},1);
+    for k=1:(intNum(b)-BPwin+1)
+        % corr
+        BPint_corrSeries{b}(k)=corr(intL_good_dmean(k:k+BPwin-1),intR_good_dmean(k:k+BPwin-1));
+        % xcorr
+        r12=[];lags12=[];
+        [r12,lags12]=xcorr(intL_good_dmean(k:k+BPwin-1),intR_good_dmean(k:k+BPwin-1),10,'normalized');
+        BPint_xcorrSeries{b}(k)=r12(11);
+    end
+end
+
+
+% Plot behaviral correlation for one subject
+canvas(1,0.5);
+for b=1:12
+    subplot(3,12,b); % BPint
+    plot(intervals{b}(:,1)/2,'r'); hold on; plot(intervals{b}(:,2)/2,'b'); hold off;
+    ylabel('interval (ms)'); xlabel('taps (matched)');
+    ylim([400 1100]);xlim([0 intNum(b)]);
+    title({[conditionNames{conditions(b)}],['BPwin ' num2str(BPwin)]},'Color',condicolors(conditions(b),:));
+    % legend({'L','R'});
+    
+    subplot(3,12,12+b); % corrSeries
+    plot(BPint_corrSeries{b},'k'); 
+    ylabel('corr coef'); xlabel(['taps (sum ' num2str(round(sum(BPint_corrSeries{b},2))) ')'])
+    % corrSeries = corrSeries(~isnan(corrSeries)); median(corrSeries)
+    title({['corr coef'], ['smoo win ' num2str(BPwin)]},'Color',condicolors(conditions(b),:));
+    ylim([-1 1]); yline(0,'color',deepyellow);
+    xlim([0 intNum(b)]);
+
+    subplot(3,12,12+b); % XcorrSeries
+    plot(BPint_xcorrSeries{b},'k'); 
+    ylabel('xcorr coef'); xlabel(['taps (sum ' num2str(round(sum(BPint_xcorrSeries{b},2))) ')'])
+    % corrSeries = corrSeries(~isnan(corrSeries)); median(corrSeries)
+    title({['xcorr lag 0'], ['smoo win ' num2str(BPwin)]},'Color',condicolors(conditions(b),:));
+    ylim([-1 1]); yline(0,'color',deepyellow);
+    xlim([0 intNum(b)]);
+    subplot(3,12,24+b); % BPint difference
+    plot(abs(intervals{b}(:,1)/2-intervals{b}(:,2)/2),'k'); 
+    ylabel('difference (ms)'); 
+    xlabel(['taps (sum ' num2str(round(sum(abs(intervals{b}(:,1)/2-intervals{b}(:,2)/2)))) ')'])
+    ylim([-10 300]); yline(0,'color',deepyellow);
+    xlim([0 intNum(b)]);
+    title({[conditionNames{conditions(b)}],['BPwin ' num2str(BPwin)]},'Color',condicolors(conditions(b),:));
+end
+sgtitle(['session ' num2str(seed) ' BPint xcorr']);
+
+
+%% PLOT 12 500ms EEG 5 bands
+clear
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
+sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
+EEGwin=0.5; % second
+
+cd /ssd/zhibin/1overf/
+for s=1:8 % each session
+    
+    runid=num2str(seeds(s,:));
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
+
+    delta_L={};theta_L={};alpha_L={};beta_L={};gamma_L={};
+    delta_R={};theta_R={};alpha_R={};beta_R={};gamma_R={};
+    zEEG_L={};zEEG_R={};zEEG500_L={};zEEG500_R={};
+    for b=1:12 % each block
+        zEEG_L{b}=zscore(dataL{b}(:,1:32),[],1);
+        zEEG_R{b}=zscore(dataR{b}(:,1:32),[],1);
+
+        for i=1:size(samples{b},1) % each matched interval
+            zEEG500_L{b}{i}=zEEG_L{b}(samples{b}(i,1)-999:samples{b}(i,1),:); % start from first matched tap (if not enough samples before, then consider starting from 2nd tap)
+            zEEG500_R{b}{i}=zEEG_R{b}(samples{b}(i,2)-999:samples{b}(i,2),:);
+            [delta_L{b}{i}, theta_L{b}{i}, alpha_L{b}{i}, beta_L{b}{i}, gamma_L{b}{i}]...
+                =sum5band(zEEG500_L{b}{i},sr,EEGwin);
+            [delta_R{b}{i}, theta_R{b}{i}, alpha_R{b}{i}, beta_R{b}{i}, gamma_R{b}{i}]...
+                =sum5band(zEEG500_R{b}{i},sr,EEGwin);
+        end
+    end
+end
 
 
 
