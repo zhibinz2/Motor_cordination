@@ -2062,6 +2062,7 @@ sgtitle('corr of H-EEG and H-interval')
 %% PLOT  PLS regression
 % % previously in sync.m
 % open sync.m
+% open syn_tryout.m
 % % powforpls (28 matches x 3200 predictors) 50freqsx64chan=3200
 % % cor(j).BP' (28 corr ceof x 1) 
 % [R2,reg,ypred] = npls_pred(powforpls,cor(j).BP',1);
