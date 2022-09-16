@@ -1998,6 +1998,45 @@ subplot(1,5,4);topoplot(mean(H_beta_LR_chan),channels,'nosedir','+X');title('H-b
 subplot(1,5,5);topoplot(mean(H_gamma_LR_chan),channels,'nosedir','+X');title('H-gamma');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle('mean H-EEG values')
 
+% organize conditions in all sessions into a vector of 192
+condition_all=[];
+for s=1:8
+    clear conditions
+    runid=num2str(seeds(s,:));
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ]);
+    condition_all(s,:)=conditions;
+end
+% reshape into a vector in time sequence
+condition_all=reshape(condition_all',[],1);
+% check how many H-EEG > 0.5 according to conditions (showing complexity)
+states4names={'uncoupled','Leading','Following','mutual'};
+% find the indices for each condition in L R conbined sequence
+uncoupleInd=repmat(find(condition_all==1),2,1);
+leadingInd=[find(condition_all==2);96+find(condition_all==3)];
+followingInd=[find(condition_all==3);96+find(condition_all==2)];
+mutualInd=repmat(find(condition_all==4),2,1);
+Inds4=[uncoupleInd leadingInd followingInd mutualInd];
+canvas(0.5,0.5);
+cmin=0.3;cmax=0.7;
+for c=1:4
+subplot(4,5,(c-1)*5+1);
+topoplot(mean(H_delta_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+title(['H-delta ' states4names{c}]);colorbar;colormap('jet');clim([cmin cmax]);
+subplot(4,5,(c-1)*5+2);
+topoplot(mean(H_theta_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+title(['H-theta ' states4names{c}]);colorbar;colormap('jet');clim([cmin cmax]);
+subplot(4,5,(c-1)*5+3);
+topoplot(mean(H_alpha_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+title(['H-alpha ' states4names{c}]);colorbar;colormap('jet');clim([cmin cmax]);
+subplot(4,5,(c-1)*5+4);
+topoplot(mean(H_beta_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+title(['H-beta ' states4names{c}]);colorbar;colormap('jet');clim([cmin cmax]);
+subplot(4,5,(c-1)*5+5);
+topoplot(mean(H_gamma_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+title(['H-gamma ' states4names{c}]);colorbar;colormap('jet');clim([cmin cmax]);
+end
+sgtitle('mean H-EEG values for each condition');
+
 % Do the correlation between H-pow and H-interval
 % Combine L and R for correlation;
 for c=1:32
@@ -2021,7 +2060,25 @@ sgtitle('corr of H-EEG and H-interval')
 
 
 %% PLOT  PLS regression
+% % previously in sync.m
+% open sync.m
+% % powforpls (28 matches x 3200 predictors) 50freqsx64chan=3200
+% % cor(j).BP' (28 corr ceof x 1) 
+% [R2,reg,ypred] = npls_pred(powforpls,cor(j).BP',1);
+% weights = reshape(reg{1},50,64); % reg{1} (3200 x 1)
+% R2 = R2;
+% ypred = ypred;
 
+pow5forpls=cat(3,H_delta_LR_chan,H_theta_LR_chan,H_alpha_LR_chan,H_beta_LR_chan,H_gamma_LR_chan);
+pow5forpls=permute(pow5forpls,[3 2 1]);% freqxchanxtrials
+pow5forpls=reshape(pow5forpls,5*32,192)'; % 192x160
+% (5freq x 32chan x 24/48/192 trials?)
+[R2,reg,ypred] = npls_pred(pow5forpls,H_all_LR,1);
+weights = reshape(reg{1},5,32);
+imagesc(weights);colorbar; % caxis([-2 2]*10E-7);
+yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+xticks([1:32]);xticklabels([labels]);xtickangle(90);
+% title({['Condi ' conditionNames{i}],'PLS model'},'Color',condicolors(i,:)); 
 %% try out DFA on EEG
 ans(:,15)
 [D,Alpha1,n,F_n,FitValues]=DFA_main(ans(:,15));
