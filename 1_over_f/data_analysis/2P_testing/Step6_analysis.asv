@@ -1740,6 +1740,61 @@ for s=1:8
         H_all(:,s,b)=H(:,b);
     end
 end
+
+% H-int matching for L and R as in Marmelat 2012
+H_all; % 2x8x12
+H_Lall=squeeze(H_all(1,:,:));
+H_Lall=reshape(H_Lall',[],1);
+H_Rall=squeeze(H_all(2,:,:));
+H_Rall=reshape(H_Rall',[],1);
+Inds4(:,c);
+uncoupleInd(1:24);
+leadingInd(1:24);
+followingInd(1:24);
+mutualInd(1:24);
+
+canvas(0.3,0.1);
+% canvas(0.2,0.1);
+% subplot(1,2,1);
+subplot(1,3,1);
+plot(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),'ko');
+xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+title('uncouple');
+A=[];Alpha1=[];FitValues=[];
+A=polyfit(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
+hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
+subplot(1,3,2);
+plot(H_Lall(leadingInd(1:24)),H_Rall(leadingInd(1:24)),'ko');
+xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+title('leading');
+A=[];Alpha1=[];FitValues=[];
+A=polyfit([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))], [H_Rall(leadingInd(1:24)) ],1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,H_Lall(leadingInd(1:24)));
+hold on; plot(H_Lall(leadingInd(1:24)),FitValues,'k-');
+
+
+plot(H_Lall(followingInd(1:24)),H_Rall(followingInd(1:24)),'ko');
+xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+title('following');
+A=[];Alpha1=[];FitValues=[];
+A=polyfit(H_Lall(followingInd(1:24)),H_Rall(followingInd(1:24)),1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,H_Lall(followingInd(1:24)));
+hold on; plot(H_Lall(followingInd(1:24)),FitValues,'k-');
+
+% subplot(1,2,2);
+subplot(1,3,3);
+plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
+xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+title('mutual');
+A=[];Alpha1=[];FitValues=[];
+A=polyfit(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),1);
+Alpha1=A(1); 
+FitValues=polyval(A,H_Lall(mutualInd(1:24)));
+hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
 %% PLOT 11 Xcorr slinding window of 20 intervals (based on the matched invervals)
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
@@ -1841,7 +1896,7 @@ for s=1:8 % each session
     end
 end
 
-%% PLOT 13 corr between power and Hurst all sessions
+%% PLOT 13 corr between sum of EEG power and Hurst all sessions
 zEEG500_L; zEEG500_R; % for all sessions from PLOT 12
 delta_L;theta_L;alpha_L;beta_L;gamma_L;
 delta_R;theta_R;alpha_R;beta_R;gamma_R;
@@ -1915,6 +1970,21 @@ for c=1:32
     beta_LR_H_LR_corr(c)=corr(beta_LR_chan(:,c),H_all_LR);
     gamma_LR_H_LR_corr(c)=corr(gamma_LR_chan(:,c),H_all_LR);
 end
+% 4 states
+delta_LR_H_LR_4corr=zeros(4,32);
+theta_LR_H_LR_4corr=zeros(4,32);
+alpha_LR_H_LR_4corr=zeros(4,32);
+beta_LR_H_LR_4corr=zeros(4,32);
+gamma_LR_H_LR_4corr=zeros(4,32);
+for s=1:4
+    for c=1:32
+        delta_LR_H_LR_4corr(s,c)=corr(delta_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        theta_LR_H_LR_4corr(s,c)=corr(theta_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        alpha_LR_H_LR_4corr(s,c)=corr(alpha_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        beta_LR_H_LR_4corr(s,c)=corr(beta_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        gamma_LR_H_LR_4corr(s,c)=corr(gamma_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+    end
+end
 
 % Topoplots (5x1)
 canvas(0.2,0.5);
@@ -1930,6 +2000,7 @@ subplot(5,2,6);topoplot(alpha_R_H_R_corr,channels,'nosedir','+X');title('alpha-R
 subplot(5,2,8);topoplot(beta_R_H_R_corr,channels,'nosedir','+X');title('beta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(5,2,10);topoplot(gamma_R_H_R_corr,channels,'nosedir','+X');title('gamma-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
 sgtile('corr of EEG and interval_H')
+
 % Combine L and R in topoplots (1x5)
 canvas(0.5,0.1);
 cmin=-0.4;cmax=0.4;
@@ -1939,7 +2010,34 @@ subplot(1,5,3);topoplot(alpha_LR_H_LR_corr,channels,'nosedir','+X');title('alpha
 subplot(1,5,4);topoplot(beta_LR_H_LR_corr,channels,'nosedir','+X');title('beta & H');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,5);topoplot(gamma_LR_H_LR_corr,channels,'nosedir','+X');title('gamma & H');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle('corr of EEG and interval-H')
-%% PLOT13-1 corr between H-power and H-interval all sessions
+
+% Combine L and R in 4 states(4x5)
+canvas(0.5,0.4);
+cmin=-0.4;cmax=0.4;
+for s=1:4
+    subplot(4,5,5*(s-1)+1);
+    topoplot(delta_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    title([states4names{s} ': delta & H'],'Color',condicolors(s,:));
+    colorbar;colormap('jet');clim([cmin cmax]);
+    subplot(4,5,5*(s-1)+2);
+    topoplot(theta_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    title([states4names{s} ': theta & H'],'Color',condicolors(s,:));
+    colorbar;colormap('jet');clim([cmin cmax]);
+    subplot(4,5,5*(s-1)+3);
+    topoplot(alpha_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    title([states4names{s} ': alpha & H'],'Color',condicolors(s,:));
+    colorbar;colormap('jet');clim([cmin cmax]);
+    subplot(4,5,5*(s-1)+4);
+    topoplot(beta_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    title([states4names{s} ': beta & H'],'Color',condicolors(s,:));
+    colorbar;colormap('jet');clim([cmin cmax]);
+    subplot(4,5,5*(s-1)+5);
+    topoplot(gamma_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    title([states4names{s} ': gamma & H'],'Color',condicolors(s,:));
+    colorbar;colormap('jet');clim([cmin cmax]);
+end
+sgtitle('4states: Corr of EEG & H-int');
+%% PLOT 13-1 corr between H-power and H-interval all sessions & 4 states
 % H derived from EEG power
 delta_L;theta_L;alpha_L;beta_L;gamma_L;
 delta_R;theta_R;alpha_R;beta_R;gamma_R;
@@ -2010,14 +2108,14 @@ end
 condition_all=reshape(condition_all',[],1);
 % check how many H-EEG > 0.5 according to conditions (showing complexity)
 states4names={'uncoupled','Leading','Following','mutual'};
-% find the indices for each condition in L R conbined sequence
+% find the indices for each condition in L R conbined sequence (4 states)
 uncoupleInd=repmat(find(condition_all==1),2,1);
 leadingInd=[find(condition_all==2);96+find(condition_all==3)];
 followingInd=[find(condition_all==3);96+find(condition_all==2)];
 mutualInd=repmat(find(condition_all==4),2,1);
 Inds4=[uncoupleInd leadingInd followingInd mutualInd];
 canvas(0.5,0.5);
-cmin=0.3;cmax=0.7;
+cmin=0.5;cmax=1;
 for c=1:4
 subplot(4,5,(c-1)*5+1);
 topoplot(mean(H_delta_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
@@ -2050,18 +2148,24 @@ end
 % Combine L and R in topoplots (1x5)
 canvas(0.5,0.1);
 cmin=-0.4;cmax=0.4;
-subplot(1,5,1);topoplot(H_delta_LR_H_LR_corr,channels,'nosedir','+X');title('H-delta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,2);topoplot(H_theta_LR_H_LR_corr,channels,'nosedir','+X');title('H-theta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,3);topoplot(H_alpha_LR_H_LR_corr,channels,'nosedir','+X');title('H-alpha & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,4);topoplot(H_beta_LR_H_LR_corr,channels,'nosedir','+X');title('H-beta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,5);topoplot(H_gamma_LR_H_LR_corr,channels,'nosedir','+X');title('H-gamma & H-int');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,1);topoplot(H_delta_LR_H_LR_corr,channels,'nosedir','+X');
+title('H-delta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,2);topoplot(H_theta_LR_H_LR_corr,channels,'nosedir','+X');
+title('H-theta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,3);topoplot(H_alpha_LR_H_LR_corr,channels,'nosedir','+X');
+title('H-alpha & H-int');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,4);topoplot(H_beta_LR_H_LR_corr,channels,'nosedir','+X');
+title('H-beta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,5);topoplot(H_gamma_LR_H_LR_corr,channels,'nosedir','+X');
+title('H-gamma & H-int');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle('corr of H-EEG and H-interval')
 
 
 
-%% PLOT  PLS regression
+%% PLOT 14 PLS regression
 % % previously in sync.m
 % open sync.m
+% open syn_tryout.m
 % % powforpls (28 matches x 3200 predictors) 50freqsx64chan=3200
 % % cor(j).BP' (28 corr ceof x 1) 
 % [R2,reg,ypred] = npls_pred(powforpls,cor(j).BP',1);
@@ -2072,15 +2176,33 @@ sgtitle('corr of H-EEG and H-interval')
 pow5forpls=cat(3,H_delta_LR_chan,H_theta_LR_chan,H_alpha_LR_chan,H_beta_LR_chan,H_gamma_LR_chan);
 pow5forpls=permute(pow5forpls,[3 2 1]);% freqxchanxtrials
 pow5forpls=reshape(pow5forpls,5*32,192)'; % 192x160
-% (5freq x 32chan x 24/48/192 trials?)
+% (ALL states: 5freq x 32chan = 160 predictors x 192 trials)
 [R2,reg,ypred] = npls_pred(pow5forpls,H_all_LR,1);
 weights = reshape(reg{1},5,32);
-imagesc(weights);colorbar;
-caxis([-2 2]*10E-7);
-yticks([1:50]);
-xticks([1:64]);
-xticklabels([labels labels]);xtickangle(90);
-title({['Condi ' conditionNames{i}],'PLS model'},'Color',condicolors(i,:)); 
+canvas(0.2,0.1)
+imagesc(weights);colorbar; % caxis([-2 2]*10E-7);
+yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+xticks([1:32]);xticklabels([labels]);xtickangle(90);
+title('All 4 statues: PLS model');
+
+% (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48 trials)
+canvas(0.4,0.2);
+for c=1:4 % four states
+    R2=[];reg=[];ypred=[];
+    [R2,reg,ypred] = npls_pred(pow5forpls(Inds4(:,c),:),H_all_LR(Inds4(:,c)),1);
+    plsmodel(c).weights=reshape(reg{1},5,32);
+    plsmodel(c).R2 = R2;
+    plsmodel(c).ypred = ypred;
+    subplot(2,2,c);
+    imagesc(plsmodel(c).weights);colorbar; 
+    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    xticks([1:32]);xticklabels([labels]);xtickangle(90);
+    clim([-0.1 0.1]); % caxis([-0.1 0.1]);
+    title([states4names{c} ': PLS model'],'Color',condicolors(c,:));
+end
+sgtitle('PLS model: H-EEG(-500ms) -> H-int')
+
+
 %% try out DFA on EEG
 ans(:,15)
 [D,Alpha1,n,F_n,FitValues]=DFA_main(ans(:,15));
