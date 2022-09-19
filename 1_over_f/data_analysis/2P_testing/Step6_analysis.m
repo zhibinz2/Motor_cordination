@@ -1939,7 +1939,7 @@ subplot(1,5,3);topoplot(alpha_LR_H_LR_corr,channels,'nosedir','+X');title('alpha
 subplot(1,5,4);topoplot(beta_LR_H_LR_corr,channels,'nosedir','+X');title('beta & H');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,5);topoplot(gamma_LR_H_LR_corr,channels,'nosedir','+X');title('gamma & H');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle('corr of EEG and interval-H')
-%% PLOT13-1 corr between H-power and H-interval all sessions
+%% PLOT 13-1 corr between H-power and H-interval all sessions
 % H derived from EEG power
 delta_L;theta_L;alpha_L;beta_L;gamma_L;
 delta_R;theta_R;alpha_R;beta_R;gamma_R;
@@ -2017,7 +2017,7 @@ followingInd=[find(condition_all==3);96+find(condition_all==2)];
 mutualInd=repmat(find(condition_all==4),2,1);
 Inds4=[uncoupleInd leadingInd followingInd mutualInd];
 canvas(0.5,0.5);
-cmin=0.3;cmax=0.7;
+cmin=0.5;cmax=1;
 for c=1:4
 subplot(4,5,(c-1)*5+1);
 topoplot(mean(H_delta_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
@@ -2059,7 +2059,7 @@ sgtitle('corr of H-EEG and H-interval')
 
 
 
-%% PLOT  PLS regression
+%% PLOT 14 PLS regression
 % % previously in sync.m
 % open sync.m
 % open syn_tryout.m
@@ -2080,6 +2080,9 @@ imagesc(weights);colorbar; % caxis([-2 2]*10E-7);
 yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
 xticks([1:32]);xticklabels([labels]);xtickangle(90);
 % title({['Condi ' conditionNames{i}],'PLS model'},'Color',condicolors(i,:)); 
+
+
+
 %% try out DFA on EEG
 ans(:,15)
 [D,Alpha1,n,F_n,FitValues]=DFA_main(ans(:,15));
