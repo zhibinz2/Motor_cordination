@@ -1067,7 +1067,7 @@ for d=1:2
 end
 
 
-%% PLOT 6 DFA H values for all sessions based on matched intervals (sorted order)
+%% PLOT 6 DFA H values for all sessions (matched int)(sorted order)
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
 H=zeros(2,12,8);
@@ -1233,7 +1233,7 @@ title('mean H in all sessions');
 grid on;
 
 
-%% PLOT 6-1 DFA H values for all sessions based on original intervals (sorted order)
+%% PLOT 6-1 DFA H values for all sessions (unmatched int) (sorted order)
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
@@ -1505,7 +1505,7 @@ end
 sgtitle('H from DFA after d removal in all sessions (using Leites d estimation function)');
 
 
-%% PLOT 9 Xcorr after d removal and save new intervals (sorted order) 
+%% SECT 9 Xcorr after d removal and save new intervals (sorted order) 
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
@@ -1533,7 +1533,7 @@ for r=1:8;
         % estimate the d
         [~,H(1,j,r)]=DFA_main(intL_good_dmean);
         [~,H(2,j,r)]=DFA_main(intR_good_dmean);
-        % Xcorr based on int_dmean_drm
+        % Xcorr based on int_dmean_drm (before d removal)
         r12=[];lags12=[];
         [r12,lags12]=xcorr(intL_good_dmean,intR_good_dmean,10,'normalized');
         XcorrPeakLag(j,r)=lags12(find(r12==max(r12)));
@@ -1542,7 +1542,7 @@ for r=1:8;
 end
 eval(['save ' '/ssd/zhibin/1overf/all_session20220713_0816/H.mat H'])
 d1=H-0.5;% estimate d using DFA method (method1: based on DFA, d=h-0.5)
-        
+% ( Continue to PLOT 9 )
         
 % d removal
 H_est2=zeros(2,12,8);
@@ -1576,6 +1576,8 @@ eval(['save ' '/ssd/zhibin/1overf/all_session20220713_0816/int_dmean_drm.mat int
 % plot H all session and compare like in PLOT 8
 
 % Xcorr based on int_dmean_drm
+load /ssd/zhibin/1overf/all_session20220713_0816/int_dmean_drm.mat
+load /ssd/zhibin/1overf/all_session20220713_0816/H.mat
 XcorrPeakLag=zeros(12,8);XcorrPeak=zeros(12,8);
 for r=1:8;
     for j = 1:12
@@ -1585,9 +1587,12 @@ for r=1:8;
         XcorrPeak(j,r)=max(r12);
     end
 end
+% ( Continue to PLOT 9 )
+%% PLOT 9 Xcorr after d removal and save new intervals (sorted order) 
+
 
 % Plot XcorrPeakLag in all sessions
-canvas(0.3, 0.4);
+canvas(0.3, 0.8);
 for r=1:8
     subplot(8,1,r);
     plot(1:12,XcorrPeakLag(:,r),'ko')
@@ -1595,6 +1600,7 @@ for r=1:8
     yline(0,'color',deepyellow);set(gca, 'YDir','reverse')
     xticks(1:12);xticklabels(Trials);
     title([num2str(seeds(r,:)) '-' sessions{r}]);
+    grid on; grid minor;
 end
 sgtitle('peak lag from Xcorr in all sessions (-lag = L leading; +lag = R leading)')
 
@@ -1612,7 +1618,8 @@ Table_XcorrPeakLag=table(Trials, XcorrPeakLag_synch1,XcorrPeakLag_synco1,...
     XcorrPeakLag_synch3, XcorrPeakLag_synco3,...
     XcorrPeakLag_synch4, XcorrPeakLag_synco4);
 
-% average all trials of the same condition (lag of peak)
+% PLOT (lag of peak)
+% average all trials of the same condition 
 XcorrPeakLag_uncouple_synch = reshape(XcorrPeakLag([1:3],[1:2:7]),1,[])  % uncouple,synch
 XcorrPeakLag_Llead_synch    = reshape(XcorrPeakLag([4:6],[1:2:7]),1,[])  % L lead,synch
 XcorrPeakLag_Rlead_synch    = reshape(XcorrPeakLag([7:9],[1:2:7]),1,[])  % R lead,synch
@@ -1639,23 +1646,24 @@ XcorrPeakLag_LR_synco_std = [std(XcorrPeakLag_uncouple_synco);...
     std(XcorrPeakLag_Rlead_synco);...
     std(XcorrPeakLag_mutual_synco)];
 % plot average lag of peak
-canvas(0.2, 0.3);
+canvas(0.2, 0.6);
 subplot(2,1,1);
 errorbar(1:4,XcorrPeakLag_LR_synch_mean,XcorrPeakLag_LR_synch_std,'ko');
 xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
 ylabel('average lag of the peak'); % ylabel('\rho(k)');
-ylim([-10 10]);yline(0,'color',deepyellow);set(gca, 'YDir','reverse');
-xlim([0 5]);
+ylim([-10 10]);yline(0,'color',red);set(gca, 'YDir','reverse');
+xlim([0 5]);grid on;  grid minor;
 title('average lag of xcorr peak in all synch sessions (-lag: L leading; +lag: R leading)')
 subplot(2,1,2);
 errorbar(1:4,XcorrPeakLag_LR_synco_mean,XcorrPeakLag_LR_synco_std,'ko');
 xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
 ylabel('average lag of the peak'); % ylabel('\rho(k)');
-ylim([-10 10]);yline(0,'color',deepyellow);set(gca, 'YDir','reverse')
-xlim([0 5]);
+ylim([-10 10]);yline(0,'color',red);set(gca, 'YDir','reverse')
+xlim([0 5]);grid on; grid minor;
 title('average lag of xcorr peak in all synco sessions (-lag: L leading; +lag: R leading)')
 
-% average all trials of the same condition (lag of peak)
+% PLOT (lag of peak)
+% average all trials of the same condition 
 XcorrPeak_uncouple_synch = reshape(XcorrPeak([1:3],[1:2:7]),1,[])  % uncouple,synch
 XcorrPeak_Llead_synch    = reshape(XcorrPeak([4:6],[1:2:7]),1,[])  % L lead,synch
 XcorrPeak_Rlead_synch    = reshape(XcorrPeak([7:9],[1:2:7]),1,[])  % R lead,synch
@@ -1687,13 +1695,13 @@ canvas(0.2, 0.3);
 subplot(2,1,1);
 errorbar(1:4,XcorrPeak_LR_synch_mean,XcorrPeak_LR_synch_std,'ko');
 xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
-ylabel('\rho(k)');
+ylabel('\rho(k)'); grid on;  grid minor;
 ylim([-0.1 1]);yline(0,'color',red);xlim([0 5]);
 title('average peak of xcorr in all synch sessions');
 subplot(2,1,2);
 errorbar(1:4,XcorrPeak_LR_synco_mean,XcorrPeak_LR_synco_std,'ko');
 xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
-ylabel('\rho(k)');
+ylabel('\rho(k)'); grid on;  grid minor;
 ylim([-0.1 1]);yline(0,'color',red);xlim([0 5]);
 title('average peak of xcorr in all synco sessions');
 
@@ -1786,6 +1794,7 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
 hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+grid on;
 subplot(1,2,2);
 plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
 xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
@@ -1796,6 +1805,7 @@ Alpha1=A(1);
 FitValues=polyval(A,H_Lall(mutualInd(1:24)));
 hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+grid on;
 
 %**********************
 canvas(0.2,0.5);

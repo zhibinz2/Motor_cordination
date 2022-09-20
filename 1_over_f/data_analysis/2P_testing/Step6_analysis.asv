@@ -1067,7 +1067,7 @@ for d=1:2
 end
 
 
-%% PLOT 6 DFA H values for all sessions based on matched intervals (sorted order)
+%% PLOT 6 DFA H values for all sessions (matched int)(sorted order)
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
 H=zeros(2,12,8);
@@ -1233,7 +1233,7 @@ title('mean H in all sessions');
 grid on;
 
 
-%% PLOT 6-1 DFA H values for all sessions based on original intervals (sorted order)
+%% PLOT 6-1 DFA H values for all sessions (unmatched int) (sorted order)
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
@@ -1505,7 +1505,7 @@ end
 sgtitle('H from DFA after d removal in all sessions (using Leites d estimation function)');
 
 
-%% PLOT 9 Xcorr after d removal and save new intervals (sorted order) 
+%% SECT 9 Xcorr after d removal and save new intervals (sorted order) 
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
@@ -1575,11 +1575,15 @@ end
 eval(['save ' '/ssd/zhibin/1overf/all_session20220713_0816/int_dmean_drm.mat int_dmean_drm'])
 % plot H all session and compare like in PLOT 8
 
+%% PLOT 9 Xcorr after d removal and save new intervals (sorted order) 
 % Xcorr based on int_dmean_drm
+load /ssd/zhibin/1overf/all_session20220713_0816/int_dmean_drm.mat
+load /ssd/zhibin/1overf/all_session20220713_0816/H.mat
 XcorrPeakLag=zeros(12,8);XcorrPeak=zeros(12,8);
 for r=1:8;
     for j = 1:12
         r12=[];lags12=[];
+        [r12,lags12]=xcorr(int_dmean_drm{1,j,r},int_dmean_drm{2,j,r},10,'normalized');
         [r12,lags12]=xcorr(int_dmean_drm{1,j,r},int_dmean_drm{2,j,r},10,'normalized');
         XcorrPeakLag(j,r)=lags12(find(r12==max(r12)));
         XcorrPeak(j,r)=max(r12);
@@ -1639,20 +1643,20 @@ XcorrPeakLag_LR_synco_std = [std(XcorrPeakLag_uncouple_synco);...
     std(XcorrPeakLag_Rlead_synco);...
     std(XcorrPeakLag_mutual_synco)];
 % plot average lag of peak
-canvas(0.2, 0.3);
+canvas(0.2, 0.6);
 subplot(2,1,1);
 errorbar(1:4,XcorrPeakLag_LR_synch_mean,XcorrPeakLag_LR_synch_std,'ko');
 xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
 ylabel('average lag of the peak'); % ylabel('\rho(k)');
-ylim([-10 10]);yline(0,'color',deepyellow);set(gca, 'YDir','reverse');
-xlim([0 5]);
+ylim([-10 10]);yline(0,'color',red);set(gca, 'YDir','reverse');
+xlim([0 5]);grid on;  grid minor;
 title('average lag of xcorr peak in all synch sessions (-lag: L leading; +lag: R leading)')
 subplot(2,1,2);
 errorbar(1:4,XcorrPeakLag_LR_synco_mean,XcorrPeakLag_LR_synco_std,'ko');
 xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
 ylabel('average lag of the peak'); % ylabel('\rho(k)');
-ylim([-10 10]);yline(0,'color',deepyellow);set(gca, 'YDir','reverse')
-xlim([0 5]);
+ylim([-10 10]);yline(0,'color',red);set(gca, 'YDir','reverse')
+xlim([0 5]);grid on; grid minor;
 title('average lag of xcorr peak in all synco sessions (-lag: L leading; +lag: R leading)')
 
 % average all trials of the same condition (lag of peak)
@@ -1786,6 +1790,7 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
 hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+grid on;
 subplot(1,2,2);
 plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
 xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
@@ -1796,6 +1801,7 @@ Alpha1=A(1);
 FitValues=polyval(A,H_Lall(mutualInd(1:24)));
 hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+grid on;
 
 %**********************
 canvas(0.2,0.5);
@@ -2529,39 +2535,39 @@ sgtitle('corr of H-EEG (- 500ms) and H-interval in 4 states')
 for c=1:32
     H_delta_LLRR_H_LR_corr(c)=corr(H_delta_LLRR_chan(:,c),H_all_LR);
     H_theta_LLRR_H_LR_corr(c)=corr(H_theta_LLRR_chan(:,c),H_all_LR);
-    H_alpha_LR_H_LR_corr(c)=corr(H_alpha_LLRR_chan(:,c),H_all_LR);
-    H_beta_LR_H_LR_corr(c)=corr(H_beta_LLRR_chan(:,c),H_all_LR);
-    H_gamma_LR_H_LR_corr(c)=corr(H_gamma_LLRR_chan(:,c),H_all_LR);
+    H_alpha_LLRR_H_LR_corr(c)=corr(H_alpha_LLRR_chan(:,c),H_all_LR);
+    H_beta_LLRR_H_LR_corr(c)=corr(H_beta_LLRR_chan(:,c),H_all_LR);
+    H_gamma_LLRR_H_LR_corr(c)=corr(H_gamma_LLRR_chan(:,c),H_all_LR);
 end
 
 % Combine L and R in topoplots (1x5)
 canvas(0.5,0.2);
 cmin=-0.7;cmax=0.7;
-subplot(1,5,1);topoplot(H_delta_LR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,1);topoplot(H_delta_LLRR_H_LR_corr,channels,'nosedir','+X');
 title('H-delta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,2);topoplot(H_theta_LR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,2);topoplot(H_theta_LLRR_H_LR_corr,channels,'nosedir','+X');
 title('H-theta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,3);topoplot(H_alpha_LR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,3);topoplot(H_alpha_LLRR_H_LR_corr,channels,'nosedir','+X');
 title('H-alpha & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,4);topoplot(H_beta_LR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,4);topoplot(H_beta_LLRR_H_LR_corr,channels,'nosedir','+X');
 title('H-beta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,5);topoplot(H_gamma_LR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,5);topoplot(H_gamma_LLRR_H_LR_corr,channels,'nosedir','+X');
 title('H-gamma & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-sgtitle('corr of H-EEG (- 500ms) and H-interval')
+sgtitle('corr of H-EEG (+ 500ms) and H-interval')
 
 % Compute correlation between H-pow and H-interval in 4 states
-H_delta_LR_H_LR_corr4=zeros(4,32);
-H_theta_LR_H_LR_corr4=zeros(4,32);
-H_alpha_LR_H_LR_corr4=zeros(4,32);
-H_beta_LR_H_LR_corr4=zeros(4,32);
-H_gamma_LR_H_LR_corr4=zeros(4,32);
+H_delta_LLRR_H_LR_corr4=zeros(4,32);
+H_theta_LLRR_H_LR_corr4=zeros(4,32);
+H_alpha_LLRR_H_LR_corr4=zeros(4,32);
+H_beta_LLRR_H_LR_corr4=zeros(4,32);
+H_gamma_LLRR_H_LR_corr4=zeros(4,32);
 for s=1:4
     for c=1:32
-        H_delta_LR_H_LR_corr4(s,c)=corr(H_delta_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        H_theta_LR_H_LR_corr4(s,c)=corr(H_theta_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        H_alpha_LR_H_LR_corr4(s,c)=corr(H_alpha_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        H_beta_LR_H_LR_corr4(s,c)=corr(H_beta_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        H_gamma_LR_H_LR_corr4(s,c)=corr(H_gamma_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        H_delta_LLRR_H_LR_corr4(s,c)=corr(H_delta_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        H_theta_LLRR_H_LR_corr4(s,c)=corr(H_theta_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        H_alpha_LLRR_H_LR_corr4(s,c)=corr(H_alpha_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        H_beta_LLRR_H_LR_corr4(s,c)=corr(H_beta_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        H_gamma_LLRR_H_LR_corr4(s,c)=corr(H_gamma_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
     end
 end
 % Combine L and R in 4 states (4x5)
@@ -2569,27 +2575,27 @@ canvas(0.5,0.8);
 cmin=-0.7;cmax=0.7;
 for s=1:4
 subplot(4,5,(s-1)*5+1);
-topoplot(H_delta_LR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_delta_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X');
 title(['H-delta ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(s-1)*5+2);
-topoplot(H_theta_LR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_theta_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X');
 title(['H-theta ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(s-1)*5+3);
-topoplot(H_alpha_LR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_alpha_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X');
 title(['H-alpha ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(s-1)*5+4);
-topoplot(H_beta_LR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_beta_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X');
 title(['H-beta ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(s-1)*5+5);
-topoplot(H_gamma_LR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_gamma_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X');
 title(['H-gamma ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 end
-sgtitle('corr of H-EEG (- 500ms) and H-interval in 4 states')
+sgtitle('corr of H-EEG (+ 500ms) and H-interval in 4 states')
 
 %% PLOT 16 PLS regression
 % % previously in sync.m
