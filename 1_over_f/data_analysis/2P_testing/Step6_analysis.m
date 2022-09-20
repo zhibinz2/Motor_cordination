@@ -1,4 +1,4 @@
-%% PLOT 1: Auto&Xcorr and DFA and Granger Causality for each trial
+%% SECT 1: Auto&Xcorr DFA GC for each trial
 
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA/Sim_plots
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
@@ -76,7 +76,7 @@ for i=1:nTrials
     y12(i).sig=sig;
 end
 
-%% PLOT 1:  plotting
+%% PLOT 1:  Auto&Xcorr DFA GC for each trial
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Corr_DFA
 cd /ssd/zhibin/1overf/20220804_2P/Segmented_data/Plots/Corr_DFA
 
@@ -158,7 +158,7 @@ for i=1:nTrials
 end
 close all;
 
-%% PLOT 2: Auto&Xcorr and DFA and Autocov Granger Causality and PSA for each trial
+%% SECT 2: Auto&Xcorr DFA GC PSA for each trial
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA/Sim_plots
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
@@ -279,7 +279,7 @@ for i=1:nTrials
     % later examine pow eppow corr cprod in imagesc and create myallspectra
 end
     
-%% PLOT 2: plotting
+%% PLOT 2: Auto&Xcorr DFA GC PSA for each trial
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
 cd /ssd/zhibin/1overf/20220721_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
 cd /ssd/zhibin/1overf/20220808_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
@@ -376,10 +376,10 @@ for i=1:nTrials
     close all;
 end
 
-%% PLOT 2-1: plotting
-cd /ssd/zhibin/1overf/20220804_2P/Segmented_data/Plots/Plot2_1/
-mkdir Plot2_1
-cd Plot2_1
+%% PLOT 2-1: (Color Scheme) 
+% cd /ssd/zhibin/1overf/20220804_2P/Segmented_data/Plots/Plot2_1/
+% mkdir Plot2_1
+% cd Plot2_1
 % Plots - color scheme
 red   = [1 0 0];
 pink  = [1 0.65 0.75];
@@ -398,7 +398,7 @@ HNLcolors = [darkgreen; deepyellow; pink];
 % % test color
 % showcolor=pink;
 % imagesc(cat(3,showcolor(1),showcolor(2),showcolor(3)));
-
+%% PLOT 2-1: Auto&Xcorr DFA GC PSA for each trial
 % check condiSeq for synchronization
 % condiSeq=allPerm;
 
@@ -511,8 +511,7 @@ figureName=['EEG_spectra'];
 saveas(gcf,figureName,'fig');
 
 
-%% PLOT 3: slinding window: DFA and Autocov Granger Causality for each trial
- 
+%% SECT 3 (unfinished): slinding window: DFA Autocov GC for each trial
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA/Sim_plots
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
@@ -549,7 +548,7 @@ winsize = 80*sr; % 80 Second with df of 0.0125 Hz, about 104 taps
 % winsize = 2*sr; % 2 Second with df of 0.5 Hz
 overlapsize = round(winsize*0.3); % number of samples for each overlapping window of3.3 seconds
 
-% Matric Structure (no heading in variable viewer)
+% Matrix Structure (no heading in variable viewer)
 ys1=[];ys2=[];ys12=[];
 nTrials=12;
 alpha = 0.05; 
@@ -687,7 +686,6 @@ open ys2;
 addpath(genpath('/home/zhibin/Documents/GitHub/MVGC1')); 
 
 
-
 % sum EEG power
 %  for m = 1:50 % 50 frequencies
 %     freqs = (m-1)*10+1:m*10; % downsample freq
@@ -698,7 +696,7 @@ addpath(genpath('/home/zhibin/Documents/GitHub/MVGC1'));
 %  end
 
     
-%% PLOT 3: plotting
+%% PLOT 3 (unfinished): slinding window: DFA Autocov GC for each trial
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Corr_DFA_GC_PSA
 cd /ssd/zhibin/1overf/20220721_2P/Segmented_data/Plots/
 
@@ -715,7 +713,7 @@ for i=1:nTrials
     close all;
 end
 
-%% PLOT 4: 500ms before BP
+%% SECT 4: 500ms before BP
 % Calculation on BP
 y1=[];y2=[];y12=[];
 nTrials=12;
@@ -898,7 +896,7 @@ for seleted_band=1:5
     saveas(gcf,figureName,'fig');
 end
 
-%% PLOT 5: GC between BPint and EEGpow
+%% SECT 5: GC between BPint and EEGpow
 GC1=[];GC2=[];
 eegbandNames={'delta','theta','alpha','beta','gamma'};
 % selected_chan=15; % selected_chan=15;
@@ -1700,7 +1698,7 @@ ylim([-0.1 1]);yline(0,'color',red);xlim([0 5]);
 title('average peak of xcorr in all synco sessions');
 
 
-%% PLOT 10 redo H and intervals_H_removed separately (based on matched invervals)
+%% SECT 10 redo H and intervals_H_removed and save them separately (matched int)
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
@@ -1726,7 +1724,7 @@ for s=1:8
         eval(['save ' '/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/d_removal' runid '.mat H intervals_H_removed'])
     end
 end
-%% PLOT 10-1 get H from all sessions (based on matched invervals)
+%% SECT 10-1 extract H from all sessions & 4 states(matched int)
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
@@ -1741,22 +1739,44 @@ for s=1:8
     end
 end
 
+% organize conditions in all sessions into a vector of 192
+condition_all=[];
+for s=1:8
+    clear conditions
+    runid=num2str(seeds(s,:));
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ]);
+    condition_all(s,:)=conditions;
+end
+% reshape into a vector in time sequence
+condition_all=reshape(condition_all',[],1);
+
+% indices for 4 states
+states4names={'uncoupled','Leading','Following','mutual'};
+% find the indices for each condition in L R conbined sequence (4 states)
+uncoupleInd=repmat(find(condition_all==1),2,1);
+leadingInd=[find(condition_all==2);96+find(condition_all==3)];
+followingInd=[find(condition_all==3);96+find(condition_all==2)];
+mutualInd=repmat(find(condition_all==4),2,1);
+Inds4=[uncoupleInd leadingInd followingInd mutualInd];
+
 % H-int matching for L and R as in Marmelat 2012
+% organize H_all 
 H_all; % 2x8x12
 H_Lall=squeeze(H_all(1,:,:));
 H_Lall=reshape(H_Lall',[],1);
 H_Rall=squeeze(H_all(2,:,:));
 H_Rall=reshape(H_Rall',[],1);
-Inds4(:,c);
-uncoupleInd(1:24);
-leadingInd(1:24); % L
-followingInd(1:24); % L
-mutualInd(1:24);
+% Inds4(:,c);
+% uncoupleInd(1:24);
+% leadingInd(1:24); % for L
+% followingInd(1:24); % for L
+% mutualInd(1:24);
 
-canvas(0.6,0.2);
-% canvas(0.2,0.1);
-% subplot(1,2,1);
-subplot(1,3,1);
+%% PLOT 10-2 H matching as in Marmelat 2012 (matched int)
+% H-int matching for L and R as in Marmelat 2012
+%**********************
+canvas(0.2,0.25);
+subplot(1,2,1);
 plot(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),'ko');
 xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
 title('uncouple');
@@ -1766,26 +1786,7 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
 hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-subplot(1,3,2);
-plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))], [H_Rall(leadingInd(1:24)); H_Rall(followingInd(1:24))],'ko');
-xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
-title('uni-directional coupling (leading or following)');
-A=[];Alpha1=[];FitValues=[];
-A=polyfit([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))], [H_Rall(leadingInd(1:24)); H_Rall(followingInd(1:24))],1);
-Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,[H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))]);
-hold on; plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))],FitValues,'k-');
-xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-% plot(H_Lall(followingInd(1:24)),H_Rall(followingInd(1:24)),'ko');
-% xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
-% title('following');
-% A=[];Alpha1=[];FitValues=[];
-% A=polyfit(H_Lall(followingInd(1:24)),H_Rall(followingInd(1:24)),1);
-% Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-% FitValues=polyval(A,H_Lall(followingInd(1:24)));
-% hold on; plot(H_Lall(followingInd(1:24)),FitValues,'k-');
-% subplot(1,2,2);
-subplot(1,3,3);
+subplot(1,2,2);
 plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
 xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
 title('mutual');
@@ -1795,8 +1796,86 @@ Alpha1=A(1);
 FitValues=polyval(A,H_Lall(mutualInd(1:24)));
 hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-%% PLOT 11 Xcorr slinding window of 20 intervals (based on the matched invervals)
-clear
+
+%**********************
+canvas(0.2,0.5);
+subplot(2,2,1);
+plot(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),'ko');
+xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+title('uncouple');
+A=[];Alpha1=[];FitValues=[];
+A=polyfit(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
+hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
+xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+subplot(2,2,2);
+plot(H_Lall(leadingInd(1:24)),H_Rall(leadingInd(1:24)),'ko');
+xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+title('L-leading');
+A=[];Alpha1=[];FitValues=[];
+A=polyfit(H_Lall(leadingInd(1:24)),H_Rall(leadingInd(1:24)),1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,H_Lall(leadingInd(1:24)));
+hold on; plot(H_Lall(leadingInd(1:24)),FitValues,'k-');
+xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+subplot(2,2,3);
+plot(H_Lall(followingInd(1:24)),H_Rall(followingInd(1:24)),'ko');
+xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+title('R-leading');
+A=[];Alpha1=[];FitValues=[];
+A=polyfit(H_Lall(followingInd(1:24)),H_Rall(followingInd(1:24)),1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,H_Lall(followingInd(1:24)));
+hold on; plot(H_Lall(followingInd(1:24)),FitValues,'k-');
+xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+subplot(2,2,4);
+plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
+xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+title('mutual');
+A=[];Alpha1=[];FitValues=[];
+A=polyfit(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),1);
+Alpha1=A(1); 
+FitValues=polyval(A,H_Lall(mutualInd(1:24)));
+hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
+xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+
+%**********************
+canvas(0.25,0.2);
+subplot(1,3,1);
+plot(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),'ko');
+xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+title('uncoupling');subtitle('(uncouple)')
+A=[];Alpha1=[];FitValues=[];
+A=polyfit(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
+hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
+xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+subplot(1,3,2);
+plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))], [H_Rall(leadingInd(1:24)); H_Rall(followingInd(1:24))],'ko');
+xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+title('uni-directional coupling'); subtitle('(leading or following)');
+A=[];Alpha1=[];FitValues=[];
+A=polyfit([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))], [H_Rall(leadingInd(1:24)); H_Rall(followingInd(1:24))],1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,[H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))]);
+hold on; plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))],FitValues,'k-');
+xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+subplot(1,3,3);
+plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
+xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+title('stroung coupling'); subtitle('(mutual)');
+A=[];Alpha1=[];FitValues=[];
+A=polyfit(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),1);
+Alpha1=A(1); 
+FitValues=polyval(A,H_Lall(mutualInd(1:24)));
+hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
+xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+
+
+%% PLOT 11 Xcorr with slinding window of 20 intervals (matched int)
+% clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
 % sliding win
@@ -1862,30 +1941,26 @@ end
 sgtitle(['session ' num2str(seed) ' ' sessionTypes{session} ' BPint corr xcorr diff']);
 
 
-%% PLOT 12 500ms EEG 5 bands
-clear
+%% SECT 12 Compute -/+ 500ms EEG 5 bands
+% clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
 EEGwin=0.5; % second
 
+% EEG -500ms before the matched tap
 delta_L=cell(8,12);theta_L=cell(8,12);alpha_L=cell(8,12);beta_L=cell(8,12);gamma_L=cell(8,12);
 delta_R=cell(8,12);theta_R=cell(8,12);alpha_R=cell(8,12);beta_R=cell(8,12);gamma_R=cell(8,12);
 zEEG500_L=cell(8,12);zEEG500_R=cell(8,12);
-
 cd /ssd/zhibin/1overf/
 for s=1:8 % each session
-    
     runid=num2str(seeds(s,:));
     clear dataL dataR
     load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
     zEEG_L={};zEEG_R={};
-    for b=1:12 % each block
-        
+    for b=1:12 % each block  
         zEEG_L{b}=zscore(dataL{b}(:,1:32),[],1);
         zEEG_R{b}=zscore(dataR{b}(:,1:32),[],1);
-
-        for i=1:size(samples{b},1) % each matched interval
-            
+        for i=1:size(samples{b},1) % each matched interval           
             zEEG500_L{s,b}{i}=zEEG_L{b}(samples{b}(i,1)-999:samples{b}(i,1),:); % start from first matched tap (if not enough samples before, then consider starting from 2nd tap)
             zEEG500_R{s,b}{i}=zEEG_R{b}(samples{b}(i,2)-999:samples{b}(i,2),:);
             [delta_L{s,b}(i,:), theta_L{s,b}(i,:), alpha_L{s,b}(i,:), beta_L{s,b}(i,:), gamma_L{s,b}(i,:)]...
@@ -1896,7 +1971,31 @@ for s=1:8 % each session
     end
 end
 
-%% PLOT 13 corr between sum of EEG power and Hurst all sessions
+% EEG +500ms before the matched tap
+delta_LL=cell(8,12);theta_LL=cell(8,12);alpha_LL=cell(8,12);beta_LL=cell(8,12);gamma_LL=cell(8,12);
+delta_RR=cell(8,12);theta_RR=cell(8,12);alpha_RR=cell(8,12);beta_RR=cell(8,12);gamma_RR=cell(8,12);
+zEEG500_LL=cell(8,12);zEEG500_RR=cell(8,12);
+cd /ssd/zhibin/1overf/
+for s=1:8 % each session
+    runid=num2str(seeds(s,:));
+    clear dataL dataR
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
+    zEEG_L={};zEEG_R={};
+    for b=1:12 % each block
+        zEEG_L{b}=zscore(dataL{b}(:,1:32),[],1);
+        zEEG_R{b}=zscore(dataR{b}(:,1:32),[],1);
+        for i=1:(size(samples{b},1)-2) % each matched interval (excluding the last tap or two)          
+            zEEG500_LL{s,b}{i}=zEEG_L{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % start from first matched tap (if not enough samples before, then consider starting from 2nd tap)
+            zEEG500_RR{s,b}{i}=zEEG_R{b}(samples{b}(i,2):samples{b}(i,2)+999,:); % end at the 2nd or 3rd last matched tap
+            [delta_LL{s,b}(i,:), theta_LL{s,b}(i,:), alpha_LL{s,b}(i,:), beta_LL{s,b}(i,:), gamma_LL{s,b}(i,:)]...
+                =sum5band(zEEG500_LL{s,b}{i},sr,EEGwin);
+            [delta_RR{s,b}(i,:), theta_RR{s,b}(i,:), alpha_RR{s,b}(i,:), beta_RR{s,b}(i,:), gamma_RR{s,b}(i,:)]...
+                =sum5band(zEEG500_RR{s,b}{i},sr,EEGwin);
+        end
+    end
+end
+
+%% PLOT 13 corr of sum-EEG power and H-int all sessions
 zEEG500_L; zEEG500_R; % for all sessions from PLOT 12
 delta_L;theta_L;alpha_L;beta_L;gamma_L;
 delta_R;theta_R;alpha_R;beta_R;gamma_R;
@@ -1939,8 +2038,8 @@ alpha_LR_chan=[alpha_L_chan;alpha_R_chan];
 beta_LR_chan=[beta_L_chan;beta_R_chan];
 gamma_LR_chan=[gamma_L_chan;gamma_R_chan];
 
-% Organize H_all
-H_all; % (8x12) for all sessions from PLOT 10-1 
+% Organize H_all for corr
+H_all; % (2x 8x12) for all sessions from SECT 10-1 
 H_all_L=squeeze(H_all(1,:,:));
 H_all_R=squeeze(H_all(2,:,:));
 % squeeze into 1 vector from the 96 blocks for each subject, for corr with pow in each chan
@@ -1949,7 +2048,7 @@ H_all_R=reshape(H_all_R',[],1);
 % Combine L and R
 H_all_LR=[H_all_L;H_all_R];
 
-% Do the correlation between pow and H
+% Compute the correlation between pow and H
 for c=1:32
     delta_L_H_L_corr(c)=corr(delta_L_chan(:,c),H_all_L);
     theta_L_H_L_corr(c)=corr(theta_L_chan(:,c),H_all_L);
@@ -2037,7 +2136,7 @@ for s=1:4
     colorbar;colormap('jet');clim([cmin cmax]);
 end
 sgtitle('4states: Corr of EEG & H-int');
-%% PLOT 13-1 corr between H-power and H-interval all sessions & 4 states
+%% PLOT 13-1 corr of H-EEG power and H-int all sessions & 4 states
 % H derived from EEG power
 delta_L;theta_L;alpha_L;beta_L;gamma_L;
 delta_R;theta_R;alpha_R;beta_R;gamma_R;
@@ -2087,33 +2186,18 @@ H_gamma_LR_chan=[H_gamma_L_chan;H_gamma_R_chan];
 % mean(H_alpha_LR_chan)
 % mean(H_beta_LR_chan)
 % mean(H_gamma_LR_chan)
-canvas(0.5,0.1);
-cmin=0.3;cmax=0.7;
+canvas(0.5,0.2);
+cmin=0.5;cmax=1;
 subplot(1,5,1);topoplot(mean(H_delta_LR_chan),channels,'nosedir','+X');title('H-delta');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,2);topoplot(mean(H_theta_LR_chan),channels,'nosedir','+X');title('H-theta');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,3);topoplot(mean(H_alpha_LR_chan),channels,'nosedir','+X');title('H-alpha');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,4);topoplot(mean(H_beta_LR_chan),channels,'nosedir','+X');title('H-beta');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,5);topoplot(mean(H_gamma_LR_chan),channels,'nosedir','+X');title('H-gamma');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle('mean H-EEG values')
+% only H-EEG of beta and gamma show complexity (H>0.5)
 
-% organize conditions in all sessions into a vector of 192
-condition_all=[];
-for s=1:8
-    clear conditions
-    runid=num2str(seeds(s,:));
-    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ]);
-    condition_all(s,:)=conditions;
-end
-% reshape into a vector in time sequence
-condition_all=reshape(condition_all',[],1);
-% check how many H-EEG > 0.5 according to conditions (showing complexity)
-states4names={'uncoupled','Leading','Following','mutual'};
-% find the indices for each condition in L R conbined sequence (4 states)
-uncoupleInd=repmat(find(condition_all==1),2,1);
-leadingInd=[find(condition_all==2);96+find(condition_all==3)];
-followingInd=[find(condition_all==3);96+find(condition_all==2)];
-mutualInd=repmat(find(condition_all==4),2,1);
-Inds4=[uncoupleInd leadingInd followingInd mutualInd];
+% check how many H-EEG > 0.5 according to 4 states (showing complexity)
+% plot in 4 states
 canvas(0.5,0.5);
 cmin=0.5;cmax=1;
 for c=1:4
@@ -2134,6 +2218,8 @@ topoplot(mean(H_gamma_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
 title(['H-gamma ' states4names{c}]);colorbar;colormap('jet');clim([cmin cmax]);
 end
 sgtitle('mean H-EEG values for each condition');
+% only H-EEG of beta and gamma show complexity (H>0.5)
+
 
 % Do the correlation between H-pow and H-interval
 % Combine L and R for correlation;
