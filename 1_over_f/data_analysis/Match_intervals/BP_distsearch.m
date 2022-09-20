@@ -13,6 +13,7 @@ seed=20220816;
 
 %% 
 addpath /ssd/zhibin/1overf/20220808_2P/Copy_of_Ramesh20220909
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/Match_intervals
 %%
 cd /ssd/zhibin/1overf
 

@@ -119,7 +119,7 @@ canvas(0.5,0.25);
 subplot(2,1,1);plot(downsample(filtered_dataL5,10));ylim([-300 300]);title('truncated L');
 subplot(2,1,2);plot(downsample(filtered_dataR5,10));ylim([-300 300]);title('truncated R');
 
-% examine photocells on top
+% examine photocells on top (synchronization)
 % figure('units','normalized','outerposition',[0 0 1 0.6]);  % took too long
 % canvas(0.5,0.25); % took too long
 figure;
@@ -133,7 +133,7 @@ subplot(2,1,2);plot(filtered_dataR5);ylim([-300 300]);title('truncated R');
 for i=1:length(PacersR);
     xline(PacersR(i),'b');
 end
-sgtitle('plot on top are SegPacerIndL and SegPacerIndR')
+sgtitle('plot on top are PacersL and PacersR')
 
     
 % Examine plot for 20220721_2P; 20220808_2P; 20220811_2P; 20220816_2P(syncopation)
@@ -153,7 +153,7 @@ end
 sgtitle('plot on top are SegPacerIndL and SegPacerIndR')
 
 % Examine segmentation points on top
-% Examine plot for 20220713_2P; 20220804_2P (synchronization)
+% Examine plot for 20220713_2P; 20220721_2P; 20220804_2P 
 % figure('units','normalized','outerposition',[0 0 1 0.6]); % took too long
 % canvas(0.5,0.25); % took too long
 figure;
