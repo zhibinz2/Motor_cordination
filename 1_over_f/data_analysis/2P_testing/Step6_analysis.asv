@@ -1941,7 +1941,7 @@ end
 sgtitle(['session ' num2str(seed) ' ' sessionTypes{session} ' BPint corr xcorr diff']);
 
 
-%% SECT 12 Compute -/+ 500ms EEG 5 bands
+%% SECT 12 Compute EEG poweer (-/+ 500ms) 5 bands
 % clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
@@ -1995,8 +1995,8 @@ for s=1:8 % each session
     end
 end
 
-%% PLOT 13 corr of sum-EEG power and H-int all sessions
-zEEG500_L; zEEG500_R; % for all sessions from PLOT 12
+%% PLOT 13 corr of sum-EEG power (- 500ms) and H-int all sessions
+zEEG500_L; zEEG500_R; % for all sessions from SECT 12
 delta_L;theta_L;alpha_L;beta_L;gamma_L;
 delta_R;theta_R;alpha_R;beta_R;gamma_R;
 % sum the band power in each channel in each block (8x12=96)
@@ -2048,7 +2048,7 @@ H_all_R=reshape(H_all_R',[],1);
 % Combine L and R
 H_all_LR=[H_all_L;H_all_R];
 
-% Compute the correlation between pow and H
+% Compute the correlation between sum-EEG pow and H-int
 for c=1:32
     delta_L_H_L_corr(c)=corr(delta_L_chan(:,c),H_all_L);
     theta_L_H_L_corr(c)=corr(theta_L_chan(:,c),H_all_L);
@@ -2061,7 +2061,22 @@ for c=1:32
     beta_R_H_R_corr(c)=corr(beta_R_chan(:,c),H_all_R);
     gamma_R_H_R_corr(c)=corr(gamma_R_chan(:,c),H_all_R);
 end
-% Combine L and R for correlation;
+% Topoplots (5x2)
+canvas(0.2,0.5);
+cmin=-0.7;cmax=0.7;
+subplot(5,2,1);topoplot(delta_L_H_L_corr,channels,'nosedir','+X');title('delta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,3);topoplot(theta_L_H_L_corr,channels,'nosedir','+X');title('theta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,5);topoplot(alpha_L_H_L_corr,channels,'nosedir','+X');title('alpha-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,7);topoplot(beta_L_H_L_corr,channels,'nosedir','+X');title('beta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,9);topoplot(gamma_L_H_L_corr,channels,'nosedir','+X');title('gamma-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,2);topoplot(delta_R_H_R_corr,channels,'nosedir','+X');title('delta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,4);topoplot(theta_R_H_R_corr,channels,'nosedir','+X');title('theta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,6);topoplot(alpha_R_H_R_corr,channels,'nosedir','+X');title('alpha-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,8);topoplot(beta_R_H_R_corr,channels,'nosedir','+X');title('beta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,10);topoplot(gamma_R_H_R_corr,channels,'nosedir','+X');title('gamma-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+sgtitle('corr of sum-EEG (-500ms) and H-int')
+
+% Combine L and R in correlation;
 for c=1:32
     delta_LR_H_LR_corr(c)=corr(delta_LR_chan(:,c),H_all_LR);
     theta_LR_H_LR_corr(c)=corr(theta_LR_chan(:,c),H_all_LR);
@@ -2069,7 +2084,17 @@ for c=1:32
     beta_LR_H_LR_corr(c)=corr(beta_LR_chan(:,c),H_all_LR);
     gamma_LR_H_LR_corr(c)=corr(gamma_LR_chan(:,c),H_all_LR);
 end
-% 4 states
+% Combine L and R in topoplots (1x5)
+canvas(0.5,0.1);
+cmin=-0.7;cmax=0.7;
+subplot(1,5,1);topoplot(delta_LR_H_LR_corr,channels,'nosedir','+X');title('delta & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,2);topoplot(theta_LR_H_LR_corr,channels,'nosedir','+X');title('theta & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,3);topoplot(alpha_LR_H_LR_corr,channels,'nosedir','+X');title('alpha & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,4);topoplot(beta_LR_H_LR_corr,channels,'nosedir','+X');title('beta & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,5);topoplot(gamma_LR_H_LR_corr,channels,'nosedir','+X');title('gamma & H');colorbar;colormap('jet');clim([cmin cmax]);
+sgtitle('corr of sum-EEG (-500ms) and H-int')
+
+% Correlation in 4 states
 delta_LR_H_LR_4corr=zeros(4,32);
 theta_LR_H_LR_4corr=zeros(4,32);
 alpha_LR_H_LR_4corr=zeros(4,32);
@@ -2084,35 +2109,9 @@ for s=1:4
         gamma_LR_H_LR_4corr(s,c)=corr(gamma_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
     end
 end
-
-% Topoplots (5x1)
-canvas(0.2,0.5);
-cmin=-0.2;cmax=0.5;
-subplot(5,2,1);topoplot(delta_L_H_L_corr,channels,'nosedir','+X');title('delta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,3);topoplot(theta_L_H_L_corr,channels,'nosedir','+X');title('theta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,5);topoplot(alpha_L_H_L_corr,channels,'nosedir','+X');title('alpha-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,7);topoplot(beta_L_H_L_corr,channels,'nosedir','+X');title('beta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,9);topoplot(gamma_L_H_L_corr,channels,'nosedir','+X');title('gamma-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,2);topoplot(delta_R_H_R_corr,channels,'nosedir','+X');title('delta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,4);topoplot(theta_R_H_R_corr,channels,'nosedir','+X');title('theta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,6);topoplot(alpha_R_H_R_corr,channels,'nosedir','+X');title('alpha-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,8);topoplot(beta_R_H_R_corr,channels,'nosedir','+X');title('beta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,10);topoplot(gamma_R_H_R_corr,channels,'nosedir','+X');title('gamma-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-sgtile('corr of EEG and interval_H')
-
-% Combine L and R in topoplots (1x5)
-canvas(0.5,0.1);
-cmin=-0.4;cmax=0.4;
-subplot(1,5,1);topoplot(delta_LR_H_LR_corr,channels,'nosedir','+X');title('delta & H');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,2);topoplot(theta_LR_H_LR_corr,channels,'nosedir','+X');title('theta & H');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,3);topoplot(alpha_LR_H_LR_corr,channels,'nosedir','+X');title('alpha & H');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,4);topoplot(beta_LR_H_LR_corr,channels,'nosedir','+X');title('beta & H');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,5);topoplot(gamma_LR_H_LR_corr,channels,'nosedir','+X');title('gamma & H');colorbar;colormap('jet');clim([cmin cmax]);
-sgtitle('corr of EEG and interval-H')
-
 % Combine L and R in 4 states(4x5)
-canvas(0.5,0.4);
-cmin=-0.4;cmax=0.4;
+canvas(0.5,0.6);
+cmin=-0.7;cmax=0.7;
 for s=1:4
     subplot(4,5,5*(s-1)+1);
     topoplot(delta_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
@@ -2135,8 +2134,150 @@ for s=1:4
     title([states4names{s} ': gamma & H'],'Color',condicolors(s,:));
     colorbar;colormap('jet');clim([cmin cmax]);
 end
-sgtitle('4states: Corr of EEG & H-int');
-%% PLOT 13-1 corr of H-EEG power and H-int all sessions & 4 states
+sgtitle('4states: Corr of sum-EEG (-500ms) and H-int')
+
+%% PLOT 13-1 corr of sum-EEG power (+ 500ms) and H-int all sessions
+zEEG500_LL; zEEG500_RR; % for all sessions from SECT 12
+delta_LL;theta_LL;alpha_LL;beta_LL;gamma_LL;
+delta_RR;theta_RR;alpha_RR;beta_RR;gamma_RR;
+% sum the band power in each channel in each block (8x12=96)
+delta_LL_sum=[];theta_LL_sum=[];alpha_LL_sum=[];beta_LL_sum=[];gamma_LL_sum=[];
+delta_RR_sum=[];theta_RR_sum=[];alpha_RR_sum=[];beta_RR_sum=[];gamma_RR_sum=[];
+for s=1:8
+    for b=1:12
+        delta_LL_sum(s,b,:)=sum([delta_LL{s,b}]);
+        theta_LL_sum(s,b,:)=sum([theta_LL{s,b}]);
+        alpha_LL_sum(s,b,:)=sum([alpha_LL{s,b}]);
+        beta_LL_sum(s,b,:)=sum([beta_LL{s,b}]);
+        gamma_LL_sum(s,b,:)=sum([gamma_LL{s,b}]);
+        delta_RR_sum(s,b,:)=sum([delta_RR{s,b}]);
+        theta_RR_sum(s,b,:)=sum([theta_RR{s,b}]);
+        alpha_RR_sum(s,b,:)=sum([alpha_RR{s,b}]);
+        beta_RR_sum(s,b,:)=sum([beta_RR{s,b}]);
+        gamma_RR_sum(s,b,:)=sum([gamma_RR{s,b}]);
+    end
+end
+% squeeze into 32 vectors for corr with H
+delta_LL_chan=[];theta_LL_chan=[];alpha_LL_chan=[];beta_LL_chan=[];gamma_LL_chan=[];
+delta_RR_chan=[];theta_RR_chan=[];alpha_RR_chan=[];beta_RR_chan=[];gamma_RR_chan=[];
+for c=1:32
+    delta_LL_chan(:,c)=reshape(delta_LL_sum(:,:,c)',[],1); % 96x32 (each element from one block in time sequence) 
+    theta_LL_chan(:,c)=reshape(theta_LL_sum(:,:,c)',[],1);
+    alpha_LL_chan(:,c)=reshape(alpha_LL_sum(:,:,c)',[],1);
+    beta_LL_chan(:,c)=reshape(beta_LL_sum(:,:,c)',[],1);
+    gamma_LL_chan(:,c)=reshape(gamma_LL_sum(:,:,c)',[],1);
+    delta_RR_chan(:,c)=reshape(delta_RR_sum(:,:,c)',[],1);
+    theta_RR_chan(:,c)=reshape(theta_RR_sum(:,:,c)',[],1);
+    alpha_RR_chan(:,c)=reshape(alpha_RR_sum(:,:,c)',[],1);
+    beta_RR_chan(:,c)=reshape(beta_RR_sum(:,:,c)',[],1);
+    gamma_RR_chan(:,c)=reshape(gamma_RR_sum(:,:,c)',[],1);
+end
+% Combine L and R
+delta_LLRR_chan=[delta_LL_chan;delta_RR_chan];
+theta_LLRR_chan=[theta_LL_chan;theta_RR_chan];
+alpha_LLRR_chan=[alpha_LL_chan;alpha_RR_chan];
+beta_LLRR_chan=[beta_LL_chan;beta_RR_chan];
+gamma_LLRR_chan=[gamma_LL_chan;gamma_RR_chan];
+
+% % Organize H_all for corr (same as in PLOT 13)
+% H_all; % (2x 8x12) for all sessions from SECT 10-1 
+% H_all_L=squeeze(H_all(1,:,:));
+% H_all_R=squeeze(H_all(2,:,:));
+% % squeeze into 1 vector from the 96 blocks for each subject, for corr with pow in each chan
+% H_all_L=reshape(H_all_L',[],1);% 96x1 (each element from one block in time sequence) 
+% H_all_R=reshape(H_all_R',[],1);
+% % Combine L and R
+% H_all_LR=[H_all_L;H_all_R];
+
+% Compute the correlation between sum-EEG pow and H-int
+for c=1:32
+    delta_LL_H_L_corr(c)=corr(delta_LL_chan(:,c),H_all_L);
+    theta_LL_H_L_corr(c)=corr(theta_LL_chan(:,c),H_all_L);
+    alpha_LL_H_L_corr(c)=corr(alpha_LL_chan(:,c),H_all_L);
+    beta_LL_H_L_corr(c)=corr(beta_LL_chan(:,c),H_all_L);
+    gamma_LL_H_L_corr(c)=corr(gamma_LL_chan(:,c),H_all_L);
+    delta_RR_H_R_corr(c)=corr(delta_RR_chan(:,c),H_all_R);
+    theta_RR_H_R_corr(c)=corr(theta_RR_chan(:,c),H_all_R);
+    alpha_RR_H_R_corr(c)=corr(alpha_RR_chan(:,c),H_all_R);
+    beta_RR_H_R_corr(c)=corr(beta_RR_chan(:,c),H_all_R);
+    gamma_RR_H_R_corr(c)=corr(gamma_RR_chan(:,c),H_all_R);
+end
+% Topoplots (5x2)
+canvas(0.2,0.5);
+cmin=-0.7;cmax=0.7;
+subplot(5,2,1);topoplot(delta_LL_H_L_corr,channels,'nosedir','+X');title('delta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,3);topoplot(theta_LL_H_L_corr,channels,'nosedir','+X');title('theta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,5);topoplot(alpha_LL_H_L_corr,channels,'nosedir','+X');title('alpha-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,7);topoplot(beta_LL_H_L_corr,channels,'nosedir','+X');title('beta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,9);topoplot(gamma_LL_H_L_corr,channels,'nosedir','+X');title('gamma-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,2);topoplot(delta_RR_H_R_corr,channels,'nosedir','+X');title('delta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,4);topoplot(theta_RR_H_R_corr,channels,'nosedir','+X');title('theta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,6);topoplot(alpha_RR_H_R_corr,channels,'nosedir','+X');title('alpha-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,8);topoplot(beta_RR_H_R_corr,channels,'nosedir','+X');title('beta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,10);topoplot(gamma_RR_H_R_corr,channels,'nosedir','+X');title('gamma-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+sgtitle('corr of sum-EEG (+500ms) and H-int')
+
+% Combine L and R in correlation;
+for c=1:32
+    delta_LLRR_H_LR_corr(c)=corr(delta_LLRR_chan(:,c),H_all_LR);
+    theta_LLRR_H_LR_corr(c)=corr(theta_LLRR_chan(:,c),H_all_LR);
+    alpha_LLRR_H_LR_corr(c)=corr(alpha_LLRR_chan(:,c),H_all_LR);
+    beta_LLRR_H_LR_corr(c)=corr(beta_LLRR_chan(:,c),H_all_LR);
+    gamma_LLRR_H_LR_corr(c)=corr(gamma_LLRR_chan(:,c),H_all_LR);
+end
+% Combine L and R in topoplots (1x5)
+canvas(0.5,0.1);
+cmin=-0.7;cmax=0.7;
+subplot(1,5,1);topoplot(delta_LLRR_H_LR_corr,channels,'nosedir','+X');title('delta & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,2);topoplot(theta_LLRR_H_LR_corr,channels,'nosedir','+X');title('theta & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,3);topoplot(alpha_LLRR_H_LR_corr,channels,'nosedir','+X');title('alpha & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,4);topoplot(beta_LLRR_H_LR_corr,channels,'nosedir','+X');title('beta & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,5);topoplot(gamma_LLRR_H_LR_corr,channels,'nosedir','+X');title('gamma & H');colorbar;colormap('jet');clim([cmin cmax]);
+sgtitle('corr of sum-EEG (+500ms) and H-int')
+
+% Correlation in 4 states
+delta_LLRR_H_LR_4corr=zeros(4,32);
+theta_LLRR_H_LR_4corr=zeros(4,32);
+alpha_LLRR_H_LR_4corr=zeros(4,32);
+beta_LLRR_H_LR_4corr=zeros(4,32);
+gamma_LLRR_H_LR_4corr=zeros(4,32);
+for s=1:4
+    for c=1:32
+        delta_LLRR_H_LR_4corr(s,c)=corr(delta_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        theta_LLRR_H_LR_4corr(s,c)=corr(theta_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        alpha_LLRR_H_LR_4corr(s,c)=corr(alpha_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        beta_LLRR_H_LR_4corr(s,c)=corr(beta_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        gamma_LLRR_H_LR_4corr(s,c)=corr(gamma_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+    end
+end
+% Combine L and R in 4 states(4x5)
+canvas(0.5,0.6);
+cmin=-0.7;cmax=0.7;
+for s=1:4
+    subplot(4,5,5*(s-1)+1);
+    topoplot(delta_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    title([states4names{s} ': delta & H'],'Color',condicolors(s,:));
+    colorbar;colormap('jet');clim([cmin cmax]);
+    subplot(4,5,5*(s-1)+2);
+    topoplot(theta_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    title([states4names{s} ': theta & H'],'Color',condicolors(s,:));
+    colorbar;colormap('jet');clim([cmin cmax]);
+    subplot(4,5,5*(s-1)+3);
+    topoplot(alpha_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    title([states4names{s} ': alpha & H'],'Color',condicolors(s,:));
+    colorbar;colormap('jet');clim([cmin cmax]);
+    subplot(4,5,5*(s-1)+4);
+    topoplot(beta_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    title([states4names{s} ': beta & H'],'Color',condicolors(s,:));
+    colorbar;colormap('jet');clim([cmin cmax]);
+    subplot(4,5,5*(s-1)+5);
+    topoplot(gamma_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    title([states4names{s} ': gamma & H'],'Color',condicolors(s,:));
+    colorbar;colormap('jet');clim([cmin cmax]);
+end
+sgtitle('4states: Corr of sum-EEG (+500ms) and H-int')
+
+%% SECT 14 Compute H-EEG (- 500ms) all sessions & 4 states
 % H derived from EEG power
 delta_L;theta_L;alpha_L;beta_L;gamma_L;
 delta_R;theta_R;alpha_R;beta_R;gamma_R;
@@ -2193,7 +2334,7 @@ subplot(1,5,2);topoplot(mean(H_theta_LR_chan),channels,'nosedir','+X');title('H-
 subplot(1,5,3);topoplot(mean(H_alpha_LR_chan),channels,'nosedir','+X');title('H-alpha');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,4);topoplot(mean(H_beta_LR_chan),channels,'nosedir','+X');title('H-beta');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,5);topoplot(mean(H_gamma_LR_chan),channels,'nosedir','+X');title('H-gamma');colorbar;colormap('jet');clim([cmin cmax]);
-sgtitle('mean H-EEG values')
+sgtitle('mean H-EEG (- 500ms)')
 % only H-EEG of beta and gamma show complexity (H>0.5)
 
 % check how many H-EEG > 0.5 according to 4 states (showing complexity)
@@ -2217,10 +2358,94 @@ subplot(4,5,(c-1)*5+5);
 topoplot(mean(H_gamma_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
 title(['H-gamma ' states4names{c}]);colorbar;colormap('jet');clim([cmin cmax]);
 end
-sgtitle('mean H-EEG values for each condition');
+sgtitle('mean H-EEG (- 500ms) for each condition');
 % only H-EEG of beta and gamma show complexity (H>0.5)
 
+%% SECT 14 Compute H-EEG (+ 500ms) all sessions & 4 states
+% H derived from EEG power
+delta_LL;theta_LL;alpha_LL;beta_LL;gamma_LL;
+delta_RR;theta_RR;alpha_RR;beta_RR;gamma_RR;
+H_delta_LL=[];H_theat_LL=[];H_alpha_LL=[];H_beta_LL=[];H_gamma_LL=[];
+H_delta_RR=[];H_theat_RR=[];H_alpha_RR=[];H_beta_RR=[];H_gamma_RR=[];
+for s=1:8
+    for b=1:12
+        for c=1:32
+            [~,H_delta_LL(s,b,c)]=DFA_main(delta_LL{s,b}(:,c));
+            [~,H_theta_LL(s,b,c)]=DFA_main(theta_LL{s,b}(:,c));
+            [~,H_alpha_LL(s,b,c)]=DFA_main(alpha_LL{s,b}(:,c));
+            [~,H_beta_LL(s,b,c)]=DFA_main(beta_LL{s,b}(:,c));
+            [~,H_gamma_LL(s,b,c)]=DFA_main(gamma_LL{s,b}(:,c));
+            [~,H_delta_RR(s,b,c)]=DFA_main(delta_RR{s,b}(:,c));
+            [~,H_theta_RR(s,b,c)]=DFA_main(theta_RR{s,b}(:,c));
+            [~,H_alpha_RR(s,b,c)]=DFA_main(alpha_RR{s,b}(:,c));
+            [~,H_beta_RR(s,b,c)]=DFA_main(beta_RR{s,b}(:,c));
+            [~,H_gamma_RR(s,b,c)]=DFA_main(gamma_RR{s,b}(:,c)); 
+        end
+    end
+end
+% squeeze into 32 vectors for corr with H
+H_delta_LL_chan=[];H_theat_LL_chan=[];H_alpha_LL_chan=[];H_beta_LL_chan=[];H_gamma_LL_chan=[];
+H_delta_RR_chan=[];H_theat_RR_chan=[];H_alpha_RR_chan=[];H_beta_RR_chan=[];H_gamma_RR_chan=[];
+for c=1:32
+    H_delta_LL_chan(:,c) = reshape(H_delta_LL(:,:,c)',[],1);
+    H_theta_LL_chan(:,c)  = reshape(H_theta_LL(:,:,c)',[],1);
+    H_alpha_LL_chan(:,c)  = reshape(H_alpha_LL(:,:,c)',[],1);
+    H_beta_LL_chan(:,c)   = reshape(H_beta_LL(:,:,c)',[],1);
+    H_gamma_LL_chan(:,c)  = reshape(H_gamma_LL(:,:,c)',[],1);
+    H_delta_RR_chan(:,c)  = reshape(H_delta_RR(:,:,c)',[],1);
+    H_theta_RR_chan(:,c)  = reshape(H_theta_RR(:,:,c)',[],1);
+    H_alpha_RR_chan(:,c)  = reshape(H_alpha_RR(:,:,c)',[],1);
+    H_beta_RR_chan(:,c)   = reshape(H_beta_RR(:,:,c)',[],1);
+    H_gamma_RR_chan(:,c)   = reshape(H_gamma_RR(:,:,c)',[],1);
+end
+% combine L and R
+H_delta_LLRR_chan=[H_delta_LL_chan;H_delta_RR_chan];
+H_theta_LLRR_chan=[H_theta_LL_chan;H_theta_RR_chan];
+H_alpha_LLRR_chan=[H_alpha_LL_chan;H_alpha_RR_chan];
+H_beta_LLRR_chan=[H_beta_LL_chan;H_beta_RR_chan];
+H_gamma_LLRR_chan=[H_gamma_LL_chan;H_gamma_RR_chan];
 
+% check how many H-EEG > 0.5 (showing complexity)
+% mean(H_delta_LR_chan)
+% mean(H_theta_LR_chan)
+% mean(H_alpha_LR_chan)
+% mean(H_beta_LR_chan)
+% mean(H_gamma_LR_chan)
+canvas(0.5,0.2);
+cmin=0.5;cmax=1;
+subplot(1,5,1);topoplot(mean(H_delta_LR_chan),channels,'nosedir','+X');title('H-delta');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,2);topoplot(mean(H_theta_LR_chan),channels,'nosedir','+X');title('H-theta');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,3);topoplot(mean(H_alpha_LR_chan),channels,'nosedir','+X');title('H-alpha');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,4);topoplot(mean(H_beta_LR_chan),channels,'nosedir','+X');title('H-beta');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,5);topoplot(mean(H_gamma_LR_chan),channels,'nosedir','+X');title('H-gamma');colorbar;colormap('jet');clim([cmin cmax]);
+sgtitle('mean H-EEG (- 500ms)')
+% only H-EEG of beta and gamma show complexity (H>0.5)
+
+% check how many H-EEG > 0.5 according to 4 states (showing complexity)
+% plot in 4 states
+canvas(0.5,0.5);
+cmin=0.5;cmax=1;
+for c=1:4
+subplot(4,5,(c-1)*5+1);
+topoplot(mean(H_delta_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+title(['H-delta ' states4names{c}]);colorbar;colormap('jet');clim([cmin cmax]);
+subplot(4,5,(c-1)*5+2);
+topoplot(mean(H_theta_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+title(['H-theta ' states4names{c}]);colorbar;colormap('jet');clim([cmin cmax]);
+subplot(4,5,(c-1)*5+3);
+topoplot(mean(H_alpha_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+title(['H-alpha ' states4names{c}]);colorbar;colormap('jet');clim([cmin cmax]);
+subplot(4,5,(c-1)*5+4);
+topoplot(mean(H_beta_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+title(['H-beta ' states4names{c}]);colorbar;colormap('jet');clim([cmin cmax]);
+subplot(4,5,(c-1)*5+5);
+topoplot(mean(H_gamma_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+title(['H-gamma ' states4names{c}]);colorbar;colormap('jet');clim([cmin cmax]);
+end
+sgtitle('mean H-EEG (- 500ms) for each condition');
+% only H-EEG of beta and gamma show complexity (H>0.5)
+
+%% PLOT 15 corr of H-EEG (- 500ms) and H-intall sessions & 4 states
 % Do the correlation between H-pow and H-interval
 % Combine L and R for correlation;
 for c=1:32
@@ -2246,9 +2471,7 @@ subplot(1,5,5);topoplot(H_gamma_LR_H_LR_corr,channels,'nosedir','+X');
 title('H-gamma & H-int');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle('corr of H-EEG and H-interval')
 
-
-
-%% PLOT 14 PLS regression
+%% PLOT 16 PLS regression
 % % previously in sync.m
 % open sync.m
 % open syn_tryout.m
