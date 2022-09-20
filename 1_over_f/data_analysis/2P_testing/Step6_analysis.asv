@@ -1749,11 +1749,11 @@ H_Rall=squeeze(H_all(2,:,:));
 H_Rall=reshape(H_Rall',[],1);
 Inds4(:,c);
 uncoupleInd(1:24);
-leadingInd(1:24);
-followingInd(1:24);
+leadingInd(1:24); % L
+followingInd(1:24); % L
 mutualInd(1:24);
 
-canvas(0.3,0.1);
+canvas(0.6,0.2);
 % canvas(0.2,0.1);
 % subplot(1,2,1);
 subplot(1,3,1);
@@ -1765,26 +1765,25 @@ A=polyfit(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
 hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
+xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 subplot(1,3,2);
-plot(H_Lall(leadingInd(1:24)),H_Rall(leadingInd(1:24)),'ko');
+plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))], [H_Rall(leadingInd(1:24)); H_Rall(followingInd(1:24))],'ko');
 xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
-title('leading');
+title('uni-directional coupling (leading or following)');
 A=[];Alpha1=[];FitValues=[];
-A=polyfit([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))], [H_Rall(leadingInd(1:24)) ],1);
+A=polyfit([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))], [H_Rall(leadingInd(1:24)); H_Rall(followingInd(1:24))],1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(leadingInd(1:24)));
-hold on; plot(H_Lall(leadingInd(1:24)),FitValues,'k-');
-
-
-plot(H_Lall(followingInd(1:24)),H_Rall(followingInd(1:24)),'ko');
-xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
-title('following');
-A=[];Alpha1=[];FitValues=[];
-A=polyfit(H_Lall(followingInd(1:24)),H_Rall(followingInd(1:24)),1);
-Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(followingInd(1:24)));
-hold on; plot(H_Lall(followingInd(1:24)),FitValues,'k-');
-
+FitValues=polyval(A,[H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))]);
+hold on; plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))],FitValues,'k-');
+xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+% plot(H_Lall(followingInd(1:24)),H_Rall(followingInd(1:24)),'ko');
+% xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+% title('following');
+% A=[];Alpha1=[];FitValues=[];
+% A=polyfit(H_Lall(followingInd(1:24)),H_Rall(followingInd(1:24)),1);
+% Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+% FitValues=polyval(A,H_Lall(followingInd(1:24)));
+% hold on; plot(H_Lall(followingInd(1:24)),FitValues,'k-');
 % subplot(1,2,2);
 subplot(1,3,3);
 plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
@@ -1795,6 +1794,7 @@ A=polyfit(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),1);
 Alpha1=A(1); 
 FitValues=polyval(A,H_Lall(mutualInd(1:24)));
 hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
+xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 %% PLOT 11 Xcorr slinding window of 20 intervals (based on the matched invervals)
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];

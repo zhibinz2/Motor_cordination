@@ -28,7 +28,7 @@ save(filename_variables,'condiSeq'); % for syncopation
 save(filename_variables,'conditionNames','ifi','seed','-append');
 save(filename_variables,'sessionTypes','session','-append');
 
-% organize into data structure ***
+% organize into data structure *** (skip)
 data=[]; % first dimension has to be 1 in order to explore field names in GUI
 % data.condiSeq=allPerm;
 % data.conditionNames=conditionNames; 
@@ -53,7 +53,7 @@ if srL==srR; sr=srL; end;
 save(filename_variables,'sr','timeL','TRIGGERindL','srL','channels_infoL','labelsL',...
     'timeR','TRIGGERindR','srR','channels_infoR','labelsR','-append');
 
-% organize into data structure ***
+% organize into data structure ***(skip)
 % data=[];
 data(1,1).sr=srL; data(1,2).sr=srR;
 % data(2,1).samples=samplesL; data(2,2).samples=samplesR;
@@ -71,7 +71,7 @@ mixedsigL;mixedsigR;
 % add to mat file ***
 save(filename_variables,'labels','chaninfo','-append');
 
-% organize into data structure ***
+% organize into data structure ***(skip)
 for i=1:2
     data(1,i).labels=labels; 
     data(1,i).chaninfo=chaninfo; 
@@ -108,7 +108,7 @@ mixedsigR=mixedsigR';
 SegIndL;
 SegIndR;
 
-% organize into data structure ***
+% organize into data structure *** 
 % EEGtemp1=[];EEGtemp2=[];
 for i=1:12
     data(1).EEG{i}=mixedsigL(SegIndL(2*i-1):SegIndL(2*i),:); % in cells

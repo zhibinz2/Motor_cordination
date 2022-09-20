@@ -1749,8 +1749,8 @@ H_Rall=squeeze(H_all(2,:,:));
 H_Rall=reshape(H_Rall',[],1);
 Inds4(:,c);
 uncoupleInd(1:24);
-leadingInd(1:24);
-followingInd(1:24);
+leadingInd(1:24); % L
+followingInd(1:24); % L
 mutualInd(1:24);
 
 canvas(0.6,0.2);
