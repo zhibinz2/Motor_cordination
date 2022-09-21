@@ -1784,9 +1784,13 @@ H_Rall=reshape(H_Rall',[],1);
 %% PLOT 10-2 H matching as in Marmelat 2012 (matched int)
 % H-int matching for L and R as in Marmelat 2012
 %**********************
+synchind=[1:3 7:9 13:15 19:21];syncoind=[4:6 10:12 16:18 22:24];
 canvas(0.2,0.25);
 subplot(1,2,1);
-plot(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),'ko');
+plot(H_Lall(uncoupleInd(synchind)),H_Rall(uncoupleInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(uncoupleInd(syncoind)),H_Rall(uncoupleInd(syncoind)),'o','color',pink);
+legend('synch','synco')
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uncouple');
 A=[];Alpha1=[];FitValues=[];
@@ -1875,7 +1879,7 @@ hold on; plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))],FitValues,'
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 subplot(1,3,3);
 plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
-xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('stroung coupling'); subtitle('(mutual)');
 A=[];Alpha1=[];FitValues=[];
 A=polyfit(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),1);

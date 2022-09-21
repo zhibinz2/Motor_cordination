@@ -1783,10 +1783,13 @@ H_Rall=reshape(H_Rall',[],1);
 
 %% PLOT 10-2 H matching as in Marmelat 2012 (matched int)
 % H-int matching for L and R as in Marmelat 2012
-%**********************
+synchind=[1:3 7:9 13:15 19:21];syncoind=[4:6 10:12 16:18 22:24];
+%********************** 2 subplots
 canvas(0.2,0.25);
-subplot(1,2,1);
-plot(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),'ko');
+subplot(1,2,1); %##############
+plot(H_Lall(uncoupleInd(synchind)),H_Rall(uncoupleInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(uncoupleInd(syncoind)),H_Rall(uncoupleInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uncouple');
 A=[];Alpha1=[];FitValues=[];
@@ -1796,8 +1799,11 @@ FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
 hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 grid on;
-subplot(1,2,2);
-plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
+legend('synch','synco','','');
+subplot(1,2,2); %##############
+plot(H_Lall(mutualInd(synchind)),H_Rall(mutualInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(mutualInd(syncoind)),H_Rall(mutualInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('mutual');
 A=[];Alpha1=[];FitValues=[];
@@ -1807,11 +1813,14 @@ FitValues=polyval(A,H_Lall(mutualInd(1:24)));
 hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 grid on;
+legend('synch','synco','','');
 
-%**********************
+%********************** 4 subplots
 canvas(0.2,0.5);
-subplot(2,2,1);
-plot(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),'ko');
+subplot(2,2,1); %##############
+plot(H_Lall(uncoupleInd(synchind)),H_Rall(uncoupleInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(uncoupleInd(syncoind)),H_Rall(uncoupleInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uncouple');
 A=[];Alpha1=[];FitValues=[];
@@ -1820,8 +1829,12 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
 hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-subplot(2,2,2);
-plot(H_Lall(leadingInd(1:24)),H_Rall(leadingInd(1:24)),'ko');
+legend('synch','synco','','');
+grid on;
+subplot(2,2,2); %##############
+plot(H_Lall(leadingInd(synchind)),H_Rall(leadingInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(leadingInd(syncoind)),H_Rall(leadingInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('L-leading');
 A=[];Alpha1=[];FitValues=[];
@@ -1830,8 +1843,12 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,H_Lall(leadingInd(1:24)));
 hold on; plot(H_Lall(leadingInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-subplot(2,2,3);
-plot(H_Lall(followingInd(1:24)),H_Rall(followingInd(1:24)),'ko');
+legend('synch','synco','','');
+grid on;
+subplot(2,2,3); %##############
+plot(H_Lall(followingInd(synchind)),H_Rall(followingInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(followingInd(syncoind)),H_Rall(followingInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('R-leading');
 A=[];Alpha1=[];FitValues=[];
@@ -1840,8 +1857,12 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,H_Lall(followingInd(1:24)));
 hold on; plot(H_Lall(followingInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-subplot(2,2,4);
-plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
+legend('synch','synco','','');
+grid on;
+subplot(2,2,4); %##############
+plot(H_Lall(mutualInd(synchind)),H_Rall(mutualInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(mutualInd(syncoind)),H_Rall(mutualInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('mutual');
 A=[];Alpha1=[];FitValues=[];
@@ -1850,11 +1871,15 @@ Alpha1=A(1);
 FitValues=polyval(A,H_Lall(mutualInd(1:24)));
 hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+legend('synch','synco','','');
+grid on;
 
-%**********************
+%********************** 3 subplots
 canvas(0.25,0.2);
-subplot(1,3,1);
-plot(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),'ko');
+subplot(1,3,1); %##############
+plot(H_Lall(uncoupleInd(synchind)),H_Rall(uncoupleInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(uncoupleInd(syncoind)),H_Rall(uncoupleInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uncoupling');subtitle('(uncouple)')
 A=[];Alpha1=[];FitValues=[];
@@ -1863,8 +1888,13 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
 hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-subplot(1,3,2);
-plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))], [H_Rall(leadingInd(1:24)); H_Rall(followingInd(1:24))],'ko');
+legend('synch','synco','','');
+grid on;
+subplot(1,3,2); %##############
+plot(H_Lall(leadingInd(synchind)),H_Rall(leadingInd(synchind)),'o','color',darkgreen); hold on;
+plot(H_Lall(leadingInd(syncoind)),H_Rall(leadingInd(syncoind)),'o','color',pink);
+plot(H_Lall(followingInd(synchind)),H_Rall(followingInd(synchind)),'o','color',darkgreen);
+plot(H_Lall(followingInd(syncoind)),H_Rall(followingInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uni-directional coupling'); subtitle('(leading or following)');
 A=[];Alpha1=[];FitValues=[];
@@ -1873,8 +1903,12 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,[H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))]);
 hold on; plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))],FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-subplot(1,3,3);
-plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
+legend('synch','synco','','','','');
+grid on;
+subplot(1,3,3); %##############
+plot(H_Lall(mutualInd(synchind)),H_Rall(mutualInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(mutualInd(syncoind)),H_Rall(mutualInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('stroung coupling'); subtitle('(mutual)');
 A=[];Alpha1=[];FitValues=[];
@@ -1883,6 +1917,8 @@ Alpha1=A(1);
 FitValues=polyval(A,H_Lall(mutualInd(1:24)));
 hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+legend('synch','synco','','');
+grid on;
 
 
 %% PLOT 11 Xcorr with slinding window of 20 intervals (matched int)
