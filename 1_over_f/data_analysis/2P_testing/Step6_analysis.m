@@ -1619,12 +1619,40 @@ Table_XcorrPeakLag=table(Trials, XcorrPeakLag_synch1,XcorrPeakLag_synco1,...
     XcorrPeakLag_synch3, XcorrPeakLag_synco3,...
     XcorrPeakLag_synch4, XcorrPeakLag_synco4);
 
-% PLOT (lag of peak)
+% organize for PLOT (lag of peak)
 % average all trials of the same condition 
-XcorrPeakLag_uncouple_synch = reshape(XcorrPeakLag([1:3],[1:2:7]),1,[])  % uncouple,synch
-XcorrPeakLag_Llead_synch    = reshape(XcorrPeakLag([4:6],[1:2:7]),1,[])  % L lead,synch
-XcorrPeakLag_Rlead_synch    = reshape(XcorrPeakLag([7:9],[1:2:7]),1,[])  % R lead,synch
-XcorrPeakLag_mutual_synch   = reshape(XcorrPeakLag([10:12],[1:2:7]),1,[])% mutual,synch
+% synchronization
+XcorrPeakLag_uncouple_synch = reshape(XcorrPeakLag([1:3],[1:2:7]),1,[])'  % uncouple,synch
+XcorrPeakLag_Llead_synch    = reshape(XcorrPeakLag([4:6],[1:2:7]),1,[])'  % L lead,synch
+XcorrPeakLag_Rlead_synch    = reshape(XcorrPeakLag([7:9],[1:2:7]),1,[])'  % R lead,synch
+XcorrPeakLag_mutual_synch   = reshape(XcorrPeakLag([10:12],[1:2:7]),1,[])'% mutual,synch
+% Uncouple=XcorrPeakLag_uncouple_synch;
+% Llead=XcorrPeakLag_Llead_synch;   
+% Rlead=XcorrPeakLag_Rlead_synch;   
+% Mutual=XcorrPeakLag_mutual_synch;  
+% print on a table for JASP 
+Table_XcorrPeakLagSynch_4condi=table(...
+    XcorrPeakLag_uncouple_synch,XcorrPeakLag_Llead_synch,...
+    XcorrPeakLag_Rlead_synch,XcorrPeakLag_mutual_synch);
+% for matlab
+Table_XcorrPeakLagSynch_4condi=[
+    XcorrPeakLag_uncouple_synch XcorrPeakLag_Llead_synch ...
+    XcorrPeakLag_Rlead_synch XcorrPeakLag_mutual_synch];
+[p,tbl,stats] = anova1(Table_XcorrPeakLagSynch_4condi); % ANOVA (work)
+% for jasp
+Table_XcorrPeakLagSynch_4condi=table(...
+    [XcorrPeakLag_uncouple_synch;XcorrPeakLag_Llead_synch;...
+    XcorrPeakLag_Rlead_synch;XcorrPeakLag_mutual_synch],...
+    [ones(12,1);2*ones(12,1);3*ones(12,1);4*ones(12,1)]);
+% T=table(...
+%     Uncouple,Llead,...
+%     Rlead,Mutual);
+% save for JASP
+cd /usr/local/MATLAB/R2022a/toolbox/matlab/strfun/
+writetable(Table_XcorrPeakLagSynch_4condi,'/ssd/zhibin/1overf/all_session20220713_0816/Table_XcorrPeakLagSynch_4condi.csv');
+cd /ssd/zhibin/1overf/all_session20220713_0816
+
+% get mean and std for plot
 XcorrPeakLag_LR_synch_mean = [mean(XcorrPeakLag_uncouple_synch);...
     mean(XcorrPeakLag_Llead_synch);...
     mean(XcorrPeakLag_Rlead_synch);...
@@ -1634,10 +1662,27 @@ XcorrPeakLag_LR_synch_std = [std(XcorrPeakLag_uncouple_synch);...
     std(XcorrPeakLag_Rlead_synch);...
     std(XcorrPeakLag_mutual_synch)];
 
-XcorrPeakLag_uncouple_synco = reshape(XcorrPeakLag([1:3],[2:2:8]),1,[])  % R,uncouple,synco
-XcorrPeakLag_Llead_synco    = reshape(XcorrPeakLag([4:6],[2:2:8]),1,[])  % R,L lead,synco
-XcorrPeakLag_Rlead_synco    = reshape(XcorrPeakLag([7:9],[2:2:8]),1,[])  % R,R lead,synco
-XcorrPeakLag_mutual_synco   = reshape(XcorrPeakLag([10:12],[2:2:8]),1,[])% R, mutual,synco
+% syncopation
+XcorrPeakLag_uncouple_synco = reshape(XcorrPeakLag([1:3],[2:2:8]),1,[])';   % R,uncouple,synco
+XcorrPeakLag_Llead_synco    = reshape(XcorrPeakLag([4:6],[2:2:8]),1,[])';   % R,L lead,synco
+XcorrPeakLag_Rlead_synco    = reshape(XcorrPeakLag([7:9],[2:2:8]),1,[])';   % R,R lead,synco
+XcorrPeakLag_mutual_synco   = reshape(XcorrPeakLag([10:12],[2:2:8]),1,[])'; % R, mutual,synco
+% print on a table for JASP 
+Table_XcorrPeakLagSynco_4condi=table(...
+    XcorrPeakLag_uncouple_synco,XcorrPeakLag_Llead_synco,...
+    XcorrPeakLag_Rlead_synco,XcorrPeakLag_mutual_synco);
+% for jasp
+Table_XcorrPeakLagSynco_4condi=table(...
+    [XcorrPeakLag_uncouple_synco;XcorrPeakLag_Llead_synco;...
+    XcorrPeakLag_Rlead_synco;XcorrPeakLag_mutual_synco],...
+    [ones(12,1);2*ones(12,1);3*ones(12,1);4*ones(12,1)]);
+% save for JASP
+cd /usr/local/MATLAB/R2022a/toolbox/matlab/strfun/
+writetable(Table_XcorrPeakLagSynco_4condi,'/ssd/zhibin/1overf/all_session20220713_0816/Table_XcorrPeakLagSynco_4condi.csv');
+cd /ssd/zhibin/1overf/all_session20220713_0816
+
+
+% get mean and std for plot
 XcorrPeakLag_LR_synco_mean = [mean(XcorrPeakLag_uncouple_synco);...
     mean(XcorrPeakLag_Llead_synco);...
     mean(XcorrPeakLag_Rlead_synco);...
@@ -1663,12 +1708,18 @@ ylim([-10 10]);yline(0,'color',red);set(gca, 'YDir','reverse')
 xlim([0 5]);grid on; grid minor;
 title('average lag of xcorr peak in all synco sessions (-lag: L leading; +lag: R leading)')
 
-% PLOT (lag of peak)
+% organize for PLOT (lag of peak)
 % average all trials of the same condition 
-XcorrPeak_uncouple_synch = reshape(XcorrPeak([1:3],[1:2:7]),1,[])  % uncouple,synch
-XcorrPeak_Llead_synch    = reshape(XcorrPeak([4:6],[1:2:7]),1,[])  % L lead,synch
-XcorrPeak_Rlead_synch    = reshape(XcorrPeak([7:9],[1:2:7]),1,[])  % R lead,synch
-XcorrPeak_mutual_synch   = reshape(XcorrPeak([10:12],[1:2:7]),1,[])% mutual,synch
+XcorrPeak_uncouple_synch = reshape(XcorrPeak([1:3],[1:2:7]),1,[])'  % uncouple,synch
+XcorrPeak_Llead_synch    = reshape(XcorrPeak([4:6],[1:2:7]),1,[])'  % L lead,synch
+XcorrPeak_Rlead_synch    = reshape(XcorrPeak([7:9],[1:2:7]),1,[])'  % R lead,synch
+XcorrPeak_mutual_synch   = reshape(XcorrPeak([10:12],[1:2:7]),1,[])'% mutual,synch
+% print on a table for JASP 
+Table_XcorrPeakSynch_4condi=table(...
+    XcorrPeak_uncouple_synch,XcorrPeak_Llead_synch,...
+    XcorrPeak_Rlead_synch,XcorrPeak_mutual_synch);
+
+% get mean and std for plot
 XcorrPeak_LR_synch_mean = [mean(XcorrPeak_uncouple_synch);...
     mean(XcorrPeak_Llead_synch);...
     mean(XcorrPeak_Rlead_synch);...
@@ -1678,10 +1729,26 @@ XcorrPeak_LR_synch_std = [std(XcorrPeak_uncouple_synch);...
     std(XcorrPeak_Rlead_synch);...
     std(XcorrPeak_mutual_synch)];
 
-XcorrPeak_uncouple_synco = reshape(XcorrPeak([1:3],[2:2:8]),1,[])  % R,uncouple,synco
-XcorrPeak_Llead_synco    = reshape(XcorrPeak([4:6],[2:2:8]),1,[])  % R,L lead,synco
-XcorrPeak_Rlead_synco    = reshape(XcorrPeak([7:9],[2:2:8]),1,[])  % R,R lead,synco
-XcorrPeak_mutual_synco   = reshape(XcorrPeak([10:12],[2:2:8]),1,[])% R, mutual,synco
+XcorrPeak_uncouple_synco = reshape(XcorrPeak([1:3],[2:2:8]),1,[])'  % R,uncouple,synco
+XcorrPeak_Llead_synco    = reshape(XcorrPeak([4:6],[2:2:8]),1,[])'  % R,L lead,synco
+XcorrPeak_Rlead_synco    = reshape(XcorrPeak([7:9],[2:2:8]),1,[])'  % R,R lead,synco
+XcorrPeak_mutual_synco   = reshape(XcorrPeak([10:12],[2:2:8]),1,[])'% R, mutual,synco
+% print on a table for JASP 
+Table_XcorrPeakSynco_4condi=table(...
+    XcorrPeak_uncouple_synco,XcorrPeak_Llead_synco,...
+    XcorrPeak_Rlead_synco,XcorrPeak_mutual_synco);
+% for jasp
+Table_XcorrPeakSynco_4condi=table(...
+    [XcorrPeak_uncouple_synco;XcorrPeak_Llead_synco;...
+    XcorrPeak_Rlead_synco;XcorrPeak_mutual_synco],...
+    [ones(12,1);2*ones(12,1);3*ones(12,1);4*ones(12,1)]);
+% save for JASP
+cd /usr/local/MATLAB/R2022a/toolbox/matlab/strfun/
+writetable(Table_XcorrPeakSynco_4condi,'/ssd/zhibin/1overf/all_session20220713_0816/Table_XcorrPeakSynco_4condi.csv');
+cd /ssd/zhibin/1overf/all_session20220713_0816
+
+
+% get mean and std for plot
 XcorrPeak_LR_synco_mean = [mean(XcorrPeak_uncouple_synco);...
     mean(XcorrPeak_Llead_synco);...
     mean(XcorrPeak_Rlead_synco);...

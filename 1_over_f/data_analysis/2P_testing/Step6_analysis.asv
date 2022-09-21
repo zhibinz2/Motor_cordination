@@ -1619,12 +1619,40 @@ Table_XcorrPeakLag=table(Trials, XcorrPeakLag_synch1,XcorrPeakLag_synco1,...
     XcorrPeakLag_synch3, XcorrPeakLag_synco3,...
     XcorrPeakLag_synch4, XcorrPeakLag_synco4);
 
-% PLOT (lag of peak)
+% organize for PLOT (lag of peak)
 % average all trials of the same condition 
-XcorrPeakLag_uncouple_synch = reshape(XcorrPeakLag([1:3],[1:2:7]),1,[])  % uncouple,synch
-XcorrPeakLag_Llead_synch    = reshape(XcorrPeakLag([4:6],[1:2:7]),1,[])  % L lead,synch
-XcorrPeakLag_Rlead_synch    = reshape(XcorrPeakLag([7:9],[1:2:7]),1,[])  % R lead,synch
-XcorrPeakLag_mutual_synch   = reshape(XcorrPeakLag([10:12],[1:2:7]),1,[])% mutual,synch
+% synchronization
+XcorrPeakLag_uncouple_synch = reshape(XcorrPeakLag([1:3],[1:2:7]),1,[])'  % uncouple,synch
+XcorrPeakLag_Llead_synch    = reshape(XcorrPeakLag([4:6],[1:2:7]),1,[])'  % L lead,synch
+XcorrPeakLag_Rlead_synch    = reshape(XcorrPeakLag([7:9],[1:2:7]),1,[])'  % R lead,synch
+XcorrPeakLag_mutual_synch   = reshape(XcorrPeakLag([10:12],[1:2:7]),1,[])'% mutual,synch
+% Uncouple=XcorrPeakLag_uncouple_synch;
+% Llead=XcorrPeakLag_Llead_synch;   
+% Rlead=XcorrPeakLag_Rlead_synch;   
+% Mutual=XcorrPeakLag_mutual_synch;  
+% print on a table for JASP 
+Table_XcorrPeakLagSynch_4condi=table(...
+    XcorrPeakLag_uncouple_synch,XcorrPeakLag_Llead_synch,...
+    XcorrPeakLag_Rlead_synch,XcorrPeakLag_mutual_synch);
+% for matlab
+Table_XcorrPeakLagSynch_4condi=[
+    XcorrPeakLag_uncouple_synch XcorrPeakLag_Llead_synch ...
+    XcorrPeakLag_Rlead_synch XcorrPeakLag_mutual_synch];
+[p,tbl,stats] = anova1(Table_XcorrPeakLagSynch_4condi); % ANOVA (work)
+% for jasp
+Table_XcorrPeakLagSynch_4condi=table(...
+    [XcorrPeakLag_uncouple_synch;XcorrPeakLag_Llead_synch;...
+    XcorrPeakLag_Rlead_synch;XcorrPeakLag_mutual_synch],...
+    [ones(12,1);2*ones(12,1);3*ones(12,1);4*ones(12,1)]);
+% T=table(...
+%     Uncouple,Llead,...
+%     Rlead,Mutual);
+% save for JASP
+cd /usr/local/MATLAB/R2022a/toolbox/matlab/strfun/
+writetable(Table_XcorrPeakLagSynch_4condi,'/ssd/zhibin/1overf/all_session20220713_0816/Table_XcorrPeakLagSynch_4condi.csv');
+cd /ssd/zhibin/1overf/all_session20220713_0816
+
+% get mean and std for plot
 XcorrPeakLag_LR_synch_mean = [mean(XcorrPeakLag_uncouple_synch);...
     mean(XcorrPeakLag_Llead_synch);...
     mean(XcorrPeakLag_Rlead_synch);...
@@ -1634,10 +1662,27 @@ XcorrPeakLag_LR_synch_std = [std(XcorrPeakLag_uncouple_synch);...
     std(XcorrPeakLag_Rlead_synch);...
     std(XcorrPeakLag_mutual_synch)];
 
-XcorrPeakLag_uncouple_synco = reshape(XcorrPeakLag([1:3],[2:2:8]),1,[])  % R,uncouple,synco
-XcorrPeakLag_Llead_synco    = reshape(XcorrPeakLag([4:6],[2:2:8]),1,[])  % R,L lead,synco
-XcorrPeakLag_Rlead_synco    = reshape(XcorrPeakLag([7:9],[2:2:8]),1,[])  % R,R lead,synco
-XcorrPeakLag_mutual_synco   = reshape(XcorrPeakLag([10:12],[2:2:8]),1,[])% R, mutual,synco
+% syncopation
+XcorrPeakLag_uncouple_synco = reshape(XcorrPeakLag([1:3],[2:2:8]),1,[])';   % R,uncouple,synco
+XcorrPeakLag_Llead_synco    = reshape(XcorrPeakLag([4:6],[2:2:8]),1,[])';   % R,L lead,synco
+XcorrPeakLag_Rlead_synco    = reshape(XcorrPeakLag([7:9],[2:2:8]),1,[])';   % R,R lead,synco
+XcorrPeakLag_mutual_synco   = reshape(XcorrPeakLag([10:12],[2:2:8]),1,[])'; % R, mutual,synco
+% print on a table for JASP 
+Table_XcorrPeakLagSynco_4condi=table(...
+    XcorrPeakLag_uncouple_synco,XcorrPeakLag_Llead_synco,...
+    XcorrPeakLag_Rlead_synco,XcorrPeakLag_mutual_synco);
+% for jasp
+Table_XcorrPeakLagSynco_4condi=table(...
+    [XcorrPeakLag_uncouple_synco;XcorrPeakLag_Llead_synco;...
+    XcorrPeakLag_Rlead_synco;XcorrPeakLag_mutual_synco],...
+    [ones(12,1);2*ones(12,1);3*ones(12,1);4*ones(12,1)]);
+% save for JASP
+cd /usr/local/MATLAB/R2022a/toolbox/matlab/strfun/
+writetable(Table_XcorrPeakLagSynco_4condi,'/ssd/zhibin/1overf/all_session20220713_0816/Table_XcorrPeakLagSynco_4condi.csv');
+cd /ssd/zhibin/1overf/all_session20220713_0816
+
+
+% get mean and std for plot
 XcorrPeakLag_LR_synco_mean = [mean(XcorrPeakLag_uncouple_synco);...
     mean(XcorrPeakLag_Llead_synco);...
     mean(XcorrPeakLag_Rlead_synco);...
@@ -1663,12 +1708,18 @@ ylim([-10 10]);yline(0,'color',red);set(gca, 'YDir','reverse')
 xlim([0 5]);grid on; grid minor;
 title('average lag of xcorr peak in all synco sessions (-lag: L leading; +lag: R leading)')
 
-% PLOT (lag of peak)
+% organize for PLOT (lag of peak)
 % average all trials of the same condition 
-XcorrPeak_uncouple_synch = reshape(XcorrPeak([1:3],[1:2:7]),1,[])  % uncouple,synch
-XcorrPeak_Llead_synch    = reshape(XcorrPeak([4:6],[1:2:7]),1,[])  % L lead,synch
-XcorrPeak_Rlead_synch    = reshape(XcorrPeak([7:9],[1:2:7]),1,[])  % R lead,synch
-XcorrPeak_mutual_synch   = reshape(XcorrPeak([10:12],[1:2:7]),1,[])% mutual,synch
+XcorrPeak_uncouple_synch = reshape(XcorrPeak([1:3],[1:2:7]),1,[])'  % uncouple,synch
+XcorrPeak_Llead_synch    = reshape(XcorrPeak([4:6],[1:2:7]),1,[])'  % L lead,synch
+XcorrPeak_Rlead_synch    = reshape(XcorrPeak([7:9],[1:2:7]),1,[])'  % R lead,synch
+XcorrPeak_mutual_synch   = reshape(XcorrPeak([10:12],[1:2:7]),1,[])'% mutual,synch
+% print on a table for JASP 
+Table_XcorrPeakSynch_4condi=table(...
+    XcorrPeak_uncouple_synch,XcorrPeak_Llead_synch,...
+    XcorrPeak_Rlead_synch,XcorrPeak_mutual_synch);
+
+% get mean and std for plot
 XcorrPeak_LR_synch_mean = [mean(XcorrPeak_uncouple_synch);...
     mean(XcorrPeak_Llead_synch);...
     mean(XcorrPeak_Rlead_synch);...
@@ -1678,10 +1729,17 @@ XcorrPeak_LR_synch_std = [std(XcorrPeak_uncouple_synch);...
     std(XcorrPeak_Rlead_synch);...
     std(XcorrPeak_mutual_synch)];
 
-XcorrPeak_uncouple_synco = reshape(XcorrPeak([1:3],[2:2:8]),1,[])  % R,uncouple,synco
-XcorrPeak_Llead_synco    = reshape(XcorrPeak([4:6],[2:2:8]),1,[])  % R,L lead,synco
-XcorrPeak_Rlead_synco    = reshape(XcorrPeak([7:9],[2:2:8]),1,[])  % R,R lead,synco
-XcorrPeak_mutual_synco   = reshape(XcorrPeak([10:12],[2:2:8]),1,[])% R, mutual,synco
+XcorrPeak_uncouple_synco = reshape(XcorrPeak([1:3],[2:2:8]),1,[])'  % R,uncouple,synco
+XcorrPeak_Llead_synco    = reshape(XcorrPeak([4:6],[2:2:8]),1,[])'  % R,L lead,synco
+XcorrPeak_Rlead_synco    = reshape(XcorrPeak([7:9],[2:2:8]),1,[])'  % R,R lead,synco
+XcorrPeak_mutual_synco   = reshape(XcorrPeak([10:12],[2:2:8]),1,[])'% R, mutual,synco
+% print on a table for JASP 
+Table_XcorrPeakSynco_4condi=table(...
+    XcorrPeak_uncouple_synco,XcorrPeak_Llead_synco,...
+    XcorrPeak_Rlead_synco,XcorrPeak_mutual_synco);
+
+
+% get mean and std for plot
 XcorrPeak_LR_synco_mean = [mean(XcorrPeak_uncouple_synco);...
     mean(XcorrPeak_Llead_synco);...
     mean(XcorrPeak_Rlead_synco);...
@@ -1783,14 +1841,13 @@ H_Rall=reshape(H_Rall',[],1);
 
 %% PLOT 10-2 H matching as in Marmelat 2012 (matched int)
 % H-int matching for L and R as in Marmelat 2012
-%**********************
 synchind=[1:3 7:9 13:15 19:21];syncoind=[4:6 10:12 16:18 22:24];
+%********************** 2 subplots
 canvas(0.2,0.25);
-subplot(1,2,1);
+subplot(1,2,1); %##############
 plot(H_Lall(uncoupleInd(synchind)),H_Rall(uncoupleInd(synchind)),'o','color',darkgreen);
 hold on;
 plot(H_Lall(uncoupleInd(syncoind)),H_Rall(uncoupleInd(syncoind)),'o','color',pink);
-legend('synch','synco')
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uncouple');
 A=[];Alpha1=[];FitValues=[];
@@ -1800,8 +1857,11 @@ FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
 hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 grid on;
-subplot(1,2,2);
-plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
+legend('synch','synco','','');
+subplot(1,2,2); %##############
+plot(H_Lall(mutualInd(synchind)),H_Rall(mutualInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(mutualInd(syncoind)),H_Rall(mutualInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('mutual');
 A=[];Alpha1=[];FitValues=[];
@@ -1811,11 +1871,14 @@ FitValues=polyval(A,H_Lall(mutualInd(1:24)));
 hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 grid on;
+legend('synch','synco','','');
 
-%**********************
+%********************** 4 subplots
 canvas(0.2,0.5);
-subplot(2,2,1);
-plot(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),'ko');
+subplot(2,2,1); %##############
+plot(H_Lall(uncoupleInd(synchind)),H_Rall(uncoupleInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(uncoupleInd(syncoind)),H_Rall(uncoupleInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uncouple');
 A=[];Alpha1=[];FitValues=[];
@@ -1824,8 +1887,12 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
 hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-subplot(2,2,2);
-plot(H_Lall(leadingInd(1:24)),H_Rall(leadingInd(1:24)),'ko');
+legend('synch','synco','','');
+grid on;
+subplot(2,2,2); %##############
+plot(H_Lall(leadingInd(synchind)),H_Rall(leadingInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(leadingInd(syncoind)),H_Rall(leadingInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('L-leading');
 A=[];Alpha1=[];FitValues=[];
@@ -1834,8 +1901,12 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,H_Lall(leadingInd(1:24)));
 hold on; plot(H_Lall(leadingInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-subplot(2,2,3);
-plot(H_Lall(followingInd(1:24)),H_Rall(followingInd(1:24)),'ko');
+legend('synch','synco','','');
+grid on;
+subplot(2,2,3); %##############
+plot(H_Lall(followingInd(synchind)),H_Rall(followingInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(followingInd(syncoind)),H_Rall(followingInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('R-leading');
 A=[];Alpha1=[];FitValues=[];
@@ -1844,8 +1915,12 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,H_Lall(followingInd(1:24)));
 hold on; plot(H_Lall(followingInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-subplot(2,2,4);
-plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
+legend('synch','synco','','');
+grid on;
+subplot(2,2,4); %##############
+plot(H_Lall(mutualInd(synchind)),H_Rall(mutualInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(mutualInd(syncoind)),H_Rall(mutualInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('mutual');
 A=[];Alpha1=[];FitValues=[];
@@ -1854,11 +1929,15 @@ Alpha1=A(1);
 FitValues=polyval(A,H_Lall(mutualInd(1:24)));
 hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+legend('synch','synco','','');
+grid on;
 
-%**********************
+%********************** 3 subplots
 canvas(0.25,0.2);
-subplot(1,3,1);
-plot(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),'ko');
+subplot(1,3,1); %##############
+plot(H_Lall(uncoupleInd(synchind)),H_Rall(uncoupleInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(uncoupleInd(syncoind)),H_Rall(uncoupleInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uncoupling');subtitle('(uncouple)')
 A=[];Alpha1=[];FitValues=[];
@@ -1867,8 +1946,13 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
 hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-subplot(1,3,2);
-plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))], [H_Rall(leadingInd(1:24)); H_Rall(followingInd(1:24))],'ko');
+legend('synch','synco','','');
+grid on;
+subplot(1,3,2); %##############
+plot(H_Lall(leadingInd(synchind)),H_Rall(leadingInd(synchind)),'o','color',darkgreen); hold on;
+plot(H_Lall(leadingInd(syncoind)),H_Rall(leadingInd(syncoind)),'o','color',pink);
+plot(H_Lall(followingInd(synchind)),H_Rall(followingInd(synchind)),'o','color',darkgreen);
+plot(H_Lall(followingInd(syncoind)),H_Rall(followingInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uni-directional coupling'); subtitle('(leading or following)');
 A=[];Alpha1=[];FitValues=[];
@@ -1877,8 +1961,12 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,[H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))]);
 hold on; plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))],FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-subplot(1,3,3);
-plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
+legend('synch','synco','','','','');
+grid on;
+subplot(1,3,3); %##############
+plot(H_Lall(mutualInd(synchind)),H_Rall(mutualInd(synchind)),'o','color',darkgreen);
+hold on;
+plot(H_Lall(mutualInd(syncoind)),H_Rall(mutualInd(syncoind)),'o','color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('stroung coupling'); subtitle('(mutual)');
 A=[];Alpha1=[];FitValues=[];
@@ -1887,6 +1975,8 @@ Alpha1=A(1);
 FitValues=polyval(A,H_Lall(mutualInd(1:24)));
 hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+legend('synch','synco','','');
+grid on;
 
 
 %% PLOT 11 Xcorr with slinding window of 20 intervals (matched int)
