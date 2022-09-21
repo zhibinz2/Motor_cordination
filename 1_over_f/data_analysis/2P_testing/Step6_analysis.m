@@ -1512,6 +1512,7 @@ sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
 Trials={'uncouple','uncouple','uncouple','L-lead','L-lead','L-lead',...
     'R-lead','R-lead','R-lead','mutual','mutual','mutual'}';
 
+% (Before d removal)********
 % d estimation from H (DFA method) based on the good matched intervals
 H=zeros(2,12,8);XcorrPeakLag=zeros(12,8);XcorrPeak=zeros(12,8);
 cd /ssd/zhibin/1overf/
@@ -1533,7 +1534,7 @@ for r=1:8;
         % estimate the d
         [~,H(1,j,r)]=DFA_main(intL_good_dmean);
         [~,H(2,j,r)]=DFA_main(intR_good_dmean);
-        % Xcorr based on int_dmean_drm (before d removal)
+        % Xcorr based on int_dmean_drm (before d removal)********
         r12=[];lags12=[];
         [r12,lags12]=xcorr(intL_good_dmean,intR_good_dmean,10,'normalized');
         XcorrPeakLag(j,r)=lags12(find(r12==max(r12)));
@@ -1542,7 +1543,7 @@ for r=1:8;
 end
 eval(['save ' '/ssd/zhibin/1overf/all_session20220713_0816/H.mat H'])
 d1=H-0.5;% estimate d using DFA method (method1: based on DFA, d=h-0.5)
-% ( Continue to PLOT 9 )
+% ( Continue to PLOT 9 )#########################
         
 % d removal
 H_est2=zeros(2,12,8);
@@ -1575,22 +1576,22 @@ end
 eval(['save ' '/ssd/zhibin/1overf/all_session20220713_0816/int_dmean_drm.mat int_dmean_drm'])
 % plot H all session and compare like in PLOT 8
 
+% (After d removal)********
 % Xcorr based on int_dmean_drm
 load /ssd/zhibin/1overf/all_session20220713_0816/int_dmean_drm.mat
 load /ssd/zhibin/1overf/all_session20220713_0816/H.mat
 XcorrPeakLag=zeros(12,8);XcorrPeak=zeros(12,8);
 for r=1:8;
     for j = 1:12
+        % Xcorr after d removal ********
         r12=[];lags12=[];
         [r12,lags12]=xcorr(int_dmean_drm{1,j,r},int_dmean_drm{2,j,r},10,'normalized');
         XcorrPeakLag(j,r)=lags12(find(r12==max(r12)));
         XcorrPeak(j,r)=max(r12);
     end
 end
-% ( Continue to PLOT 9 )
+% ( Continue to PLOT 9 ) #########################
 %% PLOT 9 Xcorr after d removal and save new intervals (sorted order) 
-
-
 % Plot XcorrPeakLag in all sessions
 canvas(0.3, 0.8);
 for r=1:8
@@ -1691,7 +1692,7 @@ XcorrPeak_LR_synco_std = [std(XcorrPeak_uncouple_synco);...
     std(XcorrPeak_mutual_synco)];
 
 % plot average peak
-canvas(0.2, 0.3);
+canvas(0.1, 0.5);
 subplot(2,1,1);
 errorbar(1:4,XcorrPeak_LR_synch_mean,XcorrPeak_LR_synch_std,'ko');
 xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
@@ -1786,7 +1787,7 @@ H_Rall=reshape(H_Rall',[],1);
 canvas(0.2,0.25);
 subplot(1,2,1);
 plot(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),'ko');
-xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uncouple');
 A=[];Alpha1=[];FitValues=[];
 A=polyfit(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),1);
@@ -1797,7 +1798,7 @@ xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 grid on;
 subplot(1,2,2);
 plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
-xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('mutual');
 A=[];Alpha1=[];FitValues=[];
 A=polyfit(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),1);
@@ -1811,7 +1812,7 @@ grid on;
 canvas(0.2,0.5);
 subplot(2,2,1);
 plot(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),'ko');
-xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uncouple');
 A=[];Alpha1=[];FitValues=[];
 A=polyfit(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),1);
@@ -1821,7 +1822,7 @@ hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 subplot(2,2,2);
 plot(H_Lall(leadingInd(1:24)),H_Rall(leadingInd(1:24)),'ko');
-xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('L-leading');
 A=[];Alpha1=[];FitValues=[];
 A=polyfit(H_Lall(leadingInd(1:24)),H_Rall(leadingInd(1:24)),1);
@@ -1831,7 +1832,7 @@ hold on; plot(H_Lall(leadingInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 subplot(2,2,3);
 plot(H_Lall(followingInd(1:24)),H_Rall(followingInd(1:24)),'ko');
-xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('R-leading');
 A=[];Alpha1=[];FitValues=[];
 A=polyfit(H_Lall(followingInd(1:24)),H_Rall(followingInd(1:24)),1);
@@ -1841,7 +1842,7 @@ hold on; plot(H_Lall(followingInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 subplot(2,2,4);
 plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
-xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('mutual');
 A=[];Alpha1=[];FitValues=[];
 A=polyfit(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),1);
@@ -1854,7 +1855,7 @@ xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 canvas(0.25,0.2);
 subplot(1,3,1);
 plot(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),'ko');
-xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uncoupling');subtitle('(uncouple)')
 A=[];Alpha1=[];FitValues=[];
 A=polyfit(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),1);
@@ -1864,7 +1865,7 @@ hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 subplot(1,3,2);
 plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))], [H_Rall(leadingInd(1:24)); H_Rall(followingInd(1:24))],'ko');
-xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uni-directional coupling'); subtitle('(leading or following)');
 A=[];Alpha1=[];FitValues=[];
 A=polyfit([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))], [H_Rall(leadingInd(1:24)); H_Rall(followingInd(1:24))],1);
@@ -1874,7 +1875,7 @@ hold on; plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))],FitValues,'
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 subplot(1,3,3);
 plot(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),'ko');
-xlabel('DFA exponenet, Pacipant L');ylabel('DFA exponenet, Pacipant R');
+xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('stroung coupling'); subtitle('(mutual)');
 A=[];Alpha1=[];FitValues=[];
 A=polyfit(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),1);
