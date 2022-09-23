@@ -1,5 +1,6 @@
 function [D,Alpha1,n,F_n,FitValues]=DFA_main(DATA)
 % DATA should be a time series of length(DATA) greater than 2000,and of column vector.
+% But aslo works for 100 samples in my data.
 % A is the alpha in the paper
 % (https://aip.scitation.org/doi/pdf/10.1063/1.166141)
 % D is the dimension of the time series % ?

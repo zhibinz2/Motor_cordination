@@ -1591,7 +1591,7 @@ for r=1:8;
     end
 end
 % ( Continue to PLOT 9 ) #########################
-%% PLOT 9 Xcorr after d removal and save new intervals (sorted order) 
+%% PLOT 9 Xcorr after d removal and save new intervals (sorted order) + ANOVA 
 % Plot XcorrPeakLag in all sessions
 canvas(0.3, 0.8);
 for r=1:8
@@ -1631,11 +1631,17 @@ Table_XcorrPeakLagSynch_4condi=table(...
     XcorrPeakLag_uncouple_synch,XcorrPeakLag_Llead_synch,...
     XcorrPeakLag_Rlead_synch,XcorrPeakLag_mutual_synch);
 % for matlab (https://www.mathworks.com/help/stats/one-way-anova.html)
+% https://www.mathworks.com/help/stats/multiple-comparisons.html
 % (https://www.mathworks.com/matlabcentral/fileexchange/69794-bayesfactor?s_tid=mwa_osa_a)
 Table_XcorrPeakLagSynch_4condi=[
     XcorrPeakLag_uncouple_synch XcorrPeakLag_Llead_synch ...
     XcorrPeakLag_Rlead_synch XcorrPeakLag_mutual_synch];
-[p,tbl,stats] = anova1(Table_XcorrPeakLagSynch_4condi); % ANOVA (work)
+[p,tbl,stats] = anova1(Table_XcorrPeakLagSynch_4condi); % one-way ANOVA (work)
+[results,means,~,gnames] = multcompare(stats,"CriticalValueType","bonferroni"); % multi-comparison
+tbl = array2table([results],"VariableNames", ...
+    ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
+tb2 = array2table([means],"VariableNames", ["Mean","Standard Error"])
+
 % for jasp
 Table_XcorrPeakLagSynch_4condi=table(...
     [XcorrPeakLag_uncouple_synch;XcorrPeakLag_Llead_synch;...
@@ -2150,14 +2156,14 @@ beta_LR_chan=[beta_L_chan;beta_R_chan];
 gamma_LR_chan=[gamma_L_chan;gamma_R_chan];
 
 % Organize H_all for corr
-H_all; % (2x 8x12) for all sessions from SECT 10-1 
+H_all; % (2x8x12) for all sessions from SECT 10-1 
 H_all_L=squeeze(H_all(1,:,:));
 H_all_R=squeeze(H_all(2,:,:));
 % squeeze into 1 vector from the 96 blocks for each subject, for corr with pow in each chan
 H_all_L=reshape(H_all_L',[],1);% 96x1 (each element from one block in time sequence) 
 H_all_R=reshape(H_all_R',[],1);
 % Combine L and R
-H_all_LR=[H_all_L;H_all_R];
+H_all_LR=[H_all_L;H_all_R]; % to be used for corr and PLS
 
 % Compute the correlation between sum-EEG pow and H-int
 for c=1:32
@@ -2703,7 +2709,7 @@ end
 sgtitle('corr of H-EEG (+ 500ms) and H-interval in 4 states')
 
 %% PLOT 16 PLS regression
-% % previously in sync.m
+% % refer to previous code in sync.m
 % open sync.m
 % open syn_tryout.m
 % % powforpls (28 matches x 3200 predictors) 50freqsx64chan=3200
@@ -2713,35 +2719,84 @@ sgtitle('corr of H-EEG (+ 500ms) and H-interval in 4 states')
 % R2 = R2;
 % ypred = ypred;
 
+% Power -> H-int
+% Power
+% arrage the band powers in "trials x chan x freq" (192 x 32 x 5)
 pow5forpls=cat(3,H_delta_LR_chan,H_theta_LR_chan,H_alpha_LR_chan,H_beta_LR_chan,H_gamma_LR_chan);
-pow5forpls=permute(pow5forpls,[3 2 1]);% freqxchanxtrials
-pow5forpls=reshape(pow5forpls,5*32,192)'; % 192x160
+% then switch dismenstion to "freq x chan x trials" (5 x 32 x 192)
+pow5forpls2=permute(pow5forpls,[3 2 1]);
+% then stack them in 2-d " trials x (freq x chan)" 
+pow5forpls3=reshape(pow5forpls2,5*32,192)'; % 192x160 elements extracted colums-wise
+% (colums: delta chan1, theta chan 1, alpha chan1, beta chan1, gamma chan1, delta chan2...)
+
+% H-int
+H_all_LR; % form PLOT 13
+
+addpath /home/zhibin/Documents/GitHub/matlab/ramesh/plsmodel
+addpath(genpath('/home/zhibin/Documents/GitHub/matlab/external/')); 
+
 % (ALL states: 5freq x 32chan = 160 predictors x 192 trials)
-[R2,reg,ypred] = npls_pred(pow5forpls,H_all_LR,1);
-weights = reshape(reg{1},5,32);
-canvas(0.2,0.1)
-imagesc(weights);colorbar; % caxis([-2 2]*10E-7);
+[R2,reg,ypred] = npls_pred(pow5forpls3,H_all_LR,1);
+% reshape from 160 x 1 back to 5 x 32 (freq x chan)
+weights = reshape(reg{1},5,32); % 
+canvas(0.2,0.2)
+imagesc(weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
 yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);
-title('All 4 statues: PLS model');
+title('PLS model in all 4 statues: H-EEG(-500ms) -> H-int');
 
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48 trials)
-canvas(0.4,0.2);
+canvas(0.4,0.4);
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
-    [R2,reg,ypred] = npls_pred(pow5forpls(Inds4(:,c),:),H_all_LR(Inds4(:,c)),1);
+    [R2,reg,ypred] = npls_pred(pow5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)),1);
     plsmodel(c).weights=reshape(reg{1},5,32);
     plsmodel(c).R2 = R2;
     plsmodel(c).ypred = ypred;
     subplot(2,2,c);
     imagesc(plsmodel(c).weights);colorbar; 
     yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    set(gca, 'YDir','normal');
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
     clim([-0.1 0.1]); % caxis([-0.1 0.1]);
     title([states4names{c} ': PLS model'],'Color',condicolors(c,:));
+    grid on;
 end
 sgtitle('PLS model: H-EEG(-500ms) -> H-int')
 
+
+
+%% PLOT 17 Lasso
+% https://www.mathworks.com/help/stats/lassoglm.html
+% openExample('stats/RemoveRedundantPredictorsUsingLassoMethodExample')
+open lassoglm.m
+
+% B  = lassoglm(pow5forpls3,H_all_LR);
+clear B FitInfo
+[B,FitInfo]  = lassoglm(pow5forpls3,H_all_LR,'normal','CV',5);% try normal or gamma
+% Find the coefficient vector for the 75th Lambda value in B.
+% B(:,75)
+imagesc(B);colorbar;
+% Examine the cross-validation plot to see the effect of the Lambda regularization parameter.
+lassoPlot(B,FitInfo,'plottype','CV'); 
+legend('show') % Show legend
+% locate the Lambda with minimum cross-validation error
+idxLambdaMinDeviance = FitInfo.IndexMinDeviance;
+mincoefs = find(B(:,idxLambdaMinDeviance))
+% % locate the point with minimum cross-validation error plus one standard deviation
+idxLambda1SE = FitInfo.Index1SE;
+min1coefs = find(B(:,idxLambda1SE))
+% reshape from 160 x 1 back to 5 x 32 (freq x chan)
+Lambda_coef = reshape(B(:,max(idxLambdaMinDeviance)),5,32); 
+canvas(0.2,0.2)
+imagesc(Lambda_coef);colorbar;
+yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+set(gca, 'YDir','normal');
+xticks([1:32]);xticklabels([labels]);xtickangle(90);
+title('Lassoglm results in all 4 statues: H-EEG(-500ms) -> H-int');
+subtitle(['the coefficients for the ' num2str(max(idxLambdaMinDeviance)) 'th Lambda value']);
+grid on;
 
 %% try out DFA on EEG
 ans(:,15)
