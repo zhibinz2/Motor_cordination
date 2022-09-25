@@ -1,0 +1,34 @@
+function [deltaEEG,thetaEEG,alphaEEG,betaEEG,gammaEEG] = filter5band(EEG,sr)
+% This function use makefilter to filter each block of EEG into 5 bands
+% my band class
+% delta 1-3, theta 4-7, alpha 8-12, beta 13-30, gamma 30-50
+
+% delta
+% high pass (no paddings needed)
+Hd = makefilter(sr,0.25,0.01,6,20,0); % for keeping readiness potential
+% Hd = makefilter(srL,1.5,1,6,20,0); 
+filtered_data1=filtfilthd(Hd,EEG);
+% add padding (this step takes several minutes)
+padding=zeros(round(size(filtered_data1,1)/10), size(filtered_data1,2));
+filtered_data2=cat(1,padding,filtered_data1,padding);
+% low pass 
+Hd = makefilter(srL,3,3.1,6,20,0);  
+filtered_data3=filtfilthd(Hd,filtered_data2);
+% remove padding
+filtered_data4=filtered_data3((size(padding,1)+1):(size(padding,1)+size(EEG,1)),:);
+
+% theta
+% high pass (no paddings needed)
+Hd = makefilter(sr,0.25,0.01,6,20,0); % for keeping readiness potential
+% Hd = makefilter(srL,1.5,1,6,20,0); 
+filtered_data1=filtfilthd(Hd,EEG);
+% add padding (this step takes several minutes)
+padding=zeros(round(size(filtered_data1,1)/10), size(filtered_data1,2));
+filtered_data2=cat(1,padding,filtered_data1,padding);
+% low pass 
+Hd = makefilter(srL,3,3.5,6,20,0);  
+filtered_data3=filtfilthd(Hd,filtered_data2);
+% remove padding
+filtered_data4=filtered_data3((size(padding,1)+1):(size(padding,1)+size(EEG,1)),:);
+
+end

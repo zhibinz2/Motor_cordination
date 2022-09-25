@@ -8,7 +8,7 @@ function [delta, theta, alpha, beta, gamma] = sum5band(EEG,sr,win,varargin)
 % https://nhahealth.com/brainwaves-the-language/
 % delta 1-3, theta 4-7, alpha 8-12, beta 13-30, gamma 30-44
 % my band class
-% delta 1-3, theta 4-7, alpha 8-12, beta 13-30, gamma 30-50
+% delta 1-3, theta 4-7, alpha 8-12, beta 13-30, gamma 31-50
 %%
 % Input: EEG in time x chan
 % Output: xx is EEG in time x chan x chunks

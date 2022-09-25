@@ -2065,9 +2065,9 @@ sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
 EEGwin=0.5; % second
 
 % EEG -500ms before the matched tap
+zEEG500_L=cell(8,12);zEEG500_R=cell(8,12);
 delta_L=cell(8,12);theta_L=cell(8,12);alpha_L=cell(8,12);beta_L=cell(8,12);gamma_L=cell(8,12);
 delta_R=cell(8,12);theta_R=cell(8,12);alpha_R=cell(8,12);beta_R=cell(8,12);gamma_R=cell(8,12);
-zEEG500_L=cell(8,12);zEEG500_R=cell(8,12);
 cd /ssd/zhibin/1overf/
 for s=1:8 % each session
     runid=num2str(seeds(s,:));
@@ -2996,9 +2996,38 @@ sgtitle('Lassoglm: H-EEG(-500ms) -> H-int')
 %% try out DFA on EEG
 ans(:,15)
 [D,Alpha1,n,F_n,FitValues]=DFA_main(ans(:,15));
+%% SECT 18 continuous EEG 5 bands
+% in one session
+s=1; b=1;
+zEEG_L; zEEG_R; %Refter to SECT 12
+EEG=zEEG_L{b};
 
+tic
+[deltaEEG{s,b}, thetaEEG{s,b}, alphaEEG{s,b}, betaEEG{s,b}, gammaEEG{s,b}]...
+                =filter5band(EEG,sr);
+toc
+% processing time for filtering one block of EEG into 5 bands take 30s
+% for 192 blocks, it is going to take 96 min
 
-
+% in all sessions
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
+sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
+cd /ssd/zhibin/1overf/
+deltaEEG=cell(2,8,12); thetaEEG=cell(2,8,12); alphaEEG=cell(2,8,12); betaEEG=cell(2,8,12); gammaEEG=cell(2,8,12); 
+tic 
+for s=1:8 % each session
+    runid=num2str(seeds(s,:));
+    clear dataL dataR
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
+    zEEG_L={};zEEG_R={};
+    for b=1:12 % each block  
+        [deltaEEG{1,s,b}, thetaEEG{1,s,b}, alphaEEG{1,s,b}, betaEEG{1,s,b}, gammaEEG{1,s,b}]...
+                =filter5band(zEEG_L,sr);
+        [deltaEEG{2,s,b}, thetaEEG{2,s,b}, alphaEEG{2,s,b}, betaEEG{2,s,b}, gammaEEG{2,s,b}]...
+                =filter5band(zEEG_L,sr);
+    end
+end
+toc
 
 %% saves all variables from the current workspace
 tic
