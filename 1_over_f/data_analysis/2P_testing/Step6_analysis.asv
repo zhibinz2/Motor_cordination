@@ -2058,7 +2058,7 @@ end
 sgtitle(['session ' num2str(seed) ' ' sessionTypes{session} ' BPint corr xcorr diff']);
 
 
-%% SECT 12 Compute EEG poweer (-/+ 500ms) 5 bands
+%% SECT 12 Compute EEG power (-/+ 500ms) 5 bands
 % clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
@@ -2113,6 +2113,7 @@ for s=1:8 % each session
 end
 
 %% PLOT 13 corr of sum-EEG power (- 500ms) and H-int all sessions
+% organize EEG power
 zEEG500_L; zEEG500_R; % for all sessions from SECT 12
 delta_L;theta_L;alpha_L;beta_L;gamma_L;
 delta_R;theta_R;alpha_R;beta_R;gamma_R;
@@ -2708,7 +2709,7 @@ colorbar;colormap('jet');clim([cmin cmax]);
 end
 sgtitle('corr of H-EEG (+ 500ms) and H-interval in 4 states')
 
-%% PLOT 16 PLS regression
+%% PLOT 16 PLS regression (sum-EEG -> H-int)
 % % refer to previous code in sync.m
 % open sync.m
 % open syn_tryout.m
@@ -2719,10 +2720,11 @@ sgtitle('corr of H-EEG (+ 500ms) and H-interval in 4 states')
 % R2 = R2;
 % ypred = ypred;
 
-% Power -> H-int
+% sum-EEG -> H-int
 % Power
+pow5forpls=[];pow5forpls2=[];pow5forpls3=[];
 % arrage the band powers in "trials x chan x freq" (192 x 32 x 5)
-pow5forpls=cat(3,H_delta_LR_chan,H_theta_LR_chan,H_alpha_LR_chan,H_beta_LR_chan,H_gamma_LR_chan);
+pow5forpls=cat(3,delta_LR_chan,theta_LR_chan,alpha_LR_chan,beta_LR_chan,gamma_LR_chan);
 % then switch dismenstion to "freq x chan x trials" (5 x 32 x 192)
 pow5forpls2=permute(pow5forpls,[3 2 1]);
 % then stack them in 2-d " trials x (freq x chan)" 
@@ -2736,12 +2738,90 @@ addpath /home/zhibin/Documents/GitHub/matlab/ramesh/plsmodel
 addpath(genpath('/home/zhibin/Documents/GitHub/matlab/external/')); 
 
 % (ALL states: 5freq x 32chan = 160 predictors x 192 trials)
+R2=[];reg=[];ypred=[];
+clear plsmodel;
 [R2,reg,ypred] = npls_pred(pow5forpls3,H_all_LR,1);
+% reshape from 160 x 1 back to 5 x 32 (freq x chan)
+weights = reshape(reg{1},5,32); % 
+canvas(0.2,0.2)
+cmin=-0.1;cmax=0.1;
+imagesc(weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
+yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+colormap('jet');clim([cmin cmax]);
+set(gca, 'YDir','normal');
+xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
+title('PLS model in all 4 statues: sum-EEG(-500ms) -> H-int');
+
+% (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48 trials)
+canvas(0.4,0.4);
+cmin=-0.15;cmax=0.15;
+for c=1:4 % four states
+    R2=[];reg=[];ypred=[];
+    clear plsmodel;
+    [R2,reg,ypred] = npls_pred(pow5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)),1);
+    plsmodel(c).weights=reshape(reg{1},5,32);
+    plsmodel(c).R2 = R2;
+    plsmodel(c).ypred = ypred;
+    subplot(2,2,c);
+    imagesc(plsmodel(c).weights);colorbar; 
+    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    set(gca, 'YDir','normal');
+    xticks([1:32]);xticklabels([labels]);xtickangle(90);
+    colormap('jet');clim([cmin cmax]);% caxis([-0.1 0.1]);
+    title([states4names{c} ': PLS model'],'Color',condicolors(c,:));
+    grid on;
+end
+sgtitle('PLS model: sum-EEG(-500ms) -> H-int')
+
+% 3 states - combine uncouple state and leading state and call it "independent"
+states3names={'independent','following','mutual'};
+Inds3={[Inds4(:,1);Inds4(:,2)],Inds4(:,3),Inds4(:,4)};
+canvas(0.6,0.2);
+cmin=-5e-7;cmax=5e-7;
+for c=1:3 % four states
+    R2=[];reg=[];ypred=[];
+    clear plsmodel;
+    [R2,reg,ypred] = npls_pred(pow5forpls3(Inds3{c},:),H_all_LR(Inds3{c}),1);
+    plsmodel(c).weights=reshape(reg{1},5,32);
+    plsmodel(c).R2 = R2;
+    plsmodel(c).ypred = ypred;
+    subplot(1,3,c);
+    imagesc(plsmodel(c).weights);colorbar; 
+    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    set(gca, 'YDir','normal');
+    xticks([1:32]);xticklabels([labels]);xtickangle(90);
+    colormap('jet'); clim([cmin cmax]);% caxis([-0.1 0.1]);
+    title([states3names{c} ': PLS model'],'Color',condicolors(c,:));
+    grid on;
+end
+sgtitle('PLS model: sum-EEG(-500ms) -> H-int')
+
+%% PLOT 16-1 PLS regression (H-EEG -> H-int)
+% H-EEG -> H-int
+H5forpls=[];H5forpls2=[];H5forpls3=[];
+% arrage the band powers in "trials x chan x freq" (192 x 32 x 5)
+H5forpls=cat(3,H_delta_LR_chan,H_theta_LR_chan,H_alpha_LR_chan,H_beta_LR_chan,H_gamma_LR_chan);
+% then switch dismenstion to "freq x chan x trials" (5 x 32 x 192)
+H5forpls2=permute(H5forpls,[3 2 1]);
+% then stack them in 2-d " trials x (freq x chan)" 
+H5forpls3=reshape(H5forpls2,5*32,192)'; % 192x160 elements extracted colums-wise
+% (colums: delta chan1, theta chan 1, alpha chan1, beta chan1, gamma chan1, delta chan2...)
+
+% H-int
+H_all_LR; % form PLOT 13
+
+addpath /home/zhibin/Documents/GitHub/matlab/ramesh/plsmodel
+addpath(genpath('/home/zhibin/Documents/GitHub/matlab/external/')); 
+
+% (ALL states: 5freq x 32chan = 160 predictors x 192 trials)
+R2=[];reg=[];ypred=[];
+[R2,reg,ypred] = npls_pred(H5forpls3,H_all_LR,1);
 % reshape from 160 x 1 back to 5 x 32 (freq x chan)
 weights = reshape(reg{1},5,32); % 
 canvas(0.2,0.2)
 imagesc(weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
 yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+% clim([-0.1 0.1]);
 set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);
 title('PLS model in all 4 statues: H-EEG(-500ms) -> H-int');
@@ -2750,7 +2830,7 @@ title('PLS model in all 4 statues: H-EEG(-500ms) -> H-int');
 canvas(0.4,0.4);
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
-    [R2,reg,ypred] = npls_pred(pow5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)),1);
+    [R2,reg,ypred] = npls_pred(H5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)),1);
     plsmodel(c).weights=reshape(reg{1},5,32);
     plsmodel(c).R2 = R2;
     plsmodel(c).ypred = ypred;
@@ -2761,40 +2841,109 @@ for c=1:4 % four states
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
     clim([-0.1 0.1]); % caxis([-0.1 0.1]);
     title([states4names{c} ': PLS model'],'Color',condicolors(c,:));
+    grid on;
 end
 sgtitle('PLS model: H-EEG(-500ms) -> H-int')
 
+% 3 states - combine uncouple state and leading state and call it "independent"
+states3names={'independent','following','mutual'};
+Inds3={[Inds4(:,1);Inds4(:,2)],Inds4(:,3),Inds4(:,4)};
+canvas(0.6,0.2);
+cmin=-0.15;cmax=0.15;
+for c=1:3 % four states
+    R2=[];reg=[];ypred=[];
+    [R2,reg,ypred] = npls_pred(H5forpls3(Inds3{c},:),H_all_LR(Inds3{c}),1);
+    plsmodel(c).weights=reshape(reg{1},5,32);
+    plsmodel(c).R2 = R2;
+    plsmodel(c).ypred = ypred;
+    subplot(1,3,c);
+    imagesc(plsmodel(c).weights);colorbar; 
+    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    set(gca, 'YDir','normal');
+    xticks([1:32]);xticklabels([labels]);xtickangle(90);
+    colormap('jet');clim([cmin cmax]);% caxis([-0.1 0.1]);
+    title([states3names{c} ': PLS model'],'Color',condicolors(c,:));
+    grid on;
+end
+sgtitle('PLS model: H-EEG(-500ms) -> H-int')
 
-%% PLOT 17 Lasso
+%% PLOT 17 Lasso (sum-EEG -> H-int)
 % https://www.mathworks.com/help/stats/lassoglm.html
 % openExample('stats/RemoveRedundantPredictorsUsingLassoMethodExample')
-open lassoglm.m
+% open lassoglm.m
 
+% sum-EEG -> H-int
+% (ALL states: 5freq x 32chan = 160 predictors x 192 trials)
 % B  = lassoglm(pow5forpls3,H_all_LR);
 clear B FitInfo
-[B,FitInfo]  = lassoglm(pow5forpls3,H_all_LR,'gamma','CV',5);% try normal or gamma
+[B,FitInfo]  = lassoglm(pow5forpls3,H_all_LR,'normal','CV',5);% try normal or gamma
 % Find the coefficient vector for the 75th Lambda value in B.
 % B(:,75)
-imagesc(B)
+imagesc(B);colorbar;
 % Examine the cross-validation plot to see the effect of the Lambda regularization parameter.
 lassoPlot(B,FitInfo,'plottype','CV'); 
 legend('show') % Show legend
 % locate the Lambda with minimum cross-validation error
 idxLambdaMinDeviance = FitInfo.IndexMinDeviance;
 mincoefs = find(B(:,idxLambdaMinDeviance))
-% % locate the point with minimum cross-validation error plus one standard deviation
+% locate the point with minimum cross-validation error plus one standard deviation
 idxLambda1SE = FitInfo.Index1SE;
 min1coefs = find(B(:,idxLambda1SE))
 % reshape from 160 x 1 back to 5 x 32 (freq x chan)
-Lambda_coef = reshape(B(:,75),5,32); 
+% Lambda_coef = reshape(B(:,max(idxLambdaMinDeviance)),5,32); 
+Lambda_coef = reshape(B(:,max(idxLambda1SE)),5,32);
+cmin=-2e-6;cmax=2e-6;
 canvas(0.2,0.2)
 imagesc(Lambda_coef);colorbar;
 yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
 set(gca, 'YDir','normal');
+colormap('jet'); clim([cmin cmax]);
 xticks([1:32]);xticklabels([labels]);xtickangle(90);
 title('Lassoglm results in all 4 statues: H-EEG(-500ms) -> H-int');
-subtitle('the coefficients for the 75th Lambda value in B');
+% subtitle(['the coefficients for the ' num2str(max(idxLambdaMinDeviance)) 'th Lambda value']);
+subtitle(['the coefficients for the ' num2str(max(idxLambda1SE)) 'th Lambda value']);
+grid on;
 
+% 3 states - combine uncouple state and leading state and call it "independent"
+states3names={'independent','following','mutual'};
+Inds3={[Inds4(:,1);Inds4(:,2)],Inds4(:,3),Inds4(:,4)};
+canvas(0.6,0.2);
+cmin=-2e-6;cmax=2e-6;
+for c=1:3 % four states
+    clear B FitInfo idxLambdaMinDeviance idxLambda1SE Lambda_coef
+    [B,FitInfo]  = lassoglmpow5forpls3(Inds3{c},:),H_all_LR(Inds3{c}),'normal','CV',5);%normal or gamma
+    % locate the Lambda with minimum cross-validation error
+    idxLambdaMinDeviance = FitInfo.IndexMinDeviance;
+    % locate the point with minimum cross-validation error plus one standard deviation
+    idxLambda1SE = FitInfo.Index1SE;
+    % reshape from 160 x 1 back to 5 x 32 (freq x chan)
+    % Lambda_coef = reshape(B(:,max(idxLambdaMinDeviance)),5,32); 
+    Lambda_coef = reshape(B(:,max(idxLambda1SE)),5,32);
+    cmin=-2e-6;cmax=2e-6;
+    subplot(1,3,c);
+    imagesc(Lambda_coef);colorbar;
+    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    set(gca, 'YDir','normal');
+    colormap('jet'); clim([cmin cmax]);
+    xticks([1:32]);xticklabels([labels]);xtickangle(90);
+    title('Lassoglm results in all 4 statues: H-EEG(-500ms) -> H-int');
+    % subtitle(['the coefficients for the ' num2str(max(idxLambdaMinDeviance)) 'th Lambda value']);
+    subtitle(['the coefficients for the ' num2str(max(idxLambda1SE)) 'th Lambda value']);
+    grid on;
+
+
+
+
+    subplot(1,3,c);
+    imagesc(plsmodel(c).weights);colorbar; 
+    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    set(gca, 'YDir','normal');
+    xticks([1:32]);xticklabels([labels]);xtickangle(90);
+    colormap('jet'); clim([cmin cmax]);% caxis([-0.1 0.1]);
+    title([states3names{c} ': PLS model'],'Color',condicolors(c,:));
+    grid on;
+end
+sgtitle('PLS model: sum-EEG(-500ms) -> H-int')
 
 %% try out DFA on EEG
 ans(:,15)
