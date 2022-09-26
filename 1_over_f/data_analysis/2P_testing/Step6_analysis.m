@@ -395,6 +395,7 @@ cyan = [0 1 1]; % fill([0 1 1 0],[0 0 1 1],cc)
 purple = [0.6 0.1 0.9];
 condicolors=[darkgreen;red;blue;megenta;purple;purple];
 HNLcolors = [darkgreen; deepyellow; pink];
+
 % % test color
 % showcolor=pink;
 % imagesc(cat(3,showcolor(1),showcolor(2),showcolor(3)));
@@ -2723,6 +2724,12 @@ sgtitle('corr of H-EEG (+ 500ms) and H-interval in 4 states')
 % sum-EEG -> H-int
 % Power
 pow5forpls=[];pow5forpls2=[];pow5forpls3=[];
+% fix the scale in the data
+delta_LR_chan = delta_LR_chan./(ones(192,1)*std(delta_LR_chan));
+theta_LR_chan = theta_LR_chan./(ones(192,1)*std(theta_LR_chan));
+alpha_LR_chan = alpha_LR_chan./(ones(192,1)*std(alpha_LR_chan));
+beta_LR_chan = beta_LR_chan./(ones(192,1)*std(beta_LR_chan));
+gamma_LR_chan = gamma_LR_chan./(ones(192,1)*std(gamma_LR_chan));
 % arrage the band powers in "trials x chan x freq" (192 x 32 x 5)
 pow5forpls=cat(3,delta_LR_chan,theta_LR_chan,alpha_LR_chan,beta_LR_chan,gamma_LR_chan);
 % then switch dismenstion to "freq x chan x trials" (5 x 32 x 192)
@@ -2744,17 +2751,17 @@ clear plsmodel;
 % reshape from 160 x 1 back to 5 x 32 (freq x chan)
 weights = reshape(reg{1},5,32); % 
 canvas(0.2,0.2)
-cmin=-0.1;cmax=0.1;
+cmin=-8e-3;cmax=8e-3;
 imagesc(weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
 yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
-colormap('jet');clim([cmin cmax]);
+colormap('jet'); clim([cmin cmax]);
 set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
-title('PLS model in all 4 statues: sum-EEG(-500ms) -> H-int');
+title(['PLS model (R2= ' num2str(round(R2,1)) ') in all 4 statues: sum-EEG(-500ms) -> H-int']);
 
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48 trials)
 canvas(0.4,0.4);
-cmin=-0.15;cmax=0.15;
+cmin=-8e-3;cmax=8e-3;
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
     clear plsmodel;
@@ -2767,8 +2774,8 @@ for c=1:4 % four states
     yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
     set(gca, 'YDir','normal');
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
-    colormap('jet');clim([cmin cmax]);% caxis([-0.1 0.1]);
-    title([states4names{c} ': PLS model'],'Color',condicolors(c,:));
+    colormap('jet'); clim([cmin cmax]);% caxis([-0.1 0.1]);
+    title([states4names{c} ': PLS model (R2= ' num2str(round(R2,1)) ') '],'Color',condicolors(c,:));
     grid on;
 end
 sgtitle('PLS model: sum-EEG(-500ms) -> H-int')
@@ -2777,7 +2784,7 @@ sgtitle('PLS model: sum-EEG(-500ms) -> H-int')
 states3names={'independent','following','mutual'};
 Inds3={[Inds4(:,1);Inds4(:,2)],Inds4(:,3),Inds4(:,4)};
 canvas(0.6,0.2);
-cmin=-5e-7;cmax=5e-7;
+cmin=-8e-3;cmax=8e-3;
 for c=1:3 % four states
     R2=[];reg=[];ypred=[];
     clear plsmodel;
@@ -2791,7 +2798,7 @@ for c=1:3 % four states
     set(gca, 'YDir','normal');
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
     colormap('jet'); clim([cmin cmax]);% caxis([-0.1 0.1]);
-    title([states3names{c} ': PLS model'],'Color',condicolors(c,:));
+    title([states3names{c} ': PLS model (R2= ' num2str(round(R2,1)) ')'],'Color',condicolors(c,:));
     grid on;
 end
 sgtitle('PLS model: sum-EEG(-500ms) -> H-int')
@@ -2819,15 +2826,18 @@ R2=[];reg=[];ypred=[];
 % reshape from 160 x 1 back to 5 x 32 (freq x chan)
 weights = reshape(reg{1},5,32); % 
 canvas(0.2,0.2)
+cmin=-0.15;cmax=0.15;
 imagesc(weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
 yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
-% clim([-0.1 0.1]);
+colormap('jet'); clim([cmin cmax]);% clim([-0.1 0.1]);
 set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);
-title('PLS model in all 4 statues: H-EEG(-500ms) -> H-int');
+title(['PLS model (R2= ' num2str(round(R2,1)) ') in all 4 statues: H-EEG(-500ms) -> H-int']);
+grid on;
 
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48 trials)
 canvas(0.4,0.4);
+cmin=-0.15;cmax=0.15;
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
     [R2,reg,ypred] = npls_pred(H5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)),1);
@@ -2839,8 +2849,8 @@ for c=1:4 % four states
     yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
     set(gca, 'YDir','normal');
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
-    clim([-0.1 0.1]); % caxis([-0.1 0.1]);
-    title([states4names{c} ': PLS model'],'Color',condicolors(c,:));
+    colormap('jet'); clim([cmin cmax]); % caxis([-0.1 0.1]);
+    title([states4names{c} ': PLS model (R2= ' num2str(round(R2,1)) ')'],'Color',condicolors(c,:));
     grid on;
 end
 sgtitle('PLS model: H-EEG(-500ms) -> H-int')
@@ -2850,7 +2860,7 @@ states3names={'independent','following','mutual'};
 Inds3={[Inds4(:,1);Inds4(:,2)],Inds4(:,3),Inds4(:,4)};
 canvas(0.6,0.2);
 cmin=-0.15;cmax=0.15;
-for c=1:3 % four states
+for c=1:3 % three states
     R2=[];reg=[];ypred=[];
     [R2,reg,ypred] = npls_pred(H5forpls3(Inds3{c},:),H_all_LR(Inds3{c}),1);
     plsmodel(c).weights=reshape(reg{1},5,32);
@@ -2862,7 +2872,7 @@ for c=1:3 % four states
     set(gca, 'YDir','normal');
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
     colormap('jet');clim([cmin cmax]);% caxis([-0.1 0.1]);
-    title([states3names{c} ': PLS model'],'Color',condicolors(c,:));
+    title([states3names{c} ': PLS model (R2= ' num2str(round(R2,1)) ')'],'Color',condicolors(c,:));
     grid on;
 end
 sgtitle('PLS model: H-EEG(-500ms) -> H-int')
@@ -2883,14 +2893,18 @@ imagesc(B);colorbar;
 % Examine the cross-validation plot to see the effect of the Lambda regularization parameter.
 lassoPlot(B,FitInfo,'plottype','CV'); 
 legend('show') % Show legend
-% locate the Lambda with minimum cross-validation error
-idxLambdaMinDeviance = FitInfo.IndexMinDeviance;
-mincoefs = find(B(:,idxLambdaMinDeviance))
 % locate the point with minimum cross-validation error plus one standard deviation
 idxLambda1SE = FitInfo.Index1SE;
-min1coefs = find(B(:,idxLambda1SE))
+min1coefs = find(B(:,idxLambda1SE));
+Lambda_select=idxLambda1SE;
+if isempty(min1coefs)
+   % locate the Lambda with minimum cross-validation error
+    idxLambdaMinDeviance = FitInfo.IndexMinDeviance;
+    mincoefs = find(B(:,idxLambdaMinDeviance))
+    Lambda_select=idxLambdaMinDeviance;
+end
 % reshape from 160 x 1 back to 5 x 32 (freq x chan)
-Lambda_coef = reshape(B(:,max(idxLambdaMinDeviance)),5,32); 
+Lambda_coef = reshape(B(:,Lambda_select),5,32); 
 % Lambda_coef = reshape(B(:,max(idxLambda1SE)),5,32);
 cmin=-2e-6;cmax=2e-6;
 canvas(0.2,0.2)
@@ -2899,26 +2913,65 @@ yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
 set(gca, 'YDir','normal');
 colormap('jet'); clim([cmin cmax]);
 xticks([1:32]);xticklabels([labels]);xtickangle(90);
-title('Lassoglm results in all 4 statues: sum-EEG(-500ms) -> H-int');
-subtitle(['the coefficients for the ' num2str(max(idxLambdaMinDeviance)) 'th Lambda value']);
-% subtitle(['the coefficients for the ' num2str(max(idxLambda1SE)) 'th Lambda value']);
+title('Lassoglm in all 4 statues: sum-EEG(-500ms) -> H-int');
+subtitle(['coefficients for the ' num2str(Lambda_select) 'th Lambda value' ...
+    ' (Deviance=' num2str(round(FitInfo.Deviance(Lambda_select),1)) ')']);
 grid on;
+
+% (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48 trials)
+canvas(0.2,0.2);
+cmin=-2e-6;cmax=2e-6;
+for c=1:4 % three states
+    clear B FitInfo idxLambdaMinDeviance idxLambda1SE Lambda_coef
+    [B,FitInfo]  = lassoglm(pow5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)),'normal','CV',5);%normal or gamma
+    % locate the point with minimum cross-validation error plus one standard deviation
+    idxLambda1SE = FitInfo.Index1SE;
+    min1coefs = find(B(:,idxLambda1SE));
+    Lambda_select=idxLambda1SE;
+    if isempty(min1coefs)
+       % locate the Lambda with minimum cross-validation error
+        idxLambdaMinDeviance = FitInfo.IndexMinDeviance;
+        mincoefs = find(B(:,idxLambdaMinDeviance));
+        Lambda_select=idxLambdaMinDeviance;
+    end
+    % reshape from 160 x 1 back to 5 x 32 (freq x chan)
+    % Lambda_coef = reshape(B(:,max(idxLambdaMinDeviance)),5,32); 
+    Lambda_coef = reshape(B(:,Lambda_select),5,32);
+    cmin=-2e-6;cmax=2e-6;
+    subplot(2,2,c);
+    imagesc(Lambda_coef);colorbar;
+    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    set(gca, 'YDir','normal');
+    colormap('jet'); clim([cmin cmax]);
+    xticks([1:32]);xticklabels([labels]);xtickangle(90);
+    title([states4names{c} ': Lassoglm'],'Color',condicolors(c,:));
+    subtitle(['coefficients of ' num2str(idxLambda1SE) 'th Lambda' ...
+         '(Deviance=' num2str(round(FitInfo.Deviance(Lambda_select),1)) ')']);
+    grid on;
+end
+sgtitle('Lassoglm: sum-EEG(-500ms) -> H-int')
 
 % 3 states - combine uncouple state and leading state and call it "independent"
 states3names={'independent','following','mutual'};
 Inds3={[Inds4(:,1);Inds4(:,2)],Inds4(:,3),Inds4(:,4)};
 canvas(0.6,0.2);
 cmin=-2e-6;cmax=2e-6;
-for c=1:3 % four states
+for c=1:3 % three states
     clear B FitInfo idxLambdaMinDeviance idxLambda1SE Lambda_coef
     [B,FitInfo]  = lassoglm(pow5forpls3(Inds3{c},:),H_all_LR(Inds3{c}),'normal','CV',5);%normal or gamma
-    % locate the Lambda with minimum cross-validation error
-    idxLambdaMinDeviance = FitInfo.IndexMinDeviance;
     % locate the point with minimum cross-validation error plus one standard deviation
     idxLambda1SE = FitInfo.Index1SE;
+    min1coefs = find(B(:,idxLambda1SE));
+    Lambda_select=idxLambda1SE;
+    if isempty(min1coefs)
+       % locate the Lambda with minimum cross-validation error
+        idxLambdaMinDeviance = FitInfo.IndexMinDeviance;
+        mincoefs = find(B(:,idxLambdaMinDeviance));
+        Lambda_select=idxLambdaMinDeviance;
+    end
     % reshape from 160 x 1 back to 5 x 32 (freq x chan)
     % Lambda_coef = reshape(B(:,max(idxLambdaMinDeviance)),5,32); 
-    Lambda_coef = reshape(B(:,max(idxLambda1SE)),5,32);
+    Lambda_coef = reshape(B(:,Lambda_select),5,32);
     cmin=-2e-6;cmax=2e-6;
     subplot(1,3,c);
     imagesc(Lambda_coef);colorbar;
@@ -2927,8 +2980,8 @@ for c=1:3 % four states
     colormap('jet'); clim([cmin cmax]);
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
     title([states3names{c} ': Lassoglm'],'Color',condicolors(c,:));
-    % subtitle(['coefficients of ' num2str(max(idxLambdaMinDeviance)) 'th Lambda']);
-    subtitle(['coefficients of ' num2str(max(idxLambda1SE)) 'th Lambda']);
+    subtitle(['coefficients of ' num2str(max(idxLambda1SE)) 'th Lambda' ...
+         '(Deviance=' num2str(round(FitInfo.Deviance(Lambda_select),1)) ')']);
     grid on;
 end
 sgtitle('Lassoglm: sum-EEG(-500ms) -> H-int')
@@ -3010,6 +3063,7 @@ toc
 % for 192 blocks, it is going to take 96 min
 
 % in all sessions
+clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
 cd /ssd/zhibin/1overf/
@@ -3021,6 +3075,8 @@ for s=1:8 % each session
     load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
     zEEG_L={};zEEG_R={};
     for b=1:12 % each block  
+        zEEG_L{b}=zscore(dataL{b}(:,1:32),[],1);
+        zEEG_R{b}=zscore(dataR{b}(:,1:32),[],1);
         [deltaEEG{1,s,b}, thetaEEG{1,s,b}, alphaEEG{1,s,b}, betaEEG{1,s,b}, gammaEEG{1,s,b}]...
                 =filter5band(zEEG_L,sr);
         [deltaEEG{2,s,b}, thetaEEG{2,s,b}, alphaEEG{2,s,b}, betaEEG{2,s,b}, gammaEEG{2,s,b}]...
@@ -3028,7 +3084,10 @@ for s=1:8 % each session
     end
 end
 toc
-
+cd /ssd/zhibin/1overf/all_session20220713_0816
+tic
+save('filter5band20220925workspace.mat');
+toc
 %% saves all variables from the current workspace
 tic
 save([num2str(seed) 'workspace.mat']);
