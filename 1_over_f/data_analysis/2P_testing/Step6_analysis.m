@@ -2150,7 +2150,7 @@ for c=1:32
     beta_R_chan(:,c)=reshape(beta_R_sum(:,:,c)',[],1);
     gamma_R_chan(:,c)=reshape(gamma_R_sum(:,:,c)',[],1);
 end
-% Combine L and R
+% Combine L and R for 192 predictors in PLS
 delta_LR_chan=[delta_L_chan;delta_R_chan];
 theta_LR_chan=[theta_L_chan;theta_R_chan];
 alpha_LR_chan=[alpha_L_chan;alpha_R_chan];
@@ -2725,7 +2725,7 @@ sgtitle('corr of H-EEG (+ 500ms) and H-interval in 4 states')
 % Power
 pow5forpls=[];pow5forpls2=[];pow5forpls3=[];
 % fix the scale in the data
-delta_LR_chan = delta_LR_chan./(ones(192,1)*std(delta_LR_chan));
+delta_LR_chan = delta_LR_chan./(ones(192,1)*std(delta_LR_chan)); %organized in PLOT 13
 theta_LR_chan = theta_LR_chan./(ones(192,1)*std(theta_LR_chan));
 alpha_LR_chan = alpha_LR_chan./(ones(192,1)*std(alpha_LR_chan));
 beta_LR_chan = beta_LR_chan./(ones(192,1)*std(beta_LR_chan));
@@ -3084,6 +3084,7 @@ end
 sgtitle('Lassoglm: H-EEG(-500ms) -> H-int')
 
 %% SECT 18 Xcorr (original order)
+clear XcorrPeakLag XcorrPeak
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
 XcorrPeakLag=zeros(8,12);XcorrPeak=zeros(8,12);
@@ -3106,28 +3107,64 @@ for r=1:8;
     end
 end
 
+% Organize XcorrPeak for corr
+XcorrPeak; % (8x12) for all sessions 
+% squeeze into 1 vector from the 96 blocks for both subject, for corr with pow in each chan
+XcorrPeak_all=reshape(XcorrPeak',[],1); % 96x1 (each element from one block in time sequence) 
+% then republicate the the vector for the Left and right
+XcorrPeak_all_LR=[XcorrPeak_all;XcorrPeak_all];
+
 % Organize XcorrPeakLag for corr
 XcorrPeakLag; % (8x12) for all sessions 
 % squeeze into 1 vector from the 96 blocks for both subject, for corr with pow in each chan
-
+XcorrPeakLag_all=reshape(XcorrPeakLag',[],1); % 96x1 (each element from one block in time sequence) 
 % then republicate the the vector for the Left and right
+XcorrPeakLag_all_LR=[XcorrPeakLag_all;XcorrPeakLag_all];
+
+%% PLS regression (sum-EEG -> XcorrPeak / XcorrPeakLag)
+% sum-EEG Power from PLOT 16
+pow5forpls3; % 192 blocks x160 elements extracted colums-wise
+% (colums: delta chan1, theta chan 1, alpha chan1, beta chan1, gamma chan1, delta chan2...)
+
+% Re-combine L and R for 68 predictors in PLS 
+delta_LR_chan=[delta_L_chan delta_R_chan]; % from PLOT 13
+theta_LR_chan=[theta_L_chan theta_R_chan];
+alpha_LR_chan=[alpha_L_chan alpha_R_chan];
+beta_LR_chan=[beta_L_chan beta_R_chan];
+gamma_LR_chan=[gamma_L_chan gamma_R_chan];
+
+% XcorrPeak_all_LR; % (192 x 1) from SECT18
+XcorrPeak_all; % (96 x 1) from SECT18
+
+% XcorrPeakLag_all_LR; % (192 x 1) from SECT18
+XcorrPeakLag_all; % (96 x 1) from SECT18
+
+PLSxcorrNames={'XcorrPeak','XcorrPeakLag'};
+% select a dependent measure
+depen_select=1;
+depen_select=2;
+
+% similar code as in PLOT 16
+% (ALL states: 5freq x 32chan = 160 predictors x 192 trials)
+R2=[];reg=[];ypred=[];
+clear plsmodel;
+[R2,reg,ypred] = npls_pred(pow5forpls3,H_all_LR,1);
+% reshape from 160 x 1 back to 5 x 32 (freq x chan)
+weights = reshape(reg{1},5,32); % 
+canvas(0.2,0.2)
+cmin=-8e-3;cmax=8e-3;
+imagesc(weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
+yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+colormap('jet'); clim([cmin cmax]);
+set(gca, 'YDir','normal');
+xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
+title(['PLS model (R2= ' num2str(round(R2,1)) ') in all 4 statues: sum-EEG(-500ms) -> H-int']);
 
 
-% H_all_L=squeeze(H_all(1,:,:));
-% H_all_R=squeeze(H_all(2,:,:));
-% % squeeze into 1 vector from the 96 blocks for each subject, for corr with pow in each chan
-% H_all_L=reshape(H_all_L',[],1);% 96x1 (each element from one block in time sequence) 
-% H_all_R=reshape(H_all_R',[],1);
-% % Combine L and R
-% H_all_LR=[H_all_L;H_all_R]; % to be used for corr and PLS
-
-% Orangize EEG for L and R in correponding order
-
-
-%% SECT 18 try out DFA on EEG
+%% SECT 19 try out DFA on EEG
 ans(:,15)
 [D,Alpha1,n,F_n,FitValues]=DFA_main(ans(:,15));
-%% SECT 18 continuous EEG 5 bands
+%% SECT 20 continuous EEG 5 bands
 % tryout in one session
 s=1; b=1;
 zEEG_L; zEEG_R; %Refter to SECT 12
