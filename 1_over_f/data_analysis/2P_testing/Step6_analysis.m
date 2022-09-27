@@ -3128,7 +3128,7 @@ XcorrPeakLag; % (8x12) for all sessions
 ans(:,15)
 [D,Alpha1,n,F_n,FitValues]=DFA_main(ans(:,15));
 %% SECT 18 continuous EEG 5 bands
-% in one session
+% tryout in one session
 s=1; b=1;
 zEEG_L; zEEG_R; %Refter to SECT 12
 EEG=zEEG_L{b};
@@ -3140,7 +3140,7 @@ toc
 % processing time for filtering one block of EEG into 5 bands take 30s
 % for 192 blocks, it is going to take 96 min
 
-% in all sessions
+% do it in all sessions
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
@@ -3166,8 +3166,9 @@ for s=1:8 % each session
     cd /ssd/zhibin/1overf/
 end
 toc
-
-% Re reference
+% take about 2 hours to filter all sessions
+plot(alphaEEG{1,b})
+% try Re reference
 % This function pass filtered_data and get back average referenced data.
 [reRef_data] = reRef(data_trials_EEG,goodchans);
 
@@ -3177,6 +3178,16 @@ averageRef=mean(filtered_data(:,goodchans,:),2); % can we average over the good 
 averageRef=repmat(averageRef,1,size(filtered_data,2));
 reRef_data=filtered_data-averageRef; % this have all the channels, including VEOG,HEOG,M1,M2
 end
+
+% compute envelope using hilbert
+
+% savitzy golay filter (smooth window 2000/f. f is the mid freq)
+
+% average trial power in each band, corr with H-int
+
+% downsample to 100 Hz
+
+% H-EEG in each band, corr with H-int
 
 %% saves all variables from the current workspace
 tic

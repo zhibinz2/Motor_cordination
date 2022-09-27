@@ -3086,7 +3086,7 @@ sgtitle('Lassoglm: H-EEG(-500ms) -> H-int')
 %% SECT 18 Xcorr (original order)
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
-XcorrPeakLag=zeros(12,8);XcorrPeak=zeros(12,8);
+XcorrPeakLag=zeros(8,12);XcorrPeak=zeros(8,12);
 cd /ssd/zhibin/1overf/
 for r=1:8;
     clear intervals conditions sortorders
@@ -3101,27 +3101,34 @@ for r=1:8;
         % Xcorr based on int_dmean_drm (before d removal)********
         r12=[];lags12=[];
         [r12,lags12]=xcorr(intL_good_dmean,intR_good_dmean,10,'normalized');
-        XcorrPeakLag(j,r)=lags12(find(r12==max(r12)));
-        XcorrPeak(j,r)=max(r12);
+        XcorrPeakLag(r,j)=lags12(find(r12==max(r12)));
+        XcorrPeak(r,j)=max(r12);
     end
 end
 
-% Organize H_all for corr
-H_all; % (2x8x12) for all sessions from SECT 10-1 
-H_all_L=squeeze(H_all(1,:,:));
-H_all_R=squeeze(H_all(2,:,:));
-% squeeze into 1 vector from the 96 blocks for each subject, for corr with pow in each chan
-H_all_L=reshape(H_all_L',[],1);% 96x1 (each element from one block in time sequence) 
-H_all_R=reshape(H_all_R',[],1);
-% Combine L and R
-H_all_LR=[H_all_L;H_all_R]; % to be used for corr and PLS
+% Organize XcorrPeakLag for corr
+XcorrPeakLag; % (8x12) for all sessions 
+% squeeze into 1 vector from the 96 blocks for both subject, for corr with pow in each chan
+
+% then republicate the the vector for the Left and right
+
+
+% H_all_L=squeeze(H_all(1,:,:));
+% H_all_R=squeeze(H_all(2,:,:));
+% % squeeze into 1 vector from the 96 blocks for each subject, for corr with pow in each chan
+% H_all_L=reshape(H_all_L',[],1);% 96x1 (each element from one block in time sequence) 
+% H_all_R=reshape(H_all_R',[],1);
+% % Combine L and R
+% H_all_LR=[H_all_L;H_all_R]; % to be used for corr and PLS
+
+% Orangize EEG for L and R in correponding order
 
 
 %% SECT 18 try out DFA on EEG
 ans(:,15)
 [D,Alpha1,n,F_n,FitValues]=DFA_main(ans(:,15));
 %% SECT 18 continuous EEG 5 bands
-% in one session
+% tryout in one session
 s=1; b=1;
 zEEG_L; zEEG_R; %Refter to SECT 12
 EEG=zEEG_L{b};
@@ -3133,7 +3140,7 @@ toc
 % processing time for filtering one block of EEG into 5 bands take 30s
 % for 192 blocks, it is going to take 96 min
 
-% in all sessions
+% do it in all sessions
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
@@ -3160,6 +3167,20 @@ for s=1:8 % each session
 end
 toc
 
+% try Re reference
+% This function pass filtered_data and get back average referenced data.
+[reRef_data] = reRef(data_trials_EEG,goodchans);
+
+function [reRef_data] = reRef(filtered_data,goodchans);
+% This function pass filtered_data and get back average referenced data. 
+averageRef=mean(filtered_data(:,goodchans,:),2); % can we average over the good epochs too?
+averageRef=repmat(averageRef,1,size(filtered_data,2));
+reRef_data=filtered_data-averageRef; % this have all the channels, including VEOG,HEOG,M1,M2
+end
+
+% compute envelope using hilbert
+
+% savitzy golay filter (smooth window 2000
 
 %% saves all variables from the current workspace
 tic
