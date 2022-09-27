@@ -3108,6 +3108,11 @@ end
 
 % Organize XcorrPeakLag for corr
 XcorrPeakLag; % (8x12) for all sessions 
+% squeeze into 1 vector from the 96 blocks for both subject, for corr with pow in each chan
+
+% then republicate the the vector for the Left and right
+
+
 % H_all_L=squeeze(H_all(1,:,:));
 % H_all_R=squeeze(H_all(2,:,:));
 % % squeeze into 1 vector from the 96 blocks for each subject, for corr with pow in each chan
