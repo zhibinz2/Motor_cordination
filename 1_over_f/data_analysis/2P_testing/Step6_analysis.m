@@ -1855,6 +1855,7 @@ H_Rall=reshape(H_Rall',[],1);
 %% PLOT 10-2 H matching as in Marmelat 2012 (matched int)
 % H-int matching for L and R as in Marmelat 2012
 synchind=[1:3 7:9 13:15 19:21];syncoind=[4:6 10:12 16:18 22:24];
+
 %********************** 2 subplots
 canvas(0.2,0.25);
 subplot(1,2,1); %##############
@@ -1946,11 +1947,16 @@ legend('synch','synco','','');
 grid on;
 
 %********************** 3 subplots
-canvas(0.25,0.2);
+canvas(0.3,0.3);
 subplot(1,3,1); %##############
-plot(H_Lall(uncoupleInd(synchind)),H_Rall(uncoupleInd(synchind)),'o','color',darkgreen);
-hold on;
-plot(H_Lall(uncoupleInd(syncoind)),H_Rall(uncoupleInd(syncoind)),'o','color',pink);
+plot(H_Lall(uncoupleInd(synchind(1:3))),H_Rall(uncoupleInd(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);hold on;
+plot(H_Lall(uncoupleInd(synchind(4:6))),H_Rall(uncoupleInd(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(uncoupleInd(synchind(7:9))),H_Rall(uncoupleInd(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(uncoupleInd(synchind(10:12))),H_Rall(uncoupleInd(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(uncoupleInd(syncoind(1:3))),H_Rall(uncoupleInd(syncoind(1:3))),'.','MarkerSize',30,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(uncoupleInd(syncoind(4:6))),H_Rall(uncoupleInd(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(uncoupleInd(syncoind(7:9))),H_Rall(uncoupleInd(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(uncoupleInd(syncoind(10:12))),H_Rall(uncoupleInd(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uncoupling');subtitle('(uncouple)')
 A=[];Alpha1=[];FitValues=[];
@@ -1959,14 +1965,26 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
 hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-legend('synch','synco','','');
+legend('synch','','','','synco','','','','location','northwest');
 grid on;
 subplot(1,3,2); %##############
-plot(H_Lall(leadingInd(synchind)),H_Rall(leadingInd(synchind)),'o','color',darkgreen); hold on;
-plot(H_Lall(leadingInd(syncoind)),H_Rall(leadingInd(syncoind)),'o','color',pink);
-plot(H_Lall(followingInd(synchind)),H_Rall(followingInd(synchind)),'o','color',darkgreen);
-plot(H_Lall(followingInd(syncoind)),H_Rall(followingInd(syncoind)),'o','color',pink);
-xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
+plot(H_Lall(leadingInd(synchind(1:3))),H_Rall(leadingInd(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen); hold on;
+plot(H_Lall(leadingInd(synchind(4:6))),H_Rall(leadingInd(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(leadingInd(synchind(7:9))),H_Rall(leadingInd(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(leadingInd(synchind(10:12))),H_Rall(leadingInd(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(leadingInd(syncoind(1:3))),H_Rall(leadingInd(syncoind(1:3))),'.','MarkerSize',30,'color',pink);
+plot(H_Lall(leadingInd(syncoind(4:6))),H_Rall(leadingInd(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(leadingInd(syncoind(7:9))),H_Rall(leadingInd(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(leadingInd(syncoind(10:12))),H_Rall(leadingInd(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Rall(followingInd(synchind(1:3))),H_Lall(followingInd(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);
+plot(H_Rall(followingInd(synchind(4:6))),H_Lall(followingInd(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Rall(followingInd(synchind(7:9))),H_Lall(followingInd(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Rall(followingInd(synchind(10:12))),H_Lall(followingInd(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Rall(followingInd(syncoind(1:3))),H_Lall(followingInd(syncoind(1:3))),'.','MarkerSize',30,'color',pink);
+plot(H_Rall(followingInd(syncoind(4:6))),H_Lall(followingInd(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Rall(followingInd(syncoind(7:9))),H_Lall(followingInd(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
+plot(H_Rall(followingInd(syncoind(10:12))),H_Lall(followingInd(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+xlabel('DFA exponent, Leader');ylabel('DFA exponent, Follower');
 title('uni-directional coupling'); subtitle('(leading or following)');
 A=[];Alpha1=[];FitValues=[];
 A=polyfit([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))], [H_Rall(leadingInd(1:24)); H_Rall(followingInd(1:24))],1);
@@ -1974,25 +1992,31 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,[H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))]);
 hold on; plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))],FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-legend('synch','synco','','','','');
+legend('synch','','','','synco','','','','','','','','','','','','location','northwest');
 grid on;
 subplot(1,3,3); %##############
-plot(H_Lall(mutualInd(synchind)),H_Rall(mutualInd(synchind)),'o','color',darkgreen);
-hold on;
-plot(H_Lall(mutualInd(syncoind)),H_Rall(mutualInd(syncoind)),'o','color',pink);
+plot(H_Lall(mutualInd(synchind(1:3))),H_Rall(mutualInd(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);hold on;
+plot(H_Lall(mutualInd(synchind(4:6))),H_Rall(mutualInd(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(mutualInd(synchind(7:9))),H_Rall(mutualInd(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(mutualInd(synchind(10:12))),H_Rall(mutualInd(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(mutualInd(syncoind(1:3))),H_Rall(mutualInd(syncoind(1:3))),'.','MarkerSize',30,'color',pink);
+plot(H_Lall(mutualInd(syncoind(4:6))),H_Rall(mutualInd(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(mutualInd(syncoind(7:9))),H_Rall(mutualInd(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(mutualInd(syncoind(10:12))),H_Rall(mutualInd(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('stroung coupling'); subtitle('(mutual)');
+title('strong coupling'); subtitle('(mutual)');
 A=[];Alpha1=[];FitValues=[];
 A=polyfit(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),1);
 Alpha1=A(1); 
 FitValues=polyval(A,H_Lall(mutualInd(1:24)));
 hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-legend('synch','synco','','');
+legend('synch','','','','synco','','','','location','northwest');
 grid on;
+sgtitle(['H matching as in Marmelat 2012  ^{* PLOT 10-2}']);
 
 
-%% PLOT 11 Xcorr with slinding window of 20 intervals (matched int)
+%% PLOT 11 Xcorr(0) with slinding win of 20 intervals (matched int) in one subj
 % clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
@@ -2056,7 +2080,61 @@ for b=1:12
     xlim([0 intNum(b)]);
     title({[conditionNames{conditions(b)}],['BPwin ' num2str(BPwin)]},'Color',condicolors(conditions(b),:));
 end
-sgtitle(['session ' num2str(seed) ' ' sessionTypes{session} ' BPint corr xcorr diff']);
+sgtitle(['session ' num2str(seed) ' ' sessionTypes{session} ' BPint corr xcorr diff ^{* PLOT 11}']);
+
+%% PLOT 11-1 Xcorr(0) with slinding win of 20 intervals (matched int) in all subj
+% clear
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
+sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
+% sliding win
+BPwin=20;
+% organize conditions in all sessions into a matrix of 8 x 12
+condition_all_mat=NaN(8,12); % (Refer to SECT 10-1)
+% Compute Xcorr(0) for all trials
+intNum=NaN(8,12);BPint_xcorrSeries=cell(8,12);
+for s=1:8;
+    clear intervals conditions
+    runid=num2str(seeds(s,:));
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ]);
+    condition_all_mat(s,:)=conditions;
+    intL_good_dmean=[];intR_good_dmean=[];
+    for b=1:12
+        % remove the mean (no need for DFA)
+        intL_good_dmean=intervals{b}(:,1)-mean(intervals{b}(:,1));
+        intR_good_dmean=intervals{b}(:,2)-mean(intervals{b}(:,2));
+        % sliding window of 20 to compute xcorr at lag 0
+        intNum(s,b)=size(intervals{b},1);
+        for k=1:(intNum(s,b)-BPwin+1)
+            % xcorr
+            r12=[];lags12=[];
+            [r12,lags12]=xcorr(intL_good_dmean(k:k+BPwin-1),intR_good_dmean(k:k+BPwin-1),10,'normalized');
+            BPint_xcorrSeries{s,b}(k)=r12(11);
+        end
+    end
+end
+% find indicies for all mutual conditions (Refer to SECT 10-1)
+find(condition_all_mat==4)
+% plot xcorr(0) for synch/synco (4 subplots for 4 pairs of subj)
+canvas(0.4,0.2)
+for p=1:4
+    subplot(1,4,p)
+        % synch
+        inds=[];inds=find(condition_all_mat((2*p-1),:)==4);
+        for t=1:3
+            plot(BPint_xcorrSeries{(2*p-1),inds(t)},'color',darkgreen);hold on;
+        end
+        % synco
+        inds=[];inds=find(condition_all_mat((2*p),:)==4);
+        for t=1:3
+            plot(BPint_xcorrSeries{(2*p),inds(t)},'color',pink);hold on;
+        end
+        hold off;
+        ylabel('xcorr coef'); xlabel(['taps']);
+        ylim([-1 1]); yline(0,'color',deepyellow);
+        legend({'synch','','','synco','',''},'location','southeast');
+        title(['pair of subjects - ' num2str(p)]);
+end
+sgtitle({['Mutual: xcorr(0) smoo win ' num2str(BPwin) ' ^{* PLOT 11-1}']},'Color',condicolors(4,:));
 
 
 %% SECT 12 Compute EEG power (-/+ 500ms) 5 bands
@@ -3234,6 +3312,8 @@ for s=1:8 % each session
 end
 toc
 % take about 2 hours to filter all sessions
+
+
 plot(alphaEEG{1,b})
 % try Re reference
 % This function pass filtered_data and get back average referenced data.
