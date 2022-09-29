@@ -1,0 +1,7 @@
+function [reRef_data] = reRef1(EEG);
+% This function pass EEG (sample x chan) and get back average referenced data. 
+averageRef=mean(EEG(:,goodchans,:),2); % can we average over the good epochs too?
+averageRef=repmat(averageRef,1,size(filtered_data,2));
+reRef_data=filtered_data-averageRef; % this have all the channels, including VEOG,HEOG,M1,M2
+end
+

@@ -2842,7 +2842,8 @@ title(['PLS model (R2= ' num2str(round(R2,1)) ') in all 4 statues: sum-EEG(-500m
 canvas(0.4,0.4);
 clear plsmodel;
 cmin=-8e-3;cmax=8e-3;
-Fac=1;
+% cmin=-8e-3;cmax=8e-3;
+Fac=10;
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
     [R2,reg,ypred] = npls_pred(pow5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)),Fac);
@@ -2864,17 +2865,17 @@ sgtitle('PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}')
 band5names={'delta','theta','alpha','beta','gamma'};
 states2names={'uncouple','mutual'};
 states4names;
-canvas(0.1,0.9)
+figure; % canvas(0.9,0.5)
 cmin=-8e-3;cmax=8e-3;
 c=[1 4];
 for s=1:2
     for b=1:5
-        subplot(5,2,(b-1)*2+s)
+        subplot(2,5,(s-1)*5+b)
         topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');colorbar; 
         colormap('jet'); clim([cmin cmax]);
-        if b==1;title({['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'], ...
+        if b==3;title({['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'], ...
                 [states4names{c(s)} '(R2= ' num2str(round(plsmodel(c(s)).R2,1)) ...
-            '  Fac= ' num2str(Fac) ') ']});end
+            '  Fac= ' num2str(Fac) ') ']},'Color',condicolors(c(s),:));end
         subtitle(band5names(b));
     end
 end
@@ -3287,7 +3288,7 @@ colormap('jet');
 clim([cmin cmax]);
 xticks([1:64]);xticklabels([labelsL labelsR]);xtickangle(90);grid on;
 title(['PLS model (R2= ' num2str(round(R2,1)) ') in all 4 statues: sum-EEG(-500ms) -> '...
-XcorrPeakmat2names{depen_select}]);
+XcorrPeakmat2names{depen_select} ' ^{* PLOT 18-1}']);
 
 
 
@@ -3335,8 +3336,16 @@ end
 toc
 % take about 2 hours to filter all sessions
 
-
-
+% load one session
+clear
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
+sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
+cd /ssd/zhibin/1overf/
+% select one session
+s=1;
+runid=num2str(seeds(s,:));
+load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/' runid '_5band.mat'])
+plot(deltaEEG{1,11})
 
 
 % try Re reference

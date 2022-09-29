@@ -2843,7 +2843,7 @@ canvas(0.4,0.4);
 clear plsmodel;
 cmin=-8e-3;cmax=8e-3;
 % cmin=-8e-3;cmax=8e-3;
-Fac=10;
+Fac=1;
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
     [R2,reg,ypred] = npls_pred(pow5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)),Fac);
@@ -3288,7 +3288,7 @@ colormap('jet');
 clim([cmin cmax]);
 xticks([1:64]);xticklabels([labelsL labelsR]);xtickangle(90);grid on;
 title(['PLS model (R2= ' num2str(round(R2,1)) ') in all 4 statues: sum-EEG(-500ms) -> '...
-XcorrPeakmat2names{depen_select}]);
+XcorrPeakmat2names{depen_select} ' ^{* PLOT 18-1}']);
 
 
 
@@ -3336,20 +3336,28 @@ end
 toc
 % take about 2 hours to filter all sessions
 
+% load one session
+clear
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
+sessions={'synch','synco','synch','synco','synch','synco','synch','synco'};
+cd /ssd/zhibin/1overf/
+% select one session
+s=1;
+runid=num2str(seeds(s,:));
+load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/' runid '_5band.mat'])
 
-
-
+figure;
+subplot(2,1,1);
+EEG=deltaEEG{1,11};
+plot(EEG);
+subplot(2,1,2);
 
 % try Re reference
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 % This function pass filtered_data and get back average referenced data.
-[reRef_data] = reRef(data_trials_EEG,goodchans);
+[reRef_data] = reRef2(EEG);
+plot(reRef_data);
 
-function [reRef_data] = reRef(filtered_data,goodchans);
-% This function pass filtered_data and get back average referenced data. 
-averageRef=mean(filtered_data(:,goodchans,:),2); % can we average over the good epochs too?
-averageRef=repmat(averageRef,1,size(filtered_data,2));
-reRef_data=filtered_data-averageRef; % this have all the channels, including VEOG,HEOG,M1,M2
-end
 
 % compute envelope using hilbert
 
