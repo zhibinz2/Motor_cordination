@@ -1,10 +1,13 @@
 % Understanding the PLS model
 addpath /home/zhibin/Documents/GitHub/matlab/ramesh/plsmodel
 
+c=1;
 X=pow5forpls3(Inds4(:,c),:);
 Y=H_all_LR(Inds4(:,c));
 
-[R2,reg,ypred,Xfactors,Yfactors,Core,B,Fac] = npls_pred(X,Y,Fac)
+Fac=3;
+
+% [R2,reg,ypred,Xfactors,Yfactors,Core,B,Fac] = npls_pred(X,Y,Fac)
 % [R2,reg,ypred,Xfactors,Yfactors,Core,B] = npls_pred(X,Y) 
 % Drop 1 and cross-validate pls model
 %X = EEG measures organized as subjects x channels (or channel pairs)
@@ -32,15 +35,15 @@ disp('/////Calculating fitted model/////')
 
 disp('/////Calculating cross-validation model/////')
 
-if nargin<3
-    Fac=input('# of components to include (80% variance accounted):  ');
-end
+% if nargin<3
+%     Fac=input('# of components to include (80% variance accounted):  ');
+% end
 
 n=size(X,1);
 ypred=zeros(n,1);
 T=zeros(n,Fac);
 
-for i=1:n; % leave one out cross-validation
+for i=1:n; % leave one out cross-validation 48 times x 1 factor
     % Remove i from complete data set
     X_set=X(setdiff(1:n,i),:);
     Y_set=Y(setdiff(1:n,i),:);
@@ -82,4 +85,4 @@ end
 
 ssEr=sum(sum((Y-ypred).^2))
 ssOr=sum(sum((Y-mean(Y)).^2))
-R2=100*(1-ssEr/ssOr)
+R2=100*(1-ssEr/ssOr) % prediction error 

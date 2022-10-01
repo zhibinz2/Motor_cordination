@@ -2862,6 +2862,8 @@ for c=1:4 % four states
 end
 sgtitle('PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}')
 % topoplot for uncouple and mutual
+addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
+hnc = hotncold(100);
 band5names={'delta','theta','alpha','beta','gamma'};
 states2names={'uncouple','mutual'};
 states4names;
@@ -2872,14 +2874,14 @@ for s=1:2
     for b=1:5
         subplot(2,5,(s-1)*5+b)
         topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');colorbar; 
-        colormap('jet'); clim([cmin cmax]);
+        colormap(hnc); % colormap('jet'); %  clim([cmin cmax]);
         if b==3;title({['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'], ...
                 [states4names{c(s)} '(R2= ' num2str(round(plsmodel(c(s)).R2,1)) ...
             '  Fac= ' num2str(Fac) ') ']},'Color',condicolors(c(s),:));end
         subtitle(band5names(b));
     end
 end
-
+set(gcf,'color','w'); % set background white for copying in ubuntu
 
 % 3 states - combine uncouple state and leading state and call it "independent"
 states3names={'independent','following','mutual'};
@@ -3271,8 +3273,9 @@ depen_select=2;
 cmin=-12e-3;cmax=12e-3;
 cmin=-0.07;cmax=0.07;
 
+
+% (ALL states: 5freq x 32chan = 160 predictors x 96 trials)
 % similar code as in PLOT 16
-% (ALL states: 5freq x 32chan = 160 predictors x 192 trials)
 clear plsmodel;
 canvas(0.5,0.3);
 R2=[];reg=[];ypred=[];
@@ -3290,7 +3293,51 @@ xticks([1:64]);xticklabels([labelsL labelsR]);xtickangle(90);grid on;
 title(['PLS model (R2= ' num2str(round(R2,1)) ') in all 4 statues: sum-EEG(-500ms) -> '...
 XcorrPeakmat2names{depen_select} ' ^{* PLOT 18-1}']);
 
-
+% (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48 trials)
+% similar code as in PLOT 16
+canvas(0.4,0.4);
+plsmodel=[];
+% cmin=-8e-3;cmax=8e-3;
+cmin=-0.07;cmax=0.07;
+Fac=1;
+for c=1:4 % four states
+    R2=[];reg=[];ypred=[];
+    [R2,reg,ypred] = npls_pred(Band5_LR_chan64_3(Inds4(1:24,c),:),XcorrPeakmat2(Inds4(1:24,c),depen_select),Fac);
+    plsmodel(c).weights=reshape(reg{Fac},5,64); 
+    plsmodel(c).R2 = R2;
+    plsmodel(c).ypred = ypred;
+    subplot(2,2,c);
+    imagesc(plsmodel(c).weights);colorbar; 
+    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    set(gca, 'YDir','normal');
+    xticks([1:64]);xticklabels([labelsL labelsR]);xtickangle(90);grid on; % from PLOT 18-1 
+    colormap('jet'); clim([cmin cmax]);% caxis([-0.1 0.1]);
+    title([states4names{c} ': PLS model (R2= ' num2str(round(R2,1)) '  Fac= ' num2str(Fac) ') '], ...
+        'Color',condicolors(c,:));
+    grid on;
+end
+sgtitle(['PLS model: sum-EEG(-500ms) ->' XcorrPeakmat2names{depen_select} ' ^{* PLOT 18-1}'])
+% topoplot for uncouple and mutual
+addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
+hnc = hotncold(100);
+band5names={'delta','theta','alpha','beta','gamma'};
+states2names={'uncouple','mutual'};
+states4names;
+figure; % canvas(0.9,0.5)
+cmin=-8e-3;cmax=8e-3;
+c=[1 4];
+for s=1:2
+    for b=1:5
+        subplot(2,5,(s-1)*5+b)
+        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');colorbar; 
+        colormap(hnc); % colormap('jet'); %  clim([cmin cmax]);
+        if b==3;title({['PLS model: sum-EEG(-500ms) -> ' XcorrPeakmat2names{depen_select} ' ^{* PLOT 18-1}'], ...
+                [states4names{c(s)} '(R2= ' num2str(round(plsmodel(c(s)).R2,1)) ...
+            '  Fac= ' num2str(Fac) ') ']},'Color',condicolors(c(s),:));end
+        subtitle(band5names(b));
+    end
+end
+set(gcf,'color','w'); % set background white for copying in ubuntu
 
 %% SECT 19 ...try out DFA on EEG
 ans(:,15)

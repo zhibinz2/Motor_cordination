@@ -96,11 +96,10 @@ AIC=nan(2,10);R2s=nan(2,10);ssERs=nan(2,10);
         reg=[];X=[];Y=[];
         X=pow5forpls3(Inds4(:,c(s)),:);Y=H_all_LR(Inds4(:,c(s)));
         [reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(X,Y);
-        regs{s}=reg;
-        ssOr=sum(sum((Y_MC-mean(Y_MC)).^2))
+        ssOr=sum(sum((X_MC-mean(Y_MC)).^2))
         for Fac=1:10;
             R2=[];ssEr=[];
-            ssEr=sum(sum((Y_MC-ypred_fit(:,Fac)).^2))% ssEr=sum(sum((Y-ypred).^2))
+            ssEr=sum(sum((X_MC-ypred_fit(:,Fac)).^2))% ssEr=sum(sum((Y-ypred).^2))
             ssERs(s,Fac)=ssEr;
             R2=100*(1-ssEr/ssOr)
             R2s(s,Fac)=R2;
@@ -131,39 +130,9 @@ subtitle('mutual')
 
 %% Try cross validation (myxvalidation)
 % select the Fac with minimal AIC
-Fac=1
+Fac=1;
 c=[1 4];
-ssErs=[];R2s=[];
 % do the cross validation
 for s=1:2
-    ssEr=[];R2=[];
     X=pow5forpls3(Inds4(:,c(s)),:);Y=H_all_LR(Inds4(:,c(s)));
     [ssEr,R2]  = myxvalidation(X,Y,Fac);
-    ssErs(s)=ssEr;
-    R2s(s)=R2;
-end
-
-regs{1}{1}
-
-
-% topoplot for uncouple and mutual
-addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
-hnc = hotncold(100);
-band5names={'delta','theta','alpha','beta','gamma'};
-states2names={'uncouple','mutual'};
-states4names;
-figure; % canvas(0.9,0.5)
-cmin=-8e-3;cmax=8e-3;
-c=[1 4];
-for s=1:2
-    for b=1:5
-        subplot(2,5,(s-1)*5+b)
-        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');colorbar; 
-        colormap(hnc); % colormap('jet'); %  clim([cmin cmax]);
-        if b==3;title({['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'], ...
-                [states4names{c(s)} '(R2= ' num2str(round(plsmodel(c(s)).R2,1)) ...
-            '  Fac= ' num2str(Fac) ') ']},'Color',condicolors(c(s),:));end
-        subtitle(band5names(b));
-    end
-end
-set(gcf,'color','w'); % set background white for copying in ubuntu
