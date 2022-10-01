@@ -1,4 +1,5 @@
-open /home/zhibin/Documents/sedation-restingstate/20200522CSP/classifyRS_better_version.m
+%% Try AIC
+% open /home/zhibin/Documents/sedation-restingstate/20200522CSP/classifyRS_better_version.m
 
 % Calculate AIC
 AIC(i)=2*log(ERRORRATE)+2*(ncomps(i));
@@ -89,7 +90,7 @@ subtitle('uncouple')
 subplot(3,2,6)
 plot(1:10,ssERs(2,:),'r.');xlabel('nFac');ylabel('ssEr');% title('AIC(s,Fac)=log(ssEr)+2*(Fac);')
 subtitle('mutual')
-%% Mean center everything
+%% Mean center everything (This is correct)
 c=[1 4];regs=[];
 AIC=nan(2,10);R2s=nan(2,10);ssERs=nan(2,10);
     for s=1:2 % one of the four states
@@ -100,7 +101,7 @@ AIC=nan(2,10);R2s=nan(2,10);ssERs=nan(2,10);
         ssOr=sum(sum((Y_MC-mean(Y_MC)).^2))
         for Fac=1:10;
             R2=[];ssEr=[];
-            ssEr=sum(sum((Y_MC-ypred_fit(:,Fac)).^2))% ssEr=sum(sum((Y-ypred).^2))
+            ssEr=sum(sum((Y_MC-ypred_fit(:,Fac)).^2))
             ssERs(s,Fac)=ssEr;
             R2=100*(1-ssEr/ssOr)
             R2s(s,Fac)=R2;
@@ -129,39 +130,32 @@ subplot(3,2,6)
 plot(1:10,ssERs(2,:),'r.');xlabel('nFac');ylabel('ssEr');% title('AIC(s,Fac)=log(ssEr)+2*(Fac);')
 subtitle('mutual')
 
-%% Try cross validation (myxvalidation)
-% select the Fac with minimal AIC
-Fac=1
-c=[1 4];
-ssErs=[];R2s=[];
-% do the cross validation
-for s=1:2
-    ssEr=[];R2=[];
-    X=pow5forpls3(Inds4(:,c(s)),:);Y=H_all_LR(Inds4(:,c(s)));
-    [ssEr,R2]  = myxvalidation(X,Y,Fac);
-    ssErs(s)=ssEr;
-    R2s(s)=R2;
-end
+%
 
 regs{1}{1}
 
+clear plsmodel
+% reshape regs{1}{1} and {2}{1}
+plsmodel(1).weights=reshape(regs{1}{Fac},5,32); % uncouple
+plsmodel(2).weights=reshape(regs{2}{Fac},5,32); % mutual
 
-% topoplot for uncouple and mutual
+% topoplot for uncouple and mutual (same as in PLOT 16)
 addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
 band5names={'delta','theta','alpha','beta','gamma'};
 states2names={'uncouple','mutual'};
 states4names;
 figure; % canvas(0.9,0.5)
-cmin=-8e-3;cmax=8e-3;
+cmin=-0.01;cmax=0.01;
 c=[1 4];
 for s=1:2
     for b=1:5
         subplot(2,5,(s-1)*5+b)
-        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');colorbar; 
-        colormap(hnc); % colormap('jet'); %  clim([cmin cmax]);
+        topoplot(plsmodel(s).weights(b,:),channels,'nosedir','+X');colorbar; 
+        colormap(hnc); % colormap('jet'); 
+        clim([cmin cmax]);
         if b==3;title({['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'], ...
-                [states4names{c(s)} '(R2= ' num2str(round(plsmodel(c(s)).R2,1)) ...
+                [states4names{c(s)} '(R^2= ' num2str(round(R2s(s),1)) ...
             '  Fac= ' num2str(Fac) ') ']},'Color',condicolors(c(s),:));end
         subtitle(band5names(b));
     end

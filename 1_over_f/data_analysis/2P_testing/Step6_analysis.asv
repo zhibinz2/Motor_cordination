@@ -2838,29 +2838,71 @@ set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
 title(['PLS model (R2= ' num2str(round(R2,1)) ') in all 4 statues: sum-EEG(-500ms) -> H-int']);
 
-% (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48 trials)
-canvas(0.4,0.4);
-clear plsmodel;
-cmin=-8e-3;cmax=8e-3;
-% cmin=-8e-3;cmax=8e-3;
-Fac=1;
+% (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48
+% trials)-updated to use mynpls_pred function
+regs=[];AIC=nan(2,10);R2s=nan(4,10);ssERs=nan(4,10);
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
-    [R2,reg,ypred] = npls_pred(pow5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)),Fac);
-    plsmodel(c).weights=reshape(reg{Fac},5,32);
-    plsmodel(c).R2 = R2;
-    plsmodel(c).ypred = ypred;
+    [reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(pow5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)));
+    regs{c}=reg;
+    ssOr=sum(sum((Y_MC-mean(Y_MC)).^2))
+    for Fac=1:10;
+        R2=[];ssEr=[];
+        ssEr=sum(sum((Y_MC-ypred_fit(:,Fac)).^2))
+        ssERs(c,Fac)=ssEr;
+        R2=100*(1-ssEr/ssOr)
+        R2s(c,Fac)=R2;
+        % Cal AIC
+        AIC(c,Fac)=log(ssEr)+2*(Fac);
+    end
+end
+figure;
+for c=1:4
+    subplot(2,4,c);
+    plot(1:10,AIC(c,:),'.','MarkerSize',20);xlabel('nFac');ylabel('AIC');
+    ylim([0 16]);xlim([0 11]);
+    subtitle(states4names{c})
+    subplot(2,4,4+c);
+    plot(1:10,R2s(c,:),'r.','MarkerSize',20);xlabel('nFac');ylabel('R^2');
+    ylim([10 110]);xlim([0 11]);
+    subtitle(states4names{c})
+end
+
+% Try cross validation (myxvalidation)
+% select the Fac with minimal AIC
+Fac=1
+ssErs=[];R2s=[];
+% do the cross validation
+for c=1:4
+    ssEr=[];R2=[];
+    X=pow5forpls3(Inds4(:,c),:);Y=H_all_LR(Inds4(:,c));
+    [ssEr,R2]  = myxvalidation(X,Y,Fac);
+    ssErs(c)=ssEr;
+    R2s(c)=R2;
+end
+% reshape regs{1:4}{Fac} 
+clear plsmodel
+for c=1:4
+    plsmodel(c).weights=reshape(regs{c}{Fac},5,32); 
+end
+% Plot the 4 states
+canvas(0.4,0.4);
+cmin=-0.01;cmax=0.01;
+for c=1:4
     subplot(2,2,c);
     imagesc(plsmodel(c).weights);colorbar; 
     yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
     set(gca, 'YDir','normal');
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
-    colormap('jet'); clim([cmin cmax]);% caxis([-0.1 0.1]);
-    title([states4names{c} ': PLS model (R2= ' num2str(round(R2,1)) '  Fac= ' num2str(Fac) ') '], ...
+    colormap('jet'); clim([cmin cmax]);
+    % caxis([-0.1 0.1]);
+    title([states4names{c} ': PLS model (R^2= ' num2str(round(R2s(c),1)) '  Fac= ' num2str(Fac) ') '], ...
         'Color',condicolors(c,:));
     grid on;
 end
 sgtitle('PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}')
+set(gcf,'color','w'); % set background white for copying in ubuntu
+
 % topoplot for uncouple and mutual
 addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
@@ -3297,8 +3339,8 @@ XcorrPeakmat2names{depen_select} ' ^{* PLOT 18-1}']);
 % similar code as in PLOT 16
 canvas(0.4,0.4);
 plsmodel=[];
-cmin=-8e-3;cmax=8e-3;
 % cmin=-8e-3;cmax=8e-3;
+cmin=-0.07;cmax=0.07;
 Fac=1;
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
