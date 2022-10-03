@@ -1958,14 +1958,15 @@ plot(H_Lall(uncoupleInd(syncoind(4:6))),H_Rall(uncoupleInd(syncoind(4:6))),'squa
 plot(H_Lall(uncoupleInd(syncoind(7:9))),H_Rall(uncoupleInd(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
 plot(H_Lall(uncoupleInd(syncoind(10:12))),H_Rall(uncoupleInd(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('uncoupling');subtitle('(uncouple)')
-A=[];Alpha1=[];FitValues=[];
+title('uncoupling');
+A=[];S=[]; Alpha1=[];FitValues=[];
 A=polyfit(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
 hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 % legend('synch','','','','synco','','','','location','northwest');
+subtitle('(uncouple: linear regression slope = ' num2str(Alpha1) ')')
 grid on;
 subplot(1,3,2); %##############
 plot(H_Lall(leadingInd(synchind(1:3))),H_Rall(leadingInd(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen); hold on;
@@ -2870,26 +2871,6 @@ xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
 title(['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: sum-EEG(-500ms) -> H-int  ^{* PLOT 16}']);
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
-% Plot the 4 states
-canvas(0.4,0.4);
-cmin=-0.01;cmax=0.01;
-for c=1:4
-    subplot(2,2,c);
-    imagesc(plsmodel(c).weights);colorbar; 
-    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
-    set(gca, 'YDir','normal');
-    xticks([1:32]);xticklabels([labels]);xtickangle(90);
-    colormap('jet'); clim([cmin cmax]);
-    % caxis([-0.1 0.1]);
-    title([states4names{c} ': PLS model (R^2= ' num2str(round(R2s(c),1)) '  Fac= ' num2str(Fac) ') '], ...
-        'Color',condicolors(c,:));
-    grid on;
-end
-sgtitle('PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}')
-
-
-
-
 
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48
 % trials)-updated to use mynpls_pred function
@@ -3021,19 +3002,51 @@ addpath /home/zhibin/Documents/GitHub/matlab/ramesh/plsmodel
 addpath(genpath('/home/zhibin/Documents/GitHub/matlab/external/')); 
 
 % (ALL states: 5freq x 32chan = 160 predictors x 192 trials)
-R2=[];reg=[];ypred=[];
-[R2,reg,ypred] = npls_pred(H5forpls3,H_all_LR,1);
+% -updated to use mynpls_pred function
+reg=[];ypred_fit=[];X_MC=[];Y_MC;
+clear plsmodel;
+[reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(H5forpls3,H_all_LR);
+ssOr=sum(sum((Y_MC-mean(Y_MC)).^2))
+AIC=nan(1,10);R2s=nan(1,10);ssERs=nan(1,10);
+for Fac=1:10;
+    R2=[];ssEr=[];
+    ssEr=sum(sum((Y_MC-ypred_fit(:,Fac)).^2))
+    ssERs(Fac)=ssEr;
+    R2=100*(1-ssEr/ssOr)
+    R2s(Fac)=R2;
+    % Cal AIC
+    AIC(Fac)=log(ssEr)+2*(Fac);
+end
+figure;
+subplot(2,1,1);
+plot(1:10,AIC,'.','MarkerSize',20);xlabel('nFac');ylabel('AIC');
+xlim([0 11]);
+subtitle('All states');
+subplot(2,1,2);
+plot(1:10,R2s,'r.','MarkerSize',20);xlabel('nFac');ylabel('R^2');
+xlim([0 11]);
+subtitle('All states');
+sgtitle(['AIC & R^2 for PLS model in all statues: H-EEG(-500ms) -> H-int^{ *PLOT16-1}']);
+% Try cross validation (myxvalidation)
+% select the Fac with minimal AIC
+Fac=1
+% do the 8-fold cross validation
+ssEr=[];R2=[];
+X=H5forpls3;Y=H_all_LR;
+[ssEr,R2]  = myxvalidation(X,Y,Fac);
+% reshape regs{1:4}{Fac} 
+clear plsmodel
 % reshape from 160 x 1 back to 5 x 32 (freq x chan)
-weights = reshape(reg{1},5,32); % 
+plsmodel.weights=reshape(reg{Fac},5,32); 
 canvas(0.2,0.2)
 cmin=-0.15;cmax=0.15;
-imagesc(weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
+imagesc(plsmodel.weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
 yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
-colormap('jet'); clim([cmin cmax]);% clim([-0.1 0.1]);
+colormap('jet'); clim([cmin cmax]);
 set(gca, 'YDir','normal');
-xticks([1:32]);xticklabels([labels]);xtickangle(90);
-title(['PLS model (R2= ' num2str(round(R2,1)) ') in all 4 statues: H-EEG(-500ms) -> H-int']);
-grid on;
+xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
+title(['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: H-EEG(-500ms) -> H-int  ^{* PLOT 16-1}']);
+set(gcf,'color','w'); % set background white for copying in ubuntu
 
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48 trials)
 % -updated to use mynpls_pred function

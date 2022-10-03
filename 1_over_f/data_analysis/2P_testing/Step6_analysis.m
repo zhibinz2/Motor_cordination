@@ -1947,7 +1947,7 @@ legend('synch','synco','','');
 grid on;
 
 %********************** 3 subplots
-canvas(0.3,0.3);
+canvas(0.4,0.3);
 subplot(1,3,1); %##############
 plot(H_Lall(uncoupleInd(synchind(1:3))),H_Rall(uncoupleInd(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);hold on;
 plot(H_Lall(uncoupleInd(synchind(4:6))),H_Rall(uncoupleInd(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
@@ -1958,14 +1958,15 @@ plot(H_Lall(uncoupleInd(syncoind(4:6))),H_Rall(uncoupleInd(syncoind(4:6))),'squa
 plot(H_Lall(uncoupleInd(syncoind(7:9))),H_Rall(uncoupleInd(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
 plot(H_Lall(uncoupleInd(syncoind(10:12))),H_Rall(uncoupleInd(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('uncoupling');subtitle('(uncouple)')
-A=[];Alpha1=[];FitValues=[];
+title('uncoupling');
+A=[];S=[]; Alpha1=[];FitValues=[];
 A=polyfit(H_Lall(uncoupleInd(1:24)),H_Rall(uncoupleInd(1:24)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,H_Lall(uncoupleInd(1:24)));
 hold on; plot(H_Lall(uncoupleInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 % legend('synch','','','','synco','','','','location','northwest');
+subtitle(['(uncouple: linear regression slope = ' num2str(round(Alpha1,1)) ')'])
 grid on;
 subplot(1,3,2); %##############
 plot(H_Lall(leadingInd(synchind(1:3))),H_Rall(leadingInd(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen); hold on;
@@ -1985,7 +1986,7 @@ plot(H_Rall(followingInd(syncoind(4:6))),H_Lall(followingInd(syncoind(4:6))),'sq
 plot(H_Rall(followingInd(syncoind(7:9))),H_Lall(followingInd(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
 plot(H_Rall(followingInd(syncoind(10:12))),H_Lall(followingInd(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Leader');ylabel('DFA exponent, Follower');
-title('uni-directional coupling'); subtitle('(leading or following)');
+title('uni-directional coupling'); 
 A=[];Alpha1=[];FitValues=[];
 A=polyfit([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))], [H_Rall(leadingInd(1:24)); H_Rall(followingInd(1:24))],1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
@@ -1993,6 +1994,7 @@ FitValues=polyval(A,[H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))]);
 hold on; plot([H_Lall(leadingInd(1:24)); H_Lall(followingInd(1:24))],FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 % legend('synch','','','','synco','','','','','','','','','','','','location','northwest');
+subtitle(['(leading or following: linear regression slope = ' num2str(round(Alpha1,1)) ')'])
 grid on;
 subplot(1,3,3); %##############
 plot(H_Lall(mutualInd(synchind(1:3))),H_Rall(mutualInd(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);hold on;
@@ -2004,13 +2006,14 @@ plot(H_Lall(mutualInd(syncoind(4:6))),H_Rall(mutualInd(syncoind(4:6))),'square',
 plot(H_Lall(mutualInd(syncoind(7:9))),H_Rall(mutualInd(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
 plot(H_Lall(mutualInd(syncoind(10:12))),H_Rall(mutualInd(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('strong coupling'); subtitle('(mutual)');
+title('strong coupling'); 
 A=[];Alpha1=[];FitValues=[];
 A=polyfit(H_Lall(mutualInd(1:24)),H_Rall(mutualInd(1:24)),1);
 Alpha1=A(1); 
 FitValues=polyval(A,H_Lall(mutualInd(1:24)));
 hold on; plot(H_Lall(mutualInd(1:24)),FitValues,'k-');
 xlim([0.4 1.4]);ylim([0.4 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+subtitle(['(mutual): linear regression slope = ' num2str(round(Alpha1,1)) ')'])
 legend('synch - subj pair 1','synch - subj pair 2','synch - subj pair 3','synch - subj pair 4', ...
     'synco - subj pair 1','synco - subj pair 2','synco - subj pair 3','synco - subj pair 4','location','eastoutside');
 grid on;
