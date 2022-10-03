@@ -13,9 +13,10 @@ n=size(X,1);
 T=zeros(n,Fac);
 
 for i=1:8; % 8 fold cross validation
+    nSet=n/8;
     % Remove 6 from complete data set
-    X_set=X(setdiff(1:n,((i-1)*6+1):((i-1)*6+6)),:);
-    Y_set=Y(setdiff(1:n,((i-1)*6+1):((i-1)*6+6)),:);
+    X_set=X(setdiff(1:n,((i-1)*nSet+1):((i-1)*nSet+nSet)),:);
+    Y_set=Y(setdiff(1:n,((i-1)*nSet+1):((i-1)*nSet+nSet)),:);
 
     % Calculate mean values
     X_mean=mean(X_set,1);
@@ -33,7 +34,7 @@ for i=1:8; % 8 fold cross validation
     [Xfacs,Yfacs,Cr,b] = npls(Z_set,Y_set,10,nan);
     
     % Remove X mean for X(i)
-    X_fix=X((((i-1)*6+1):((i-1)*6+6)),:)-X_mean;   
+    X_fix=X((((i-1)*nSet+1):((i-1)*nSet+nSet)),:)-X_mean;   
     % Remove DOSC component from X(i)
     [Znew]=dosc_pred(X_fix,W_dosc,P_dosc);
     
@@ -41,8 +42,8 @@ for i=1:8; % 8 fold cross validation
     [ypred_tp,T_tp]=npred(Znew,Fac,Xfacs,Yfacs,Cr,b,1);
     
     % Add mean center value to predicted value
-    ypred((((i-1)*6+1):((i-1)*6+6)),1)=ypred_tp+Y_mean;  
-    T(((i-1)*6+1):((i-1)*6+6),:)=T_tp;
+    ypred((((i-1)*nSet+1):((i-1)*nSet+nSet)),1)=ypred_tp+Y_mean;  
+    T(((i-1)*nSet+1):((i-1)*nSet+nSet),:)=T_tp;
     
     clear X_set Y_set X_mean Y_mean X_fix
     clear Z_set W_dosc P_dosc

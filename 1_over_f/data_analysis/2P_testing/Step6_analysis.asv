@@ -2824,22 +2824,76 @@ addpath /home/zhibin/Documents/GitHub/matlab/ramesh/plsmodel
 addpath(genpath('/home/zhibin/Documents/GitHub/matlab/external/')); 
 
 % (ALL states: 5freq x 32chan = 160 predictors x 192 trials)
-R2=[];reg=[];ypred=[];
+% -updated to use mynpls_pred function
+reg=[];ypred_fit=[];X_MC=[];Y_MC;
 clear plsmodel;
-[R2,reg,ypred] = npls_pred(pow5forpls3,H_all_LR,1);
+[reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(pow5forpls3,H_all_LR);
+ssOr=sum(sum((Y_MC-mean(Y_MC)).^2))
+AIC=nan(1,10);R2s=nan(1,10);ssERs=nan(1,10);
+for Fac=1:10;
+    R2=[];ssEr=[];
+    ssEr=sum(sum((Y_MC-ypred_fit(:,Fac)).^2))
+    ssERs(Fac)=ssEr;
+    R2=100*(1-ssEr/ssOr)
+    R2s(Fac)=R2;
+    % Cal AIC
+    AIC(Fac)=log(ssEr)+2*(Fac);
+end
+figure;
+subplot(2,1,1);
+plot(1:10,AIC,'.','MarkerSize',20);xlabel('nFac');ylabel('AIC');
+xlim([0 11]);
+subtitle('All states');
+subplot(2,1,2);
+plot(1:10,R2s,'r.','MarkerSize',20);xlabel('nFac');ylabel('R^2');
+xlim([0 11]);
+subtitle('All states');
+sgtitle(['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> H-int^{ *PLOT16}']);
+% Try cross validation (myxvalidation)
+% select the Fac with minimal AIC
+Fac=1
+% do the 8-fold cross validation
+ssEr=[];R2=[];
+X=pow5forpls3;Y=H_all_LR;
+[ssEr,R2]  = myxvalidation(X,Y,Fac);
+% reshape regs{1:4}{Fac} 
+clear plsmodel
 % reshape from 160 x 1 back to 5 x 32 (freq x chan)
-weights = reshape(reg{1},5,32); % 
+plsmodel.weights=reshape(reg{Fac},5,32); 
 canvas(0.2,0.2)
 cmin=-8e-3;cmax=8e-3;
-imagesc(weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
+imagesc(plsmodel.weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
 yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
 colormap('jet'); clim([cmin cmax]);
 set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
-title(['PLS model (R2= ' num2str(round(R2,1)) ') in all 4 statues: sum-EEG(-500ms) -> H-int']);
+title(['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: sum-EEG(-500ms) -> H-int  ^{* PLOT 16}']);
+set(gcf,'color','w'); % set background white for copying in ubuntu
+
+% Plot the 4 states
+canvas(0.4,0.4);
+cmin=-0.01;cmax=0.01;
+for c=1:4
+    subplot(2,2,c);
+    imagesc(plsmodel(c).weights);colorbar; 
+    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    set(gca, 'YDir','normal');
+    xticks([1:32]);xticklabels([labels]);xtickangle(90);
+    colormap('jet'); clim([cmin cmax]);
+    % caxis([-0.1 0.1]);
+    title([states4names{c} ': PLS model (R^2= ' num2str(round(R2s(c),1)) '  Fac= ' num2str(Fac) ') '], ...
+        'Color',condicolors(c,:));
+    grid on;
+end
+sgtitle('PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}')
+
+
+
+
 
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48
 % trials)-updated to use mynpls_pred function
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 regs=[];AIC=nan(2,10);R2s=nan(4,10);ssERs=nan(4,10);
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
@@ -2860,13 +2914,14 @@ figure;
 for c=1:4
     subplot(2,4,c);
     plot(1:10,AIC(c,:),'.','MarkerSize',20);xlabel('nFac');ylabel('AIC');
-    ylim([0 16]);xlim([0 11]);
-    subtitle(states4names{c})
+    ylim([0 17]);xlim([0 11]);
+    subtitle(states4names{c},'Color',condicolors(c,:));
     subplot(2,4,4+c);
     plot(1:10,R2s(c,:),'r.','MarkerSize',20);xlabel('nFac');ylabel('R^2');
     ylim([10 110]);xlim([0 11]);
-    subtitle(states4names{c})
+    subtitle(states4names{c},'Color',condicolors(c,:));
 end
+sgtitle(['AIC & R^2 for PLS model in all 4 statues: sum-EEG(-500ms) -> H-int^{ *PLOT16}']);
 
 % Try cross validation (myxvalidation)
 % select the Fac with minimal AIC
@@ -2910,15 +2965,15 @@ band5names={'delta','theta','alpha','beta','gamma'};
 states2names={'uncouple','mutual'};
 states4names;
 figure; % canvas(0.9,0.5)
-cmin=-8e-3;cmax=8e-3;
 c=[1 4];
 for s=1:2
     for b=1:5
         subplot(2,5,(s-1)*5+b)
         topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');colorbar; 
-        colormap(hnc); % colormap('jet'); %  clim([cmin cmax]);
+        colormap(hnc); % colormap('jet');
+        clim([cmin cmax]);
         if b==3;title({['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'], ...
-                [states4names{c(s)} '(R2= ' num2str(round(plsmodel(c(s)).R2,1)) ...
+                [states4names{c(s)} '(R2= ' num2str(round(R2s(c(s)),1)) ...
             '  Fac= ' num2str(Fac) ') ']},'Color',condicolors(c(s),:));end
         subtitle(band5names(b));
     end
@@ -2981,24 +3036,71 @@ title(['PLS model (R2= ' num2str(round(R2,1)) ') in all 4 statues: H-EEG(-500ms)
 grid on;
 
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48 trials)
-canvas(0.4,0.4);
-cmin=-0.15;cmax=0.15;
+% -updated to use mynpls_pred function
+cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
+regs=[];AIC=nan(2,10);R2s=nan(4,10);ssERs=nan(4,10);
 for c=1:4 % four states
-    R2=[];reg=[];ypred=[];
-    [R2,reg,ypred] = npls_pred(H5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)),1);
-    plsmodel(c).weights=reshape(reg{1},5,32);
-    plsmodel(c).R2 = R2;
-    plsmodel(c).ypred = ypred;
+    reg=[];ypred=[];ypred_fit=[];
+    [reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(H5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)));
+    regs{c}=reg;
+    ssOr=sum(sum((Y_MC-mean(Y_MC)).^2))
+    for Fac=1:10;
+        R2=[];ssEr=[];
+        ssEr=sum(sum((Y_MC-ypred_fit(:,Fac)).^2))
+        ssERs(c,Fac)=ssEr;
+        R2=100*(1-ssEr/ssOr)
+        R2s(c,Fac)=R2;
+        % Cal AIC
+        AIC(c,Fac)=log(ssEr)+2*(Fac);
+    end
+end
+figure;
+for c=1:4
+    subplot(2,4,c);
+    plot(1:10,AIC(c,:),'.','MarkerSize',20);xlabel('nFac');ylabel('AIC');
+    ylim([0 17]);xlim([0 11]);
+    subtitle(states4names{c},'Color',condicolors(c,:));
+    subplot(2,4,4+c);
+    plot(1:10,R2s(c,:),'r.','MarkerSize',20);xlabel('nFac');ylabel('R^2');
+    ylim([10 110]);xlim([0 11]);
+    subtitle(states4names{c},'Color',condicolors(c,:));
+end
+sgtitle(['AIC & R^2 for PLS model in all 4 statues: H-EEG(-500ms) -> H-int ^{ *PLOT16-1}']);
+% Try cross validation (myxvalidation)
+% select the Fac with minimal AIC
+Fac=1;
+ssErs=[];R2s=[];
+% do the cross validation
+for c=1:4
+    ssEr=[];R2=[];
+    X=H5forpls3(Inds4(:,c),:);Y=H_all_LR(Inds4(:,c));
+    [ssEr,R2]  = myxvalidation(X,Y,Fac);
+    ssErs(c)=ssEr;
+    R2s(c)=R2;
+end
+% reshape regs{1:4}{Fac} 
+clear plsmodel
+for c=1:4
+    plsmodel(c).weights=reshape(regs{c}{Fac},5,32); 
+end
+% Plot the 4 states
+canvas(0.4,0.4);
+cmin=-0.1;cmax=0.1;
+for c=1:4
     subplot(2,2,c);
     imagesc(plsmodel(c).weights);colorbar; 
     yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
     set(gca, 'YDir','normal');
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
-    colormap('jet'); clim([cmin cmax]); % caxis([-0.1 0.1]);
-    title([states4names{c} ': PLS model (R2= ' num2str(round(R2,1)) ')'],'Color',condicolors(c,:));
+    colormap('jet'); clim([cmin cmax]);
+    % caxis([-0.1 0.1]);
+    title([states4names{c} ': PLS model (R^2= ' num2str(round(R2s(c),1)) '  Fac= ' num2str(Fac) ') '], ...
+        'Color',condicolors(c,:));
     grid on;
 end
-sgtitle('PLS model: H-EEG(-500ms) -> H-int')
+sgtitle('PLS model: H-EEG(-500ms) -> H-int ^{* PLOT 16-1}')
+set(gcf,'color','w'); % set background white for copying in ubuntu
+
 
 % 3 states - combine uncouple state and leading state and call it "independent"
 states3names={'independent','following','mutual'};
