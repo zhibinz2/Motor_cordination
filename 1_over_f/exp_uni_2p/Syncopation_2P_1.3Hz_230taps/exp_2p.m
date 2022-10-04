@@ -7,6 +7,7 @@ sca; clc; close all; clear all; clearvars;
 
 %% load previous synchronization experiment results
 last_seed=20221003;
+cd (['/home/hnl/Acquisition/zhibin/' num2str(last_seed) '_2P/Segmented_data/']);
 % cd /home/hnl/Acquisition/zhibin/20220609_2P/Segmented_data/1_50Hz_ICAautomized/
 % [BPCondi_dataName]=uigetfile('BP*.mat');% select the Left player EEG
 % Path_filename=[pwd '/' BPCondi_dataName];
@@ -31,7 +32,7 @@ load(['/home/hnl/Acquisition/zhibin/' num2str(last_seed) '_2P/Segmented_data/BP'
 % load '/home/hnl/Acquisition/zhibin/20220810_2P/Segmented_data/condiSeq20220810.mat';
 % save('condiSeq20220815.mat','condiSeq');
 % load '/home/hnl/Acquisition/zhibin/20220815_2P/Segmented_data/condiSeq20220815.mat';
-load(['/home/hnl/Acquisition/zhibin/20220815_2P/Segmented_data/condiSeq' num2str(last_seed) '.mat']);
+load(['/home/hnl/Acquisition/zhibin/' num2str(last_seed) '_2P/Segmented_data/condiSeq' num2str(last_seed) '.mat']);
 %% Go back to experimental directory
 cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/Syncopation_2P_1.3Hz_230taps
 
