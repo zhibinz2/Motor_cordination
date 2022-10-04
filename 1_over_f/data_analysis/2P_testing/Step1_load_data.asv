@@ -39,7 +39,6 @@ Path_filenameR=[pwd '/' EEGfileNameR];
 [timeR,samplesR,TRIGGERindR,srR,channels_infoR,labelsR] = LoadTMSi(Path_filenameR);
 
 %% Extract Trigger channel info
-TriggersL=[];TriggersR=[];valuesL=[];valuesR=[];
 TriggersL=samplesL(TRIGGERindL,:)';valuesL=unique(TriggersL)'
 TriggersR=samplesR(TRIGGERindR,:)';valuesR=unique(TriggersR)'
 
@@ -69,7 +68,6 @@ yline(192,'k','192 = psychtoolbox display starts');
 plot(find(TriggersR==192),192*ones(length(find(TriggersR==192)),1),'mo'); 
 hold off;
 
-% troubleshooting
 hold on;
 yline(95,'k','95 = light sensor 2 + key 6 '); 
 plot(find(TriggersR==95),95*ones(length(find(TriggersR==95)),1),'mo'); % only happen in trial 1, to be discarded anyway
@@ -109,11 +107,8 @@ xline(cut1_L,'k');xline(cut2_L,'k');
 subplot(2,1,2);
 xline(cut1_R,'k');xline(cut2_R,'k');
 % cut off middle section and reconnect the data
-timeL=timeL([1:cut1_L cut2_L:end]);
-samplesL=samplesL(:,[1:cut1_L cut2_L:end]);
-timeR=timeR([1:cut1_R cut2_R:end]);
-samplesR=samplesR(:,[1:cut1_R cut2_R:end]);
-% Run from the beginning of this section again 
+timeL,samplesL,
+
 
 %% extract time points for key presses (maybe create a function to do the same for pacers,feedbacks)
 % Left player
