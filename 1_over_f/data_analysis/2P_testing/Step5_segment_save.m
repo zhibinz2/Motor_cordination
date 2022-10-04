@@ -402,3 +402,68 @@ save(['Pacer' num2str(seed) '.mat'],'PacerCondi1L','PacerCondi2L','PacerCondi3L'
     'PacerCondi4L',...
     'PacerCondi1R','PacerCondi2R','PacerCondi3R',...
     'PacerCondi4R');
+
+%% save BP and condiSeq for Syncopation experiment
+seed;
+% cd(['/home/hnl/Acquisition/zhibin/' num2str(last_seed) '_2P/Segmented_data/']); % on hnlstim2
+cd(['/ssd/zhibin/1overf/' num2str(seed) '_2P/Segmented_data/']);
+save(['BP' num2str(last_seed) '.mat'],'BP');
+save(['condiSeq' num2str(last_seed) '.mat'],'condiSeq');
+
+%% saves all variables from the current workspace
+tic
+save([num2str(seed) 'workspace.mat']);
+toc
+% takes about 11 min
+
+%% Get variable names from mat file (faster)
+load("20220721.mat")
+
+tic
+load([num2str(seed) 'workspace.mat']);
+toc
+% takes about 3 min
+varlist1 = who();
+
+% varlist1 = who('-file','20220811.mat');
+
+tic
+% matObj1 = matfile('20220721workspace.mat');
+% varlist1 = who(matObj1);
+toc
+
+varlist2 = who();
+
+varlist_diff = setdiff(varlist2,varlist1);
+
+% clear varlist1
+
+% append new variables to the old mat files
+% tic
+% varlist_diff_string=string(varlist_diff);
+% for i=1:length(varlist_diff_string)
+%     save('20220811workspace.mat',varlist_diff_string(i),'-append');
+% end
+% toc
+
+tic 
+varlist_diff_string=string(varlist_diff);
+save([num2str(seed) 'workspace.mat'],varlist_diff_string{:},'-append');
+toc
+% takes about 1.5 min
+
+% clear all new added variables
+clear(varlist_diff{:})
+
+%% moving files 
+
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816];
+cd /ssd/zhibin/1overf/
+for s=1:8
+    mkdir(['/ssd/zhibin/1overf/' num2str(seeds(s,:)) '_2P/Cleaned_data/Plots'])
+    cd(['/ssd/zhibin/1overf/' num2str(seeds(s,:)) '_2P/Cleaned_data'])
+    movefile cleanup*.png Plots
+    cd /ssd/zhibin/1overf/
+end
+
+%%

@@ -1,6 +1,4 @@
 function [samples, intervals, BPL, BPR, intL, intR] = BP_nearest(BPL,BPR, tooshort)
-
-
 sampL = find(BPL==1);
 sampR = find(BPR==1);
 intL=diff(sampL);
@@ -13,7 +11,7 @@ if ~isempty(doubleL)
 	BPL(sampL(doubleL+1)) = -1;
 end
 if ~isempty(doubleR)
-	BPR(sampL(doubleR+1)) = -1;
+	BPR(sampR(doubleR+1)) = -1; % change sampL to sampR on 10/04/2022 possibly need to redo all previous data?
 end
 sampL = find(BPL>0);
 sampR = find(BPR>0);

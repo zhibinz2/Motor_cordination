@@ -13,7 +13,7 @@ seed=20220816;
 seed=20221003;
 
 %% make folder 
-mkdir(['/ssd/zhibin/1overf/' num2str(seed) '_2P/Cleaned_data/']);
+mkdir(['/ssd/zhibin/1overf/' num2s]);
 
 %% 
 % addpath /ssd/zhibin/1overf/20220808_2P/Copy_of_Ramesh20220909
