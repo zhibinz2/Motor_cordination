@@ -11,7 +11,7 @@ if ~isempty(doubleL)
 	BPL(sampL(doubleL+1)) = -1;
 end
 if ~isempty(doubleR)
-	BPR(sampR(doubleR+1)) = -1; % change sampL to sampR on 10/04/2022 possibly need to redo all previous data?
+	BPR(sampR(doubleR+1)) = -1; % change sampL to sampR on 10/04/2022 AM possibly need to redo all previous data?
 end
 sampL = find(BPL>0);
 sampR = find(BPR>0);

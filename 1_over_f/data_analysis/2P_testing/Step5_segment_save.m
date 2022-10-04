@@ -410,6 +410,11 @@ cd(['/ssd/zhibin/1overf/' num2str(seed) '_2P/Segmented_data/']);
 save(['BP' num2str(last_seed) '.mat'],'BP');
 save(['condiSeq' num2str(last_seed) '.mat'],'condiSeq');
 
+%% match intervals and save as cleaned_data
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/Match_intervals
+open BP_distsearch.m
+
+
 %% saves all variables from the current workspace
 tic
 save([num2str(seed) 'workspace.mat']);

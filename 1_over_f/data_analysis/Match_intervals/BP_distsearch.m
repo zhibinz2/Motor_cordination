@@ -11,6 +11,11 @@ seed=20220811;
 seed=20220815;
 seed=20220816;
 seed=20221003;
+%%
+clear
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401];
+sessions={'synch','synco','synch','synco','synch','synco','synch','synco','synch','synco'};
+cd /ssd/zhibin/1overf/
 
 %% make folder 
 mkdir(['/ssd/zhibin/1overf/' num2str(seed) '_2P/Cleaned_data/']);
