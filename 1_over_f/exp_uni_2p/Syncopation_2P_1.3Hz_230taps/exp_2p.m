@@ -6,6 +6,7 @@ cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/Syncopation_
 sca; clc; close all; clear all; clearvars; 
 
 %% load previous synchronization experiment results
+last_seed=20221003;
 % cd /home/hnl/Acquisition/zhibin/20220609_2P/Segmented_data/1_50Hz_ICAautomized/
 % [BPCondi_dataName]=uigetfile('BP*.mat');% select the Left player EEG
 % Path_filename=[pwd '/' BPCondi_dataName];
@@ -19,7 +20,9 @@ sca; clc; close all; clear all; clearvars;
 % save('BP20220810.mat','BP');
 % load('/home/hnl/Acquisition/zhibin/20220810_2P/Segmented_data/BP20220810.mat');
 % save('BP20220815.mat','BP');
-load('/home/hnl/Acquisition/zhibin/20220815_2P/Segmented_data/BP20220815.mat');
+% load('/home/hnl/Acquisition/zhibin/20220815_2P/Segmented_data/BP20220815.mat');
+% load(['/home/hnl/Acquisition/zhibin/20221003_2P/Segmented_data/BP20221003.mat']);
+load(['/home/hnl/Acquisition/zhibin/' num2str(last_seed) '_2P/Segmented_data/BP' num2str(last_seed) '.mat']);
 % load data_structure20220713.mat; condiSeq=data(1).condiSeq; save('condiSeq20220713.mat','condiSeq');
 % load 'condiSeq20220713.mat';
 % load data_structure20220804.mat; save('condiSeq20220804.mat','condiSeq');
@@ -27,7 +30,8 @@ load('/home/hnl/Acquisition/zhibin/20220815_2P/Segmented_data/BP20220815.mat');
 % save('condiSeq20220810.mat','condiSeq');
 % load '/home/hnl/Acquisition/zhibin/20220810_2P/Segmented_data/condiSeq20220810.mat';
 % save('condiSeq20220815.mat','condiSeq');
-load '/home/hnl/Acquisition/zhibin/20220815_2P/Segmented_data/condiSeq20220815.mat';
+% load '/home/hnl/Acquisition/zhibin/20220815_2P/Segmented_data/condiSeq20220815.mat';
+load(['/home/hnl/Acquisition/zhibin/20220815_2P/Segmented_data/condiSeq' num2str(last_seed) '.mat']);
 %% Go back to experimental directory
 cd /home/hnl/Documents/GitHub/Motor_cordination/1_over_f/exp_uni_2p/Syncopation_2P_1.3Hz_230taps
 

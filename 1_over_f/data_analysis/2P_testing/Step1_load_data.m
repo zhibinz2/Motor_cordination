@@ -20,10 +20,13 @@ cd /ssd/zhibin/1overf/20220810_2P % Jordan and Issac: Synch 1.3Hz 230 taps
 cd /ssd/zhibin/1overf/20220811_2P % Jordan and Issac: Synco 1.3Hz 230 taps
 cd /ssd/zhibin/1overf/20220815_2P % Ivy and Rajat: Synch 1.3Hz 230 taps
 cd /ssd/zhibin/1overf/20220816_2P % Ivy and Rajat: Synco 1.3Hz 230 taps
+cd /ssd/zhibin/1overf/20221003_2P % Cassie and Harlin: Synch 1.3Hz 230 taps
+
 
 load 20220713.mat
 load 20220721.mat
 load 2022080400.mat
+load 20221003.mat
 
 %% load TMSi data
 [EEGfileNameL]=uigetfile('*.Poly5');% select the Left player EEG
@@ -262,7 +265,7 @@ PacerTimeR01(PacerTimeIndR)=1;
 % figure('units','normalized','outerposition',[0 0 1 0.3]);
 canvas(0.5,0.125);
 plot(PacerTimeR01,'b');
-numPacerR=sum(PacerTimeR01); % check if == 194 / 386 for synchronization % 4+2*11+30*3+230*9=2186 for syncopation
+numPacerR=sum(PacerTimeR01) % check if == 194 / 386 for synchronization % 4+2*11+30*3+230*9=2186 for syncopation
 % For 20220810_2P, it counted 552. (30*17=510 + 2*15 + 4 + 8)
 %% Select segment points  (synchronization)
 % % Plot selected segment points (not alligned)
@@ -285,7 +288,8 @@ PacersL=PacerTimeIndL([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12
 plot(PacersL, ones(length(PacersL)),'r.');
 hold on;
 PacersR=PacerTimeIndR([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);
-plot(PacersR, ones(length(PacersR)),'b.');
+plot(PacersR, 0.5*ones(length(PacersR)),'b.');
+ylim([0 1.5])
 
 %% make shift for missming pacers (optional) 
 % examine first and then pick one pacer from both recordings to calculate shift
@@ -554,7 +558,7 @@ Photocell_L=samplesL(ISOauxindL(2),:)';
 % for photocell
 % view the time course of photocell signals
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(Photocell_L);xlabel('time');ylabel('photocell signal');
+plot(Photocell_L,'r');xlabel('time');ylabel('photocell signal');
 % plot EEG on top
 % hold on; plot(time,samples(2:33,:)'); % it zoom out the phtocell amplitude, too small to see
 

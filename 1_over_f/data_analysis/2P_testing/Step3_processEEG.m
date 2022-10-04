@@ -7,6 +7,7 @@ open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_t
 cd /ssd/zhibin/1overf/20220713_2P
 cd /ssd/zhibin/1overf/20220721_2P
 cd /ssd/zhibin/1overf/20220816_2P
+cd /ssd/zhibin/1overf/20221003_2P
 %% plot raw EEG
 timeL;samplesL;TRIGGERindL;srL;channels_infoL;labelsL;
 timeR;samplesR;TRIGGERindR;srR;channels_infoR;labelsR;
@@ -34,7 +35,7 @@ subplot(2,1,1);plot(detrend_dataL); ylim([-1000 1000]);title('detrend L');
 subplot(2,1,2);plot(detrend_dataR); ylim([-1000 1000]);title('detrend R');
 
 %% filtfilthd method (hnl) high pass first then low pass
-% clear out memory before redoing EEG preprocessing
+% clear out memory before redoing EEG preprocessing (optional)
 clearvars data EEG d
 clearvars filtered_dataL4 filtered_dataL5 icasigLrm mixedsigL 
 clearvars filtered_dataR4 filtered_dataR5 icasigLrm mixedsigR 
@@ -153,7 +154,7 @@ end
 sgtitle('plot on top are SegPacerIndL and SegPacerIndR')
 
 % Examine segmentation points on top
-% Examine plot for 20220713_2P; 20220721_2P; 20220804_2P 
+% Examine plot for 20220713_2P; 20220721_2P; 20220804_2P; 20221003_2P
 % figure('units','normalized','outerposition',[0 0 1 0.6]); % took too long
 % canvas(0.5,0.25); % took too long
 figure;
@@ -298,6 +299,7 @@ ComponentRemoveR; % ComponentRemoveL=ComponentsExamL;
 
 ComponentRemoveR=[19 14]; %for 20220811_2P
 ComponentRemoveR=[11 15 14 29 32]; %for 20220811_2P
+ComponentRemoveR=[32]; %for 20221003_2P
 %% Remove ICA components for Left player
 ALrm=AL;icasigLrm=icasigL; % make new, backup AL, icasigL
 ALrm(:,ComponentRemoveL)=0; icasigLrm(ComponentRemoveL,:)=0;

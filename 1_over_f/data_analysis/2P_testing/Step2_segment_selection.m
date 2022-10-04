@@ -2,7 +2,7 @@
 % Work for 20220713_2P; 20220721_2P; 20220810_2P; 20220815_2P
 
 %  For synchronization
-% Work for 20220713_2P; 20220810_2P:
+% Work for 20220713_2P; 20220810_2P:20221003_2P;
 % Select segmentation points based on pacers and phtotocells on light senor 1
 % 50 Pacer markers selected (2 resting + 12 blocks + 11 resting)
 % SegIndL=PacerTimeIndL([1:2 repelem([2+[32*([1:12]-1)]],4)+repmat([1 2 3 32],1,12)]);

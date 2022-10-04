@@ -10,6 +10,7 @@ cd /ssd/zhibin/1overf/20220810_2P/Segmented_data/
 cd /ssd/zhibin/1overf/20220811_2P/Segmented_data/
 cd /ssd/zhibin/1overf/20220815_2P/Segmented_data/
 cd /ssd/zhibin/1overf/20220816_2P/Segmented_data/
+cd /ssd/zhibin/1overf/20221003_2P/Segmented_data/
 %% Collect all the variables
 % experimental data extracted =====================================
 allPerm;
@@ -103,8 +104,8 @@ loL;loR; % Hilbert envelop
 % organize into data structure ***
 
 %% Segment EEG - synchronization
-mixedsigL=mixedsigL';
-mixedsigR=mixedsigR';
+% mixedsigL=mixedsigL';
+% mixedsigR=mixedsigR';
 SegIndL;
 SegIndR;
 
@@ -217,7 +218,7 @@ FBlocs(1,1).FBlocs=data(1).FBlocs;
 FBlocs(2,1).FBlocs=data(2).FBlocs;
 save(filename_variables,'FBlocs','-append');
 
-%% Save data structure;
+%% Save data structure (skip);
 tic
 filename_structure=['data_structure' num2str(seed) '.mat'];
 save(filename_structure,'data');
