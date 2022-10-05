@@ -155,8 +155,7 @@ end
 sgtitle('plot on top are SegPacerIndL and SegPacerIndR')
 
 % Examine segmentation points on top
-% Examine plot for 20220713_2P; 20220721_2P; 20220804_2P; 20221003_2P;
-% 2022100401_2P;
+% Examine plot for 20220713_2P; 20220721_2P; 20220804_2P; 20221003_2P
 % figure('units','normalized','outerposition',[0 0 1 0.6]); % took too long
 % canvas(0.5,0.25); % took too long
 figure;
@@ -302,7 +301,6 @@ ComponentRemoveR; % ComponentRemoveL=ComponentsExamL;
 ComponentRemoveR=[19 14]; %for 20220811_2P
 ComponentRemoveR=[11 15 14 29 32]; %for 20220811_2P
 ComponentRemoveR=[32]; %for 20221003_2P
-ComponentRemoveR=[23 31]; %for 2022100401_2P
 %% Remove ICA components for Left player
 ALrm=AL;icasigLrm=icasigL; % make new, backup AL, icasigL
 ALrm(:,ComponentRemoveL)=0; icasigLrm(ComponentRemoveL,:)=0;

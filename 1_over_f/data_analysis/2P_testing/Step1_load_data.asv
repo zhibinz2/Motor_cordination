@@ -39,6 +39,7 @@ Path_filenameR=[pwd '/' EEGfileNameR];
 [timeR,samplesR,TRIGGERindR,srR,channels_infoR,labelsR] = LoadTMSi(Path_filenameR);
 
 %% Extract Trigger channel info
+TriggersL=[];TriggersR=[];valuesL=[];valuesR=[];
 TriggersL=samplesL(TRIGGERindL,:)';valuesL=unique(TriggersL)'
 TriggersR=samplesR(TRIGGERindR,:)';valuesR=unique(TriggersR)'
 
@@ -68,6 +69,7 @@ yline(192,'k','192 = psychtoolbox display starts');
 plot(find(TriggersR==192),192*ones(length(find(TriggersR==192)),1),'mo'); 
 hold off;
 
+% troubleshooting
 hold on;
 yline(95,'k','95 = light sensor 2 + key 6 '); 
 plot(find(TriggersR==95),95*ones(length(find(TriggersR==95)),1),'mo'); % only happen in trial 1, to be discarded anyway
@@ -77,8 +79,10 @@ yline(223,'k','223 = key 6'); % R20220810 Issac pushes a lot of key 6 in trial 1
 plot(find(TriggersR==223),223*ones(length(find(TriggersR==223)),1),'mo'); % just in trial 1, to be discarded anyway
 yline(239,'k','239 = key 5'); % see how many key 5 pushes there
 plot(find(TriggersR==239),239*ones(length(find(TriggersR==239)),1),'mo'); % just one additional wrong push (can be ignored)
-hold off;
-
+yline(239,'k','239 = key 5'); % see how many key 5 pushes there
+plot(find(TriggersL==239),239*ones(length(find(TriggersL==239)),1),'ko'); % just one additional wrong push (can be ignored)
+yline(251,'k','251 = key 3'); % see how many key 3 pushes there
+plot(find(TriggersL==251),251*ones(length(find(TriggersL==251)),1),'ko'); % hold off;
 % Xidon2 - setting
 % Line 0: Key 1  (output = 255-2^0 = 255-1 =254)
 % Line 1: Key 2  (output = 255-2^1 = 255-2 =253)
@@ -107,8 +111,11 @@ xline(cut1_L,'k');xline(cut2_L,'k');
 subplot(2,1,2);
 xline(cut1_R,'k');xline(cut2_R,'k');
 % cut off middle section and reconnect the data
-timeL,samplesL,
-
+timeL=timeL([1:cut1_L cut2_L:end]);
+samplesL=samplesL(:,[1:cut1_L cut2_L:end]);
+timeR=timeR([1:cut1_R cut2_R:end]);
+samplesR=samplesR(:,[1:cut1_R cut2_R:end]);
+% Run from the beginning of this section again 
 
 %% extract time points for key presses (maybe create a function to do the same for pacers,feedbacks)
 % Left player
@@ -120,6 +127,11 @@ timeL,samplesL,
 PresIndL=unique([find(TriggersL == 247);...
     find(TriggersL == 119);...
     find(TriggersL == 183 )]); 
+% for 2022100402_2P
+PresIndL=unique([find(TriggersL == 247);find(TriggersL == 239);find(TriggersL == 251);... 
+    find(TriggersL == 119);...
+    find(TriggersL == 183 )]); 
+
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PresIndL,ones(1,length(PresIndL)),'ro'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
@@ -176,7 +188,7 @@ FeedbIndL=unique([find(TriggersL == 127);find(TriggersL == 119)]);
 FeedbIndL=unique([find(TriggersL == 127);find(TriggersL == 119);find(TriggersL == 63)]); % for 20220808_2P
 
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(FeedbIndL,ones(1,length(FeedbIndL)),'bo'); % look at the above Index (one press produced several indices)
+plot(FeedbIndL,ones(1,length(FeedbIndL)),'ro'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
 % determine a threshold of numbers of frames in the button press interval
 threshold = ifi*waitframes*srL*1.5; % number of samples within a interval larger than the waitframes
@@ -187,7 +199,7 @@ FeedbTimeIndL=FeedbIndL(find([0 diff(FeedbIndL')]>threshold)); % exact index of 
 FeedbTimeL01=zeros(size(timeL));
 FeedbTimeL01(FeedbTimeIndL)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(FeedbTimeL01,'b.')
+plot(FeedbTimeL01,'r.')
 numFbL=sum(FeedbTimeL01) % num of feedbacks from the other plus 4+2x5 resting photocells 
 % 12 blocks *230 taps = 2760
 
@@ -202,7 +214,7 @@ numFbL=sum(FeedbTimeL01) % num of feedbacks from the other plus 4+2x5 resting ph
 FeedbIndR=unique([find(TriggersR == 127);find(TriggersR == 119)]);
 
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(FeedbIndR,ones(1,length(FeedbIndR)),'ro'); % look at the above Index (one press produced several indices)
+plot(FeedbIndR,ones(1,length(FeedbIndR)),'bo'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
 % determine a threshold of numbers of frames in the button press interval
 threshold = ifi*waitframes*srR*1.5; % number of samples within a interval larger than the waitframes
@@ -213,7 +225,7 @@ FeedbTimeIndR=FeedbIndR(find([0 diff(FeedbIndR')]>threshold)); % exact index of 
 FeedbTimeR01=zeros(size(timeR));
 FeedbTimeR01(FeedbTimeIndR)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(FeedbTimeR01,'r.')
+plot(FeedbTimeR01,'b.')
 numFbR=sum(FeedbTimeR01) % num of feedbacks from the other plus 4+2x5 resting photocells
 % 12 blocks *230 taps = 2760
 
@@ -494,12 +506,13 @@ subplot(2,1,2);
 plot(SegtimeIndR,ones(1,length(SegtimeIndR)),'bo');
 
 %% extract time points for pacers with segmentation purpose - syncopation -(12 blocks)
-% Work for 20220721_2P; 20220816_2P;
+% Work for 20220721_2P; 20220816_2P;2022100401_2P;
 
 % L player pacer
 % % thresholdL=2000*3; % after longer than 3 sec interval; for 20220721_2P;
 thresholdL=2000*2.5; % after longer than 2.5 sec interval; for 20220816_2P;
 SegPacerIndL=[1 find([0 diff(PacerTimeIndL')]>thresholdL)]; % should be 4+2*11+12=38 values (first five should be 1 2 3 4 5)
+SegPacerIndL(1)=[];% remove the first one for 2022100401_2P
 SegtimeIndL=PacerTimeIndL(SegPacerIndL); % index in data time
 % R player pacer
 % thresholdR=2000*3; % after longer than 3 sec interval; for 20220721_2P;

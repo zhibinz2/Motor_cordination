@@ -188,7 +188,7 @@ FeedbIndL=unique([find(TriggersL == 127);find(TriggersL == 119)]);
 FeedbIndL=unique([find(TriggersL == 127);find(TriggersL == 119);find(TriggersL == 63)]); % for 20220808_2P
 
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(FeedbIndL,ones(1,length(FeedbIndL)),'bo'); % look at the above Index (one press produced several indices)
+plot(FeedbIndL,ones(1,length(FeedbIndL)),'ro'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
 % determine a threshold of numbers of frames in the button press interval
 threshold = ifi*waitframes*srL*1.5; % number of samples within a interval larger than the waitframes
@@ -199,7 +199,7 @@ FeedbTimeIndL=FeedbIndL(find([0 diff(FeedbIndL')]>threshold)); % exact index of 
 FeedbTimeL01=zeros(size(timeL));
 FeedbTimeL01(FeedbTimeIndL)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(FeedbTimeL01,'b.')
+plot(FeedbTimeL01,'r.')
 numFbL=sum(FeedbTimeL01) % num of feedbacks from the other plus 4+2x5 resting photocells 
 % 12 blocks *230 taps = 2760
 
@@ -214,7 +214,7 @@ numFbL=sum(FeedbTimeL01) % num of feedbacks from the other plus 4+2x5 resting ph
 FeedbIndR=unique([find(TriggersR == 127);find(TriggersR == 119)]);
 
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(FeedbIndR,ones(1,length(FeedbIndR)),'ro'); % look at the above Index (one press produced several indices)
+plot(FeedbIndR,ones(1,length(FeedbIndR)),'bo'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
 % determine a threshold of numbers of frames in the button press interval
 threshold = ifi*waitframes*srR*1.5; % number of samples within a interval larger than the waitframes
@@ -225,7 +225,7 @@ FeedbTimeIndR=FeedbIndR(find([0 diff(FeedbIndR')]>threshold)); % exact index of 
 FeedbTimeR01=zeros(size(timeR));
 FeedbTimeR01(FeedbTimeIndR)=1;
 figure('units','normalized','outerposition',[0 0 1 0.3]);
-plot(FeedbTimeR01,'r.')
+plot(FeedbTimeR01,'b.')
 numFbR=sum(FeedbTimeR01) % num of feedbacks from the other plus 4+2x5 resting photocells
 % 12 blocks *230 taps = 2760
 
@@ -506,17 +506,19 @@ subplot(2,1,2);
 plot(SegtimeIndR,ones(1,length(SegtimeIndR)),'bo');
 
 %% extract time points for pacers with segmentation purpose - syncopation -(12 blocks)
-% Work for 20220721_2P; 20220816_2P;
+% Work for 20220721_2P; 20220816_2P;2022100401_2P;
 
 % L player pacer
 % % thresholdL=2000*3; % after longer than 3 sec interval; for 20220721_2P;
 thresholdL=2000*2.5; % after longer than 2.5 sec interval; for 20220816_2P;
 SegPacerIndL=[1 find([0 diff(PacerTimeIndL')]>thresholdL)]; % should be 4+2*11+12=38 values (first five should be 1 2 3 4 5)
+SegPacerIndL(1)=[];% remove the first one for 2022100401_2P
 SegtimeIndL=PacerTimeIndL(SegPacerIndL); % index in data time
 % R player pacer
 % thresholdR=2000*3; % after longer than 3 sec interval; for 20220721_2P;
 thresholdR=2000*2.5; % after longer than 3 sec interval; for 20220816_2P;
 SegPacerIndR=[1 find([0 diff(PacerTimeIndR')]>thresholdR)]; % should be 38 values (first five should be 1 2 3 4 5)
+SegPacerIndR(1)=[];% remove the first one for 2022100401_2P
 SegtimeIndR=PacerTimeIndR(SegPacerIndR); % index in data time
 
 % plot to examine

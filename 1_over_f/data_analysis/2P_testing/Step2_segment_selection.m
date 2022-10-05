@@ -12,7 +12,7 @@ SegIndL1=PacersL([6+[4*([1:12]-1)]]);% 12 segmentation points of the last pacer 
 SegIndR1=PacersR([6+[4*([1:12]-1)]]);
 
 % For syncopation 
-% Work for 20220721_2P; 20220811_2P; 20220816_2P;
+% Work for 20220721_2P; 20220811_2P; 20220816_2P;2022100401_2P;
 Seg30IndL1=PacerTimeIndL(SegPacerIndL([[1:12]*3+2]));% the 1st pacer
 Seg30IndR1=PacerTimeIndR(SegPacerIndR([[1:12]*3+2]));% the 1st pacer
 SegIndL1=PacerTimeIndL(SegPacerIndL([[1:12]*3+2])+29);% the 30th pacer
