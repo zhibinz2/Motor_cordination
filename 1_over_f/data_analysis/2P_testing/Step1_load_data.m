@@ -79,8 +79,10 @@ yline(223,'k','223 = key 6'); % R20220810 Issac pushes a lot of key 6 in trial 1
 plot(find(TriggersR==223),223*ones(length(find(TriggersR==223)),1),'mo'); % just in trial 1, to be discarded anyway
 yline(239,'k','239 = key 5'); % see how many key 5 pushes there
 plot(find(TriggersR==239),239*ones(length(find(TriggersR==239)),1),'mo'); % just one additional wrong push (can be ignored)
-hold off;
-
+yline(239,'k','239 = key 5'); % see how many key 5 pushes there
+plot(find(TriggersL==239),239*ones(length(find(TriggersL==239)),1),'ko'); % just one additional wrong push (can be ignored)
+yline(251,'k','251 = key 3'); % see how many key 3 pushes there
+plot(find(TriggersL==251),251*ones(length(find(TriggersL==251)),1),'ko'); % hold off;
 % Xidon2 - setting
 % Line 0: Key 1  (output = 255-2^0 = 255-1 =254)
 % Line 1: Key 2  (output = 255-2^1 = 255-2 =253)
@@ -125,6 +127,11 @@ samplesR=samplesR(:,[1:cut1_R cut2_R:end]);
 PresIndL=unique([find(TriggersL == 247);...
     find(TriggersL == 119);...
     find(TriggersL == 183 )]); 
+% for 2022100402_2P
+PresIndL=unique([find(TriggersL == 247);find(TriggersL == 239);find(TriggersL == 251);... 
+    find(TriggersL == 119);...
+    find(TriggersL == 183 )]); 
+
 figure('units','normalized','outerposition',[0 0 1 0.3]);
 plot(PresIndL,ones(1,length(PresIndL)),'ro'); % look at the above Index (one press produced several indices)
 % ifi=1/100;waitframes=2;sr=2000;
