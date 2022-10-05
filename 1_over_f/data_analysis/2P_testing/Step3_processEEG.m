@@ -239,7 +239,7 @@ ComponentRemoveL; % ComponentRemoveL=ComponentsExamL;
 
 ComponentRemoveL=32;
 %% ICA for Right player
- filtered_dataR5;
+filtered_dataR5;
 % run ICA
 [icasigR, AR, WR] = fastica(filtered_dataR5');
 % Plot all ICA component
