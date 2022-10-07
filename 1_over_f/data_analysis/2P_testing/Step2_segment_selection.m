@@ -12,7 +12,7 @@ SegIndL1=PacersL([6+[4*([1:12]-1)]]);% 12 segmentation points of the last pacer 
 SegIndR1=PacersR([6+[4*([1:12]-1)]]);
 
 % For syncopation 
-% Work for 20220721_2P; 20220811_2P; 20220816_2P;2022100401_2P;
+% Work for 20220721_2P; 20220811_2P; 20220816_2P;2022100401_2P;20221005_2P;
 Seg30IndL1=PacerTimeIndL(SegPacerIndL([[1:12]*3+2]));% the 1st pacer
 Seg30IndR1=PacerTimeIndR(SegPacerIndR([[1:12]*3+2]));% the 1st pacer
 SegIndL1=PacerTimeIndL(SegPacerIndL([[1:12]*3+2])+29);% the 30th pacer
@@ -34,7 +34,7 @@ ylim([-3 6]);
 % Select segmentation points of last BP in each trial
 % determine a threshold of numbers of samples in between trials
 if srL==srR; sr=srL; end; 
-threshold = sr*30; 
+threshold = sr*25; 
 % threshold = sr*15; % for 20220811_2P
 % 12 segmentation points of the last tap in each trial
 SegIndL2=[BottonPresTimeIndL(find([diff(BottonPresTimeIndL')]>threshold)); BottonPresTimeIndL(end)]; 

@@ -2,6 +2,8 @@
 cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/1_50Hz_ICAautomized
 cd /ssd/zhibin/1overf/20220517_2P/Segmented_data/1_50Hz_ICAautomized
 
+mkdir('Segmented_data');cd Segmented_data/
+
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data
 cd /ssd/zhibin/1overf/20220721_2P/Segmented_data
 cd /ssd/zhibin/1overf/20220804_2P/Segmented_data/
@@ -11,7 +13,10 @@ cd /ssd/zhibin/1overf/20220811_2P/Segmented_data/
 cd /ssd/zhibin/1overf/20220815_2P/Segmented_data/
 cd /ssd/zhibin/1overf/20220816_2P/Segmented_data/
 cd /ssd/zhibin/1overf/20221003_2P/Segmented_data/
+cd /ssd/zhibin/1overf/2022100401_2P/Segmented_data/
 cd /ssd/zhibin/1overf/2022100402_2P/Segmented_data/
+cd /ssd/zhibin/1overf/20221005_2P/Segmented_data/
+
 %% Collect all the variables
 % experimental data extracted =====================================
 allPerm;
@@ -104,7 +109,7 @@ loL;loR; % Hilbert envelop
 % save(filename_variables,'','-append');
 % organize into data structure ***
 
-%% Segment EEG - synchronization
+%% Segment EEG 
 % mixedsigL=mixedsigL';
 % mixedsigR=mixedsigR';
 SegIndL;
@@ -145,7 +150,7 @@ EEG_pacing(1,1).EEG_pacing=data(1).EEG_pacing;
 EEG_pacing(2,1).EEG_pacing=data(2).EEG_pacing;
 save(filename_variables,'EEG_pacing','-append');
 
-%% segment button presses - synchronization
+%% segment button presses 
 BottonPresTimeL01; BottonPresTimeR01;
 SegIndL; SegIndR;
 
@@ -162,7 +167,7 @@ BP(1,1).BP=data(1).BP;
 BP(2,1).BP=data(2).BP;
 save(filename_variables,'BP','-append');
 
-%% segment feedbacks from the other  - synchronization
+%% segment feedbacks from the other 
 FeedbTimeL01; FeedbTimeR01;
 SegIndL; SegIndR;
 

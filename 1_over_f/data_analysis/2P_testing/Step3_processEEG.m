@@ -8,6 +8,7 @@ cd /ssd/zhibin/1overf/20220713_2P
 cd /ssd/zhibin/1overf/20220721_2P
 cd /ssd/zhibin/1overf/20220816_2P
 cd /ssd/zhibin/1overf/20221003_2P
+cd /ssd/zhibin/1overf/20221005_2P
 %% plot raw EEG
 timeL;samplesL;TRIGGERindL;srL;channels_infoL;labelsL;
 timeR;samplesR;TRIGGERindR;srR;channels_infoR;labelsR;
@@ -138,7 +139,7 @@ sgtitle('plot on top are PacersL and PacersR')
 
 % examine photocells on top (syncopation)
 % Examine plot for syncopation
-% work for 20220721_2P; 20220808_2P; 20220811_2P; 20220816_2P;2022100401_2P;(syncopation)
+% work for 20220721_2P; 20220808_2P; 20220811_2P; 20220816_2P;2022100401_2P; 20221005_2P;(syncopation)
 % figure('units','normalized','outerposition',[0 0 1 0.6]); % took too long
 % canvas(0.5,0.25); % took too long
 figure;

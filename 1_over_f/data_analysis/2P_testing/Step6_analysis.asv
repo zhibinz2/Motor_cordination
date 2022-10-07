@@ -1401,7 +1401,7 @@ subplot(2,1,2);
 b=bar(Autocorrs_LR_synco_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
 xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
 ylabel('\rho(k)');
-title('mean autocorr sum for 20 lags in all synco sessions (unmatched int) ^ { *PLOT7}')
+title('mean autocorr sum for 20 lags in all synco sessions')
 
 % combine synch and synco
 Autocorrs_LR_syn_mean=[mean([Autocorrs_L_uncouple_synch Autocorrs_L_uncouple_synco Autocorrs_R_uncouple_synch Autocorrs_R_uncouple_synco]);...
@@ -1413,7 +1413,7 @@ b=bar(Autocorrs_LR_syn_mean);
 xticks(1:4);xticklabels({'uncouple','Leading','Following','mutual'});
 ylabel('\rho(k)');
 hold on;
-title('mean autocorr sum for 20 lags in all sessions (unmatched int) ^ { *PLOT7}');
+title('mean autocorr sum for 20 lags in all sessions');
 
 % combine synch and synco
 figure;
@@ -1428,7 +1428,7 @@ v=violin(Y,...
 'medc','r--');
 set(gca,'XtickLabel',{'uncouple','Leading','Following','mutual'});
 ylabel('\rho(k)');
-title('mean autocorr sum for 20 lags in all sessions (unmatched int) ^ { *PLOT 7}');
+title('mean autocorr sum for 20 lags in all sessions');
 grid on;
 
 %% PLOT 8 DFA after d removed (sorted order)

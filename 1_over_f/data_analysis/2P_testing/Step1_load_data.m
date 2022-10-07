@@ -23,6 +23,8 @@ cd /ssd/zhibin/1overf/20220816_2P % Ivy and Rajat: Synco 1.3Hz 230 taps
 cd /ssd/zhibin/1overf/20221003_2P % Cassie and Harlin: Synch 1.3Hz 230 taps
 cd /ssd/zhibin/1overf/2022100401_2P % Cassie and Harlin: Synco 1.3Hz 230 taps
 cd /ssd/zhibin/1overf/2022100402_2P % Cassie and Shiri: Synch 1.3Hz 230 taps
+cd /ssd/zhibin/1overf/20221005_2P % Cassie and Shiri: Synco 1.3Hz 230 taps
+
 
 load 20220713.mat
 load 20220721.mat
@@ -506,7 +508,7 @@ subplot(2,1,2);
 plot(SegtimeIndR,ones(1,length(SegtimeIndR)),'bo');
 
 %% extract time points for pacers with segmentation purpose - syncopation -(12 blocks)
-% Work for 20220721_2P; 20220816_2P;2022100401_2P;
+% Work for 20220721_2P; 20220816_2P;2022100401_2P;20221005_2P;
 
 % L player pacer
 % % thresholdL=2000*3; % after longer than 3 sec interval; for 20220721_2P;

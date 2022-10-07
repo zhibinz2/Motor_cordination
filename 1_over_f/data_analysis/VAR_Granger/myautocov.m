@@ -4,15 +4,15 @@ function [F,pval,sig] = myautocov(y1,y2);
 % MVGC demo: autocov method.
 
 %% d estimate
-% d_min=-0.5; d_max=1;
-% est_d1=d_estimation(y1,d_min,d_max);
-% est_d2=d_estimation(y2,d_min,d_max);
-% %d filter
-% [Ytmp1,~]=remove_d(y1',est_d1); %filtered data
-% [Ytmp2,~]=remove_d(y2',est_d2); %filtered data
+d_min=-0.5; d_max=1;
+est_d1=d_estimation(y1,d_min,d_max);
+est_d2=d_estimation(y2,d_min,d_max);
+%d filter
+[Ytmp1,~]=remove_d(y1',est_d1); %filtered data
+[Ytmp2,~]=remove_d(y2',est_d2); %filtered data
 
 %% if already removed d before input
-Ytmp1=y1;Ytmp2=y2;
+% Ytmp1=y1;Ytmp2=y2;
 
 %% Parameters
 ntrials   = 1;     % number of trials
