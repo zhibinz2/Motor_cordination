@@ -3,7 +3,7 @@
 ! git status
 ! git add .
 CommitName=char(datetime('now'));
-!git commit -a -m "CommitName"
+!git commit -a -m CommitName
 % https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git
 % https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git
 % My zhibin bash script — repo token: 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
