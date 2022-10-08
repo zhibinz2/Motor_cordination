@@ -403,6 +403,9 @@ HNLcolors = [darkgreen; deepyellow; pink];
 % % test color
 % showcolor=pink;
 % imagesc(cat(3,showcolor(1),showcolor(2),showcolor(3)));
+
+addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
+hnc = hotncold(100);
 %% PLOT 2-1: Auto&Xcorr DFA GC PSA for each trial
 % check condiSeq for synchronization
 % condiSeq=allPerm;
@@ -2337,6 +2340,7 @@ zEEG500_L=cell(numSes,12);zEEG500_R=cell(numSes,12);
 delta_L=cell(numSes,12);theta_L=cell(numSes,12);alpha_L=cell(numSes,12);beta_L=cell(numSes,12);gamma_L=cell(numSes,12);
 delta_R=cell(numSes,12);theta_R=cell(numSes,12);alpha_R=cell(numSes,12);beta_R=cell(numSes,12);gamma_R=cell(numSes,12);
 cd /ssd/zhibin/1overf/
+tic
 for s=1:numSes % each session
     runid=num2str(seeds(s,:));
     clear dataL dataR
@@ -2355,12 +2359,15 @@ for s=1:numSes % each session
         end
     end
 end
+toc
+% about 2 min
 
-% EEG +500ms before the matched tap
+% EEG +500ms After the matched tap
 delta_LL=cell(numSes,12);theta_LL=cell(numSes,12);alpha_LL=cell(numSes,12);beta_LL=cell(numSes,12);gamma_LL=cell(numSes,12);
 delta_RR=cell(numSes,12);theta_RR=cell(numSes,12);alpha_RR=cell(numSes,12);beta_RR=cell(numSes,12);gamma_RR=cell(numSes,12);
 zEEG500_LL=cell(numSes,12);zEEG500_RR=cell(numSes,12);
 cd /ssd/zhibin/1overf/
+tic
 for s=1:numSes % each session
     runid=num2str(seeds(s,:));
     clear dataL dataR
@@ -2379,6 +2386,8 @@ for s=1:numSes % each session
         end
     end
 end
+toc
+% about 2 min
 
 %% PLOT 13 corr of sum-EEG power (- 500ms) and H-int all sessions
 % organize EEG power
@@ -2388,7 +2397,7 @@ delta_R;theta_R;alpha_R;beta_R;gamma_R;
 % sum the band power in each channel in each block (8x12=96)
 delta_L_sum=[];theta_L_sum=[];alpha_L_sum=[];beta_L_sum=[];gamma_L_sum=[];
 delta_R_sum=[];theta_R_sum=[];alpha_R_sum=[];beta_R_sum=[];gamma_R_sum=[];
-for s=1:8
+for s=1:numSes
     for b=1:12
         delta_L_sum(s,b,:)=sum([delta_L{s,b}]);
         theta_L_sum(s,b,:)=sum([theta_L{s,b}]);
@@ -2406,7 +2415,7 @@ end
 delta_L_chan=[];theta_L_chan=[];alpha_L_chan=[];beta_L_chan=[];gamma_L_chan=[];
 delta_R_chan=[];theta_R_chan=[];alpha_R_chan=[];beta_R_chan=[];gamma_R_chan=[];
 for c=1:32
-    delta_L_chan(:,c)=reshape(delta_L_sum(:,:,c)',[],1); % 96x32 (each element from one block in time sequence) 
+    delta_L_chan(:,c)=reshape(delta_L_sum(:,:,c)',[],1); % 144x32 (each element from one block in time sequence) 
     theta_L_chan(:,c)=reshape(theta_L_sum(:,:,c)',[],1);
     alpha_L_chan(:,c)=reshape(alpha_L_sum(:,:,c)',[],1);
     beta_L_chan(:,c)=reshape(beta_L_sum(:,:,c)',[],1);
@@ -2418,18 +2427,18 @@ for c=1:32
     gamma_R_chan(:,c)=reshape(gamma_R_sum(:,:,c)',[],1);
 end
 % Combine L and R for 192 predictors in PLS
-delta_LR_chan=[delta_L_chan;delta_R_chan]; % (192 x 32)
+delta_LR_chan=[delta_L_chan;delta_R_chan]; % (288 x 32)
 theta_LR_chan=[theta_L_chan;theta_R_chan];
 alpha_LR_chan=[alpha_L_chan;alpha_R_chan];
 beta_LR_chan=[beta_L_chan;beta_R_chan];
 gamma_LR_chan=[gamma_L_chan;gamma_R_chan];
 
 % Organize H_all for corr
-H_all; % (2x8x12) for all sessions from SECT 10-1 
+H_all; % (2xnumSesx12) for all sessions from SECT 10-1 
 H_all_L=squeeze(H_all(1,:,:));
 H_all_R=squeeze(H_all(2,:,:));
 % squeeze into 1 vector from the 96 blocks for each subject, for corr with pow in each chan
-H_all_L=reshape(H_all_L',[],1);% 96x1 (each element from one block in time sequence) 
+H_all_L=reshape(H_all_L',[],1);% 144x1 (each element from one block in time sequence) 
 H_all_R=reshape(H_all_R',[],1);
 % Combine L and R
 H_all_LR=[H_all_L;H_all_R]; % to be used for corr and PLS
@@ -2448,8 +2457,8 @@ for c=1:32
     gamma_R_H_R_corr(c)=corr(gamma_R_chan(:,c),H_all_R);
 end
 % Topoplots (5x2)
-canvas(0.2,0.5);
-cmin=-0.7;cmax=0.7;
+canvas(0.2,0.6);
+cmin=-0.5;cmax=0.5;
 subplot(5,2,1);topoplot(delta_L_H_L_corr,channels,'nosedir','+X');title('delta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(5,2,3);topoplot(theta_L_H_L_corr,channels,'nosedir','+X');title('theta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(5,2,5);topoplot(alpha_L_H_L_corr,channels,'nosedir','+X');title('alpha-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
@@ -2460,7 +2469,7 @@ subplot(5,2,4);topoplot(theta_R_H_R_corr,channels,'nosedir','+X');title('theta-R
 subplot(5,2,6);topoplot(alpha_R_H_R_corr,channels,'nosedir','+X');title('alpha-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(5,2,8);topoplot(beta_R_H_R_corr,channels,'nosedir','+X');title('beta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(5,2,10);topoplot(gamma_R_H_R_corr,channels,'nosedir','+X');title('gamma-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-sgtitle('corr of sum-EEG (-500ms) and H-int')
+sgtitle('corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}')
 
 % Combine L and R in correlation;
 for c=1:32
@@ -2472,13 +2481,14 @@ for c=1:32
 end
 % Combine L and R in topoplots (1x5)
 canvas(0.5,0.1);
-cmin=-0.7;cmax=0.7;
+cmin=-0.1;cmax=0.3;
 subplot(1,5,1);topoplot(delta_LR_H_LR_corr,channels,'nosedir','+X');title('delta & H');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,2);topoplot(theta_LR_H_LR_corr,channels,'nosedir','+X');title('theta & H');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,3);topoplot(alpha_LR_H_LR_corr,channels,'nosedir','+X');title('alpha & H');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,4);topoplot(beta_LR_H_LR_corr,channels,'nosedir','+X');title('beta & H');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,5);topoplot(gamma_LR_H_LR_corr,channels,'nosedir','+X');title('gamma & H');colorbar;colormap('jet');clim([cmin cmax]);
-sgtitle('corr of sum-EEG (-500ms) and H-int')
+sgtitle('corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}')
+colormap(hnc)
 
 % Correlation in 4 states
 delta_LR_H_LR_4corr=zeros(4,32);
@@ -2497,7 +2507,7 @@ for s=1:4
 end
 % Combine L and R in 4 states(4x5)
 canvas(0.5,0.6);
-cmin=-0.7;cmax=0.7;
+cmin=-0.2;cmax=0.4;
 for s=1:4
     subplot(4,5,5*(s-1)+1);
     topoplot(delta_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
@@ -2521,7 +2531,7 @@ for s=1:4
     colorbar;colormap('jet');clim([cmin cmax]);
 end
 sgtitle('4states: Corr of sum-EEG (-500ms) and H-int')
-
+colormap(hnc)
 %% PLOT 13-1 corr of sum-EEG power (+ 500ms) and H-int all sessions
 zEEG500_LL; zEEG500_RR; % for all sessions from SECT 12
 delta_LL;theta_LL;alpha_LL;beta_LL;gamma_LL;
