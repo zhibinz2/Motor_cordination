@@ -34,7 +34,7 @@ Int1LR=intervals_H_removed{b}(:,1:2);
 % Int12LR=repmat(Int1LR,1,1,12);
 Int12LR=nan(100,2,12);
 for b=1:12
-    Int12LR(:,:,b)=[intervals_H_removed{b}(1:100,1:2)];
+    Int12LR(:,:,b)=[intervals_H_removed{b}(1:,1:2)];
 end
 
 % try arfit
