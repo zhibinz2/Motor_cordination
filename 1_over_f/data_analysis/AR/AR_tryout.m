@@ -4,6 +4,7 @@ cd /home/zhibin/Documents/GitHub/matlab/external/arfit
 open arfit
 open arconf
 
+
 cd /home/zhibin/Documents/GitHub/matlab/external/MVGC/core
 open tsdata_to_var.m % A
 open tsdata_to_autocov.m % G
@@ -19,36 +20,49 @@ numSes=size(seeds,1);
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco','synch','synco',...
         'synch','synco'};
 cd /ssd/zhibin/1overf/
+s=1
 runid=num2str(seeds(s,:));
 load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ]) 
-intervals_H_removed
+
+
+cd /ssd/zhibin/1overf/all_session20220713_1005
+load('int_dmean_drm.mat')
 
 %% try out arfit and arconf
+cd /home/zhibin/Documents/GitHub/matlab/external/arfit
+open ardem
+
+
 % one tapping int series from L
-b=1;
-Int1L=[intervals_H_removed{b}(:,1)];
+Int1L=[int_dmean_drm{1,1,1}];
 
 % 1 int series from L & R
-Int1LR=intervals_H_removed{b}(:,1:2);
+Int1LR=[int_dmean_drm{1:2,1,1}];
 
 % add 3rd dimension as trials
 % replicate 12 trials
 % Int12LR=repmat(Int1LR,1,1,12);
 Int12LR=nan(100,2,12);
-for b=1:12
-    Int12LR(:,:,b)=[intervals_H_removed{b}(1:100,1:2)];
+for p=1:2
+    for b=1:12
+        for s=1%:12
+            Int12LR(1:100,p,b)=int_dmean_drm{p,b,s}(1:100,:);
+        end
+    end
 end
+
 
 % try arfit
 % select v to try out
 v=Int1L; 
-v=Int1LR;
+v=Int12LR(1:100,1,12);
 v=Int12LR;
+
 v; % time series data x observations x trials
 
-pmin=0; % minimal order
-pmax=4; % maximal order
-[w, A, C, sbc, fpe, th]=arfit(v, pmin, pmax, 'sbc', 'zero')
+pmin=1; % minimal order
+pmax=8; % maximal order
+[w, A, C, sbc, fpe, th]=arfit(v, pmin, pmax) % , 'sbc', 'zero')
 % v(k,:)' = w' + A1*v(k-1,:)' +...+ Ap*v(k-p,:)' + noise(C)
 w; % least squares estimates of the intercept vector w (m x 1)
 A; % coefficient matrices A=[A1 ... Ap]
@@ -62,12 +76,16 @@ th; % contains information needed for the computation of confidence intervals
 Aerr; % margins of error
 werr; % (A +/- Aerr) and (w +/- werr) are approximate 95% confidence intervals for the elements of the coefficient matrix A
 
-%% try out tsdata_to_var and tsdata_to_autocov
+% Granger Causality
+% https://www.youtube.com/watch?v=XqsSB_vpHLs
+GC=
 
+%% try out tsdata_to_var and tsdata_to_autocov
+v=permute(Int12LR,[2,1,3]);
 X=v; % multi-trial time series data
 p=5; % model order (number of lags)
 regmode='LWR' ; % regression mode: 'LWR' (default) or 'OLS'
-[A,SIG,E] = tsdata_to_var(X,p,regmode)
+[A,SIG,E] = tsdata_to_var(X,p,regmode);
 A; % VAR coefficients matrix
 SIG; % residuals covariance matrix
 E; % residuals time series
@@ -76,11 +94,18 @@ cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/VAR_Gr
 open mvgc_demo_autocov_tryout.m
 
 
-
 X=v; % multi-trial time series data
 q=5; % number of lags
 G = tsdata_to_autocov(X,q)
 G; % sample autocovariance sequence
+
+%% Issues
+% each trial has to be the same length for the input as a 3d matrix (1:100)
+
+% arfit: Time series too short 2x100x12. 
+
+% arfit: A=[] 100x2x12. 
+% arconf: Index in position 1 exceeds array bounds.
 
 
 
