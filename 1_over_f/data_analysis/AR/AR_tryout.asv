@@ -1,17 +1,16 @@
-%% AR tryout
-
+%% AR toolboxestryout
 cd /home/zhibin/Documents/GitHub/matlab/external/arfit
 open arfit
 open arconf
-
+open ardem
 
 cd /home/zhibin/Documents/GitHub/matlab/external/MVGC/core
 open tsdata_to_var.m % A
 open tsdata_to_autocov.m % G
 
-
 cd /home/zhibin/Documents/GitHub/matlab/external/MSE-VARFI
 open arfi2ar2.m
+open analysis_script.m
 
 %% select the subject data
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
@@ -42,6 +41,9 @@ int_dmean_drm(:,10:12,1:2:11)% mutual
 % using function to organize into time x 2 L/R x trials
 test_data=int_dmean_drm(:,4:6,1:2:11); % L-lead synch
 test_data=int_dmean_drm(:,7:8,1:2:11); % R-lead synch
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+% [Int12LR] = reorg4arfit(test_data)
+
 % truncate to 100 samples
 Int12LR=nan(100,2,size(test_data,2)*size(test_data,3));
 nL=1;nR=1;
@@ -69,23 +71,22 @@ for p=1:size(test_data,1)
     for b=1:size(test_data,2)
         for s=1:size(test_data,3)
             if p==1;
-                Int12LR(1:100,1,nL)=resample(test_data{1,b,s},Maxlength,length(test_data{1,b,s}));
+                Int12LR(1:Maxlength,1,nL)=resample(test_data{1,b,s},Maxlength,length(test_data{1,b,s}));
                 nL=nL+1;
             end
             if p==2
-                Int12LR(1:100,2,nR)=resample(test_data{2,b,s},Maxlength,length(test_data{2,b,s}));
+                Int12LR(1:Maxlength,2,nR)=resample(test_data{2,b,s},Maxlength,length(test_data{2,b,s}));
                 nR=nR+1;
             end
         end
     end
 end
 clc
-size Int12LR
+Int12LR
 %% try out arfit and arconf
 cd /home/zhibin/Documents/GitHub/matlab/external/arfit
 % demostration example
 open ardem
-
 
 % % one tapping int series from L
 % Int1L=[int_dmean_drm{1,1,1}];
@@ -106,9 +107,10 @@ open ardem
 % select v to try out
 % v=Int1L; 
 % v=Int12LR(1:100,1,12);
-v_arfit=Int12LR+1500;
+v_arfit=Int12LR;
+% v_arfit=Int12LR+1500;
 
-v; % time series data x observations x trials
+% v; % time series data x observations x trials
 
 addpath cd /home/zhibin/Documents/GitHub/matlab/external/arfit
 pmin=1; % minimal order
@@ -163,7 +165,7 @@ GC_R2L=log(C(1,1)/C(1,2))
 %% try out tsdata_to_var and tsdata_to_autocov (MVGC)
 v_tsdata=permute(Int12LR,[2,1,3]);
 X=v_tsdata; % multi-trial time series data
-p=5; % model order (number of lags)
+p=10; % model order (number of lags)
 regmode='LWR' ; % regression mode: 'LWR' (default) or 'OLS'
 [A,SIG,E] = tsdata_to_var(X,p,regmode);
 A; % VAR coefficients matrix

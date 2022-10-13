@@ -41,7 +41,12 @@ int_dmean_drm(:,10:12,1:2:11)% mutual
 % using function to organize into time x 2 L/R x trials
 test_data=int_dmean_drm(:,4:6,1:2:11); % L-lead synch
 test_data=int_dmean_drm(:,7:8,1:2:11); % R-lead synch
-% truncate to 100 samples
+
+% Method1: concatenate into one big trial
+
+% Method2: truncate to 100 samples
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+% [Int12LR] = reorg4arfit(test_data)
 Int12LR=nan(100,2,size(test_data,2)*size(test_data,3));
 nL=1;nR=1;
 for p=1:size(test_data,1)
@@ -60,7 +65,7 @@ for p=1:size(test_data,1)
 end
 clc
 Int12LR
-% resample to 200 samples
+% Method3: resample to 200 samples
 Maxlength=200;
 Int12LR=nan(Maxlength,2,size(test_data,2)*size(test_data,3));
 nL=1;nR=1;
@@ -105,9 +110,9 @@ open ardem
 % v=Int1L; 
 % v=Int12LR(1:100,1,12);
 v_arfit=Int12LR;
-v_arfit=Int12LR+1500;
+% v_arfit=Int12LR+1500;
 
-v; % time series data x observations x trials
+% v; % time series data x observations x trials
 
 addpath cd /home/zhibin/Documents/GitHub/matlab/external/arfit
 pmin=1; % minimal order
@@ -162,7 +167,7 @@ GC_R2L=log(C(1,1)/C(1,2))
 %% try out tsdata_to_var and tsdata_to_autocov (MVGC)
 v_tsdata=permute(Int12LR,[2,1,3]);
 X=v_tsdata; % multi-trial time series data
-p=5; % model order (number of lags)
+p=10; % model order (number of lags)
 regmode='LWR' ; % regression mode: 'LWR' (default) or 'OLS'
 [A,SIG,E] = tsdata_to_var(X,p,regmode);
 A; % VAR coefficients matrix
