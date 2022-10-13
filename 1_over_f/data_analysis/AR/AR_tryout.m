@@ -54,16 +54,20 @@ end
 
 % try arfit
 % select v to try out
-v=Int1L; 
-v=Int12LR(1:100,1,12);
+% v=Int1L; 
+% v=Int12LR(1:100,1,12);
 v=Int12LR;
 
 v; % time series data x observations x trials
 
+addpath cd /home/zhibin/Documents/GitHub/matlab/external/arfit
 pmin=1; % minimal order
 pmax=8; % maximal order
 [w, A, C, sbc, fpe, th]=arfit(v, pmin, pmax) % , 'sbc', 'zero')
 % v(k,:)' = w' + A1*v(k-1,:)' +...+ Ap*v(k-p,:)' + noise(C)
+
+%  For a bivariate AR(2process)
+%  v(k,:)' = w' + A1*v(k-1,:)' + A2*v(k-2,:)' + eta(k,:)',
 w; % least squares estimates of the intercept vector w (m x 1)
 A; % coefficient matrices A=[A1 ... Ap]
 C; % noise covariance matrix (m x m)
