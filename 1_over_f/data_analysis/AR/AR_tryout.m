@@ -1,17 +1,16 @@
-%% AR tryout
-
+%% AR toolboxestryout
 cd /home/zhibin/Documents/GitHub/matlab/external/arfit
 open arfit
 open arconf
-
+open ardem
 
 cd /home/zhibin/Documents/GitHub/matlab/external/MVGC/core
 open tsdata_to_var.m % A
 open tsdata_to_autocov.m % G
 
-
 cd /home/zhibin/Documents/GitHub/matlab/external/MSE-VARFI
 open arfi2ar2.m
+open analysis_script.m
 
 %% select the subject data
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
