@@ -1489,25 +1489,30 @@ grid on;
 %
 % combine synch and synco of Autocorrs20lags in 3 directions
 direction3names={'uncouple','uni-directional','mutual'};
-Autocorrs20lags_LR_synch_mean = [Autocorrs20lags_L_uncouple_synch  Autocorrs20lags_R_uncouple_synch ...
+Autocorrs20lags_LR_synch_3mean = [Autocorrs20lags_L_uncouple_synch  Autocorrs20lags_R_uncouple_synch ...
     mean([Autocorrs20lags_L_Llead_synch Autocorrs20lags_R_Rlead_synch],2) ...
     mean([Autocorrs20lags_R_Llead_synch Autocorrs20lags_L_Rlead_synch],2) ...
     Autocorrs20lags_L_mutual_synch  Autocorrs20lags_R_mutual_synch];
-Autocorrs20lags_LR_synco_mean = [Autocorrs20lags_L_uncouple_synco Autocorrs20lags_R_uncouple_synco ...
-    Autocorrs20lags_L_Llead_synco Autocorrs20lags_R_Llead_synco ...
-    Autocorrs20lags_L_Rlead_synco Autocorrs20lags_R_Rlead_synco ...
+Autocorrs20lags_LR_synco_3mean = [Autocorrs20lags_L_uncouple_synco Autocorrs20lags_R_uncouple_synco ...
+    mean([Autocorrs20lags_L_Llead_synco Autocorrs20lags_R_Rlead_synco],2) ...
+    mean([Autocorrs20lags_R_Llead_synco Autocorrs20lags_L_Rlead_synco],2) ...
     Autocorrs20lags_L_mutual_synco Autocorrs20lags_R_mutual_synco];
-
-canvas(0.2, 0.25);
+canvas(0.4, 0.5);
 for i=1:3
 subplot(2,3,i)
-    if i=1;
-    plot(Autocorrs20lags_LR_synch_mean(:,direction3inds{i}),'r');legend('L','R');
+    plot(Autocorrs20lags_LR_synch_3mean(:,2*i-1),'r');hold on;
+    plot(Autocorrs20lags_LR_synch_3mean(:,2*i),'b');legend('L','R');
     if i==2; legend('Leader','follower');end
     title(direction3names{i},'color',condicolors(i,:));
-    subtitle('autocorr');
+    subtitle('synch autocorr');
     ylabel('\rho(k)');xlabel('lag');ylim([0 0.5])
 subplot(2,3,3+i)
+    plot(Autocorrs20lags_LR_synco_3mean(:,2*i-1),'r');hold on;
+    plot(Autocorrs20lags_LR_synco_3mean(:,2*i),'b');legend('L','R');
+    if i==2; legend('Leader','follower');end
+    title(direction3names{i},'color',condicolors(i,:));
+    subtitle('synco autocorr');
+    ylabel('\rho(k)');xlabel('lag');ylim([0 0.5])
 end
 sgtitle('mean autocorr sum for 20 lags in all sessions (unmatched int) ^{ *PLOT7}');
 
@@ -1702,8 +1707,8 @@ d1=H-0.5;% estimate d using DFA method (method1: based on DFA, d=h-0.5)
 % ( Continue to PLOT 9 )#########################
         
 % d removal
-H_est2=zeros(2,12,8);
-int_dmean_drm=cell(2,12,8);
+H_est2=zeros(2,12,numSes);
+int_dmean_drm=cell(2,12,numSes);
 cd /ssd/zhibin/1overf/
 for r=1:numSes;
     clear intervals conditions sortorders
@@ -3878,10 +3883,10 @@ for s=1:2
 end
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
-%% SECT 19 ...try out DFA on EEG
+%% SECT 19 ...(unfinished): try out DFA on EEG
 ans(:,15)
 [D,Alpha1,n,F_n,FitValues]=DFA_main(ans(:,15));
-%% SECT 20 ...continuous EEG 5 bands
+%% SECT 20 ...(unfinished): continuous EEG 5 bands
 % tryout in one session
 s=1; b=1;
 zEEG_L; zEEG_R; %Refter to SECT 12
@@ -3954,6 +3959,9 @@ plot(reRef_data);
 % downsample to 100 Hz
 
 % H-EEG in each band, corr with H-int
+
+%% SECT 21 arfit and arconf
+
 
 %% saves all variables from the current workspace
 tic

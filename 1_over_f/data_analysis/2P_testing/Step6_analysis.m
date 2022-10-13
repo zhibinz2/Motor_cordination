@@ -1578,8 +1578,8 @@ d1=H-0.5;% estimate d using DFA method (method1: based on DFA, d=h-0.5)
 d_min=-0.5; d_max=1; % (method2: open d_estimation)
 
 % d removal
-H_est1=zeros(2,12,8);
-H_est2=zeros(2,12,8);
+H_est1=zeros(2,12,numSes);
+H_est2=zeros(2,12,numSes);
 int_dmean_drm1=cell(2,12,numSes);
 cd /ssd/zhibin/1overf/
 for r=1:numSes;
@@ -1707,8 +1707,8 @@ d1=H-0.5;% estimate d using DFA method (method1: based on DFA, d=h-0.5)
 % ( Continue to PLOT 9 )#########################
         
 % d removal
-H_est2=zeros(2,12,8);
-int_dmean_drm=cell(2,12,8);
+H_est2=zeros(2,12,numSes);
+int_dmean_drm=cell(2,12,numSes);
 cd /ssd/zhibin/1overf/
 for r=1:numSes;
     clear intervals conditions sortorders
@@ -3883,10 +3883,10 @@ for s=1:2
 end
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
-%% SECT 19 ...try out DFA on EEG
+%% SECT 19 ...(unfinished): try out DFA on EEG
 ans(:,15)
 [D,Alpha1,n,F_n,FitValues]=DFA_main(ans(:,15));
-%% SECT 20 ...continuous EEG 5 bands
+%% SECT 20 ...(unfinished): continuous EEG 5 bands
 % tryout in one session
 s=1; b=1;
 zEEG_L; zEEG_R; %Refter to SECT 12
@@ -3959,6 +3959,9 @@ plot(reRef_data);
 % downsample to 100 Hz
 
 % H-EEG in each band, corr with H-int
+
+%% SECT 21 arfit and arconf
+
 
 %% saves all variables from the current workspace
 tic
