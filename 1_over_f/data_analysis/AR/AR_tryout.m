@@ -47,6 +47,8 @@ for p=1:2
     for b=1:12
         for s=1%:12
             Int12LR(1:100,p,b)=int_dmean_drm{p,b,s}(1:100,:);
+%             Int12LR(1:100,3,b)=int_dmean_drm{2,b,s}(1:100,:);
+%             Int12LR(1:100,4,b)=int_dmean_drm{2,b,s}(1:100,:);
         end
     end
 end
@@ -62,7 +64,7 @@ v; % time series data x observations x trials
 
 addpath cd /home/zhibin/Documents/GitHub/matlab/external/arfit
 pmin=1; % minimal order
-pmax=8; % maximal order
+pmax=10; % maximal order
 [w, A, C, sbc, fpe, th]=arfit(v, pmin, pmax) % , 'sbc', 'zero')
 % v(k,:)' = w' + A1*v(k-1,:)' +...+ Ap*v(k-p,:)' + noise(C)
 
@@ -75,10 +77,18 @@ sbc; % Schwarz's Bayesian Criterion
 fpe; % logarithm of Akaike's Final Prediction Error
 th; % contains information needed for the computation of confidence intervals
 
+% locate p for the minimal value
+[minSBC,indSBC]=min(sbc)
+[minFPE,indFPE]=min(fpe)
+
 % try arconf
 [Aerr, werr]=arconf(A, C, w, th)
 Aerr; % margins of error
 werr; % (A +/- Aerr) and (w +/- werr) are approximate 95% confidence intervals for the elements of the coefficient matrix A
+
+% See if the intercept cross zero
+errorbar(1:length(w),w,werr,'ko');
+xlim([0 length(w)+1])
 
 % Granger Causality
 % https://www.youtube.com/watch?v=XqsSB_vpHLs
