@@ -1578,8 +1578,8 @@ d1=H-0.5;% estimate d using DFA method (method1: based on DFA, d=h-0.5)
 d_min=-0.5; d_max=1; % (method2: open d_estimation)
 
 % d removal
-H_est1=zeros(2,12,8);
-H_est2=zeros(2,12,8);
+H_est1=zeros(2,12,numSes);
+H_est2=zeros(2,12,numSes);
 int_dmean_drm1=cell(2,12,numSes);
 cd /ssd/zhibin/1overf/
 for r=1:numSes;
@@ -2277,11 +2277,13 @@ plot(H_Lall(uncoupleInd(syncoind(13:15))),H_Rall(uncoupleInd(syncoind(13:15))),'
 plot(H_Lall(uncoupleInd(syncoind(16:18))),H_Rall(uncoupleInd(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uncoupling');
-A=[];S=[]; Alpha1=[];FitValues=[];
-A=polyfit(H_Lall(uncoupleInd(1:36)),H_Rall(uncoupleInd(1:36)),1);
-Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(uncoupleInd(1:36)));
-hold on; plot(H_Lall(uncoupleInd(1:36)),FitValues,'k-');
+% A=[];S=[]; Alpha1=[];FitValues=[];
+% A=polyfit(H_Lall(uncoupleInd(1:36)),H_Rall(uncoupleInd(1:36)),1);
+% Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+% FitValues=polyval(A,H_Lall(uncoupleInd(1:36)));
+% hold on; plot(H_Lall(uncoupleInd(1:36)),FitValues,'k-','LineWidth',3);
+% fit the synch data
+
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 % legend('synch','','','','synco','','','','location','northwest');
 subtitle(['(uncouple: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
@@ -2317,7 +2319,19 @@ A=[];Alpha1=[];FitValues=[];
 A=polyfit([H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))], [H_Rall(leadingInd(1:36)); H_Lall(followingInd(1:36))],1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,[H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))]);
-hold on; plot([H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))],FitValues,'k-');
+hold on; plot([H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))],FitValues,'k-','LineWidth',3);
+% fit the synch data
+A=[];Alpha1=[];FitValues=[];
+A=polyfit([H_Lall(leadingInd(1:2:35)); H_Rall(followingInd(1:2:35))], [H_Rall(leadingInd(1:2:35)); H_Lall(followingInd(1:2:35))],1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,[H_Lall(leadingInd(1:2:35)); H_Rall(followingInd(1:2:35))]);
+hold on; plot([H_Lall(leadingInd(1:2:35)); H_Rall(followingInd(1:2:35))],FitValues,'-','color',darkgreen,'LineWidth',3);
+% fit the synco data
+A=[];Alpha1=[];FitValues=[];
+A=polyfit([H_Lall(leadingInd(2:2:36)); H_Rall(followingInd(2:2:36))], [H_Rall(leadingInd(2:2:36)); H_Lall(followingInd(2:2:36))],1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,[H_Lall(leadingInd(2:2:36)); H_Rall(followingInd(2:2:36))]);
+hold on; plot([H_Lall(leadingInd(2:2:36)); H_Rall(followingInd(1:36))],FitValues,'-','color',pink,'LineWidth',3);
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 % legend('synch','','','','synco','','','','','','','','','','','','location','northwest');
 subtitle(['(leading or following: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
@@ -2341,7 +2355,7 @@ A=[];Alpha1=[];FitValues=[];
 A=polyfit(H_Lall(mutualInd(1:36)),H_Rall(mutualInd(1:36)),1);
 Alpha1=A(1); 
 FitValues=polyval(A,H_Lall(mutualInd(1:36)));
-hold on; plot(H_Lall(mutualInd(1:36)),FitValues,'k-');
+hold on; plot(H_Lall(mutualInd(1:36)),FitValues,'k-','LineWidth',3);
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 subtitle(['(mutual): linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 legend('synch - subj pair 1','synch - subj pair 2','synch - subj pair 3','synch - subj pair 4', ...
@@ -2351,7 +2365,7 @@ legend('synch - subj pair 1','synch - subj pair 2','synch - subj pair 3','synch 
     'location','eastoutside');
 grid on;
 sgtitle(['H matching as in Marmelat 2012  ^{* PLOT 10-2}']);
-
+set(gcf,'color','w'); % set background white for copying in ubuntu
 
 %% PLOT 11 Xcorr(0) with slinding win of 20 intervals (matched int) in one subj
 % clear
@@ -3960,8 +3974,128 @@ plot(reRef_data);
 
 % H-EEG in each band, corr with H-int
 
-%% SECT 21 arfit and arconf
+%% SECT 21 GC: arfit and MVGC
+int_dmean_drm; % from SECT9 (matched int) (sorted order)
+% 2 L/R X 12 blocks x 12 sessions
 
+% orgainized the synchronization trials into 4 conditions
+condi4Ind={[1:3],[4:6],[7:9],[10:12]};
+condi4names={'uncouple','L-lead','R-lead','mutual'};
+syn2Ind={[1:2:11],[2:2:12]};syn2names={'synch','synco'};
+
+% test_data=int_dmean_drm(:,1:3,1:2:11); % uncouple synch
+% test_data=int_dmean_drm(:,4:6,1:2:11); % L-lead synch
+% test_data=int_dmean_drm(:,7:9,1:2:11); % R-lead synch
+% test_data=int_dmean_drm(:,10:12,1:2:11); % R-lead synch
+
+% organize into time x 2 L/R matrix then apply arfit and plot GC
+pmin=1; % minimal order
+pmax=10; % maximal order
+figure;
+for syn=1:2
+    for condi=1:4
+        test_data=int_dmean_drm(:,condi4Ind{condi},syn2Ind{syn});
+        % Method1a: concatenate into one big trial
+        Int12LR=[];
+        for b=1:size(test_data,2)
+            for s=1:size(test_data,3)
+                    Int12LR=[Int12LR; [test_data{1,b,s} test_data{2,b,s}]];
+            end
+        end
+%         % Method1b: randomized the concatenation
+%         Int12LR=[];
+%         for b=randperm(size(test_data,2))
+%             for s=randperm(size(test_data,3))
+%                     Int12LR=[Int12LR; [test_data{1,b,s} test_data{2,b,s}]];
+%             end
+%         end
+        if syn==1; subplot(2,4,condi);end
+        if syn==2; subplot(2,4,4+condi);end
+        [w, A, C, sbc, fpe, th]=arfit(Int12LR, pmin, pmax);
+        % Granger Causality
+        % GC of L->R
+        GC_L2R=log(C(2,2)/C(1,2));
+        % GC of R->L
+        GC_R2L=log(C(1,1)/C(1,2));
+        % plot
+        bar([GC_L2R GC_R2L]);xticks([1 2]);xticklabels({'L->R','R->L'});
+        title([condi4names{condi}]);subtitle(syn2names{syn});
+        ylim([0 6]);
+    end
+end
+sgtitle('GC: arfit (concatenate data)')
+sgtitle('GC: arfit (permuted concatenate data)')
+
+% organize into time x 2 L/R matrix then apply MVGC and plot
+canvas(0.2, 0.9);
+for syn=1:2
+    for condi=1:4
+        test_data=int_dmean_drm(:,condi4Ind{condi},syn2Ind{syn});
+%         % Method1a: concatenate into one big trial
+%         Int12LR=[];
+%         for b=1:size(test_data,2)
+%             for s=1:size(test_data,3)
+%                     Int12LR=[Int12LR; [test_data{1,b,s} test_data{2,b,s}]];
+%             end
+%         end
+        % Method1b: randomized the concatenation
+        Int12LR=[];
+        for b=randperm(size(test_data,2))
+            for s=randperm(size(test_data,3))
+                    Int12LR=[Int12LR; [test_data{1,b,s} test_data{2,b,s}]];
+            end
+        end
+        if syn==1; subplot(2,4,condi);end
+        if syn==2; subplot(2,4,4+condi);end
+        X=[];
+        X=permute(Int12LR,[2,1]);
+        % Parameters
+        ntrials   = size(X,3);     % number of trials
+        nobs      = size(X,2);  % number of observations per trial
+        regmode   = 'LWR';  % VAR model estimation regression mode ('OLS', 'LWR' or empty for default)
+        icregmode = 'LWR';  % information criteria regression mode ('OLS', 'LWR' or empty for default) 
+        morder    = 'AIC';  % model order to use ('actual', 'AIC', 'BIC' or supplied numerical value)
+        momax     = 10;     % maximum model order for model order estimation
+        % recomended acmaxlags minimum = 105
+        acmaxlags = 10;   % maximum autocovariance lags (empty for automatic calculation)
+        tstat     = '';     % statistical test for MVGC:  'F' for Granger's F-test (default) or 'chi2' for Geweke's chi2 test
+        alpha     = 0.05;   % significance level for significance test
+        mhtc      = 'FDR';  % multiple hypothesis test correction (see routine 'significance')
+        % for plotting only
+        fs        = 1.3;    % sample rate (Hz)
+        fres      = [];     % frequency resolution (empty for automatic calculation)
+        nvars = size(X,1); % number of variables
+        % model order estimation
+        [AIC,BIC,moAIC,moBIC] = tsdata_to_infocrit(X,momax,icregmode);
+        % Select model order.
+        if     strcmpi(morder,'actual')
+            morder = amo;
+            fprintf('\nusing actual model order = %d\n',morder);
+        elseif strcmpi(morder,'AIC')
+            morder = moAIC;
+            fprintf('\nusing AIC best model order = %d\n',morder);
+        elseif strcmpi(morder,'BIC')
+            morder = moBIC;
+            fprintf('\nusing BIC best model order = %d\n',morder);
+        else
+            fprintf('\nusing specified model order = %d\n',morder);
+        end
+        % VAR model estimation 
+        [A,SIG] = tsdata_to_var(X,morder,regmode);
+        % Check for failed regression
+        assert(~isbad(A),'VAR estimation failed');
+        % Autocovariance calculation
+        [G,info] = var_to_autocov(A,SIG,acmaxlags);
+        var_acinfo(info,true); % report results (and bail out on error)
+        % Granger causality calculation: time domain 
+        F = autocov_to_pwcgc(G);
+        % plot
+        bar([F(2,1) F(1,2)]);xticks([1 2]);xticklabels({'L->R','R->L'});
+        ylim([0 0.11])
+    end
+end
+sgtitle('GC: var-to-autocov (concatenate data)')
+sgtitle('GC: var-to-autocov (permuted concatenate data)')
 
 %% saves all variables from the current workspace
 tic

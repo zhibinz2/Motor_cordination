@@ -27,22 +27,23 @@ load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
 cd /ssd/zhibin/1overf/all_session20220713_1005
 load('int_dmean_drm.mat')
 
-int_dmean_drm; % from SECT9 (matched int) (sorted order)
-% 2 L/R X 12 blocks x 12 sessions
+%% try out reorganizing methods
 
-% orgainized the synchronization trials into 4 conditions
-condi4Ind={[1:3],[4:6],[7:9],[10:12]};
-syn2Ind={[1:2:11],[2:2:12]};
-int_dmean_drm(:,1:3,1:2:11)% uncouple
-int_dmean_drm(:,4:6,1:2:11)% L-lead
-int_dmean_drm(:,7:9,1:2:11)% R-lead
-int_dmean_drm(:,10:12,1:2:11)% mutual
+% Method1a: concatenate into one big trial
+Int12LR=[];
+for b=1:size(test_data,2)
+    for s=1:size(test_data,3)
+            Int12LR=[Int12LR; [test_data{1,b,s} test_data{2,b,s}]];
+    end
+end
+% Method1b: randomized the concatenation
+Int12LR=[];
+for b=randperm(size(test_data,2))
+    for s=randperm(size(test_data,3))
+            Int12LR=[Int12LR; [test_data{1,b,s} test_data{2,b,s}]];
+    end
+end
 
-% using function to organize into time x 2 L/R x trials
-test_data=int_dmean_drm(:,4:6,1:2:11); % L-lead synch
-test_data=int_dmean_drm(:,7:8,1:2:11); % R-lead synch
-
-% Method1: concatenate into one big trial
 
 % Method2: truncate to 100 samples
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
@@ -154,7 +155,7 @@ Aerr; % margins of error
 werr; % and for the components of the intercept vector w. The input
 
 % See if the intercept cross zero
-errorbar(1:length(w),w,werr,'ko');
+figure;errorbar(1:length(w),w,werr,'ko');
 xlim([0 length(w)+1]);yline(0,'color',[1 0.8 0.2]);
 
 % Granger Causality
@@ -163,6 +164,8 @@ xlim([0 length(w)+1]);yline(0,'color',[1 0.8 0.2]);
 GC_L2R=log(C(2,2)/C(1,2))
 % GC of R->L
 GC_R2L=log(C(1,1)/C(1,2))
+% plot
+figure;bar([GC_L2R GC_R2L]);xticks([1 2]);xticklabels({'L->R','R->L'});
 
 %% try out tsdata_to_var and tsdata_to_autocov (MVGC)
 v_tsdata=permute(Int12LR,[2,1,3]);
@@ -206,6 +209,7 @@ fres      = [];     % frequency resolution (empty for automatic calculation)
 
 nvars = size(X,1); % number of variables
 
+figure;bar([F(2,1) F(1,2)]);;xticks([1 2]);xticklabels({'L->R','R->L'});
 %% Issues
 % each trial has to be the same length for the input as a 3d matrix (1:100)
 
