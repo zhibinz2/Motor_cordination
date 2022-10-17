@@ -1075,34 +1075,52 @@ for d=1:2
 end
 
 
-%% PLOT 6 DFA H values for all sessions (matched int)(sorted order)
+%% SECT 6 DFA H values for all sessions (unmatched/matched int) (sorted order)
+clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
 numSes=size(seeds,1);
 sessions={'synch','synco','synch','synco','synch','synco','synch','synco','synch','synco',...
     'synch','synco'};
+
 H=zeros(2,12,numSes);
 cd /ssd/zhibin/1overf/
+tic
 for r=1:numSes;
     clear intervals conditions sortorders
     runid = num2str(seeds(r,:));
+    % load unmatched int.
+    % path = [runid '_2P/Segmented_data/'];
+    % load([path  'data_variables' runid '.mat']);
+    % load matched int.
     path = [runid '_2P/Cleaned_data/'];
     load([path  'clean_' runid '.mat']);
     % sort order and plot results
+    % [x,sortorder]=sort(condiSeq);
     [x,sortorder]=sort(conditions);
-    for j=1:12
-        clear intL_good_dmean intR_good_dmean
-        % After aligment
-        intervals{sortorder(j)}(:,1);
-        intervals{sortorder(j)}(:,2);
+    for j = 1:12
+        % For unmatched int.
+        % clear BPL BPR sampL sampR intL intR intL_dmean intR_dmean
+	    % BPL = [BP(1).BP{sortorder(j)}];
+	    % BPR = [BP(2).BP{sortorder(j)}];
+        % sampL = find(BPL==1);
+        % sampR = find(BPR==1);
+        % intL=diff(sampL);
+        % intR=diff(sampR);
+        % For matched int.
+        clear intL intR intL_dmean intR_dmean
+        intL = intervals{sortorder(j)}(:,1);
+        intR = intervals{sortorder(j)}(:,2);
         % remove the mean
-        intL_good_dmean=intervals{sortorder(j)}(:,1)-mean(intervals{sortorder(j)}(:,1));
-        intR_good_dmean=intervals{sortorder(j)}(:,2)-mean(intervals{sortorder(j)}(:,2));
-        [~,H(1,j,r)]=DFA_main(intL_good_dmean);
-        [~,H(2,j,r)]=DFA_main(intR_good_dmean);
+        intL_dmean=intL-mean(intL);
+        intR_dmean=intR-mean(intR);
+        [~,H(1,j,r)]=DFA_main(intL_dmean);
+        [~,H(2,j,r)]=DFA_main(intR_dmean);
     end
 end
+toc
 
+%% PLOT 6 DFA H values for all sessions (matched/unmatched int)(sorted order)
 % print H to a table
 Trials={'uncouple','uncouple','uncouple','L-lead','L-lead','L-lead',...
     'R-lead','R-lead','R-lead','mutual','mutual','mutual'}';
@@ -1257,42 +1275,7 @@ title('mean H in all sessions (unmatched int) ^{ *PLOT 6-1}');
 grid on;
 
 
-%% PLOT 6-1 DFA H values for all sessions (unmatched int) (sorted order)
-clear
-seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
-        2022100402;20221005];
-numSes=size(seeds,1);
-sessions={'synch','synco','synch','synco','synch','synco','synch','synco','synch','synco',...
-    'synch','synco'};
-
-H=zeros(2,12,numSes);
-cd /ssd/zhibin/1overf/
-for r=1:numSes;
-    clear intervals conditions sortorders
-    runid = num2str(seeds(r,:));
-    path = [runid '_2P/Segmented_data/'];
-    load([path  'data_variables' runid '.mat']);
-    % sort order and plot results
-    [x,sortorder]=sort(condiSeq);
-    for j = 1:12
-        clear BPL BPR sampL sampR intL intR intL_dmean intR_dmean
-	    BPL = [BP(1).BP{sortorder(j)}];
-	    BPR = [BP(2).BP{sortorder(j)}];
-        sampL = find(BPL==1);
-        sampR = find(BPR==1);
-        intL=diff(sampL);
-        intR=diff(sampR);
-        % remove the mean
-        intL_dmean=intL-mean(intL);
-        intR_dmean=intR-mean(intR);
-        [~,H(1,j,r)]=DFA_main(intL_dmean);
-        [~,H(2,j,r)]=DFA_main(intR_dmean);
-    end
-end
-
-% run plots in previous section
-
-%% PLOT 7 Autocorr summary in all sessions (unmatched int) (sorted order)
+%% SECT 7 Autocorr summary in all sessions (unmatched/matched int) (sorted order)
 clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
@@ -1307,18 +1290,29 @@ tic
 for r=1:numSes;
     clear intervals conditions sortorders
     runid = num2str(seeds(r,:));
-    path = [runid '_2P/Segmented_data/'];
-    load([path  'data_variables' runid '.mat']);
+    % load unmatched int.
+    % path = [runid '_2P/Segmented_data/'];
+    % load([path  'data_variables' runid '.mat']);
+    % load matched int.
+    path = [runid '_2P/Cleaned_data/'];
+    load([path  'clean_' runid '.mat']);
+    load([path  'd_removal' runid '.mat']);
     % sort order and plot results
-    [x,sortorder]=sort(condiSeq);
-    for j = 1:12
-        clear BPL BPR sampL sampR intL intR intL_dmean intR_dmean
-	    BPL = [BP(1).BP{sortorder(j)}];
-	    BPR = [BP(2).BP{sortorder(j)}];
-        sampL = find(BPL==1);
-        sampR = find(BPR==1);
-        intL=diff(sampL);
-        intR=diff(sampR);
+    % [x,sortorder]=sort(condiSeq);
+    [x,sortorder]=sort(conditions);
+    for j = 1:12 
+        % For unmatched int
+        % clear BPL BPR sampL sampR intL intR intL_dmean intR_dmean
+	    % BPL = [BP(1).BP{sortorder(j)}];
+	    % BPR = [BP(2).BP{sortorder(j)}];
+        % sampL = find(BPL==1);
+        % sampR = find(BPR==1);
+        % intL=diff(sampL);
+        % intR=diff(sampR);
+        % For matched int.
+        clear intL intR intL_dmean intR_dmean
+        intL = intervals{sortorder(j)}(:,1);
+        intR = intervals{sortorder(j)}(:,2);
         % remove the mean
         intL_dmean=intL-mean(intL);
         intR_dmean=intR-mean(intR);
@@ -1331,6 +1325,8 @@ for r=1:numSes;
     end
 end
 toc
+% 88 sec
+
 
 % print Autocorrs(sum) to a table (show each session)
 Trials={'uncouple','uncouple','uncouple','L-lead','L-lead','L-lead',...
@@ -1354,6 +1350,8 @@ Table_Autocorrs=table(Trials, Autocorrs_L_synch1, Autocorrs_R_synch1, Autocorrs_
     Autocorrs_L_synch5, Autocorrs_R_synch5, Autocorrs_L_synco5, Autocorrs_R_synco5,...
     Autocorrs_L_synch6, Autocorrs_R_synch6, Autocorrs_L_synco6, Autocorrs_R_synco6);
 
+%% PLOT 7 Autocorr summary in all sessions (unmatched/matched int) (sorted order)
+
 % run similar plots in previous section (PLOT 6)
 % plot each session
 canvas(0.5, 0.5);
@@ -1371,7 +1369,8 @@ for r=1:numSes
 %     yline(0.5,'color',deepyellow);
 %     legend('L','R','1','0.5','location','eastoutside');
 end
-sgtitle('Sum of Autocorr (20 lags) in all sessions (unmatched int) ^{ *PLOT7}')
+% sgtitle('Sum of Autocorr (20 lags) in all sessions (unmatched int) ^{ *PLOT7}')
+sgtitle('Sum of Autocorr (20 lags) in all sessions (matched int) ^{ *PLOT7}')
 
 % average all trials of the same condition (synch vs synco)
 % Autocorrs (sum)
@@ -1406,12 +1405,15 @@ subplot(2,1,1);
 b=bar(Autocorrs_LR_synch_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
 xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
 ylabel('\rho(k)');
-title('mean autocorr sum for 20 lags in all synch sessions (unmatched int) ^{ *PLOT7}')
+% title('mean autocorr sum for 20 lags in all synch sessions (unmatched int) ^{ *PLOT7}')
+title('Synchronization')
 subplot(2,1,2);
 b=bar(Autocorrs_LR_synco_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
 xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
 ylabel('\rho(k)');
-title('mean autocorr sum for 20 lags in all synco sessions (unmatched int) ^{ *PLOT7}')
+% title('mean autocorr sum for 20 lags in all synco sessions (unmatched int) ^{ *PLOT7}')
+title('Syncopation')
+sgtitle('mean autocorr sum for 20 lags in all synco sessions (matched int) ^{ *PLOT7}')
 
 % average all trials of the same condition (synch vs synco)
 % Autocorrs20lags (all 20 lags)
@@ -1449,15 +1451,16 @@ for i=1:4
     plot(Autocorrs20lags_LR_synch_mean(:,2*i),'b');legend('L','R');
     title(condi4names{i},'color',condicolors(i,:));
     subtitle('autocorr synch');
-    ylabel('\rho(k)');xlabel('lag');ylim([0 0.5])
+    ylabel('\rho(k)');xlabel('lag');ylim([-0.1 0.5])
     subplot(2,4,4+i);
     plot(Autocorrs20lags_LR_synco_mean(:,2*i-1),'r');hold on;
     plot(Autocorrs20lags_LR_synco_mean(:,2*i),'b');legend('L','R');
     title(condi4names{i},'color',condicolors(i,:));
     subtitle('autocorr synco');
-    ylabel('\rho(k)');xlabel('lag'); ylim([0 0.5])
+    ylabel('\rho(k)');xlabel('lag'); ylim([-0.1 0.5])
 end
-suptitle('mean autocorr for 20 lags from all sessions (unmatched int) ^{ *PLOT7}')
+% suptitle('mean autocorr for 20 lags from all sessions (unmatched int) ^{ *PLOT7}')
+suptitle('mean autocorr for 20 lags from all sessions (matched int) ^{ *PLOT7}')
 
 % combine synch and synco of Autocorrs (sum) in bar graph
 Autocorrs_LR_syn_mean=[mean([Autocorrs_L_uncouple_synch Autocorrs_L_uncouple_synco Autocorrs_R_uncouple_synch Autocorrs_R_uncouple_synco]);...
@@ -1469,8 +1472,11 @@ b=bar(Autocorrs_LR_syn_mean);
 xticks(1:4);xticklabels({'uncouple','Leading','Following','mutual'});
 ylabel('\rho(k)');
 hold on;
-title('mean autocorr sum for 20 lags in all sessions (unmatched int) ^{ *PLOT7}');
+% title('mean autocorr sum for 20 lags in all sessions (unmatched int) ^{ *PLOT7}');
+title('mean autocorr sum for 20 lags in all sessions (matched int) ^{ *PLOT7}');
+
 % combine synch and synco of Autocorrs (sum) in violin plot
+addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/violin
 figure;
 Y={[Autocorrs_L_uncouple_synch Autocorrs_L_uncouple_synco Autocorrs_R_uncouple_synch Autocorrs_R_uncouple_synco]',...
     [Autocorrs_L_Llead_synch Autocorrs_L_Llead_synco Autocorrs_R_Rlead_synch Autocorrs_R_Rlead_synco]',... 
@@ -1481,9 +1487,11 @@ v=violin(Y,...
 'bw',0.3,...
 'mc','k',...
 'medc','r--');
+xticks([1:4]);
 set(gca,'XtickLabel',{'uncouple','Leading','Following','mutual'});
 ylabel('\rho(k)');
-title('mean autocorr sum for 20 lags in all sessions (unmatched int) ^{ *PLOT 7}');
+% title('mean autocorr sum for 20 lags in all sessions (unmatched int) ^{ *PLOT 7}');
+title('mean autocorr sum for 20 lags in all sessions (matched int) ^{ *PLOT 7}');
 grid on;
 
 %
@@ -1514,7 +1522,8 @@ subplot(2,3,3+i)
     subtitle('synco autocorr');
     ylabel('\rho(k)');xlabel('lag');ylim([0 0.5])
 end
-sgtitle('mean autocorr sum for 20 lags in all sessions (unmatched int) ^{ *PLOT7}');
+% sgtitle('mean autocorr sum for 20 lags in all sessions (unmatched int) ^{ *PLOT7}');
+sgtitle('mean autocorr sum for 20 lags in all sessions (matched int) ^{ *PLOT7}');
 
 Autocorrs20lags_LR_uncouple_mean=...
     [mean([Autocorrs20lags_L_uncouple_synch Autocorrs20lags_L_uncouple_synco],2) ...
@@ -1539,7 +1548,8 @@ subplot(1,3,i)
     subtitle('autocorr');
     ylabel('\rho(k)');xlabel('lag');ylim([0 0.5])
 end
-sgtitle('mean autocorr sum for 20 lags in all sessions (unmatched int) ^{ *PLOT7}');
+% sgtitle('mean autocorr sum for 20 lags in all sessions (unmatched int) ^{ *PLOT7}');
+sgtitle('mean autocorr sum for 20 lags in all sessions (matched int) ^{ *PLOT7}');
 
 %% PLOT 8 DFA after d removed (sorted order)
 clear
@@ -1701,15 +1711,20 @@ for r=1:numSes;
     end
 end
 toc
+% 80 sec
+ 
 % eval(['save ' '/ssd/zhibin/1overf/all_session20220713_0816/H.mat H'])
-eval(['save ' '/ssd/zhibin/1overf/all_session20220713_1005/H.mat H'])
+eval(['save ' '/ssd/zhibin/1overf/all_session20220713_1005/H.mat H']);
 d1=H-0.5;% estimate d using DFA method (method1: based on DFA, d=h-0.5)
+% load ('/ssd/zhibin/1overf/all_session20220713_1005/H.mat H');
+
 % ( Continue to PLOT 9 )#########################
         
 % d removal
 H_est2=zeros(2,12,numSes);
 int_dmean_drm=cell(2,12,numSes);
 cd /ssd/zhibin/1overf/
+tic
 for r=1:numSes;
     clear intervals conditions sortorders
     runid = num2str(seeds(r,:));
@@ -1733,6 +1748,8 @@ for r=1:numSes;
         [~,H_est2(2,j,r)]=DFA_main(int_dmean_drm{2,j,r});
     end
 end
+toc
+
 % save the "int_dmean_drm" under [/ssd/zhibin/1overf/all_session20220713_0816]
 % eval(['save ' '/ssd/zhibin/1overf/all_session20220713_0816/int_dmean_drm.mat int_dmean_drm'])
 eval(['save ' '/ssd/zhibin/1overf/all_session20220713_1005/int_dmean_drm.mat int_dmean_drm'])
@@ -1740,9 +1757,11 @@ eval(['save ' '/ssd/zhibin/1overf/all_session20220713_1005/int_dmean_drm.mat int
 
 % (After d removal)********
 % Xcorr based on int_dmean_drm
-load /ssd/zhibin/1overf/all_session20220713_0816/int_dmean_drm.mat
-load /ssd/zhibin/1overf/all_session20220713_0816/H.mat
-XcorrPeakLag=zeros(12,8);XcorrPeak=zeros(12,8);
+% load /ssd/zhibin/1overf/all_session20220713_0816/int_dmean_drm.mat
+% load /ssd/zhibin/1overf/all_session20220713_0816/H.mat
+load /ssd/zhibin/1overf/all_session20220713_1005/int_dmean_drm.mat
+load /ssd/zhibin/1overf/all_session20220713_1005/H.mat
+XcorrPeakLag=zeros(12,numSes);XcorrPeak=zeros(12,numSes);
 for r=1:numSes;
     for j = 1:12
         % Xcorr after d removal ********
@@ -1767,6 +1786,9 @@ for r=1:12
 end
 sgtitle({['peak lag from Xcorr in all sessions (-lag = L leading; +lag = R leading)'],...
     ['(matched int) (before d removal) ^{* PLOT 9}']});
+sgtitle({['peak lag from Xcorr in all sessions (-lag = L leading; +lag = R leading)'],...
+    ['(matched int) (after d removal) ^{* PLOT 9}']});
+
 
 % print XcorrPeakLag to a table
 XcorrPeakLag_synch1=XcorrPeakLag(:,1);
@@ -1844,6 +1866,7 @@ XcorrPeakLag_LR_synch_std = [std(XcorrPeakLag_uncouple_synch);...
     std(XcorrPeakLag_Llead_synch);...
     std(XcorrPeakLag_Rlead_synch);...
     std(XcorrPeakLag_mutual_synch)];
+
 % syncopation
 XcorrPeakLag_uncouple_synco = reshape(XcorrPeakLag([1:3],[2:2:12]),1,[])';   % R,uncouple,synco
 XcorrPeakLag_Llead_synco    = reshape(XcorrPeakLag([4:6],[2:2:12]),1,[])';   % R,L lead,synco
@@ -1904,7 +1927,8 @@ ylabel('average lag of the peak'); % ylabel('\rho(k)');
 ylim([-10 10]);yline(0,'color',red);set(gca, 'YDir','reverse');
 xlim([0 5]);grid on;  grid minor;
 title('average lag of xcorr peak in all synch sessions (-lag: L leading; +lag: R leading) ^{* PLOT 9}');
-subtitle('(matched int) (before d removal)');
+% subtitle('(matched int) (before d removal)');
+subtitle('(matched int) (after d removal)');
 subplot(2,1,2);
 errorbar(1:4,XcorrPeakLag_LR_synco_mean,XcorrPeakLag_LR_synco_std,'ko');
 xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
@@ -1912,9 +1936,11 @@ ylabel('average lag of the peak'); % ylabel('\rho(k)');
 ylim([-10 10]);yline(0,'color',red);set(gca, 'YDir','reverse')
 xlim([0 5]);grid on; grid minor;
 title('average lag of xcorr peak in all synco sessions (-lag: L leading; +lag: R leading) ^{* PLOT 9}');
-subtitle('(matched int) (before d removal)');
+% subtitle('(matched int) (before d removal)');
+subtitle('(matched int) (after d removal)');
 
 % organize for PLOT (peak)
+% for synchronization
 % average all trials of the same condition 
 XcorrPeak_uncouple_synch = reshape(XcorrPeak([1:3],[1:2:11]),1,[])'  % uncouple,synch
 XcorrPeak_Llead_synch    = reshape(XcorrPeak([4:6],[1:2:11]),1,[])'  % L lead,synch
@@ -1965,6 +1991,7 @@ XcorrPeak_LR_synch_std = [std(XcorrPeak_uncouple_synch);...
     std(XcorrPeak_Llead_synch);...
     std(XcorrPeak_Rlead_synch);...
     std(XcorrPeak_mutual_synch)];
+% for syncopation
 XcorrPeak_uncouple_synco = reshape(XcorrPeak([1:3],[2:2:12]),1,[])'  % R,uncouple,synco
 XcorrPeak_Llead_synco    = reshape(XcorrPeak([4:6],[2:2:12]),1,[])'  % R,L lead,synco
 XcorrPeak_Rlead_synco    = reshape(XcorrPeak([7:9],[2:2:12]),1,[])'  % R,R lead,synco
@@ -2027,15 +2054,19 @@ xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
 ylabel('\rho(k)'); grid on;  grid minor;
 ylim([-0.1 1]);yline(0,'color',red);xlim([0 5]);
 title('average peak of xcorr in all synch sessions ^{* PLOT 9}');
-subtitle('(matched int) (before d removal)');
+% subtitle('(matched int) (before d removal)');
+subtitle('(matched int) (after d removal)');
 subplot(2,1,2);
 errorbar(1:4,XcorrPeak_LR_synco_mean,XcorrPeak_LR_synco_std,'ko');
 xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
 ylabel('\rho(k)'); grid on;  grid minor;
 ylim([-0.1 1]);yline(0,'color',red);xlim([0 5]);
 title('average peak of xcorr in all synco sessions ^{* PLOT 9}');
-subtitle('(matched int) (before d removal)');
+% subtitle('(matched int) (before d removal)');
+subtitle('(matched int) (after d removal)');
 
+
+%% PLOT 9-1 Xcorr10Lag before d removal (matched int) (sorted order)
 % average all trials of the same condition (synch vs synco)
 Xcorr10Lag; % sorted order
 sorted4inds=[1:3; 4:6; 7:9; 10:12];
@@ -2056,9 +2087,9 @@ for i=1:4
     ylabel('\rho(k)');xlabel('lag');ylim([-0.1 0.8])
     yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
 end
-suptitle('mean xcorr for 10 lags from all sessions (unmatched int) ^{ *PLOT9}')
+suptitle('mean xcorr for 10 lags from all sessions (matched int) ^{ *PLOT9}')
 
-% combine synch and synco of Xcorr10Lag in 3 directions
+% combine Xcorr10Lag in 3 directions
 Xcorr10Lag; % sorted order
 direction3names={'uncouple','uni-directional','mutual'};
 sorted3inds={[1:3],[4:9],[10:12]};
@@ -2077,7 +2108,64 @@ subplot(2,3,i)
     ylabel('\rho(k)');xlabel('lag');ylim([-0.1 0.8])
     yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
 end
-sgtitle('mean xcorr sum for 10 lags in all sessions (unmatched int) ^{ *PLOT7}');
+sgtitle('mean xcorr sum for 10 lags in all sessions (matched int) ^{ *PLOT7}');
+
+% combine synch and synco
+Xcorr10Lag; % sorted order
+direction3names={'uncouple','uni-directional','mutual'};
+sorted3inds={[1:3],[4:9],[10:12]};
+sorted4inds=[1:3; 4:6; 7:9; 10:12];
+canvas(0.45, 0.3);
+for i=1:3
+subplot(1,3,i)
+    if i==2;
+        % L-lead
+        L_mat=squeeze(mean(Xcorr10Lag(:,sorted4inds(2,:),:),2));
+        % R-lead
+        R_mat=squeeze(mean(Xcorr10Lag(:,sorted4inds(3,:),:),2));
+        % combine
+        LR_mean=mean([L_mat;fliplr(R_mat)])
+        % plot Leader vs Follower
+        plot(-10:1:10,LR_mean,'k');
+        title(direction3names{i},'color',condicolors(i,:));
+        ylabel('\rho(k)');xlabel('lag (Leader-leading <- 0 -> Follower-leading)');ylim([-0.1 0.8])
+    elseif i==1 | i==3;
+    plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(:,sorted3inds{i},:),2)),1),'k');
+    title(direction3names{i},'color',condicolors(i,:));
+    ylabel('\rho(k)');xlabel('lag (L-leading <- 0 -> R-leading)');ylim([-0.1 0.8])
+    end
+    yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
+end
+sgtitle('mean xcorr sum for 10 lags in all sessions (matched int) ^{ *PLOT7}');
+
+% for synch only
+Xcorr10Lag; % sorted order
+direction3names={'uncouple','uni-directional','mutual'};
+sorted3inds={[1:3],[4:9],[10:12]};
+sorted4inds=[1:3; 4:6; 7:9; 10:12];
+canvas(0.45, 0.3);
+for i=1:3
+subplot(1,3,i)
+    if i==2;
+        % L-lead
+        L_mat=squeeze(mean(Xcorr10Lag(1:2:11,sorted4inds(2,:),:),2));
+        % R-lead
+        R_mat=squeeze(mean(Xcorr10Lag(1:2:11,sorted4inds(3,:),:),2));
+        % combine
+        LR_mean=mean([L_mat;fliplr(R_mat)]);
+        plot(-10:1:10,LR_mean,'k');
+        title(direction3names{i},'color',condicolors(i,:));
+        ylabel('\rho(k)');xlabel('lag (Leader-leading <- 0 -> Follower-leading)');ylim([-0.1 0.8])
+        yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
+        % plot Leader vs Follower
+    else
+        plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(1:2:11,sorted3inds{i},:),2)),1),'k');
+    end
+    title(direction3names{i},'color',condicolors(i,:));
+    ylabel('\rho(k)');xlabel('lag (L-leading <- 0 -> R-leading)');ylim([-0.1 0.8])
+    yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
+end
+sgtitle('mean xcorr sum for 10 lags in synch sessions (matched int) ^{ *PLOT7}');
 
 
 %% SECT 10 redo H and intervals_H_removed and save them separately (matched int)
@@ -2283,10 +2371,20 @@ title('uncoupling');
 % FitValues=polyval(A,H_Lall(uncoupleInd(1:36)));
 % hold on; plot(H_Lall(uncoupleInd(1:36)),FitValues,'k-','LineWidth',3);
 % fit the synch data
-
+A=[];Alpha1=[];FitValues=[];
+A=polyfit(H_Lall(uncoupleInd(1:2:35)),H_Rall(uncoupleInd(1:2:35)),1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,H_Lall(uncoupleInd(1:2:35)));
+hold on; plot(H_Lall(uncoupleInd(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
+% fit the synco data
+A=[];Alpha1=[];FitValues=[];
+A=polyfit(H_Lall(uncoupleInd(2:2:36)),H_Rall(uncoupleInd(2:2:36)),1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,H_Lall(uncoupleInd(2:2:36)));
+hold on; plot(H_Lall(uncoupleInd(2:2:36)),FitValues,'-','color',pink,'LineWidth',3);
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 % legend('synch','','','','synco','','','','location','northwest');
-subtitle(['(uncouple: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
+% subtitle(['(uncouple: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 grid on;
 subplot(1,3,2); %##############
 plot(H_Lall(leadingInd(synchind(1:3))),H_Rall(leadingInd(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen); hold on;
@@ -2315,11 +2413,11 @@ plot(H_Rall(followingInd(syncoind(13:15))),H_Lall(followingInd(syncoind(13:15)))
 plot(H_Rall(followingInd(syncoind(16:18))),H_Lall(followingInd(syncoind(16:18))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Leader');ylabel('DFA exponent, Follower');
 title('uni-directional coupling'); 
-A=[];Alpha1=[];FitValues=[];
-A=polyfit([H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))], [H_Rall(leadingInd(1:36)); H_Lall(followingInd(1:36))],1);
-Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,[H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))]);
-hold on; plot([H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))],FitValues,'k-','LineWidth',3);
+% A=[];Alpha1=[];FitValues=[];
+% A=polyfit([H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))], [H_Rall(leadingInd(1:36)); H_Lall(followingInd(1:36))],1);
+% Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+% FitValues=polyval(A,[H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))]);
+% hold on; plot([H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))],FitValues,'k-','LineWidth',3);
 % fit the synch data
 A=[];Alpha1=[];FitValues=[];
 A=polyfit([H_Lall(leadingInd(1:2:35)); H_Rall(followingInd(1:2:35))], [H_Rall(leadingInd(1:2:35)); H_Lall(followingInd(1:2:35))],1);
@@ -2331,10 +2429,10 @@ A=[];Alpha1=[];FitValues=[];
 A=polyfit([H_Lall(leadingInd(2:2:36)); H_Rall(followingInd(2:2:36))], [H_Rall(leadingInd(2:2:36)); H_Lall(followingInd(2:2:36))],1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,[H_Lall(leadingInd(2:2:36)); H_Rall(followingInd(2:2:36))]);
-hold on; plot([H_Lall(leadingInd(2:2:36)); H_Rall(followingInd(1:36))],FitValues,'-','color',pink,'LineWidth',3);
+hold on; plot([H_Lall(leadingInd(2:2:36)); H_Rall(followingInd(2:2:36))],FitValues,'-','color',pink,'LineWidth',3);
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 % legend('synch','','','','synco','','','','','','','','','','','','location','northwest');
-subtitle(['(leading or following: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
+% subtitle(['(leading or following: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 grid on;
 subplot(1,3,3); %##############
 plot(H_Lall(mutualInd(synchind(1:3))),H_Rall(mutualInd(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);hold on;
@@ -2350,14 +2448,26 @@ plot(H_Lall(mutualInd(syncoind(10:12))),H_Rall(mutualInd(syncoind(10:12))),'pent
 plot(H_Lall(mutualInd(syncoind(13:15))),H_Rall(mutualInd(syncoind(13:15))),'*','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(H_Lall(mutualInd(syncoind(16:18))),H_Rall(mutualInd(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('strong coupling'); 
+title('strong mutual coupling'); 
+% A=[];Alpha1=[];FitValues=[];
+% A=polyfit(H_Lall(mutualInd(1:36)),H_Rall(mutualInd(1:36)),1);
+% Alpha1=A(1); 
+% FitValues=polyval(A,H_Lall(mutualInd(1:36)));
+% hold on; plot(H_Lall(mutualInd(1:36)),FitValues,'k-','LineWidth',3);
+% fit the synch data
 A=[];Alpha1=[];FitValues=[];
-A=polyfit(H_Lall(mutualInd(1:36)),H_Rall(mutualInd(1:36)),1);
-Alpha1=A(1); 
-FitValues=polyval(A,H_Lall(mutualInd(1:36)));
-hold on; plot(H_Lall(mutualInd(1:36)),FitValues,'k-','LineWidth',3);
+A=polyfit(H_Lall(mutualInd(1:2:35)),H_Rall(mutualInd(1:2:35)),1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,H_Lall(mutualInd(1:2:35)));
+hold on; plot(H_Lall(mutualInd(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
+% fit the synco data
+A=[];Alpha1=[];FitValues=[];
+A=polyfit(H_Lall(mutualInd(2:2:36)),H_Rall(mutualInd(2:2:36)),1);
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,H_Lall(mutualInd(2:2:36)));
+hold on; plot(H_Lall(mutualInd(2:2:36)),FitValues,'-','color',pink,'LineWidth',3);
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-subtitle(['(mutual): linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
+% subtitle(['(mutual): linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 legend('synch - subj pair 1','synch - subj pair 2','synch - subj pair 3','synch - subj pair 4', ...
     'synch - subj pair 5','synch - subj pair 6', ...
     'synco - subj pair 1','synco - subj pair 2','synco - subj pair 3','synco - subj pair 4',...
