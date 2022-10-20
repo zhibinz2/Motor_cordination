@@ -3004,7 +3004,7 @@ H_gamma_LR_chan=[H_gamma_L_chan;H_gamma_R_chan];
 % mean(H_beta_LR_chan)
 % mean(H_gamma_LR_chan)
 canvas(0.5,0.2);
-cmin=0.5;cmax=1;
+cmin=0.3;cmax=0.7;
 subplot(1,5,1);topoplot(mean(H_delta_LR_chan),channels,'nosedir','+X');title('H-delta');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,2);topoplot(mean(H_theta_LR_chan),channels,'nosedir','+X');title('H-theta');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,3);topoplot(mean(H_alpha_LR_chan),channels,'nosedir','+X');title('H-alpha');colorbar;colormap('jet');clim([cmin cmax]);
@@ -3017,7 +3017,7 @@ colormap(hnc)
 % check how many H-EEG > 0.5 according to 4 states (showing complexity)
 % plot in 4 states
 canvas(0.5,0.5);
-cmin=0.5;cmax=1;
+cmin=0.3;cmax=0.7;
 for c=1:4
 subplot(4,5,(c-1)*5+1);
 topoplot(mean(H_delta_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
@@ -3095,7 +3095,7 @@ H_gamma_LLRR_chan=[H_gamma_LL_chan;H_gamma_RR_chan];
 % mean(H_beta_LLRR_chan)
 % mean(H_gamma_LLRR_chan)
 canvas(0.5,0.2);
-cmin=0.5;cmax=1;
+cmin=0.3;cmax=0.7;
 subplot(1,5,1);topoplot(mean(H_delta_LLRR_chan),channels,'nosedir','+X');title('H-delta');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,2);topoplot(mean(H_theta_LLRR_chan),channels,'nosedir','+X');title('H-theta');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,3);topoplot(mean(H_alpha_LLRR_chan),channels,'nosedir','+X');title('H-alpha');colorbar;colormap('jet');clim([cmin cmax]);
@@ -3108,7 +3108,7 @@ colormap(hnc)
 % check how many H-EEG > 0.5 according to 4 states (showing complexity)
 % plot in 4 states
 canvas(0.5,0.5);
-cmin=0.5;cmax=1;
+cmin=0.3;cmax=0.7;
 for c=1:4
 subplot(4,5,(c-1)*5+1);
 topoplot(mean(H_delta_LLRR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
