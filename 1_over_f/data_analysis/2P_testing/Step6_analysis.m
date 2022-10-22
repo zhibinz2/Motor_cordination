@@ -2364,7 +2364,7 @@ plot(H_Lall(uncoupleInd(syncoind(10:12))),H_Rall(uncoupleInd(syncoind(10:12))),'
 plot(H_Lall(uncoupleInd(syncoind(13:15))),H_Rall(uncoupleInd(syncoind(13:15))),'*','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
 plot(H_Lall(uncoupleInd(syncoind(16:18))),H_Rall(uncoupleInd(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('uncoupling');
+title('uncoupled');
 % A=[];S=[]; Alpha1=[];FitValues=[];
 % A=polyfit(H_Lall(uncoupleInd(1:36)),H_Rall(uncoupleInd(1:36)),1);
 % Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
@@ -2412,7 +2412,7 @@ plot(H_Rall(followingInd(syncoind(10:12))),H_Lall(followingInd(syncoind(10:12)))
 plot(H_Rall(followingInd(syncoind(13:15))),H_Lall(followingInd(syncoind(13:15))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(H_Rall(followingInd(syncoind(16:18))),H_Lall(followingInd(syncoind(16:18))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Leader');ylabel('DFA exponent, Follower');
-title('uni-directional coupling'); 
+title('uni-directional'); 
 % A=[];Alpha1=[];FitValues=[];
 % A=polyfit([H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))], [H_Rall(leadingInd(1:36)); H_Lall(followingInd(1:36))],1);
 % Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
@@ -2448,7 +2448,7 @@ plot(H_Lall(mutualInd(syncoind(10:12))),H_Rall(mutualInd(syncoind(10:12))),'pent
 plot(H_Lall(mutualInd(syncoind(13:15))),H_Rall(mutualInd(syncoind(13:15))),'*','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(H_Lall(mutualInd(syncoind(16:18))),H_Rall(mutualInd(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('strong mutual coupling'); 
+title('bidirectional'); 
 % A=[];Alpha1=[];FitValues=[];
 % A=polyfit(H_Lall(mutualInd(1:36)),H_Rall(mutualInd(1:36)),1);
 % Alpha1=A(1); 
@@ -2712,7 +2712,7 @@ beta_LR_chan=[beta_L_chan;beta_R_chan];
 gamma_LR_chan=[gamma_L_chan;gamma_R_chan];
 
 % Organize H_all for corr
-H_all; % (2xnumSesx12) for all sessions from SECT 10-1 
+H_all; % (2xnumSesx12) for all sessions from SECT 10-1 (matched int)
 H_all_L=squeeze(H_all(1,:,:));
 H_all_R=squeeze(H_all(2,:,:));
 % squeeze into 1 vector from the 96 blocks for each subject, for corr with pow in each chan
@@ -2759,7 +2759,7 @@ for c=1:32
 end
 % Combine L and R in topoplots (1x5)
 canvas(0.5,0.1);
-cmin=-0.1;cmax=0.3;
+cmin=-0.3;cmax=0.3;
 subplot(1,5,1);topoplot(delta_LR_H_LR_corr,channels,'nosedir','+X');title('delta & H');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,2);topoplot(theta_LR_H_LR_corr,channels,'nosedir','+X');title('theta & H');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,3);topoplot(alpha_LR_H_LR_corr,channels,'nosedir','+X');title('alpha & H');colorbar;colormap('jet');clim([cmin cmax]);
@@ -2785,7 +2785,7 @@ for s=1:4
 end
 % Combine L and R in 4 states(4x5)
 canvas(0.5,0.6);
-cmin=-0.2;cmax=0.4;
+cmin=-0.4;cmax=0.4;
 for s=1:4
     subplot(4,5,5*(s-1)+1);
     topoplot(delta_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
@@ -2808,7 +2808,7 @@ for s=1:4
     title([states4names{s} ': gamma & H'],'Color',condicolors(s,:));
     colorbar;colormap('jet');clim([cmin cmax]);
 end
-sgtitle('4states: Corr of sum-EEG (-500ms) and H-int')
+sgtitle('4states: Corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}')
 colormap(hnc)
 %% PLOT 13-1 corr of sum-EEG power (+ 500ms) and H-int all sessions
 zEEG500_LL; zEEG500_RR; % for all sessions from SECT 12
