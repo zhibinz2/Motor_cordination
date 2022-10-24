@@ -1544,12 +1544,15 @@ subplot(1,3,i)
     plot(Autocorrs20lags_3dir_LR_syn_mean(:,2*i-1),'r');hold on;
     plot(Autocorrs20lags_3dir_LR_syn_mean(:,2*i),'b');legend('L','R');
     if i==2; legend('Leader','follower');end
-    title(direction3names{i},'color',condicolors(i,:));
+    title(direction3names{i});
     subtitle('autocorr');
     ylabel('\rho(k)');xlabel('lag');ylim([0 0.5])
 end
 % sgtitle('mean autocorr sum for 20 lags in all sessions (unmatched int) ^{ *PLOT7}');
-sgtitle('mean autocorr sum for 20 lags in all sessions (matched int) ^{ *PLOT7}');
+% sgtitle('mean autocorr sum for 20 lags in all sessions (matched int) ^{ *PLOT7}');
+sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
+    'Autocorr ^{* PLOT 7}')
+set(gcf,'color','w'); % set background white for copying in ubuntu
 
 %% PLOT 8 DFA after d removed (sorted order)
 clear
@@ -2087,7 +2090,7 @@ for i=1:4
     ylabel('\rho(k)');xlabel('lag');ylim([-0.1 0.8])
     yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
 end
-suptitle('mean xcorr for 10 lags from all sessions (matched int) ^{ *PLOT9}')
+suptitle('mean xcorr for 10 lags from all sessions (matched int) ^{ *PLOT 9-1}')
 
 % combine Xcorr10Lag in 3 directions
 Xcorr10Lag; % sorted order
@@ -2108,14 +2111,14 @@ subplot(2,3,i)
     ylabel('\rho(k)');xlabel('lag');ylim([-0.1 0.8])
     yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
 end
-sgtitle('mean xcorr sum for 10 lags in all sessions (matched int) ^{ *PLOT7}');
+sgtitle('mean xcorr sum for 10 lags in all sessions (matched int) ^{ *PLOT 9-1}');
 
 % combine synch and synco
 Xcorr10Lag; % sorted order
 direction3names={'uncouple','uni-directional','mutual'};
 sorted3inds={[1:3],[4:9],[10:12]};
 sorted4inds=[1:3; 4:6; 7:9; 10:12];
-canvas(0.45, 0.3);
+canvas(0.45, 0.35);
 for i=1:3
 subplot(1,3,i)
     if i==2;
@@ -2127,17 +2130,23 @@ subplot(1,3,i)
         LR_mean=mean([L_mat;fliplr(R_mat)]);
         % plot Leader vs Follower
         plot(-10:1:10,LR_mean,'k');
-        title(direction3names{i},'color',condicolors(i,:));
+        title(direction3names{i});
         ylabel('\rho(k)');xlabel('lag (Leader-leading <- 0 -> Follower-leading)');ylim([-0.1 0.8])
     elseif i==1 | i==3;
     plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(:,sorted3inds{i},:),2)),1),'k');
-    title(direction3names{i},'color',condicolors(i,:));
+    title(direction3names{i});
     ylabel('\rho(k)');xlabel('lag (L-leading <- 0 -> R-leading)');ylim([-0.1 0.8])
     end
     yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
     grid on; grid minor
 end
-sgtitle('mean xcorr sum for 10 lags in all sessions (matched int) ^{ *PLOT7}');
+% sgtitle('mean xcorr sum for 10 lags in all sessions (matched int) ^{ *PLOT 9-1}');
+delete(findall(gcf,'type','annotation'))
+sg=annotation('textbox',[0.01 0.01 0.07 0.05],'string',...
+    'Xcorr ^{* PLOT 9-1}')
+set([sg], 'fitboxtotext','on',...
+    'edgecolor','none')
+set(gcf,'color','w'); % set background white for copying in ubuntu
 
 % for synch only
 Xcorr10Lag; % sorted order
@@ -2165,7 +2174,7 @@ subplot(1,3,i)
 end
     yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
 end
-sgtitle('mean xcorr sum for 10 lags in synch sessions (matched int) ^{ *PLOT7}');
+sgtitle('mean xcorr sum for 10 lags in synch sessions (matched int) ^{ *PLOT 9-1}');
 
 
 %% SECT 10 redo H and intervals_H_removed and save them separately (matched int)
@@ -2784,32 +2793,69 @@ for s=1:4
     end
 end
 % Combine L and R in 4 states(4x5)
-canvas(0.5,0.6);
+canvas(0.3,0.5);
 cmin=-0.4;cmax=0.4;
 for s=1:4
     subplot(4,5,5*(s-1)+1);
     topoplot(delta_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
-    title([states4names{s} ': delta & H'],'Color',condicolors(s,:));
-    colorbar;colormap('jet');clim([cmin cmax]);
+    % title([states4names{s} ': delta & H'],'Color',condicolors(s,:));
+    % colorbar;colormap('jet');
+    clim([cmin cmax]);
     subplot(4,5,5*(s-1)+2);
     topoplot(theta_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
-    title([states4names{s} ': theta & H'],'Color',condicolors(s,:));
-    colorbar;colormap('jet');clim([cmin cmax]);
+    % title([states4names{s} ': theta & H'],'Color',condicolors(s,:));
+    % colorbar;colormap('jet');
+    clim([cmin cmax]);
     subplot(4,5,5*(s-1)+3);
     topoplot(alpha_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
-    title([states4names{s} ': alpha & H'],'Color',condicolors(s,:));
-    colorbar;colormap('jet');clim([cmin cmax]);
+    % title([states4names{s} ': alpha & H'],'Color',condicolors(s,:));
+    % colorbar;colormap('jet');
+    clim([cmin cmax]);
     subplot(4,5,5*(s-1)+4);
     topoplot(beta_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
-    title([states4names{s} ': beta & H'],'Color',condicolors(s,:));
-    colorbar;colormap('jet');clim([cmin cmax]);
+    % title([states4names{s} ': beta & H'],'Color',condicolors(s,:));
+    % colorbar;colormap('jet');
+    clim([cmin cmax]);
     subplot(4,5,5*(s-1)+5);
     topoplot(gamma_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
-    title([states4names{s} ': gamma & H'],'Color',condicolors(s,:));
-    colorbar;colormap('jet');clim([cmin cmax]);
+    % title([states4names{s} ': gamma & H'],'Color',condicolors(s,:));
+    % colorbar;colormap('jet');
+    clim([cmin cmax]);
 end
-sgtitle('4states: Corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}')
+% sgtitle('4states: Corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}')
 colormap(hnc)
+% https://www.mathworks.com/help/matlab/ref/matlab.graphics.illustration.colorbar-properties.html
+cb=colorbar;
+cb.AxisLocation = 'out';
+cb.Position = [0.92 0.15 0.01 0.75];
+% dim is [x position, y position of starting point, width, height]
+% for i=1:5
+% h(i)=annotation('textbox',[(i-1)/5+15/100 0/5+19/20 2/100 1/100],'string','A','color',[0 0 0]);
+% end
+% for i=1:4
+% v(i)=annotation('textbox',[0/5+2/20 (i-1)/5+1/20 2/100 1/100],'string','H','color',...
+%     condicolors(i,:));
+% end
+% set([h v], 'fitboxtotext','on',...
+%     'edgecolor','none')
+% clf h(1)
+delete(findall(gcf,'type','annotation'))
+h0=annotation('textbox',[0.17 0.95 0.05 0.03],'string','Delta','color',[0 0 0])
+h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
+h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
+h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
+h4=annotation('textbox',[0.81 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
+v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','uncouple','color',condicolors(1,:))
+v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','L-lead','color',condicolors(2,:))
+v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','R-lead','color',condicolors(3,:))
+v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','mutual','color',condicolors(4,:))
+set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
+sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
+    'Correlation of sum-EEG (-500ms) and H-int ^{* PLOT 13}')
+set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
+    'edgecolor','none')
+set(gcf,'color','w'); % set background white for copying in ubuntu
+
 %% PLOT 13-1 corr of sum-EEG power (+ 500ms) and H-int all sessions
 zEEG500_LL; zEEG500_RR; % for all sessions from SECT 12
 delta_LL;theta_LL;alpha_LL;beta_LL;gamma_LL;
@@ -3430,21 +3476,49 @@ hnc = hotncold(100);
 band5names={'delta','theta','alpha','beta','gamma'};
 states2names={'uncouple','mutual'};
 states4names;
-figure; % canvas(0.9,0.5)
+% figure;
+canvas(0.3,0.4)
 c=[1 4];
 for s=1:2
     for b=1:5
         subplot(2,5,(s-1)*5+b)
-        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');colorbar; 
-        colormap(hnc); % colormap('jet');
+        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');
+        % colorbar; 
+        % colormap(hnc); % colormap('jet');
         clim([cmin cmax]);
-        if b==3;title({['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'], ...
-                [states4names{c(s)} '(R2= ' num2str(round(R2s(c(s)),1)) ...
-            '  Fac= ' num2str(Fac) ') ']},'Color',condicolors(c(s),:));end
-        subtitle(band5names(b));
+%         if b==3;title({['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'], ...
+%                 [states4names{c(s)} '(R2= ' num2str(round(R2s(c(s)),1)) ...
+%             '  Fac= ' num2str(Fac) ') ']},'Color',condicolors(c(s),:));end
+        % subtitle(band5names(b));
     end
 end
+colormap(hnc)
+% https://www.mathworks.com/help/matlab/ref/matlab.graphics.illustration.colorbar-properties.html
+cb=colorbar;
+cb.AxisLocation = 'out';
+cb.Position = [0.92 0.15 0.01 0.75];
 set(gcf,'color','w'); % set background white for copying in ubuntu
+delete(findall(gcf,'type','annotation'))
+h0=annotation('textbox',[0.17 0.95 0.05 0.03],'string','Delta','color',[0 0 0])
+h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
+h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
+h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
+h4=annotation('textbox',[0.82 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
+v0=annotation('textbox',[0.1 0.2 0.05 0.03],'string',...
+    {[states4names{c(2)}], [' (R2= ' num2str(round(R2s(c(2)),1)) ...
+            '  Fac= ' num2str(Fac) ') ']}...
+            ,'color',condicolors(1,:));
+set(v0,'Rotation',90);
+v3=annotation('textbox',[0.1 0.65 0.05 0.03],'string',...
+    {[states4names{c(1)}], [' (R2= ' num2str(round(R2s(c(1)),1)) ...
+            '  Fac= ' num2str(Fac) ') ']} ...
+            ,'color',condicolors(4,:));
+set(v3,'Rotation',90);
+sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
+    'PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}')
+set([h0 h1 h2 h3 h4 v0 v3], 'fitboxtotext','on',...
+    'edgecolor','none')
+
 
 % 3 states - combine uncouple state and leading state and call it "independent"
 % cannot combine, subject can distinguish between uncouple and leading
