@@ -2067,6 +2067,7 @@ ylim([-0.1 1]);yline(0,'color',red);xlim([0 5]);
 title('average peak of xcorr in all synco sessions ^{* PLOT 9}');
 % subtitle('(matched int) (before d removal)');
 subtitle('(matched int) (after d removal)');
+%
 
 
 %% PLOT 9-1 Xcorr10Lag before d removal (matched int) (sorted order)
@@ -2115,7 +2116,7 @@ sgtitle('mean xcorr sum for 10 lags in all sessions (matched int) ^{ *PLOT 9-1}'
 
 % combine synch and synco
 Xcorr10Lag; % sorted order
-direction3names={'uncouple','uni-directional','mutual'};
+direction3names={'uncoupled','unidirectional','bidirectional'};
 sorted3inds={[1:3],[4:9],[10:12]};
 sorted4inds=[1:3; 4:6; 7:9; 10:12];
 canvas(0.45, 0.35);
@@ -2131,21 +2132,21 @@ subplot(1,3,i)
         % plot Leader vs Follower
         plot(-10:1:10,LR_mean,'k');
         title(direction3names{i});
-        ylabel('\rho(k)');xlabel('lag (Leader-leading <- 0 -> Follower-leading)');ylim([-0.1 0.8])
+        ylabel('\rho(k)');xlabel({'lag'; '(Leader-leading <- 0 -> Follower-leading)'});ylim([-0.1 0.8])
     elseif i==1 | i==3;
     plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(:,sorted3inds{i},:),2)),1),'k');
     title(direction3names{i});
-    ylabel('\rho(k)');xlabel('lag (L-leading <- 0 -> R-leading)');ylim([-0.1 0.8])
+    ylabel('\rho(k)');xlabel({'lag'; '(L-leading <- 0 -> R-leading)'});ylim([-0.1 0.8])
     end
     yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
     grid on; grid minor
 end
 % sgtitle('mean xcorr sum for 10 lags in all sessions (matched int) ^{ *PLOT 9-1}');
 delete(findall(gcf,'type','annotation'))
-sg=annotation('textbox',[0.01 0.01 0.07 0.05],'string',...
-    'Xcorr ^{* PLOT 9-1}')
 set([sg], 'fitboxtotext','on',...
     'edgecolor','none')
+sg=annotation('textbox',[0.01 0.01 0.07 0.05],'string',...
+    'Xcorr ^{* PLOT 9-1}')
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
 % for synch only
@@ -2421,7 +2422,7 @@ plot(H_Rall(followingInd(syncoind(10:12))),H_Lall(followingInd(syncoind(10:12)))
 plot(H_Rall(followingInd(syncoind(13:15))),H_Lall(followingInd(syncoind(13:15))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(H_Rall(followingInd(syncoind(16:18))),H_Lall(followingInd(syncoind(16:18))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Leader');ylabel('DFA exponent, Follower');
-title('uni-directional'); 
+title('unidirectional'); 
 % A=[];Alpha1=[];FitValues=[];
 % A=polyfit([H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))], [H_Rall(leadingInd(1:36)); H_Lall(followingInd(1:36))],1);
 % Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
@@ -2483,7 +2484,11 @@ legend('synch - subj pair 1','synch - subj pair 2','synch - subj pair 3','synch 
     'synco - subj pair 5','synco - subj pair 6',...
     'location','eastoutside');
 grid on;
-sgtitle(['H matching as in Marmelat 2012  ^{* PLOT 10-2}']);
+% sgtitle(['H matching as in Marmelat 2012  ^{* PLOT 10-2}']);
+delete(findall(gcf,'type','annotation'))
+sg=annotation('textbox',[0.07 0.01 0.17 0.05],'string',...
+    'H matching as in Marmelat 2012  ^{* PLOT 10-2}')
+sg.Rotation=90
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
 %% PLOT 11 Xcorr(0) with slinding win of 20 intervals (matched int) in one subj
@@ -4159,6 +4164,8 @@ plot(reRef_data);
 % H-EEG in each band, corr with H-int
 
 %% SECT 21 GC: arfit and MVGC
+cd /ssd/zhibin/1overf/all_session20220713_1005
+load('int_dmean_drm.mat')
 int_dmean_drm; % from SECT9 (matched int) (sorted order)
 % 2 L/R X 12 blocks x 12 sessions
 
@@ -4211,26 +4218,26 @@ sgtitle('GC: arfit (concatenate data)')
 sgtitle('GC: arfit (permuted concatenate data)')
 
 % organize into time x 2 L/R matrix then apply MVGC and plot
-canvas(0.2, 0.9);
+Fs=cell(2,4);
 for syn=1:2
     for condi=1:4
         test_data=int_dmean_drm(:,condi4Ind{condi},syn2Ind{syn});
-%         % Method1a: concatenate into one big trial
-%         Int12LR=[];
-%         for b=1:size(test_data,2)
-%             for s=1:size(test_data,3)
-%                     Int12LR=[Int12LR; [test_data{1,b,s} test_data{2,b,s}]];
-%             end
-%         end
-        % Method1b: randomized the concatenation
+        % Method1a: concatenate into one big trial
         Int12LR=[];
-        for b=randperm(size(test_data,2))
-            for s=randperm(size(test_data,3))
+        for b=1:size(test_data,2)
+            for s=1:size(test_data,3)
                     Int12LR=[Int12LR; [test_data{1,b,s} test_data{2,b,s}]];
             end
         end
-        if syn==1; subplot(2,4,condi);end
-        if syn==2; subplot(2,4,4+condi);end
+%         % Method1b: randomized the concatenation
+%         Int12LR=[];
+%         for b=randperm(size(test_data,2))
+%             for s=randperm(size(test_data,3))
+%                     Int12LR=[Int12LR; [test_data{1,b,s} test_data{2,b,s}]];
+%             end
+%         end
+%         if syn==1; subplot(2,4,condi);end
+%         if syn==2; subplot(2,4,4+condi);end
         X=[];
         X=permute(Int12LR,[2,1]);
         % Parameters
@@ -4273,14 +4280,49 @@ for syn=1:2
         var_acinfo(info,true); % report results (and bail out on error)
         % Granger causality calculation: time domain 
         F = autocov_to_pwcgc(G);
-        % plot
-        bar([F(2,1) F(1,2)]);xticks([1 2]);xticklabels({'L->R','R->L'});
-        ylim([0 0.11])
+        % save F
+        % F(2,1): L->R; F(1,2): R->L;
+        Fs{syn,condi}=[F(2,1) F(1,2)];
     end
 end
-sgtitle('GC: var-to-autocov (concatenate data)')
-sgtitle('GC: var-to-autocov (permuted concatenate data)')
+% 3 subplots 
+ymax=0.06;
+canvas(0.4, 0.4);
+tiledlayout(1,3);
+% Tile 1
+nexttile
+bar(mean([Fs{1,1};Fs{2,1}],'all'));xticks([1]);xticklabels({'L<->R'});
+title('uncoupled');ylabel('GC');
+ylim([0 ymax]);% xlim([0.25 1.75]);
+% Tile 2
+nexttile
+bar([mean([Fs{1,2}(1);Fs{2,2}(1);Fs{1,3}(2);Fs{2,3}(2)]) ...
+    mean([Fs{1,2}(2);Fs{2,2}(2);Fs{1,3}(1);Fs{2,3}(1)])]);xticks([1 2]);
+xticklabels({'Leader->Follower','Follower->Leader'});
+title('unidirectional');ylabel('GC');
+ylim([0 ymax]);% xlim([0.25 2.75]);
+% Tile 1
+nexttile
+bar(mean([Fs{1,4};Fs{2,4}],'all'));xticks([1]);xticklabels({'L<->R'});
+title('bidirectional');ylabel('GC');
+ylim([0 ymax]);% xlim([0.25 1.75]);
+% sgtitle('GC: var-to-autocov (concatenate data)')
+% sgtitle('GC: var-to-autocov (permuted concatenate data)')
+sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
+    'MVGC (concatenate data) H-int ^{* SECT 21}')
 
+% 3 subplots combined as one 
+ymax=0.06;
+figure;
+bar([mean([Fs{1,1};Fs{2,1}],'all')...
+    mean([Fs{1,2}(1);Fs{2,2}(1);Fs{1,3}(2);Fs{2,3}(2)]) ...
+    mean([Fs{1,2}(2);Fs{2,2}(2);Fs{1,3}(1);Fs{2,3}(1)]) ...
+    mean([Fs{1,4};Fs{2,4}],'all')]);
+xticks([1 2 3 4]);
+xticklabels({'uncouple (L<->R)','Leader->Follower','Follower->Leader', 'mutual (L<->R)'});
+ylim([0 ymax]);ylabel('GC');
+sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
+    'MVGC (concatenate data) H-int ^{* SECT 21}')
 %% saves all variables from the current workspace
 tic
 save([num2str(seed) 'workspace.mat']);
