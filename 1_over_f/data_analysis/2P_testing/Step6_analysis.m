@@ -2243,7 +2243,7 @@ toc %
 condition_all=reshape(condition_all',[],1);
 
 % indices for 4 states
-states4names={'uncoupled','Leading','Following','mutual'};
+states4names={'Uncouple','Leading','Following','Mutual'};
 % find the indices for each condition in L R conbined sequence (4 states)
 uncoupleInd=repmat(find(condition_all==1),2,1);
 leadingInd=[find(condition_all==2);12*numSes+find(condition_all==3)];
@@ -2563,7 +2563,6 @@ end
 sgtitle(['session ' num2str(seed) ' ' sessionTypes{session} ' BPint corr xcorr diff ^{* PLOT 11}']);
 
 %% PLOT 11-1 Xcorr(0) with slinding win of 20 intervals (matched int) in all subj
-% clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
 numSes=size(seeds,1);
@@ -2618,7 +2617,6 @@ for p=1:6
         title(['pair of subjects - ' num2str(p)]);
 end
 sgtitle({['Mutual: xcorr(0) smoo win ' num2str(BPwin) ' ^{* PLOT 11-1}']},'Color',condicolors(4,:));
-
 %% SECT 11-3 EEG (-500ms)-> Xcorr(0)(matched int) -Corr -PLS in all subj
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
@@ -2671,7 +2669,7 @@ BPint_xcorrSeries_LR=[BPint_xcorrSeries_L;BPint_xcorrSeries_R]; % to be used for
 %     gamma_R_Xcorr_R_corr(c)=corr(gamma_R_chan(:,c),BPint_xcorrSeries_R);
 % end
 % indices for 4 states from PLOT 10-1
-Inds4;
+Inds4; % from SECT 10-1 
 % fix the scale in the data (as in PLOT 16)
 delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); %organized in PLOT 13
 theta_LR_chan = theta_LR_chan./(ones(288,1)*std(theta_LR_chan));
@@ -2725,10 +2723,10 @@ h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
 h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.81 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
-v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','uncouple','color',condicolors(1,:))
-v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','L-lead','color',condicolors(2,:))
-v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','R-lead','color',condicolors(3,:))
-v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','mutual','color',condicolors(4,:))
+v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','Mutual','color',condicolors(4,:))
+v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','Following','color',condicolors(3,:))
+v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','Leading','color',condicolors(2,:))
+v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','Uncouple','color',condicolors(1,:))
 set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     'Correlation of sum-EEG (-500ms) and Xcorr(0) ^{* PLOT 11-3}')
@@ -2860,8 +2858,8 @@ colormap(hnc)
 % topoplot for uncouple and mutual
 addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
-band5names={'delta','theta','alpha','beta','gamma'};
-states2names={'uncouple','mutual'};
+band5names={'Delta','Theta','Alpha','Beta','Gamma'};
+states2names={'Uncouple','Mutual'};
 states4names;
 % figure;
 canvas(0.3,0.4)
@@ -2886,14 +2884,14 @@ h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.82 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
 v0=annotation('textbox',[0.1 0.2 0.05 0.03],'string',...
-    {[states4names{c(2)}], [' (R2= ' num2str(round(R2s(c(2)),1)) ...
+    {[states4names{c(2)}], [' (R^2= ' num2str(round(R2s(c(2)),1)) ...
             '  Fac= ' num2str(Fac) ') ']}...
-            ,'color',condicolors(1,:));
+            ,'color',condicolors(4,:));
 set(v0,'Rotation',90);
 v3=annotation('textbox',[0.1 0.65 0.05 0.03],'string',...
-    {[states4names{c(1)}], [' (R2= ' num2str(round(R2s(c(1)),1)) ...
+    {[states4names{c(1)}], [' (R^2= ' num2str(round(R2s(c(1)),1)) ...
             '  Fac= ' num2str(Fac) ') ']} ...
-            ,'color',condicolors(4,:));
+            ,'color',condicolors(1,:));
 set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     'PLS model: sum-EEG(-500ms) -> Xcorr(0) ^{* PLOT 11-3}')
@@ -3133,10 +3131,10 @@ h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
 h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.81 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
-v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','uncouple','color',condicolors(1,:))
-v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','L-lead','color',condicolors(2,:))
-v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','R-lead','color',condicolors(3,:))
-v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','mutual','color',condicolors(4,:))
+v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','mutual','color',condicolors(4,:))
+v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','following','color',condicolors(3,:))
+v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','leading','color',condicolors(2,:))
+v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','uncouple','color',condicolors(1,:))
 set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     'Correlation of sum-EEG (-500ms) and H-int ^{* PLOT 13}')
@@ -3763,7 +3761,7 @@ addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/col
 hnc = hotncold(100);
 band5names={'delta','theta','alpha','beta','gamma'};
 states2names={'uncouple','mutual'};
-states4names;
+states4names; 
 % figure;
 canvas(0.3,0.4)
 c=[1 4];
@@ -3793,14 +3791,14 @@ h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.82 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
 v0=annotation('textbox',[0.1 0.2 0.05 0.03],'string',...
-    {[states4names{c(2)}], [' (R2= ' num2str(round(R2s(c(2)),1)) ...
+    {[states4names{c(2)}], [' (R^2= ' num2str(round(R2s(c(2)),1)) ...
             '  Fac= ' num2str(Fac) ') ']}...
-            ,'color',condicolors(1,:));
+            ,'color',condicolors(4,:));
 set(v0,'Rotation',90);
 v3=annotation('textbox',[0.1 0.65 0.05 0.03],'string',...
-    {[states4names{c(1)}], [' (R2= ' num2str(round(R2s(c(1)),1)) ...
+    {[states4names{c(1)}], [' (R^2= ' num2str(round(R2s(c(1)),1)) ...
             '  Fac= ' num2str(Fac) ') ']} ...
-            ,'color',condicolors(4,:));
+            ,'color',condicolors(1,:));
 set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     'PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}')
@@ -3810,7 +3808,7 @@ set([h0 h1 h2 h3 h4 v0 v3], 'fitboxtotext','on',...
 
 % 3 states - combine uncouple state and leading state and call it "independent"
 % cannot combine, subject can distinguish between uncouple and leading
-states3names={'independent','following','mutual'}; 
+states3names={'Independent','Following','Mutual'}; 
 Inds3={[Inds4(:,1);Inds4(:,2)],Inds4(:,3),Inds4(:,4)};
 canvas(0.6,0.2);
 cmin=-8e-3;cmax=8e-3;
@@ -4805,10 +4803,10 @@ h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
 h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.81 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
-v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','uncouple','color',condicolors(1,:))
-v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','L-lead','color',condicolors(2,:))
-v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','R-lead','color',condicolors(3,:))
-v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','mutual','color',condicolors(4,:))
+v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','Mutual','color',condicolors(4,:))
+v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','Following','color',condicolors(3,:))
+v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','Leading','color',condicolors(2,:))
+v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','Uncouple','color',condicolors(1,:))
 set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     'Correlation of sum-EEG (-500ms) and GC ^{* PLOT 21}')
@@ -4863,11 +4861,11 @@ plsmodel.weights=reshape(reg{Fac},5,32);
 canvas(0.2,0.2)
 cmin=-0.01;cmax=0.01;
 imagesc(plsmodel.weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
-yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
 colormap('jet'); clim([cmin cmax]);
 set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
-title(['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: ...' ...
+title(['PLS model (R^2= ' num2str(round(R2,1)) ') in all statues: ...' ...
     'sum-EEG(-500ms) -> GC  ^{* PLOT 21}']);
 set(gcf,'color','w'); % set background white for copying in ubuntu
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 72
@@ -4940,8 +4938,8 @@ colormap(hnc)
 % topoplot for uncouple and mutual
 addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
-band5names={'delta','theta','alpha','beta','gamma'};
-states2names={'uncouple','mutual'};
+band5names={'Delta','Theta','Alpha','Beta','Gamma'};
+states2names={'Uncouple','Mutual'};
 states4names;
 % figure;
 canvas(0.3,0.4)
@@ -4966,14 +4964,14 @@ h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.82 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
 v0=annotation('textbox',[0.1 0.2 0.05 0.03],'string',...
-    {[states4names{c(2)}], [' (R2= ' num2str(round(R2s(c(2)),1)) ...
+    {[states4names{c(2)}], [' (R^2= ' num2str(round(R2s(c(2)),1)) ...
             '  Fac= ' num2str(Fac) ') ']}...
-            ,'color',condicolors(1,:));
+            ,'color',condicolors(4,:));
 set(v0,'Rotation',90);
 v3=annotation('textbox',[0.1 0.65 0.05 0.03],'string',...
-    {[states4names{c(1)}], [' (R2= ' num2str(round(R2s(c(1)),1)) ...
+    {[states4names{c(1)}], [' (R^2= ' num2str(round(R2s(c(1)),1)) ...
             '  Fac= ' num2str(Fac) ') ']} ...
-            ,'color',condicolors(4,:));
+            ,'color',condicolors(1,:));
 set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     'PLS model: sum-EEG(-500ms) -> GC ^{* PLOT 21}')

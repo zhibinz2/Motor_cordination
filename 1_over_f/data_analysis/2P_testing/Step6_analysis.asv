@@ -2243,7 +2243,7 @@ toc %
 condition_all=reshape(condition_all',[],1);
 
 % indices for 4 states
-states4names={'uncoupled','Leading','Following','mutual'};
+states4names={'uncouple','Leading','Following','mutual'};
 % find the indices for each condition in L R conbined sequence (4 states)
 uncoupleInd=repmat(find(condition_all==1),2,1);
 leadingInd=[find(condition_all==2);12*numSes+find(condition_all==3)];
@@ -2563,7 +2563,6 @@ end
 sgtitle(['session ' num2str(seed) ' ' sessionTypes{session} ' BPint corr xcorr diff ^{* PLOT 11}']);
 
 %% PLOT 11-1 Xcorr(0) with slinding win of 20 intervals (matched int) in all subj
-% clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
 numSes=size(seeds,1);
@@ -2725,10 +2724,10 @@ h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
 h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.81 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
-v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','uncouple','color',condicolors(1,:))
-v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','L-lead','color',condicolors(2,:))
-v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','R-lead','color',condicolors(3,:))
-v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','mutual','color',condicolors(4,:))
+v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','mutual','color',condicolors(4,:))
+v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','R-lead','color',condicolors(3,:))
+v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','L-lead','color',condicolors(2,:))
+v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','uncouple','color',condicolors(1,:))
 set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     'Correlation of sum-EEG (-500ms) and Xcorr(0) ^{* PLOT 11-3}')
@@ -2886,14 +2885,14 @@ h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.82 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
 v0=annotation('textbox',[0.1 0.2 0.05 0.03],'string',...
-    {[states4names{c(2)}], [' (R2= ' num2str(round(R2s(c(2)),1)) ...
+    {[states4names{c(2)}], [' (R^2= ' num2str(round(R2s(c(2)),1)) ...
             '  Fac= ' num2str(Fac) ') ']}...
-            ,'color',condicolors(1,:));
+            ,'color',condicolors(4,:));
 set(v0,'Rotation',90);
 v3=annotation('textbox',[0.1 0.65 0.05 0.03],'string',...
-    {[states4names{c(1)}], [' (R2= ' num2str(round(R2s(c(1)),1)) ...
+    {[states4names{c(1)}], [' (R^2= ' num2str(round(R2s(c(1)),1)) ...
             '  Fac= ' num2str(Fac) ') ']} ...
-            ,'color',condicolors(4,:));
+            ,'color',condicolors(1,:));
 set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     'PLS model: sum-EEG(-500ms) -> Xcorr(0) ^{* PLOT 11-3}')
@@ -3133,10 +3132,10 @@ h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
 h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.81 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
-v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','uncouple','color',condicolors(1,:))
-v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','L-lead','color',condicolors(2,:))
-v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','R-lead','color',condicolors(3,:))
-v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','mutual','color',condicolors(4,:))
+v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','mutual','color',condicolors(4,:))
+v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','following','color',condicolors(3,:))
+v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','leading','color',condicolors(2,:))
+v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','uncouple','color',condicolors(1,:))
 set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     'Correlation of sum-EEG (-500ms) and H-int ^{* PLOT 13}')
@@ -3763,7 +3762,7 @@ addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/col
 hnc = hotncold(100);
 band5names={'delta','theta','alpha','beta','gamma'};
 states2names={'uncouple','mutual'};
-states4names;
+states4names; 
 % figure;
 canvas(0.3,0.4)
 c=[1 4];
@@ -3793,14 +3792,14 @@ h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.82 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
 v0=annotation('textbox',[0.1 0.2 0.05 0.03],'string',...
-    {[states4names{c(2)}], [' (R2= ' num2str(round(R2s(c(2)),1)) ...
+    {[states4names{c(2)}], [' (R^2= ' num2str(round(R2s(c(2)),1)) ...
             '  Fac= ' num2str(Fac) ') ']}...
-            ,'color',condicolors(1,:));
+            ,'color',condicolors(4,:));
 set(v0,'Rotation',90);
 v3=annotation('textbox',[0.1 0.65 0.05 0.03],'string',...
-    {[states4names{c(1)}], [' (R2= ' num2str(round(R2s(c(1)),1)) ...
+    {[states4names{c(1)}], [' (R^2= ' num2str(round(R2s(c(1)),1)) ...
             '  Fac= ' num2str(Fac) ') ']} ...
-            ,'color',condicolors(4,:));
+            ,'color',condicolors(1,:));
 set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     'PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}')
@@ -4805,10 +4804,10 @@ h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
 h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.81 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
-v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','uncouple','color',condicolors(1,:))
-v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','L-lead','color',condicolors(2,:))
-v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','R-lead','color',condicolors(3,:))
-v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','mutual','color',condicolors(4,:))
+v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','mutual','color',condicolors(4,:))
+v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','R-lead','color',condicolors(3,:))
+v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','L-lead','color',condicolors(2,:))
+v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','uncouple','color',condicolors(1,:))
 set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     'Correlation of sum-EEG (-500ms) and GC ^{* PLOT 21}')
@@ -4966,14 +4965,14 @@ h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.82 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
 v0=annotation('textbox',[0.1 0.2 0.05 0.03],'string',...
-    {[states4names{c(2)}], [' (R2= ' num2str(round(R2s(c(2)),1)) ...
+    {[states4names{c(2)}], [' (R^2= ' num2str(round(R2s(c(2)),1)) ...
             '  Fac= ' num2str(Fac) ') ']}...
-            ,'color',condicolors(1,:));
+            ,'color',condicolors(4,:));
 set(v0,'Rotation',90);
 v3=annotation('textbox',[0.1 0.65 0.05 0.03],'string',...
-    {[states4names{c(1)}], [' (R2= ' num2str(round(R2s(c(1)),1)) ...
+    {[states4names{c(1)}], [' (R^2= ' num2str(round(R2s(c(1)),1)) ...
             '  Fac= ' num2str(Fac) ') ']} ...
-            ,'color',condicolors(4,:));
+            ,'color',condicolors(1,:));
 set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     'PLS model: sum-EEG(-500ms) -> GC ^{* PLOT 21}')
