@@ -220,8 +220,6 @@ figure;bar([F(2,1) F(1,2)]);;xticks([1 2]);xticklabels({'L->R','R->L'});
 
 % arconf: intercef+error cross zero bad?
 
-
-
 % The A output (coefficient matrices) of arfit variea
 
 
