@@ -4984,7 +4984,13 @@ set([h0 h1 h2 h3 h4 v0 v3], 'fitboxtotext','on',...
 tic
 save([num2str(seed) 'workspace.mat']);
 toc
-% takes about 11 min
+% takes about 11 min for one session
+
+cd /ssd/zhibin/1overf/all_session20220713_1005
+tic
+save(['20220713_1005workspace.mat']);
+toc
+
 
 
 %% Get variable names from mat file (faster)
