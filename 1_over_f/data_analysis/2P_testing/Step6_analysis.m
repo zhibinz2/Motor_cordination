@@ -4722,6 +4722,36 @@ for s=1:numSes;
         Fs(2,s,b)=F(2,1);
     end
 end
+% Examine Fs in sorted order
+[condition_all_sorted,ind2]=sort(condition_all_mat,2)
+canvas(0.8,0.8);
+for s=1:12
+    for b=1:12
+        subplot(12,12,(s-1)*12+b);
+        clear barplot
+        barplot=bar([Fs(1,s,ind2(s,b)) Fs(2,s,ind2(s,b))]);
+        set(gca, 'XTickLabel', {'L -> R' 'R -> L'});
+        barplot.FaceColor='flat';barplot.CData(1,:) = [1 0 0];barplot.CData(2,:) = [0 0 1];
+        xlim([0.25 2.75]); ylim([0 1]);
+        ylabel('GC');
+        title(condi4names(condition_all_sorted(s,b)),'color',condicolors(condition_all_sorted(s,b),:))
+    end
+end
+% Examine only uncouple Fs
+canvas(0.2,0.8);
+for s=1:12
+    for b=1:3
+        subplot(12,3,(s-1)*3+b);
+        clear barplot
+        barplot=bar([Fs(1,s,ind2(s,b)) Fs(2,s,ind2(s,b))]);
+        set(gca, 'XTickLabel', {'L -> R' 'R -> L'});
+        barplot.FaceColor='flat';barplot.CData(1,:) = [1 0 0];barplot.CData(2,:) = [0 0 1];
+        xlim([0.25 2.75]); ylim([0 0.5]);
+        ylabel('GC');
+        title(condi4names(condition_all_sorted(s,b)),'color',condicolors(condition_all_sorted(s,b),:))
+    end
+end
+
 % Organize Fs for PLS
 % same way as we did with H in PLOT 13
 Fs; % (2xnumSesx12) for all sessions (matched int) (original order)
