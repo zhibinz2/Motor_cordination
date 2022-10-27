@@ -4746,7 +4746,7 @@ for s=1:12
         barplot=bar([Fs(1,s,ind2(s,b)) Fs(2,s,ind2(s,b))]);
         set(gca, 'XTickLabel', {'L -> R' 'R -> L'});
         barplot.FaceColor='flat';barplot.CData(1,:) = [1 0 0];barplot.CData(2,:) = [0 0 1];
-        xlim([0.25 2.75]); ylim([0 0.5]);
+        xlim([0.25 2.75]); ylim([0 0.125]);
         ylabel('GC');
         title(condi4names(condition_all_sorted(s,b)),'color',condicolors(condition_all_sorted(s,b),:))
     end
