@@ -2177,6 +2177,10 @@ end
 end
 sgtitle('mean xcorr sum for 10 lags in synch sessions (matched int) ^{ *PLOT 9-1}');
 
+%% PLOT 9-2 Xcorr(+/-1) synco and Xcorr(0) synch
+Xcorr10Lag; % from SECT 9
+
+
 
 %% SECT 10 redo H and intervals_H_removed and save them separately (matched int)
 % in original order
