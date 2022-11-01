@@ -2072,9 +2072,32 @@ subtitle('(matched int) (after d removal)');
 
 %% PLOT 9-1 Xcorr10Lag before d removal (matched int) (sorted order)
 % average all trials of the same condition (synch vs synco)
-Xcorr10Lag; % sorted order
+Xcorr10Lag; % sorted order (12 ses x 12 blocks x 21 lags)
 sorted4inds=[1:3; 4:6; 7:9; 10:12];
-% organized
+% Examine all Xcorr10Lag
+canvas(1,1);
+for s=1:12
+    for b=1:12
+        subplot(12,12,12*(s-1)+b)
+        plot(-10:1:10,squeeze(Xcorr10Lag(s,b,:)),'k');
+        i=[];
+        if any([1:3]==b);
+            i=1;
+        elseif any([4:6]==b);
+            i=2;
+        elseif any([7:9]==b);
+            i=3;
+        else any([10:12]==b);
+            i=4;
+        end;
+        title(condi4names{i},'color',condicolors(i,:));
+        ylabel('\rho(k)');xlabel('lag');ylim([-0.1 0.8])
+        yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
+        xline(-1,'color',[1 0.8 0.2]);xline(1,'color',[1 0.8 0.2]);
+    end
+end
+
+% organized into 2x4 conditions
 canvas(0.4,0.6);
 condi4names={'uncouple','L-lead','R-lead','mutual'};
 for i=1:4
@@ -2177,11 +2200,6 @@ end
 end
 sgtitle('mean xcorr sum for 10 lags in synch sessions (matched int) ^{ *PLOT 9-1}');
 
-%% PLOT 9-2 Xcorr(+/-1) synco and Xcorr(0) synch
-Xcorr10Lag; % from SECT 9
-
-
-
 %% SECT 10 redo H and intervals_H_removed and save them separately (matched int)
 % in original order
 clear
@@ -2229,7 +2247,7 @@ for s=1:numSes
     clear H
     load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/d_removal' runid '.mat' ])   
     for b=1:12
-        H_all(:,s,b)=H(:,b); % subject x session x trials
+        H_all(:,s,b)=H(:,b); % 2 subject x 12 session x 12 trials
     end
 end
 
@@ -2240,20 +2258,21 @@ for s=1:numSes
     clear conditions
     runid=num2str(seeds(s,:));
     load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ]);
-    condition_all(s,:)=conditions; % session x trials
+    condition_all(s,:)=conditions; % 12 session x 12 trials
 end
-toc % 
+toc % 78 sec
 % reshape into a vector in time sequence
-condition_all=reshape(condition_all',[],1);
+condition_all=reshape(condition_all',[],1); % 144 x 1 
 
 % indices for 4 states
 states4names={'Uncouple','Leading','Following','Mutual'};
 % find the indices for each condition in L R conbined sequence (4 states)
-uncoupleInd=repmat(find(condition_all==1),2,1);
-leadingInd=[find(condition_all==2);12*numSes+find(condition_all==3)];
-followingInd=[find(condition_all==3);12*numSes+find(condition_all==2)];
-mutualInd=repmat(find(condition_all==4),2,1);
-Inds4=[uncoupleInd leadingInd followingInd mutualInd];
+% and organize for PLS
+uncoupleInd_LR=[find(condition_all==1);12*numSes+find(condition_all==1)];
+leadingInd_LR=[find(condition_all==2);12*numSes+find(condition_all==3)];
+followingInd_LR=[find(condition_all==3);12*numSes+find(condition_all==2)];
+mutualInd_LR=[find(condition_all==4);12*numSes+find(condition_all==4)];
+Inds4_LR=[uncoupleInd_LR leadingInd_LR followingInd_LR mutualInd_LR];
 
 % H-int matching for L and R as in Marmelat 2012
 % organize H_all 
@@ -2262,6 +2281,7 @@ H_Lall=squeeze(H_all(1,:,:)); % 12session by 12trials
 H_Lall=reshape(H_Lall',[],1); % in time sequence
 H_Rall=squeeze(H_all(2,:,:)); % 12session by 12trials
 H_Rall=reshape(H_Rall',[],1); % in time sequence
+H_all_LR=[H_Lall; H_Rall]
 % Inds4(:,c);
 % uncoupleInd(1:24);
 % leadingInd(1:24); % for L
@@ -2274,228 +2294,241 @@ H_Rall=reshape(H_Rall',[],1); % in time sequence
 synchind=[1:3 7:9 13:15 19:21 25:27 31:33]; % 3 trials x 6 sessions
 syncoind=[4:6 10:12 16:18 22:24 28:30 34:36]; % 3 trials x 6 sessions
 
-%********************** 2 subplots
+%********************** 2 subplots (uncouple and mutual)
+for  subplots2 = 1;
 canvas(0.2,0.25);
 subplot(1,2,1); %##############
-plot(H_Lall(uncoupleInd(synchind)),H_Rall(uncoupleInd(synchind)),'.','MarkerSize',30,'color',darkgreen);
+plot(H_Lall(uncoupleInd_LR(synchind)),H_Rall(uncoupleInd_LR(synchind)),'.','MarkerSize',30,'color',darkgreen);
 hold on;
-plot(H_Lall(uncoupleInd(syncoind)),H_Rall(uncoupleInd(syncoind)),'.','MarkerSize',30,'color',pink);
+plot(H_Lall(uncoupleInd_LR(syncoind)),H_Rall(uncoupleInd_LR(syncoind)),'.','MarkerSize',30,'color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('uncouple');
+title('Uncouple');
 A=[];Alpha1=[];FitValues=[];
-A=polyfit(H_Lall(uncoupleInd(1:36)),H_Rall(uncoupleInd(1:36)),1);
+A=polyfit(H_Lall(uncoupleInd_LR(1:36)),H_Rall(uncoupleInd_LR(1:36)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(uncoupleInd(1:36)));
-hold on; plot(H_Lall(uncoupleInd(1:36)),FitValues,'k-');
+FitValues=polyval(A,H_Lall(uncoupleInd_LR(1:36)));
+hold on; plot(H_Lall(uncoupleInd_LR(1:36)),FitValues,'k-');
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 grid on;
 legend('synch','synco','','','location','northwest');
 subplot(1,2,2); %##############
-plot(H_Lall(mutualInd(synchind)),H_Rall(mutualInd(synchind)),'.','MarkerSize',30,'color',darkgreen);
+plot(H_Lall(mutualInd_LR(synchind)),H_Rall(mutualInd_LR(synchind)),'.','MarkerSize',30,'color',darkgreen);
 hold on;
-plot(H_Lall(mutualInd(syncoind)),H_Rall(mutualInd(syncoind)),'.','MarkerSize',30,'color',pink);
+plot(H_Lall(mutualInd_LR(syncoind)),H_Rall(mutualInd_LR(syncoind)),'.','MarkerSize',30,'color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('mutual');
+title('Mutual');
 A=[];Alpha1=[];FitValues=[];
-A=polyfit(H_Lall(mutualInd(1:36)),H_Rall(mutualInd(1:36)),1);
+A=polyfit(H_Lall(mutualInd_LR(1:36)),H_Rall(mutualInd_LR(1:36)),1);
 Alpha1=A(1); 
-FitValues=polyval(A,H_Lall(mutualInd(1:36)));
-hold on; plot(H_Lall(mutualInd(1:36)),FitValues,'k-');
+FitValues=polyval(A,H_Lall(mutualInd_LR(1:36)));
+hold on; plot(H_Lall(mutualInd_LR(1:36)),FitValues,'k-');
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 grid on;
 legend('synch','synco','','','location','northwest');
+end
 
-%********************** 4 subplots
+%********************** 4 subplots (4 states)
+for subplots4 = 1;
 canvas(0.2,0.5);
 subplot(2,2,1); %##############
-plot(H_Lall(uncoupleInd(synchind)),H_Rall(uncoupleInd(synchind)),'.','MarkerSize',30,'color',darkgreen);
+plot(H_Lall(uncoupleInd_LR(synchind)),H_Rall(uncoupleInd_LR(synchind)),'.','MarkerSize',30,'color',darkgreen);
 hold on;
-plot(H_Lall(uncoupleInd(syncoind)),H_Rall(uncoupleInd(syncoind)),'.','MarkerSize',30,'color',pink);
+plot(H_Lall(uncoupleInd_LR(syncoind)),H_Rall(uncoupleInd_LR(syncoind)),'.','MarkerSize',30,'color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('uncouple');
+title('Uncouple');
 A=[];Alpha1=[];FitValues=[];
-A=polyfit(H_Lall(uncoupleInd(1:36)),H_Rall(uncoupleInd(1:36)),1);
+A=polyfit(H_Lall(uncoupleInd_LR(1:36)),H_Rall(uncoupleInd_LR(1:36)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(uncoupleInd(1:36)));
-hold on; plot(H_Lall(uncoupleInd(1:36)),FitValues,'k-');
+FitValues=polyval(A,H_Lall(uncoupleInd_LR(1:36)));
+hold on; plot(H_Lall(uncoupleInd_LR(1:36)),FitValues,'k-');
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 legend('synch','synco','','','location','northwest');
 grid on;
 subplot(2,2,2); %##############
-plot(H_Lall(leadingInd(synchind)),H_Rall(leadingInd(synchind)),'.','MarkerSize',30,'color',darkgreen);
+plot(H_Lall(leadingInd_LR(synchind)),H_Rall(leadingInd_LR(synchind)),'.','MarkerSize',30,'color',darkgreen);
 hold on;
-plot(H_Lall(leadingInd(syncoind)),H_Rall(leadingInd(syncoind)),'.','MarkerSize',30,'color',pink);
+plot(H_Lall(leadingInd_LR(syncoind)),H_Rall(leadingInd_LR(syncoind)),'.','MarkerSize',30,'color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('L-leading');
+title('L-lead');
 A=[];Alpha1=[];FitValues=[];
-A=polyfit(H_Lall(leadingInd(1:36)),H_Rall(leadingInd(1:36)),1);
+A=polyfit(H_Lall(leadingInd_LR(1:36)),H_Rall(leadingInd_LR(1:36)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(leadingInd(1:36)));
-hold on; plot(H_Lall(leadingInd(1:36)),FitValues,'k-');
+FitValues=polyval(A,H_Lall(leadingInd_LR(1:36)));
+hold on; plot(H_Lall(leadingInd_LR(1:36)),FitValues,'k-');
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 legend('synch','synco','','','location','northwest');
 grid on;
 subplot(2,2,3); %##############
-plot(H_Lall(followingInd(synchind)),H_Rall(followingInd(synchind)),'.','MarkerSize',30,'color',darkgreen);
+plot(H_Lall(followingInd_LR(synchind)),H_Rall(followingInd_LR(synchind)),'.','MarkerSize',30,'color',darkgreen);
 hold on;
-plot(H_Lall(followingInd(syncoind)),H_Rall(followingInd(syncoind)),'.','MarkerSize',30,'color',pink);
+plot(H_Lall(followingInd_LR(syncoind)),H_Rall(followingInd_LR(syncoind)),'.','MarkerSize',30,'color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('R-leading');
+title('R-lead');
 A=[];Alpha1=[];FitValues=[];
-A=polyfit(H_Lall(followingInd(1:36)),H_Rall(followingInd(1:36)),1);
+A=polyfit(H_Lall(followingInd_LR(1:36)),H_Rall(followingInd_LR(1:36)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(followingInd(1:36)));
-hold on; plot(H_Lall(followingInd(1:36)),FitValues,'k-');
+FitValues=polyval(A,H_Lall(followingInd_LR(1:36)));
+hold on; plot(H_Lall(followingInd_LR(1:36)),FitValues,'k-');
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 legend('synch','synco','','','location','northwest');
 grid on;
 subplot(2,2,4); %##############
-plot(H_Lall(mutualInd(synchind)),H_Rall(mutualInd(synchind)),'.','MarkerSize',30,'color',darkgreen);
+plot(H_Lall(mutualInd_LR(synchind)),H_Rall(mutualInd_LR(synchind)),'.','MarkerSize',30,'color',darkgreen);
 hold on;
-plot(H_Lall(mutualInd(syncoind)),H_Rall(mutualInd(syncoind)),'.','MarkerSize',30,'color',pink);
+plot(H_Lall(mutualInd_LR(syncoind)),H_Rall(mutualInd_LR(syncoind)),'.','MarkerSize',30,'color',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('mutual');
 A=[];Alpha1=[];FitValues=[];
-A=polyfit(H_Lall(mutualInd(1:36)),H_Rall(mutualInd(1:36)),1);
+A=polyfit(H_Lall(mutualInd_LR(1:36)),H_Rall(mutualInd_LR(1:36)),1);
 Alpha1=A(1); 
-FitValues=polyval(A,H_Lall(mutualInd(1:36)));
-hold on; plot(H_Lall(mutualInd(1:36)),FitValues,'k-');
+FitValues=polyval(A,H_Lall(mutualInd_LR(1:36)));
+hold on; plot(H_Lall(mutualInd_LR(1:36)),FitValues,'k-');
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 legend('synch','synco','','','location','northwest');
 grid on;
+end
 
 %********************** 3 subplots
-canvas(0.4,0.3);
+for subplots3 =1;
+canvas(0.5,0.35);
 subplot(1,3,1); %##############
-plot(H_Lall(uncoupleInd(synchind(1:3))),H_Rall(uncoupleInd(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);hold on;
-plot(H_Lall(uncoupleInd(synchind(4:6))),H_Rall(uncoupleInd(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(uncoupleInd(synchind(7:9))),H_Rall(uncoupleInd(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(uncoupleInd(synchind(10:12))),H_Rall(uncoupleInd(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(uncoupleInd(synchind(13:15))),H_Rall(uncoupleInd(synchind(13:15))),'*','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(uncoupleInd(synchind(16:18))),H_Rall(uncoupleInd(synchind(16:18))),'diamond','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(uncoupleInd(syncoind(1:3))),H_Rall(uncoupleInd(syncoind(1:3))),'.','MarkerSize',30,'color',pink,'MarkerFaceColor',pink);
-plot(H_Lall(uncoupleInd(syncoind(4:6))),H_Rall(uncoupleInd(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-plot(H_Lall(uncoupleInd(syncoind(7:9))),H_Rall(uncoupleInd(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
-plot(H_Lall(uncoupleInd(syncoind(10:12))),H_Rall(uncoupleInd(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-plot(H_Lall(uncoupleInd(syncoind(13:15))),H_Rall(uncoupleInd(syncoind(13:15))),'*','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
-plot(H_Lall(uncoupleInd(syncoind(16:18))),H_Rall(uncoupleInd(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+for subplot1 =1;
+plot(H_Lall(uncoupleInd_LR(synchind(1:3))),H_Rall(uncoupleInd_LR(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);hold on;
+plot(H_Lall(uncoupleInd_LR(synchind(4:6))),H_Rall(uncoupleInd_LR(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(uncoupleInd_LR(synchind(7:9))),H_Rall(uncoupleInd_LR(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(uncoupleInd_LR(synchind(10:12))),H_Rall(uncoupleInd_LR(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(uncoupleInd_LR(synchind(13:15))),H_Rall(uncoupleInd_LR(synchind(13:15))),'*','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(uncoupleInd_LR(synchind(16:18))),H_Rall(uncoupleInd_LR(synchind(16:18))),'diamond','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(uncoupleInd_LR(syncoind(1:3))),H_Rall(uncoupleInd_LR(syncoind(1:3))),'.','MarkerSize',30,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(uncoupleInd_LR(syncoind(4:6))),H_Rall(uncoupleInd_LR(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(uncoupleInd_LR(syncoind(7:9))),H_Rall(uncoupleInd_LR(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(uncoupleInd_LR(syncoind(10:12))),H_Rall(uncoupleInd_LR(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(uncoupleInd_LR(syncoind(13:15))),H_Rall(uncoupleInd_LR(syncoind(13:15))),'*','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(uncoupleInd_LR(syncoind(16:18))),H_Rall(uncoupleInd_LR(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('uncoupled');
 % A=[];S=[]; Alpha1=[];FitValues=[];
-% A=polyfit(H_Lall(uncoupleInd(1:36)),H_Rall(uncoupleInd(1:36)),1);
+% A=polyfit(H_Lall(uncoupleInd_LR(1:36)),H_Rall(uncoupleInd_LR_LR(1:36)),1);
 % Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-% FitValues=polyval(A,H_Lall(uncoupleInd(1:36)));
-% hold on; plot(H_Lall(uncoupleInd(1:36)),FitValues,'k-','LineWidth',3);
+% FitValues=polyval(A,H_Lall(uncoupleInd_LR(1:36)));
+% hold on; plot(H_Lall(uncoupleInd_LR(1:36)),FitValues,'k-','LineWidth',3);
 % fit the synch data
 A=[];Alpha1=[];FitValues=[];
-A=polyfit(H_Lall(uncoupleInd(1:2:35)),H_Rall(uncoupleInd(1:2:35)),1);
+A=polyfit(H_Lall(uncoupleInd_LR(1:2:35)),H_Rall(uncoupleInd_LR(1:2:35)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(uncoupleInd(1:2:35)));
-hold on; plot(H_Lall(uncoupleInd(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
+FitValues=polyval(A,H_Lall(uncoupleInd_LR(1:2:35)));
+hold on; plot(H_Lall(uncoupleInd_LR(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
 % fit the synco data
 A=[];Alpha1=[];FitValues=[];
-A=polyfit(H_Lall(uncoupleInd(2:2:36)),H_Rall(uncoupleInd(2:2:36)),1);
+A=polyfit(H_Lall(uncoupleInd_LR(2:2:36)),H_Rall(uncoupleInd_LR(2:2:36)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(uncoupleInd(2:2:36)));
-hold on; plot(H_Lall(uncoupleInd(2:2:36)),FitValues,'-','color',pink,'LineWidth',3);
+FitValues=polyval(A,H_Lall(uncoupleInd_LR(2:2:36)));
+hold on; plot(H_Lall(uncoupleInd_LR(2:2:36)),FitValues,'-','color',pink,'LineWidth',3);
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 % legend('synch','','','','synco','','','','location','northwest');
 % subtitle(['(uncouple: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 grid on;
+end
 subplot(1,3,2); %##############
-plot(H_Lall(leadingInd(synchind(1:3))),H_Rall(leadingInd(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen); hold on;
-plot(H_Lall(leadingInd(synchind(4:6))),H_Rall(leadingInd(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(leadingInd(synchind(7:9))),H_Rall(leadingInd(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(leadingInd(synchind(10:12))),H_Rall(leadingInd(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(leadingInd(synchind(13:15))),H_Rall(leadingInd(synchind(13:15))),'*','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(leadingInd(synchind(16:18))),H_Rall(leadingInd(synchind(16:18))),'diamond','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(leadingInd(syncoind(1:3))),H_Rall(leadingInd(syncoind(1:3))),'.','MarkerSize',30,'color',pink);
-plot(H_Lall(leadingInd(syncoind(4:6))),H_Rall(leadingInd(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-plot(H_Lall(leadingInd(syncoind(7:9))),H_Rall(leadingInd(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
-plot(H_Lall(leadingInd(syncoind(10:12))),H_Rall(leadingInd(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-plot(H_Lall(leadingInd(syncoind(13:15))),H_Rall(leadingInd(syncoind(13:15))),'*','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-plot(H_Lall(leadingInd(syncoind(16:18))),H_Rall(leadingInd(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-plot(H_Rall(followingInd(synchind(1:3))),H_Lall(followingInd(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);
-plot(H_Rall(followingInd(synchind(4:6))),H_Lall(followingInd(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Rall(followingInd(synchind(7:9))),H_Lall(followingInd(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Rall(followingInd(synchind(10:12))),H_Lall(followingInd(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Rall(followingInd(synchind(13:15))),H_Lall(followingInd(synchind(13:15))),'*','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Rall(followingInd(synchind(16:18))),H_Lall(followingInd(synchind(16:18))),'diamond','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Rall(followingInd(syncoind(1:3))),H_Lall(followingInd(syncoind(1:3))),'.','MarkerSize',30,'color',pink);
-plot(H_Rall(followingInd(syncoind(4:6))),H_Lall(followingInd(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-plot(H_Rall(followingInd(syncoind(7:9))),H_Lall(followingInd(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
-plot(H_Rall(followingInd(syncoind(10:12))),H_Lall(followingInd(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-plot(H_Rall(followingInd(syncoind(13:15))),H_Lall(followingInd(syncoind(13:15))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-plot(H_Rall(followingInd(syncoind(16:18))),H_Lall(followingInd(syncoind(16:18))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+for subplot2 =1;
+plot(H_Lall(leadingInd_LR(synchind(1:3))),H_Rall(leadingInd_LR(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen); hold on;
+plot(H_Lall(leadingInd_LR(synchind(4:6))),H_Rall(leadingInd_LR(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(leadingInd_LR(synchind(7:9))),H_Rall(leadingInd_LR(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(leadingInd_LR(synchind(10:12))),H_Rall(leadingInd_LR(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(leadingInd_LR(synchind(13:15))),H_Rall(leadingInd_LR(synchind(13:15))),'*','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(leadingInd_LR(synchind(16:18))),H_Rall(leadingInd_LR(synchind(16:18))),'diamond','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(leadingInd_LR(syncoind(1:3))),H_Rall(leadingInd_LR(syncoind(1:3))),'.','MarkerSize',30,'color',pink);
+plot(H_Lall(leadingInd_LR(syncoind(4:6))),H_Rall(leadingInd_LR(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(leadingInd_LR(syncoind(7:9))),H_Rall(leadingInd_LR(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(leadingInd_LR(syncoind(10:12))),H_Rall(leadingInd_LR(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(leadingInd_LR(syncoind(13:15))),H_Rall(leadingInd_LR(syncoind(13:15))),'*','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(leadingInd_LR(syncoind(16:18))),H_Rall(leadingInd_LR(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Rall(followingInd_LR(synchind(1:3))),H_Lall(followingInd_LR(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);
+plot(H_Rall(followingInd_LR(synchind(4:6))),H_Lall(followingInd_LR(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Rall(followingInd_LR(synchind(7:9))),H_Lall(followingInd_LR(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Rall(followingInd_LR(synchind(10:12))),H_Lall(followingInd_LR(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Rall(followingInd_LR(synchind(13:15))),H_Lall(followingInd_LR(synchind(13:15))),'*','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Rall(followingInd_LR(synchind(16:18))),H_Lall(followingInd_LR(synchind(16:18))),'diamond','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Rall(followingInd_LR(syncoind(1:3))),H_Lall(followingInd_LR(syncoind(1:3))),'.','MarkerSize',30,'color',pink);
+plot(H_Rall(followingInd_LR(syncoind(4:6))),H_Lall(followingInd_LR(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Rall(followingInd_LR(syncoind(7:9))),H_Lall(followingInd_LR(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
+plot(H_Rall(followingInd_LR(syncoind(10:12))),H_Lall(followingInd_LR(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Rall(followingInd_LR(syncoind(13:15))),H_Lall(followingInd_LR(syncoind(13:15))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Rall(followingInd_LR(syncoind(16:18))),H_Lall(followingInd_LR(syncoind(16:18))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Leader');ylabel('DFA exponent, Follower');
 title('unidirectional'); 
 % A=[];Alpha1=[];FitValues=[];
-% A=polyfit([H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))], [H_Rall(leadingInd(1:36)); H_Lall(followingInd(1:36))],1);
+% A=polyfit([H_Lall(leadingInd_LR(1:36)); H_Rall(followingInd_LR(1:36))], [H_Rall(leadingInd_LR(1:36)); H_Lall(followingInd_LR(1:36))],1);
 % Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-% FitValues=polyval(A,[H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))]);
-% hold on; plot([H_Lall(leadingInd(1:36)); H_Rall(followingInd(1:36))],FitValues,'k-','LineWidth',3);
+% FitValues=polyval(A,[H_Lall(leadingInd_LR(1:36)); H_Rall(followingInd_LR(1:36))]);
+% hold on; plot([H_Lall(leadingInd_LR(1:36)); H_Rall(followingInd_LR(1:36))],FitValues,'k-','LineWidth',3);
 % fit the synch data
 A=[];Alpha1=[];FitValues=[];
-A=polyfit([H_Lall(leadingInd(1:2:35)); H_Rall(followingInd(1:2:35))], [H_Rall(leadingInd(1:2:35)); H_Lall(followingInd(1:2:35))],1);
+A=polyfit([H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))], [H_Rall(leadingInd_LR(1:2:35)); H_Lall(followingInd_LR(1:2:35))],1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,[H_Lall(leadingInd(1:2:35)); H_Rall(followingInd(1:2:35))]);
-hold on; plot([H_Lall(leadingInd(1:2:35)); H_Rall(followingInd(1:2:35))],FitValues,'-','color',darkgreen,'LineWidth',3);
+FitValues=polyval(A,[H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))]);
+hold on; 
+plot([H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))],FitValues,'-','color',darkgreen,'LineWidth',3);
 % fit the synco data
 A=[];Alpha1=[];FitValues=[];
-A=polyfit([H_Lall(leadingInd(2:2:36)); H_Rall(followingInd(2:2:36))], [H_Rall(leadingInd(2:2:36)); H_Lall(followingInd(2:2:36))],1);
+A=polyfit([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))], [H_Rall(leadingInd_LR(2:2:36)); H_Lall(followingInd_LR(2:2:36))],1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,[H_Lall(leadingInd(2:2:36)); H_Rall(followingInd(2:2:36))]);
-hold on; plot([H_Lall(leadingInd(2:2:36)); H_Rall(followingInd(2:2:36))],FitValues,'-','color',pink,'LineWidth',3);
+FitValues=polyval(A,[H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))]);
+hold on; plot([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))],FitValues,'-','color',pink,'LineWidth',3);
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 % legend('synch','','','','synco','','','','','','','','','','','','location','northwest');
 % subtitle(['(leading or following: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 grid on;
+end
 subplot(1,3,3); %##############
-plot(H_Lall(mutualInd(synchind(1:3))),H_Rall(mutualInd(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);hold on;
-plot(H_Lall(mutualInd(synchind(4:6))),H_Rall(mutualInd(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(mutualInd(synchind(7:9))),H_Rall(mutualInd(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(mutualInd(synchind(10:12))),H_Rall(mutualInd(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(mutualInd(synchind(13:15))),H_Rall(mutualInd(synchind(13:15))),'*','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(mutualInd(synchind(16:18))),H_Rall(mutualInd(synchind(16:18))),'diamond','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
-plot(H_Lall(mutualInd(syncoind(1:3))),H_Rall(mutualInd(syncoind(1:3))),'.','MarkerSize',30,'color',pink);
-plot(H_Lall(mutualInd(syncoind(4:6))),H_Rall(mutualInd(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-plot(H_Lall(mutualInd(syncoind(7:9))),H_Rall(mutualInd(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
-plot(H_Lall(mutualInd(syncoind(10:12))),H_Rall(mutualInd(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-plot(H_Lall(mutualInd(syncoind(13:15))),H_Rall(mutualInd(syncoind(13:15))),'*','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-plot(H_Lall(mutualInd(syncoind(16:18))),H_Rall(mutualInd(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+for subplot3 =1;
+plot(H_Lall(mutualInd_LR(synchind(1:3))),H_Rall(mutualInd_LR(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);hold on;
+plot(H_Lall(mutualInd_LR(synchind(4:6))),H_Rall(mutualInd_LR(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(mutualInd_LR(synchind(7:9))),H_Rall(mutualInd_LR(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(mutualInd_LR(synchind(10:12))),H_Rall(mutualInd_LR(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(mutualInd_LR(synchind(13:15))),H_Rall(mutualInd_LR(synchind(13:15))),'*','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(mutualInd_LR(synchind(16:18))),H_Rall(mutualInd_LR(synchind(16:18))),'diamond','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(H_Lall(mutualInd_LR(syncoind(1:3))),H_Rall(mutualInd_LR(syncoind(1:3))),'.','MarkerSize',30,'color',pink);
+plot(H_Lall(mutualInd_LR(syncoind(4:6))),H_Rall(mutualInd_LR(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(mutualInd_LR(syncoind(7:9))),H_Rall(mutualInd_LR(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(mutualInd_LR(syncoind(10:12))),H_Rall(mutualInd_LR(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(mutualInd_LR(syncoind(13:15))),H_Rall(mutualInd_LR(syncoind(13:15))),'*','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(H_Lall(mutualInd_LR(syncoind(16:18))),H_Rall(mutualInd_LR(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
 title('bidirectional'); 
 % A=[];Alpha1=[];FitValues=[];
-% A=polyfit(H_Lall(mutualInd(1:36)),H_Rall(mutualInd(1:36)),1);
+% A=polyfit(H_Lall(mutualInd_LR(1:36)),H_Rall(mutualInd_LR(1:36)),1);
 % Alpha1=A(1); 
-% FitValues=polyval(A,H_Lall(mutualInd(1:36)));
-% hold on; plot(H_Lall(mutualInd(1:36)),FitValues,'k-','LineWidth',3);
+% FitValues=polyval(A,H_Lall(mutualInd_LR(1:36)));
+% hold on; plot(H_Lall(mutualInd_LR(1:36)),FitValues,'k-','LineWidth',3);
 % fit the synch data
 A=[];Alpha1=[];FitValues=[];
-A=polyfit(H_Lall(mutualInd(1:2:35)),H_Rall(mutualInd(1:2:35)),1);
+A=polyfit(H_Lall(mutualInd_LR(1:2:35)),H_Rall(mutualInd_LR(1:2:35)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(mutualInd(1:2:35)));
-hold on; plot(H_Lall(mutualInd(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
+FitValues=polyval(A,H_Lall(mutualInd_LR(1:2:35)));
+hold on; plot(H_Lall(mutualInd_LR(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
 % fit the synco data
 A=[];Alpha1=[];FitValues=[];
-A=polyfit(H_Lall(mutualInd(2:2:36)),H_Rall(mutualInd(2:2:36)),1);
+A=polyfit(H_Lall(mutualInd_LR(2:2:36)),H_Rall(mutualInd_LR(2:2:36)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(mutualInd(2:2:36)));
-hold on; plot(H_Lall(mutualInd(2:2:36)),FitValues,'-','color',pink,'LineWidth',3);
+FitValues=polyval(A,H_Lall(mutualInd_LR(2:2:36)));
+hold on; plot(H_Lall(mutualInd_LR(2:2:36)),FitValues,'-','color',pink,'LineWidth',3);
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 % subtitle(['(mutual): linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
-legend('synch - subj pair 1','synch - subj pair 2','synch - subj pair 3','synch - subj pair 4', ...
+grid on;
+end
+lg=legend('synch - subj pair 1','synch - subj pair 2','synch - subj pair 3','synch - subj pair 4', ...
     'synch - subj pair 5','synch - subj pair 6', ...
     'synco - subj pair 1','synco - subj pair 2','synco - subj pair 3','synco - subj pair 4',...
-    'synco - subj pair 5','synco - subj pair 6',...
-    'location','eastoutside');
-grid on;
+    'synco - subj pair 5','synco - subj pair 6','location','eastoutside');
+lg.Position = [0.9475 0.15 0.01 0.75];
 % sgtitle(['H matching as in Marmelat 2012  ^{* PLOT 10-2}']);
 delete(findall(gcf,'type','annotation'))
-sg=annotation('textbox',[0.07 0.01 0.17 0.05],'string',...
+sg=annotation('textbox',[0.07 0.01 0.22 0.05],'string',...
     'H matching as in Marmelat 2012  ^{* PLOT 10-2}')
 sg.Rotation=90
 set(gcf,'color','w'); % set background white for copying in ubuntu
+end
 
 %% PLOT 11 Xcorr(0) with slinding win of 20 intervals (matched int) in one subj
 % clear
@@ -2621,7 +2654,7 @@ for p=1:6
         title(['pair of subjects - ' num2str(p)]);
 end
 sgtitle({['Mutual: xcorr(0) smoo win ' num2str(BPwin) ' ^{* PLOT 11-1}']},'Color',condicolors(4,:));
-%% SECT 11-3 EEG (-500ms)-> Xcorr(0)(matched int) -Corr -PLS in all subj
+%% SECT 11-2 EEG (-500ms)-> Xcorr(0)/(-1/+1)(matched int) -Corr -PLS in all subj
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
 numSes=size(seeds,1);
@@ -2629,8 +2662,9 @@ sessions={'synch','synco','synch','synco','synch','synco','synch','synco','synch
     'synch','synco'};
 % organize conditions in all sessions into a matrix of 8 x 12
 condition_all_mat=NaN(numSes,12); % (Refer to SECT 10-1)
-% Compute Xcorr(0) for all trials
+% Compute Xcorr(0)/Xcorr(-1/+1) for all trials
 BPint_xcorrSeries=nan(2,numSes,12);
+tic
 for s=1:numSes;
     clear intervals conditions
     runid=num2str(seeds(s,:));
@@ -2642,10 +2676,13 @@ for s=1:numSes;
         intL_good_dmean=intervals{b}(:,1)-mean(intervals{b}(:,1));
         intR_good_dmean=intervals{b}(:,2)-mean(intervals{b}(:,2));
         [r12,lags12]=xcorr(intL_good_dmean,intR_good_dmean,10,'normalized');
-        BPint_xcorrSeries(1,s,b)=r12(11);
-        BPint_xcorrSeries(2,s,b)=r12(11);% make duplicate and organzie for PLS
+        BPint_xcorrSeries(1,s,b)=r12(11);% xcorr(0)
+        BPint_xcorrSeries(2,s,b)=r12(11);% xcorr(0)
+%         BPint_xcorrSeries(1,s,b)=r12(10);% xcorr(-1)_
+%         BPint_xcorrSeries(2,s,b)=r12(12);
     end
 end
+toc % 77 sec
 % Organize BPint_xcorrSeries for PLS
 % same way as we did with H in PLOT 13
 BPint_xcorrSeries; % (2xnumSesx12) for all sessions (matched int) (original order)
@@ -2657,29 +2694,42 @@ BPint_xcorrSeries_R=reshape(BPint_xcorrSeries_R',[],1);
 % Combine L and R
 BPint_xcorrSeries_LR=[BPint_xcorrSeries_L;BPint_xcorrSeries_R]; % to be used for corr and PLS
 
+Inds4_LR; % 1:288 for all sessions % from SECT 10-1 
+% indices for synch or synco
+Inds_synch4=Inds4_LR([1:3 7:9 13:15 19:21 25:27 31:33],:); % synchind
+Inds_synch4_LR=[Inds_synch4;12*numSes+Inds_synch4];
+Inds_synco4=Inds4_LR([4:6 10:12 16:18 22:24 28:30 34:36],:); % syncoind
+Inds_synco4_LR=[Inds_synco4;12*numSes+Inds_synco4];
+% *******
+% select_ind_LR=Inds4_LR; 
+% select_ind_LR=Inds_synch4_LR; 
+% select_ind_LR=Inds_synco4_LR; 
+select_ind_LR; % *******
+
 % run SECT 12 and PLOT 13 to organize EEG first (-500ms)
-% Corr
-% Compute the correlation between sum-EEG pow and BPint_xcorrSeries_LR
-% for c=1:32
-%     delta_L_Xcorr_L_corr(c)=corr(delta_L_chan(:,c),BPint_xcorrSeries_L);
-%     theta_L_Xcorr_L_corr(c)=corr(theta_L_chan(:,c),BPint_xcorrSeries_L);
-%     alpha_L_Xcorr_L_corr(c)=corr(alpha_L_chan(:,c),BPint_xcorrSeries_L);
-%     beta_L_Xcorr_L_corr(c)=corr(beta_L_chan(:,c),BPint_xcorrSeries_L);
-%     gamma_L_Xcorr_L_corr(c)=corr(gamma_L_chan(:,c),BPint_xcorrSeries_L);
-%     delta_R_Xcorr_R_corr(c)=corr(delta_R_chan(:,c),BPint_xcorrSeries_R);
-%     theta_R_Xcorr_R_corr(c)=corr(theta_R_chan(:,c),BPint_xcorrSeries_R);
-%     alpha_R_Xcorr_R_corr(c)=corr(alpha_R_chan(:,c),BPint_xcorrSeries_R);
-%     beta_R_Xcorr_R_corr(c)=corr(beta_R_chan(:,c),BPint_xcorrSeries_R);
-%     gamma_R_Xcorr_R_corr(c)=corr(gamma_R_chan(:,c),BPint_xcorrSeries_R);
-% end
+    % Corr
+    % Compute the correlation between sum-EEG pow and BPint_xcorrSeries_LR
+    % for c=1:32
+    %     delta_L_Xcorr_L_corr(c)=corr(delta_L_chan(:,c),BPint_xcorrSeries_L);
+    %     theta_L_Xcorr_L_corr(c)=corr(theta_L_chan(:,c),BPint_xcorrSeries_L);
+    %     alpha_L_Xcorr_L_corr(c)=corr(alpha_L_chan(:,c),BPint_xcorrSeries_L);
+    %     beta_L_Xcorr_L_corr(c)=corr(beta_L_chan(:,c),BPint_xcorrSeries_L);
+    %     gamma_L_Xcorr_L_corr(c)=corr(gamma_L_chan(:,c),BPint_xcorrSeries_L);
+    %     delta_R_Xcorr_R_corr(c)=corr(delta_R_chan(:,c),BPint_xcorrSeries_R);
+    %     theta_R_Xcorr_R_corr(c)=corr(theta_R_chan(:,c),BPint_xcorrSeries_R);
+    %     alpha_R_Xcorr_R_corr(c)=corr(alpha_R_chan(:,c),BPint_xcorrSeries_R);
+    %     beta_R_Xcorr_R_corr(c)=corr(beta_R_chan(:,c),BPint_xcorrSeries_R);
+    %     gamma_R_Xcorr_R_corr(c)=corr(gamma_R_chan(:,c),BPint_xcorrSeries_R);
+    % end
 % indices for 4 states from PLOT 10-1
-Inds4; % from SECT 10-1 
 % fix the scale in the data (as in PLOT 16)
-delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); %organized in PLOT 13
-theta_LR_chan = theta_LR_chan./(ones(288,1)*std(theta_LR_chan));
-alpha_LR_chan = alpha_LR_chan./(ones(288,1)*std(alpha_LR_chan));
-beta_LR_chan = beta_LR_chan./(ones(288,1)*std(beta_LR_chan));
-gamma_LR_chan = gamma_LR_chan./(ones(288,1)*std(gamma_LR_chan));
+% delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); %organized in PLOT 13
+% theta_LR_chan = theta_LR_chan./(ones(288,1)*std(theta_LR_chan));
+% alpha_LR_chan = alpha_LR_chan./(ones(288,1)*std(alpha_LR_chan));
+% beta_LR_chan = beta_LR_chan./(ones(288,1)*std(beta_LR_chan));
+% gamma_LR_chan = gamma_LR_chan./(ones(288,1)*std(gamma_LR_chan));
+delta_LR_chan;theta_LR_chan;alpha_LR_chan;beta_LR_chan;gamma_LR_chan; %organized from PLOT 13
+
 % Correlation in 4 states
 delta_LR_Xcorr_LR_4corr=zeros(4,32);
 theta_LR_Xcorr_LR_4corr=zeros(4,32);
@@ -2688,14 +2738,15 @@ beta_LR_Xcorr_LR_4corr=zeros(4,32);
 gamma_LR_Xcorr_LR_4corr=zeros(4,32);
 for s=1:4
     for c=1:32
-        delta_LR_Xcorr_LR_4corr(s,c)=corr(delta_LR_chan(Inds4(:,s),c),BPint_xcorrSeries_LR(Inds4(:,s)));
-        theta_LR_Xcorr_LR_4corr(s,c)=corr(theta_LR_chan(Inds4(:,s),c),BPint_xcorrSeries_LR(Inds4(:,s)));
-        alpha_LR_Xcorr_LR_4corr(s,c)=corr(alpha_LR_chan(Inds4(:,s),c),BPint_xcorrSeries_LR(Inds4(:,s)));
-        beta_LR_Xcorr_LR_4corr(s,c)=corr(beta_LR_chan(Inds4(:,s),c),BPint_xcorrSeries_LR(Inds4(:,s)));
-        gamma_LR_Xcorr_LR_4corr(s,c)=corr(gamma_LR_chan(Inds4(:,s),c),BPint_xcorrSeries_LR(Inds4(:,s)));
+        delta_LR_Xcorr_LR_4corr(s,c)=corr(delta_LR_chan(select_ind_LR(:,s),c),BPint_xcorrSeries_LR(select_ind_LR(:,s)));
+        theta_LR_Xcorr_LR_4corr(s,c)=corr(theta_LR_chan(select_ind_LR(:,s),c),BPint_xcorrSeries_LR(select_ind_LR(:,s)));
+        alpha_LR_Xcorr_LR_4corr(s,c)=corr(alpha_LR_chan(select_ind_LR(:,s),c),BPint_xcorrSeries_LR(select_ind_LR(:,s)));
+        beta_LR_Xcorr_LR_4corr(s,c)=corr(beta_LR_chan(select_ind_LR(:,s),c),BPint_xcorrSeries_LR(select_ind_LR(:,s)));
+        gamma_LR_Xcorr_LR_4corr(s,c)=corr(gamma_LR_chan(select_ind_LR(:,s),c),BPint_xcorrSeries_LR(select_ind_LR(:,s)));
     end
 end
 % Combine L and R in 4 states(4x5)
+for plot_4by5=1;
 canvas(0.3,0.5);
 cmin=-0.4;cmax=0.4;
 for s=1:4
@@ -2732,18 +2783,23 @@ v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','Following','color',condi
 v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','Leading','color',condicolors(2,:))
 v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','Uncouple','color',condicolors(1,:))
 set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
-sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
-    'Correlation of sum-EEG (-500ms) and Xcorr(0) ^{* PLOT 11-3}')
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
+end
+delete(sg)
+% sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
+%     'Correlation of sum-EEG (-500ms) and Xcorr(0) ^{* PLOT 11-3}')
+sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
+    {['Correlation of sum-EEG (-500ms) and Xcorr(-1/+1) ^{* PLOT 11-2} '], char(datetime('now'))})
 set(gcf,'color','w'); % set background white for copying in ubuntu
+
 
 % PLS
 addpath /home/zhibin/Documents/GitHub/matlab/ramesh/plsmodel
 addpath(genpath('/home/zhibin/Documents/GitHub/matlab/external/')); 
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 % get pow5forpls3 from PLOT 16
-pow5forpls3;
+pow5forpls3; % 288x160
 % (ALL states: 5freq x 32chan = 160 predictors x 288 trials)
 % -updated to use mynpls_pred function
 reg=[];ypred_fit=[];X_MC=[];Y_MC=[];
@@ -2760,7 +2816,7 @@ for Fac=1:10;
     % Cal AIC
     AIC(Fac)=log(ssEr)+2*(Fac);
 end
-figure;
+canvas(0.4, 0.3);
 subplot(2,1,1);
 plot(1:10,AIC,'.','MarkerSize',20);xlabel('nFac');ylabel('AIC');
 xlim([0 11]);
@@ -2769,8 +2825,10 @@ subplot(2,1,2);
 plot(1:10,R2s,'r.','MarkerSize',20);xlabel('nFac');ylabel('R^2');
 xlim([0 11]);
 subtitle('All states');
-sgtitle(['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> Xcorr(0) ^{ *PLOT 11-3}']);
 set(gcf,'color','w'); % set background white for copying in ubuntu
+% sgtitle({['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> Xcorr(0) ^{ *PLOT 11-2}'], char(datetime('now'))});
+sgtitle({['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> Xcorr(-1/+1) ^{ *PLOT 11-2}'], char(datetime('now'))});
+
 % Try cross validation (myxvalidation)
 % select the Fac with minimal AIC
 Fac=1
@@ -2782,24 +2840,28 @@ X=pow5forpls3;Y=BPint_xcorrSeries_LR;
 clear plsmodel
 % reshape from 160 x 1 back to 5 x 32 (freq x chan)
 plsmodel.weights=reshape(reg{Fac},5,32); 
-canvas(0.2,0.2)
+canvas(0.25,0.2)
 cmin=-0.02;cmax=0.02;
 imagesc(plsmodel.weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
 yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
 colormap('jet'); clim([cmin cmax]);
 set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
-title(['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: ...' ...
-    'sum-EEG(-500ms) -> Xcorr(0)  ^{* PLOT 11-3}']);
 set(gcf,'color','w'); % set background white for copying in ubuntu
+% title({['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: ' ...
+%     'sum-EEG(-500ms) -> Xcorr(0)  ^{* PLOT 11-2}'], char(datetime('now'))});
+title({['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: ' ...
+    'sum-EEG(-500ms) -> Xcorr(-1/+1)  ^{* PLOT 11-2}'], char(datetime('now'))});
+
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 72
 % trials)-updated to use mynpls_pred function
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 regs=[];AIC=nan(2,10);R2s=nan(4,10);ssERs=nan(4,10);
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
-    [reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(pow5forpls3(Inds4(:,c),:),BPint_xcorrSeries_LR(Inds4(:,c)));
+    [reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(pow5forpls3(Inds4_LR(:,c),:),BPint_xcorrSeries_LR(Inds4_LR(:,c)));
     regs{c}=reg;
+    ssOr=[];
     ssOr=sum(sum((Y_MC-mean(Y_MC)).^2))
     for Fac=1:10;
         R2=[];ssEr=[];
@@ -2811,7 +2873,7 @@ for c=1:4 % four states
         AIC(c,Fac)=log(ssEr)+2*(Fac);
     end
 end
-figure;
+canvas(0.4,0.4);
 for c=1:4
     subplot(2,4,c);
     plot(1:10,AIC(c,:),'.','MarkerSize',20);xlabel('nFac');ylabel('AIC');
@@ -2822,8 +2884,9 @@ for c=1:4
     ylim([10 110]);xlim([0 11]);
     subtitle(states4names{c},'Color',condicolors(c,:));
 end
-sgtitle(['AIC & R^2 for PLS model in all 4 statues: sum-EEG(-500ms) -> Xcorr(0) ^{ *PLOT 11-3}']);
 set(gcf,'color','w'); % set background white for copying in ubuntu
+% sgtitle({['AIC & R^2 for PLS model in all 4 statues: sum-EEG(-500ms) -> Xcorr(0) ^{ *PLOT 11-2}'], char(datetime('now'))});
+sgtitle({['AIC & R^2 for PLS model in all 4 statues: sum-EEG(-500ms) -> Xcorr(-1/+1) ^{ *PLOT 11-2}'], char(datetime('now'))});
 % Try cross validation (myxvalidation)
 % select the Fac with minimal AIC
 Fac=1
@@ -2831,7 +2894,7 @@ ssErs=[];R2s=[];
 % do the cross validation
 for c=1:4
     ssEr=[];R2=[];
-    X=pow5forpls3(Inds4(:,c),:);Y=BPint_xcorrSeries_LR(Inds4(:,c));
+    X=pow5forpls3(Inds4_LR(:,c),:);Y=BPint_xcorrSeries_LR(Inds4_LR(:,c));
     [ssEr,R2]  = myxvalidation(X,Y,Fac);
     ssErs(c)=ssEr;
     R2s(c)=R2;
@@ -2842,7 +2905,7 @@ for c=1:4
     plsmodel(c).weights=reshape(regs{c}{Fac},5,32); 
 end
 % Plot the 4 states
-canvas(0.4,0.4);
+canvas(0.35,0.4);
 cmin=-0.02;cmax=0.02;
 for c=1:4
     subplot(2,2,c);
@@ -2856,21 +2919,23 @@ for c=1:4
         'Color',condicolors(c,:));
     grid on;
 end
-sgtitle('PLS model: sum-EEG(-500ms) -> Xcorr(0) ^{* PLOT 11-3}')
 set(gcf,'color','w'); % set background white for copying in ubuntu
 colormap(hnc)
-% topoplot for uncouple and mutual
+% sgtitle({['PLS model: sum-EEG(-500ms) -> Xcorr(0) ^{* PLOT 11-2}'], char(datetime('now'))});
+sgtitle({['PLS model: sum-EEG(-500ms) -> Xcorr(-1/+1) ^{* PLOT 11-2}'],char(datetime('now'))});
+% topoplot for uncouple and mutual (now in 4 states)
 addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
 band5names={'Delta','Theta','Alpha','Beta','Gamma'};
 states2names={'Uncouple','Mutual'};
 states4names;
 % figure;
-canvas(0.3,0.4)
-c=[1 4];
-for s=1:2
+canvas(0.3,0.8)
+% c=[1 4];
+c=[1 2 3 4];
+for s=1:4 % 2
     for b=1:5
-        subplot(2,5,(s-1)*5+b)
+        subplot(4,5,(s-1)*5+b)
         topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');
         clim([cmin cmax]);
     end
@@ -2887,21 +2952,32 @@ h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
 h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.82 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
-v0=annotation('textbox',[0.1 0.2 0.05 0.03],'string',...
-    {[states4names{c(2)}], [' (R^2= ' num2str(round(R2s(c(2)),1)) ...
+v0=annotation('textbox',[0.1 0.15 0.05 0.03],'string',...
+    {[states4names{c(4)}], [' (R^2= ' num2str(round(R2s(c(4)),1)) ...
             '  Fac= ' num2str(Fac) ') ']}...
             ,'color',condicolors(4,:));
 set(v0,'Rotation',90);
-v3=annotation('textbox',[0.1 0.65 0.05 0.03],'string',...
+v1=annotation('textbox',[0.1 0.35 0.05 0.03],'string',...
+    {[states4names{c(3)}], [' (R^2= ' num2str(round(R2s(c(3)),1)) ...
+            '  Fac= ' num2str(Fac) ') ']} ...
+            ,'color',condicolors(3,:));
+set(v1,'Rotation',90);
+v2=annotation('textbox',[0.1 0.56 0.05 0.03],'string',...
+    {[states4names{c(2)}], [' (R^2= ' num2str(round(R2s(c(2)),1)) ...
+            '  Fac= ' num2str(Fac) ') ']} ...
+            ,'color',condicolors(2,:));
+set(v2,'Rotation',90);
+v3=annotation('textbox',[0.1 0.79 0.05 0.03],'string',...
     {[states4names{c(1)}], [' (R^2= ' num2str(round(R2s(c(1)),1)) ...
             '  Fac= ' num2str(Fac) ') ']} ...
             ,'color',condicolors(1,:));
 set(v3,'Rotation',90);
-sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
-    'PLS model: sum-EEG(-500ms) -> Xcorr(0) ^{* PLOT 11-3}')
-set([h0 h1 h2 h3 h4 v0 v3], 'fitboxtotext','on',...
+% sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
+%     {['PLS model: sum-EEG(-500ms) -> Xcorr(0) ^{* PLOT 11-2}'],char(datetime('now'))});
+sg=annotation('textbox',[0.3 0.03 0.4 0.03],'string',...
+    {['PLS model: sum-EEG(-500ms) -> Xcorr(-1/+1) ^{* PLOT 11-2}'],char(datetime('now'))});
+set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
-
 
 %% SECT 12 Compute EEG power (-/+ 500ms) 5 bands
 % clear
@@ -2936,8 +3012,7 @@ for s=1:numSes % each session
         end
     end
 end
-toc
-% about 2 min
+toc % about 2 min
 
 % EEG +500ms After the matched tap
 delta_LL=cell(numSes,12);theta_LL=cell(numSes,12);alpha_LL=cell(numSes,12);beta_LL=cell(numSes,12);gamma_LL=cell(numSes,12);
@@ -2963,8 +3038,7 @@ for s=1:numSes % each session
         end
     end
 end
-toc
-% about 2 min
+toc % about 2 min
 
 %% PLOT 13 corr of sum-EEG power (- 500ms) and H-int all sessions
 % organize EEG power
@@ -3003,12 +3077,18 @@ for c=1:32
     beta_R_chan(:,c)=reshape(beta_R_sum(:,:,c)',[],1);
     gamma_R_chan(:,c)=reshape(gamma_R_sum(:,:,c)',[],1);
 end
-% Combine L and R for 192 predictors in PLS
+% Combine L and R for 288 predictors in PLS
 delta_LR_chan=[delta_L_chan;delta_R_chan]; % (288 x 32)
 theta_LR_chan=[theta_L_chan;theta_R_chan];
 alpha_LR_chan=[alpha_L_chan;alpha_R_chan];
 beta_LR_chan=[beta_L_chan;beta_R_chan];
 gamma_LR_chan=[gamma_L_chan;gamma_R_chan];
+% fix the scale in the data (as in PLOT 16, now skiped in PLOT 16)
+delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); %organized in PLOT 13
+theta_LR_chan = theta_LR_chan./(ones(288,1)*std(theta_LR_chan));
+alpha_LR_chan = alpha_LR_chan./(ones(288,1)*std(alpha_LR_chan));
+beta_LR_chan = beta_LR_chan./(ones(288,1)*std(beta_LR_chan));
+gamma_LR_chan = gamma_LR_chan./(ones(288,1)*std(gamma_LR_chan));
 
 % Organize H_all for corr
 H_all; % (2xnumSesx12) for all sessions from SECT 10-1 (matched int)
@@ -3046,7 +3126,7 @@ subplot(5,2,4);topoplot(theta_R_H_R_corr,channels,'nosedir','+X');title('theta-R
 subplot(5,2,6);topoplot(alpha_R_H_R_corr,channels,'nosedir','+X');title('alpha-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(5,2,8);topoplot(beta_R_H_R_corr,channels,'nosedir','+X');title('beta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(5,2,10);topoplot(gamma_R_H_R_corr,channels,'nosedir','+X');title('gamma-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-sgtitle('corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}')
+sgtitle({['corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}'],char(datetime('now'))});
 
 % Combine L and R in correlation;
 for c=1:32
@@ -3064,7 +3144,7 @@ subplot(1,5,2);topoplot(theta_LR_H_LR_corr,channels,'nosedir','+X');title('theta
 subplot(1,5,3);topoplot(alpha_LR_H_LR_corr,channels,'nosedir','+X');title('alpha & H');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,4);topoplot(beta_LR_H_LR_corr,channels,'nosedir','+X');title('beta & H');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,5);topoplot(gamma_LR_H_LR_corr,channels,'nosedir','+X');title('gamma & H');colorbar;colormap('jet');clim([cmin cmax]);
-sgtitle('corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}')
+sgtitle({['corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}'],char(datetime('now'))});
 colormap(hnc)
 
 % Correlation in 4 states
@@ -3075,11 +3155,11 @@ beta_LR_H_LR_4corr=zeros(4,32);
 gamma_LR_H_LR_4corr=zeros(4,32);
 for s=1:4
     for c=1:32
-        delta_LR_H_LR_4corr(s,c)=corr(delta_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        theta_LR_H_LR_4corr(s,c)=corr(theta_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        alpha_LR_H_LR_4corr(s,c)=corr(alpha_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        beta_LR_H_LR_4corr(s,c)=corr(beta_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        gamma_LR_H_LR_4corr(s,c)=corr(gamma_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        delta_LR_H_LR_4corr(s,c)=corr(delta_LR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        theta_LR_H_LR_4corr(s,c)=corr(theta_LR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        alpha_LR_H_LR_4corr(s,c)=corr(alpha_LR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        beta_LR_H_LR_4corr(s,c)=corr(beta_LR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        gamma_LR_H_LR_4corr(s,c)=corr(gamma_LR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
     end
 end
 % Combine L and R in 4 states(4x5)
@@ -3141,7 +3221,7 @@ v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','leading','color',condico
 v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','uncouple','color',condicolors(1,:))
 set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
-    'Correlation of sum-EEG (-500ms) and H-int ^{* PLOT 13}')
+    {['Correlation of sum-EEG (-500ms) and H-int ^{* PLOT 13}'],,char(datetime('now'))});
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
 set(gcf,'color','w'); % set background white for copying in ubuntu
@@ -3225,7 +3305,7 @@ subplot(5,2,4);topoplot(theta_RR_H_R_corr,channels,'nosedir','+X');title('theta-
 subplot(5,2,6);topoplot(alpha_RR_H_R_corr,channels,'nosedir','+X');title('alpha-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(5,2,8);topoplot(beta_RR_H_R_corr,channels,'nosedir','+X');title('beta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(5,2,10);topoplot(gamma_RR_H_R_corr,channels,'nosedir','+X');title('gamma-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-sgtitle('corr of sum-EEG (+500ms) and H-int')
+sgtitle({['corr of sum-EEG (+500ms) and H-int'],char(datetime('now'))});
 
 % Combine L and R in correlation;
 for c=1:32
@@ -3243,7 +3323,7 @@ subplot(1,5,2);topoplot(theta_LLRR_H_LR_corr,channels,'nosedir','+X');title('the
 subplot(1,5,3);topoplot(alpha_LLRR_H_LR_corr,channels,'nosedir','+X');title('alpha & H');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,4);topoplot(beta_LLRR_H_LR_corr,channels,'nosedir','+X');title('beta & H');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,5);topoplot(gamma_LLRR_H_LR_corr,channels,'nosedir','+X');title('gamma & H');colorbar;colormap('jet');clim([cmin cmax]);
-sgtitle('corr of sum-EEG (+500ms) and H-int ^{* PLOT 13-1}')
+sgtitle({['corr of sum-EEG (+500ms) and H-int ^{* PLOT 13-1}'],char(datetime('now'))});
 colormap(hnc)
 
 % Correlation in 4 states
@@ -3254,11 +3334,11 @@ beta_LLRR_H_LR_4corr=zeros(4,32);
 gamma_LLRR_H_LR_4corr=zeros(4,32);
 for s=1:4
     for c=1:32
-        delta_LLRR_H_LR_4corr(s,c)=corr(delta_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        theta_LLRR_H_LR_4corr(s,c)=corr(theta_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        alpha_LLRR_H_LR_4corr(s,c)=corr(alpha_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        beta_LLRR_H_LR_4corr(s,c)=corr(beta_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        gamma_LLRR_H_LR_4corr(s,c)=corr(gamma_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        delta_LLRR_H_LR_4corr(s,c)=corr(delta_LLRR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        theta_LLRR_H_LR_4corr(s,c)=corr(theta_LLRR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        alpha_LLRR_H_LR_4corr(s,c)=corr(alpha_LLRR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        beta_LLRR_H_LR_4corr(s,c)=corr(beta_LLRR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        gamma_LLRR_H_LR_4corr(s,c)=corr(gamma_LLRR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
     end
 end
 % Combine L and R in 4 states(4x5)
@@ -3286,7 +3366,7 @@ for s=1:4
     title([states4names{s} ': gamma & H'],'Color',condicolors(s,:));
     colorbar;colormap('jet');clim([cmin cmax]);
 end
-sgtitle('4states: Corr of sum-EEG (+500ms) and H-int')
+sgtitle({['4states: Corr of sum-EEG (+500ms) and H-int'],char(datetime('now'))});
 colormap(hnc)
 
 %% PLOT 14 Compute H-EEG (- 500ms) all sessions & 4 states
@@ -3346,7 +3426,7 @@ subplot(1,5,2);topoplot(mean(H_theta_LR_chan),channels,'nosedir','+X');title('H-
 subplot(1,5,3);topoplot(mean(H_alpha_LR_chan),channels,'nosedir','+X');title('H-alpha');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,4);topoplot(mean(H_beta_LR_chan),channels,'nosedir','+X');title('H-beta');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,5);topoplot(mean(H_gamma_LR_chan),channels,'nosedir','+X');title('H-gamma');colorbar;colormap('jet');clim([cmin cmax]);
-sgtitle('mean H-EEG (- 500ms) ^{* PLOT 14}')
+sgtitle({['mean H-EEG (- 500ms) ^{* PLOT 14}'],char(datetime('now'))});
 colormap(hnc)
 % only H-EEG of beta and gamma show complexity (H>0.5)
 
@@ -3356,27 +3436,27 @@ canvas(0.5,0.5);
 cmin=0.3;cmax=0.7;
 for c=1:4
 subplot(4,5,(c-1)*5+1);
-topoplot(mean(H_delta_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_delta_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
 title(['H-delta ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+2);
-topoplot(mean(H_theta_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_theta_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
 title(['H-theta ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+3);
-topoplot(mean(H_alpha_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_alpha_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
 title(['H-alpha ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+4);
-topoplot(mean(H_beta_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_beta_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
 title(['H-beta ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+5);
-topoplot(mean(H_gamma_LR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_gamma_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
 title(['H-gamma ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 end
-sgtitle('mean H-EEG (- 500ms) for each condition ^{* PLOT 14}');
+sgtitle({['mean H-EEG (- 500ms) for each condition ^{* PLOT 14}'],char(datetime('now'))});
 colormap(hnc)
 % only H-EEG of beta and gamma show complexity (H>0.5)
 
@@ -3437,7 +3517,7 @@ subplot(1,5,2);topoplot(mean(H_theta_LLRR_chan),channels,'nosedir','+X');title('
 subplot(1,5,3);topoplot(mean(H_alpha_LLRR_chan),channels,'nosedir','+X');title('H-alpha');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,4);topoplot(mean(H_beta_LLRR_chan),channels,'nosedir','+X');title('H-beta');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,5);topoplot(mean(H_gamma_LLRR_chan),channels,'nosedir','+X');title('H-gamma');colorbar;colormap('jet');clim([cmin cmax]);
-sgtitle('mean H-EEG (+ 500ms) ^{* PLOT 14-1}')
+sgtitle({['mean H-EEG (+ 500ms) ^{* PLOT 14-1}'],char(datetime('now'))});
 colormap(hnc)
 % only H-EEG of beta and gamma show complexity (H>0.5)
 
@@ -3447,27 +3527,27 @@ canvas(0.5,0.5);
 cmin=0.3;cmax=0.7;
 for c=1:4
 subplot(4,5,(c-1)*5+1);
-topoplot(mean(H_delta_LLRR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_delta_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
 title(['H-delta ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+2);
-topoplot(mean(H_theta_LLRR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_theta_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
 title(['H-theta ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+3);
-topoplot(mean(H_alpha_LLRR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_alpha_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
 title(['H-alpha ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+4);
-topoplot(mean(H_beta_LLRR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_beta_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
 title(['H-beta ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+5);
-topoplot(mean(H_gamma_LLRR_chan(Inds4(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_gamma_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
 title(['H-gamma ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 end
-sgtitle('mean H-EEG (+ 500ms) for each condition ^{* PLOT 14-1}');
+sgtitle({['mean H-EEG (+ 500ms) for each condition ^{* PLOT 14-1}'],char(datetime('now'))});
 colormap(hnc)
 % only H-EEG of beta and gamma show complexity (H>0.5)
 
@@ -3495,7 +3575,7 @@ subplot(1,5,4);topoplot(H_beta_LR_H_LR_corr,channels,'nosedir','+X');
 title('H-beta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,5);topoplot(H_gamma_LR_H_LR_corr,channels,'nosedir','+X');
 title('H-gamma & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-sgtitle('corr of H-EEG (- 500ms) and H-interval ^{* PLOT 15}')
+sgtitle({['corr of H-EEG (- 500ms) and H-interval ^{* PLOT 15}'],char(datetime('now'))});
 colormap(hnc)
 
 % Compute correlation between H-pow and H-interval in 4 states
@@ -3506,11 +3586,11 @@ H_beta_LR_H_LR_corr4=zeros(4,32);
 H_gamma_LR_H_LR_corr4=zeros(4,32);
 for s=1:4
     for c=1:32
-        H_delta_LR_H_LR_corr4(s,c)=corr(H_delta_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        H_theta_LR_H_LR_corr4(s,c)=corr(H_theta_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        H_alpha_LR_H_LR_corr4(s,c)=corr(H_alpha_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        H_beta_LR_H_LR_corr4(s,c)=corr(H_beta_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        H_gamma_LR_H_LR_corr4(s,c)=corr(H_gamma_LR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        H_delta_LR_H_LR_corr4(s,c)=corr(H_delta_LR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        H_theta_LR_H_LR_corr4(s,c)=corr(H_theta_LR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        H_alpha_LR_H_LR_corr4(s,c)=corr(H_alpha_LR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        H_beta_LR_H_LR_corr4(s,c)=corr(H_beta_LR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        H_gamma_LR_H_LR_corr4(s,c)=corr(H_gamma_LR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
     end
 end
 % Combine L and R in 4 states (4x5)
@@ -3538,7 +3618,7 @@ topoplot(H_gamma_LR_H_LR_corr4(s,:),channels,'nosedir','+X');
 title(['H-gamma ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 end
-sgtitle('corr of H-EEG (- 500ms) and H-interval in 4 states ^{* PLOT 15}')
+sgtitle({['corr of H-EEG (- 500ms) and H-interval in 4 states ^{* PLOT 15}'],char(datetime('now'))});
 colormap(hnc)
 %% PLOT 15-1 corr of H-EEG (+ 500ms) and H-intall sessions & 4 states
 % Do the correlation between H-pow and H-interval
@@ -3564,7 +3644,7 @@ subplot(1,5,4);topoplot(H_beta_LLRR_H_LR_corr,channels,'nosedir','+X');
 title('H-beta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,5);topoplot(H_gamma_LLRR_H_LR_corr,channels,'nosedir','+X');
 title('H-gamma & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-sgtitle('corr of H-EEG (+ 500ms) and H-interval  ^{* PLOT 15-1}')
+sgtitle({['corr of H-EEG (+ 500ms) and H-interval  ^{* PLOT 15-1}'],char(datetime('now'))});
 colormap(hnc)
 
 % Compute correlation between H-pow and H-interval in 4 states
@@ -3575,11 +3655,11 @@ H_beta_LLRR_H_LR_corr4=zeros(4,32);
 H_gamma_LLRR_H_LR_corr4=zeros(4,32);
 for s=1:4
     for c=1:32
-        H_delta_LLRR_H_LR_corr4(s,c)=corr(H_delta_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        H_theta_LLRR_H_LR_corr4(s,c)=corr(H_theta_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        H_alpha_LLRR_H_LR_corr4(s,c)=corr(H_alpha_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        H_beta_LLRR_H_LR_corr4(s,c)=corr(H_beta_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
-        H_gamma_LLRR_H_LR_corr4(s,c)=corr(H_gamma_LLRR_chan(Inds4(:,s),c),H_all_LR(Inds4(:,s)));
+        H_delta_LLRR_H_LR_corr4(s,c)=corr(H_delta_LLRR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        H_theta_LLRR_H_LR_corr4(s,c)=corr(H_theta_LLRR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        H_alpha_LLRR_H_LR_corr4(s,c)=corr(H_alpha_LLRR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        H_beta_LLRR_H_LR_corr4(s,c)=corr(H_beta_LLRR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
+        H_gamma_LLRR_H_LR_corr4(s,c)=corr(H_gamma_LLRR_chan(Inds4_LR(:,s),c),H_all_LR(Inds4_LR(:,s)));
     end
 end
 % Combine L and R in 4 states (4x5)
@@ -3607,7 +3687,7 @@ topoplot(H_gamma_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X');
 title(['H-gamma ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 end
-sgtitle('corr of H-EEG (+ 500ms) and H-interval in 4 states  ^{* PLOT 15-1}')
+sgtitle({['corr of H-EEG (+ 500ms) and H-interval in 4 states  ^{* PLOT 15-1}'],char(datetime('now'))});
 colormap(hnc)
 
 %% PLOT 16 PLS regression (sum-EEG -> H-int)
@@ -3624,12 +3704,12 @@ colormap(hnc)
 % sum-EEG -> H-int
 % Power
 pow5forpls=[];pow5forpls2=[];pow5forpls3=[];
-% fix the scale in the data
-delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); %organized in PLOT 13
-theta_LR_chan = theta_LR_chan./(ones(288,1)*std(theta_LR_chan));
-alpha_LR_chan = alpha_LR_chan./(ones(288,1)*std(alpha_LR_chan));
-beta_LR_chan = beta_LR_chan./(ones(288,1)*std(beta_LR_chan));
-gamma_LR_chan = gamma_LR_chan./(ones(288,1)*std(gamma_LR_chan));
+% % fix the scale in the data (% already fixed in PLOT 13)
+% delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); %organized in PLOT 13
+% theta_LR_chan = theta_LR_chan./(ones(288,1)*std(theta_LR_chan));
+% alpha_LR_chan = alpha_LR_chan./(ones(288,1)*std(alpha_LR_chan));
+% beta_LR_chan = beta_LR_chan./(ones(288,1)*std(beta_LR_chan));
+% gamma_LR_chan = gamma_LR_chan./(ones(288,1)*std(gamma_LR_chan));
 % arrage the band powers in "trials x chan x freq" (288 x 32 x 5)
 pow5forpls=cat(3,delta_LR_chan,theta_LR_chan,alpha_LR_chan,beta_LR_chan,gamma_LR_chan);
 % then switch dismenstion to "freq x chan x trials" (5 x 32 x 288)
@@ -3670,7 +3750,7 @@ subplot(2,1,2);
 plot(1:10,R2s,'r.','MarkerSize',20);xlabel('nFac');ylabel('R^2');
 xlim([0 11]);
 subtitle('All states');
-sgtitle(['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> H-int^{ *PLOT16}']);
+sgtitle({['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> H-int^{ *PLOT16}'],char(datetime('now'))});
 % Try cross validation (myxvalidation)
 % select the Fac with minimal AIC
 Fac=1
@@ -3689,7 +3769,7 @@ yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
 colormap('jet'); clim([cmin cmax]);
 set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
-title(['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: sum-EEG(-500ms) -> H-int  ^{* PLOT 16}']);
+title({['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: sum-EEG(-500ms) -> H-int  ^{* PLOT 16}'],char(datetime('now'))});
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
 
@@ -3699,7 +3779,7 @@ cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 regs=[];AIC=nan(2,10);R2s=nan(4,10);ssERs=nan(4,10);
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
-    [reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(pow5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)));
+    [reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(pow5forpls3(Inds4_LR(:,c),:),H_all_LR(Inds4_LR(:,c)));
     regs{c}=reg;
     ssOr=sum(sum((Y_MC-mean(Y_MC)).^2))
     for Fac=1:10;
@@ -3723,7 +3803,7 @@ for c=1:4
     ylim([10 110]);xlim([0 11]);
     subtitle(states4names{c},'Color',condicolors(c,:));
 end
-sgtitle(['AIC & R^2 for PLS model in all 4 statues: sum-EEG(-500ms) -> H-int^{ *PLOT16}']);
+sgtitle({['AIC & R^2 for PLS model in all 4 statues: sum-EEG(-500ms) -> H-int^{ *PLOT16}'],char(datetime('now'))});
 
 % Try cross validation (myxvalidation)
 % select the Fac with minimal AIC
@@ -3732,7 +3812,7 @@ ssErs=[];R2s=[];
 % do the cross validation
 for c=1:4
     ssEr=[];R2=[];
-    X=pow5forpls3(Inds4(:,c),:);Y=H_all_LR(Inds4(:,c));
+    X=pow5forpls3(Inds4_LR(:,c),:);Y=H_all_LR(Inds4_LR(:,c));
     [ssEr,R2]  = myxvalidation(X,Y,Fac);
     ssErs(c)=ssEr;
     R2s(c)=R2;
@@ -3757,7 +3837,7 @@ for c=1:4
         'Color',condicolors(c,:));
     grid on;
 end
-sgtitle('PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}')
+sgtitle({['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'],char(datetime('now'))});
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
 % topoplot for uncouple and mutual
@@ -3813,7 +3893,7 @@ set([h0 h1 h2 h3 h4 v0 v3], 'fitboxtotext','on',...
 % 3 states - combine uncouple state and leading state and call it "independent"
 % cannot combine, subject can distinguish between uncouple and leading
 states3names={'Independent','Following','Mutual'}; 
-Inds3={[Inds4(:,1);Inds4(:,2)],Inds4(:,3),Inds4(:,4)};
+Inds3={[Inds4_LR(:,1);Inds4_LR(:,2)],Inds4_LR(:,3),Inds4_LR(:,4)};
 canvas(0.6,0.2);
 cmin=-8e-3;cmax=8e-3;
 for c=1:3 % four states
@@ -3832,7 +3912,7 @@ for c=1:3 % four states
     title([states3names{c} ': PLS model (R2= ' num2str(round(R2,1)) ')'],'Color',condicolors(c,:));
     grid on;
 end
-sgtitle('PLS model: sum-EEG(-500ms) -> H-int')
+sgtitle({['PLS model: sum-EEG(-500ms) -> H-int'],char(datetime('now'))});
 
 %% PLOT 16-1 PLS regression (H-EEG -> H-int)
 % H-EEG -> H-int
@@ -3876,7 +3956,7 @@ subplot(2,1,2);
 plot(1:10,R2s,'r.','MarkerSize',20);xlabel('nFac');ylabel('R^2');
 xlim([0 11]);
 subtitle('All states');
-sgtitle(['AIC & R^2 for PLS model in all statues: H-EEG(-500ms) -> H-int^{ *PLOT16-1}']);
+sgtitle({['AIC & R^2 for PLS model in all statues: H-EEG(-500ms) -> H-int^{ *PLOT16-1}'],,char(datetime('now'))});
 % Try cross validation (myxvalidation)
 % select the Fac with minimal AIC
 Fac=1
@@ -3895,7 +3975,7 @@ yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
 colormap('jet'); clim([cmin cmax]);
 set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
-title(['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: H-EEG(-500ms) -> H-int  ^{* PLOT 16-1}']);
+title({['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: H-EEG(-500ms) -> H-int  ^{* PLOT 16-1}'],char(datetime('now'))});
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48 trials)
@@ -3904,7 +3984,7 @@ cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 regs=[];AIC=nan(2,10);R2s=nan(4,10);ssERs=nan(4,10);
 for c=1:4 % four states
     reg=[];ypred=[];ypred_fit=[];
-    [reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(H5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)));
+    [reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(H5forpls3(Inds4_LR(:,c),:),H_all_LR(Inds4_LR(:,c)));
     regs{c}=reg;
     ssOr=sum(sum((Y_MC-mean(Y_MC)).^2))
     for Fac=1:10;
@@ -3928,7 +4008,7 @@ for c=1:4
     ylim([10 110]);xlim([0 11]);
     subtitle(states4names{c},'Color',condicolors(c,:));
 end
-sgtitle(['AIC & R^2 for PLS model in all 4 statues: H-EEG(-500ms) -> H-int ^{ *PLOT16-1}']);
+sgtitle({['AIC & R^2 for PLS model in all 4 statues: H-EEG(-500ms) -> H-int ^{ *PLOT16-1}'],char(datetime('now'))});
 % Try cross validation (myxvalidation)
 % select the Fac with minimal AIC
 Fac=1;
@@ -3936,7 +4016,7 @@ ssErs=[];R2s=[];
 % do the cross validation
 for c=1:4
     ssEr=[];R2=[];
-    X=H5forpls3(Inds4(:,c),:);Y=H_all_LR(Inds4(:,c));
+    X=H5forpls3(Inds4_LR(:,c),:);Y=H_all_LR(Inds4_LR(:,c));
     [ssEr,R2]  = myxvalidation(X,Y,Fac);
     ssErs(c)=ssEr;
     R2s(c)=R2;
@@ -3961,7 +4041,7 @@ for c=1:4
         'Color',condicolors(c,:));
     grid on;
 end
-sgtitle('PLS model: H-EEG(-500ms) -> H-int ^{* PLOT 16-1}')
+sgtitle({['PLS model: H-EEG(-500ms) -> H-int ^{* PLOT 16-1}'],char(datetime('now'))});
 set(gcf,'color','w'); % set background white for copying in ubuntu
 % topoplot for uncouple and mutual
 addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
@@ -3979,7 +4059,7 @@ for s=1:2
         clim([cmin cmax]);
         if b==3;title({['PLS model: H-EEG(-500ms) -> H-int ^{* PLOT 16-1}'], ...
                 [states4names{c(s)} '(R2= ' num2str(round(R2s(c(s)),1)) ...
-            '  Fac= ' num2str(Fac) ') ']},'Color',condicolors(c(s),:));end
+            '  Fac= ' num2str(Fac) ') '],char(datetime('now'))},'Color',condicolors(c(s),:));end
         subtitle(band5names(b));
     end
 end
@@ -3989,7 +4069,7 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 % 3 states - combine uncouple state and leading state and call it "independent"
 % cannot combine, subject can distinguish between uncouple and leading
 states3names={'independent','following','mutual'};
-Inds3={[Inds4(:,1);Inds4(:,2)],Inds4(:,3),Inds4(:,4)};
+Inds3={[Inds4_LR(:,1);Inds4_LR(:,2)],Inds4_LR(:,3),Inds4_LR(:,4)};
 canvas(0.6,0.2);
 cmin=-0.15;cmax=0.15;
 for c=1:3 % three states
@@ -4007,7 +4087,7 @@ for c=1:3 % three states
     title([states3names{c} ': PLS model (R2= ' num2str(round(R2,1)) ')'],'Color',condicolors(c,:));
     grid on;
 end
-sgtitle('PLS model: H-EEG(-500ms) -> H-int')
+sgtitle({['PLS model: H-EEG(-500ms) -> H-int'],char(datetime('now'))});
 
 %% PLOT 17 Lasso (sum-EEG(-500ms)-> H-int)
 % https://www.mathworks.com/help/stats/lassoglm.html
@@ -4045,7 +4125,7 @@ yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
 set(gca, 'YDir','normal');
 colormap('jet'); clim([cmin cmax]);
 xticks([1:32]);xticklabels([labels]);xtickangle(90);
-title('Lassoglm in all 4 statues: sum-EEG(-500ms) -> H-int');
+title({['Lassoglm in all 4 statues: sum-EEG(-500ms) -> H-int'],char(datetime('now'))});
 subtitle(['coefficients for the ' num2str(Lambda_select) 'th Lambda value' ...
     ' (Deviance=' num2str(round(FitInfo.Deviance(Lambda_select),1)) ')']);
 grid on;
@@ -4055,7 +4135,7 @@ canvas(0.4,0.4);
 cmin=-8e-2;cmax=8e-2;
 for c=1:4 % three states
     clear B FitInfo idxLambdaMinDeviance idxLambda1SE Lambda_coef
-    [B,FitInfo]  = lassoglm(pow5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)),'normal','CV',5);%normal or gamma
+    [B,FitInfo]  = lassoglm(pow5forpls3(Inds4_LR(:,c),:),H_all_LR(Inds4_LR(:,c)),'normal','CV',5);%normal or gamma
     % locate the point with minimum cross-validation error plus one standard deviation
     idxLambda1SE = FitInfo.Index1SE;
     min1coefs = find(B(:,idxLambda1SE));
@@ -4080,11 +4160,11 @@ for c=1:4 % three states
          '(Deviance=' num2str(round(FitInfo.Deviance(Lambda_select),1)) ')']);
     grid on;
 end
-sgtitle('Lassoglm: sum-EEG(-500ms) -> H-int')
+sgtitle({['Lassoglm: sum-EEG(-500ms) -> H-int'],char(datetime('now'))});
 
 % 3 states - combine uncouple state and leading state and call it "independent"
-states3names={'independent','following','mutual'};
-Inds3={[Inds4(:,1);Inds4(:,2)],Inds4(:,3),Inds4(:,4)};
+states3names={'Independent','Following','Mutual'};
+Inds3={[Inds4_LR(:,1);Inds4_LR(:,2)],Inds4_LR(:,3),Inds4_LR(:,4)};
 canvas(0.6,0.2);
 cmin=-8e-2;cmax=8e-2;
 for c=1:3 % three states
@@ -4114,7 +4194,7 @@ for c=1:3 % three states
          '(Deviance=' num2str(round(FitInfo.Deviance(Lambda_select),1)) ')']);
     grid on;
 end
-sgtitle('Lassoglm: sum-EEG(-500ms) -> H-int')
+sgtitle({['Lassoglm: sum-EEG(-500ms) -> H-int'],char(datetime('now'))});
 
 %% PLOT 17-1 Lasso (H-EEG(-500ms) -> H-int)
 % H-EEG -> H-int
@@ -4145,7 +4225,7 @@ yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
 set(gca, 'YDir','normal');
 colormap('jet'); clim([cmin cmax]);
 xticks([1:32]);xticklabels([labels]);xtickangle(90);
-title('Lassoglm results in all 4 statues: H-EEG(-500ms) -> H-int');
+title({['Lassoglm results in all 4 statues: H-EEG(-500ms) -> H-int'],char(datetime('now'))});
 subtitle(['coefficients for the ' num2str(Lambda_select) 'th Lambda value' ...
     ' (Deviance=' num2str(round(FitInfo.Deviance(Lambda_select),1)) ')']);
 % subtitle(['the coefficients for the ' num2str(max(idxLambda1SE)) 'th Lambda value']);
@@ -4156,7 +4236,7 @@ canvas(0.4,0.4);
 cmin=-8e-2;cmax=8e-2;
 for c=1:4 % three states
     clear B FitInfo idxLambdaMinDeviance idxLambda1SE Lambda_coef
-    [B,FitInfo]  = lassoglm(H5forpls3(Inds4(:,c),:),H_all_LR(Inds4(:,c)),'normal','CV',5);%normal or gamma
+    [B,FitInfo]  = lassoglm(H5forpls3(Inds4_LR(:,c),:),H_all_LR(Inds4_LR(:,c)),'normal','CV',5);%normal or gamma
     % locate the point with minimum cross-validation error plus one standard deviation
     idxLambda1SE = FitInfo.Index1SE;
     min1coefs = find(B(:,idxLambda1SE));
@@ -4181,11 +4261,11 @@ for c=1:4 % three states
          '(Deviance=' num2str(round(FitInfo.Deviance(Lambda_select),1)) ')']);
     grid on;
 end
-sgtitle('Lassoglm: H-EEG(-500ms) -> H-int')
+sgtitle({['Lassoglm: H-EEG(-500ms) -> H-int'],char(datetime('now'))});
 
 % 3 states - combine uncouple state and leading state and call it "independent"
 states3names={'independent','following','mutual'};
-Inds3={[Inds4(:,1);Inds4(:,2)],Inds4(:,3),Inds4(:,4)};
+Inds3={[Inds4_LR(:,1);Inds4_LR(:,2)],Inds4_LR(:,3),Inds4_LR(:,4)};
 canvas(0.6,0.2);
 cmin=-8e-2;cmax=8e-2;
 for c=1:3 % four states
@@ -4213,7 +4293,7 @@ for c=1:3 % four states
     subtitle(['coefficients of ' num2str(Lambda_select) 'th Lambda']);
     grid on;
 end
-sgtitle('Lassoglm: H-EEG(-500ms) -> H-int')
+sgtitle({['Lassoglm: H-EEG(-500ms) -> H-int'],char(datetime('now'))});
 
 %% SECT 18 Xcorr (original order)
 clear XcorrPeakLag XcorrPeak
@@ -4256,7 +4336,20 @@ XcorrPeakLag_all=reshape(XcorrPeakLag',[],1); % 96x1 (each element from one bloc
 % then republicate the the vector for the Left and right
 XcorrPeakLag_all_LR=[XcorrPeakLag_all;XcorrPeakLag_all];
 
-%% PLOT 18-1 PLS regression (sum-EEG -> XcorrPeak / XcorrPeakLag)
+% Organize 
+Xcorr10Lag; % 12 numses x 12 blocks x 21 lags % from SECT 9 (matched int. sorted order)
+% Just for examing them
+% We need original order for PLS 
+% % Organized in the same order as H_all_LR as in PLOT13 
+% Xcorr_L1=Xcorr10Lag(:,:,10);
+% Xcorr_R1=Xcorr10Lag(:,:,12);
+% % squeeze into 1 vector from the 144 blocks for each subject, for corr with pow in each chan
+% Xcorr_L1=reshape(Xcorr_L1',[],1);% 144x1 (each element from one block in time sequence) 
+% Xcorr_R1=reshape(Xcorr_R1',[],1);
+% Xcorr_L1R1=[Xcorr_L1; Xcorr_R1]; 
+% % We need original order for PLS
+
+%% PLOT 18-1 PLS (sum-EEG -> XcorrPeak / XcorrPeakLag / Xcorr(0)/ Xcorr(-1/+1))
 % sum-EEG Power from PLOT 16
 % pow5forpls3; % 192 blocks x160 elements extracted colums-wise
 % (colums: delta chan1, theta chan 1, alpha chan1, beta chan1, gamma chan1, delta chan2...)
@@ -4322,8 +4415,8 @@ set(gca, 'YDir','normal');
 colormap('jet'); 
 clim([cmin cmax]);
 xticks([1:64]);xticklabels([labelsL labelsR]);xtickangle(90);grid on;
-title(['PLS model (R2= ' num2str(round(R2,1)) ') in all 4 statues: sum-EEG(-500ms) -> '...
-XcorrPeakmat2names{depen_select} ' ^{* PLOT 18-1}']);
+title({['PLS model (R2= ' num2str(round(R2,1)) ') in all 4 statues: sum-EEG(-500ms) -> '...
+XcorrPeakmat2names{depen_select} ' ^{* PLOT 18-1}'],char(datetime('now'))});
 
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48 trials)
 % similar code as in PLOT 16
@@ -4334,7 +4427,7 @@ cmin=-0.07;cmax=0.07;
 Fac=1;
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
-    [R2,reg,ypred] = npls_pred(Band5_LR_chan64_3(Inds4(1:24,c),:),XcorrPeakmat2(Inds4(1:24,c),depen_select),Fac);
+    [R2,reg,ypred] = npls_pred(Band5_LR_chan64_3(Inds4_LR(1:24,c),:),XcorrPeakmat2(Inds4_LR(1:24,c),depen_select),Fac);
     plsmodel(c).weights=reshape(reg{Fac},5,64); 
     plsmodel(c).R2 = R2;
     plsmodel(c).ypred = ypred;
@@ -4348,7 +4441,7 @@ for c=1:4 % four states
         'Color',condicolors(c,:));
     grid on;
 end
-sgtitle(['PLS model: sum-EEG(-500ms) ->' XcorrPeakmat2names{depen_select} ' ^{* PLOT 18-1}'])
+sgtitle({['PLS model: sum-EEG(-500ms) ->' XcorrPeakmat2names{depen_select} ' ^{* PLOT 18-1}'],char(datetime('now'))});
 % topoplot for uncouple and mutual
 addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
@@ -4499,8 +4592,8 @@ for syn=1:2
         ylim([0 6]);
     end
 end
-sgtitle('GC: arfit (concatenate data)')
-sgtitle('GC: arfit (permuted concatenate data)')
+sgtitle({['GC: arfit (concatenate data)'],char(datetime('now'))});
+sgtitle({['GC: arfit (permuted concatenate data)',char(datetime('now'))});
 
 % organize into time x 2 L/R matrix then apply MVGC and plot
 Fs=cell(2,4);
@@ -4594,7 +4687,7 @@ ylim([0 ymax]);% xlim([0.25 1.75]);
 % sgtitle('GC: var-to-autocov (concatenate data)')
 % sgtitle('GC: var-to-autocov (permuted concatenate data)')
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
-    'MVGC (concatenate data) H-int ^{* SECT 21}')
+    {['MVGC (concatenate data) H-int ^{* SECT 21}'],char(datetime('now'))});
 
 % 3 subplots combined as one 
 for collapse=1;
@@ -4663,7 +4756,7 @@ for condi=4
     Ps(4)=pval(2,1);
 end
 % 3 subplots 
-for plot=1
+for subplot3=1
 ymax=0.04;
 canvas(0.5, 0.4);
 tiledlayout(1,3);
@@ -4690,7 +4783,7 @@ text(1-0.2, Fs(4)+0.005, sprintf('p=%.2f',Ps(4)),'Color',[1 0 0]);
 % sgtitle('GC: var-to-autocov (concatenate data)')
 % sgtitle('GC: var-to-autocov (permuted concatenate data)')
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
-    'MVGC (concatenate data) H-int ^{* SECT 21}')
+    {['MVGC (concatenate data) H-int ^{* SECT 21}'],char(datetime('now'))});
 end
 
 %% PLOT 21 EEG (-500ms) -> GC (MVGC): -Corr -PLS
@@ -4783,7 +4876,7 @@ Fs_LR=[Fs_L;Fs_R]; % to be used for corr and PLS
 %     gamma_R_F_R_corr(c)=corr(gamma_R_chan(:,c),Fs_R);
 % end
 % indices for 4 states from PLOT 10-1
-Inds4;
+Inds4_LR;
 % fix the scale in the data (as in PLOT 16)
 delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); %organized in PLOT 13
 theta_LR_chan = theta_LR_chan./(ones(288,1)*std(theta_LR_chan));
@@ -4798,11 +4891,11 @@ beta_LR_F_LR_4corr=zeros(4,32);
 gamma_LR_F_LR_4corr=zeros(4,32);
 for s=1:4
     for c=1:32
-        delta_LR_F_LR_4corr(s,c)=corr(delta_LR_chan(Inds4(:,s),c),Fs_LR(Inds4(:,s)));
-        theta_LR_F_LR_4corr(s,c)=corr(theta_LR_chan(Inds4(:,s),c),Fs_LR(Inds4(:,s)));
-        alpha_LR_F_LR_4corr(s,c)=corr(alpha_LR_chan(Inds4(:,s),c),Fs_LR(Inds4(:,s)));
-        beta_LR_F_LR_4corr(s,c)=corr(beta_LR_chan(Inds4(:,s),c),Fs_LR(Inds4(:,s)));
-        gamma_LR_F_LR_4corr(s,c)=corr(gamma_LR_chan(Inds4(:,s),c),Fs_LR(Inds4(:,s)));
+        delta_LR_F_LR_4corr(s,c)=corr(delta_LR_chan(Inds4_LR(:,s),c),Fs_LR(Inds4_LR(:,s)));
+        theta_LR_F_LR_4corr(s,c)=corr(theta_LR_chan(Inds4_LR(:,s),c),Fs_LR(Inds4_LR(:,s)));
+        alpha_LR_F_LR_4corr(s,c)=corr(alpha_LR_chan(Inds4_LR(:,s),c),Fs_LR(Inds4_LR(:,s)));
+        beta_LR_F_LR_4corr(s,c)=corr(beta_LR_chan(Inds4_LR(:,s),c),Fs_LR(Inds4_LR(:,s)));
+        gamma_LR_F_LR_4corr(s,c)=corr(gamma_LR_chan(Inds4_LR(:,s),c),Fs_LR(Inds4_LR(:,s)));
     end
 end
 % Combine L and R in 4 states(4x5)
@@ -4843,7 +4936,7 @@ v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','Leading','color',condico
 v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','Uncouple','color',condicolors(1,:))
 set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
-    'Correlation of sum-EEG (-500ms) and GC ^{* PLOT 21}')
+    {['Correlation of sum-EEG (-500ms) and GC ^{* PLOT 21}'],char(datetime('now'))});
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
 set(gcf,'color','w'); % set background white for copying in ubuntu
@@ -4879,7 +4972,7 @@ subplot(2,1,2);
 plot(1:10,R2s,'r.','MarkerSize',20);xlabel('nFac');ylabel('R^2');
 xlim([0 11]);
 subtitle('All states');
-sgtitle(['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> GC ^{ *PLOT 21}']);
+sgtitle({['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> GC ^{ *PLOT 21}'],char(datetime('now'))});
 set(gcf,'color','w'); % set background white for copying in ubuntu
 % Try cross validation (myxvalidation)
 % select the Fac with minimal AIC
@@ -4899,8 +4992,8 @@ yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
 colormap('jet'); clim([cmin cmax]);
 set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
-title(['PLS model (R^2= ' num2str(round(R2,1)) ') in all statues: ...' ...
-    'sum-EEG(-500ms) -> GC  ^{* PLOT 21}']);
+title({['PLS model (R^2= ' num2str(round(R2,1)) ') in all statues: ...' ...
+    'sum-EEG(-500ms) -> GC  ^{* PLOT 21}'],char(datetime('now'))});
 set(gcf,'color','w'); % set background white for copying in ubuntu
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 72
 % trials)-updated to use mynpls_pred function
@@ -4908,7 +5001,7 @@ cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 regs=[];AIC=nan(2,10);R2s=nan(4,10);ssERs=nan(4,10);
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
-    [reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(pow5forpls3(Inds4(:,c),:),Fs_LR(Inds4(:,c)));
+    [reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(pow5forpls3(Inds4_LR(:,c),:),Fs_LR(Inds4_LR(:,c)));
     regs{c}=reg;
     ssOr=sum(sum((Y_MC-mean(Y_MC)).^2))
     for Fac=1:10;
@@ -4941,7 +5034,7 @@ ssErs=[];R2s=[];
 % do the cross validation
 for c=1:4
     ssEr=[];R2=[];
-    X=pow5forpls3(Inds4(:,c),:);Y=BPint_xcorrSeries_LR(Inds4(:,c));
+    X=pow5forpls3(Inds4_LR(:,c),:);Y=BPint_xcorrSeries_LR(Inds4_LR(:,c));
     [ssEr,R2]  = myxvalidation(X,Y,Fac);
     ssErs(c)=ssEr;
     R2s(c)=R2;
@@ -4966,7 +5059,7 @@ for c=1:4
         'Color',condicolors(c,:));
     grid on;
 end
-sgtitle('PLS model: sum-EEG(-500ms) -> GC ^{* PLOT 21}')
+sgtitle({['PLS model: sum-EEG(-500ms) -> GC ^{* PLOT 21}'],char(datetime('now'))});
 set(gcf,'color','w'); % set background white for copying in ubuntu
 colormap(hnc)
 % topoplot for the 4 states
@@ -5018,7 +5111,7 @@ v3=annotation('textbox',[0.1 0.79 0.05 0.03],'string',...
             ,'color',condicolors(1,:));
 set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
-    'PLS model: sum-EEG(-500ms) -> GC ^{* PLOT 21}')
+    {['PLS model: sum-EEG(-500ms) -> GC ^{* PLOT 21}'],char(datetime('now'))});
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
 
