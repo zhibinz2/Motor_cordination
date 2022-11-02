@@ -1160,7 +1160,7 @@ for r=1:numSes
     legend('L','R','1','0.5','location','eastoutside');
 end
 sgtitle('H from DFA in all sessions (matched int) ^{ *PLOT 6}')
-sgtitle('H from DFA in all sessions (unmatched int) ^{ *PLOT 6-1}')
+% sgtitle('H from DFA in all sessions (unmatched int) ^{ *PLOT 6-1}')
 
 % average all trials of the same condition
 H_L_uncouple_synch = reshape(H(1,[1:3],[1:2:11]),1,[])  % L,uncouple,synch
@@ -1197,18 +1197,20 @@ xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
 ylabel('H');
 hold on;
 yline(1,'color',deepyellow);
-yline(0.5,'color',deepyellow);
+% yline(0.5,'color',deepyellow);
+ylim([0.6 0.9]);
 title('mean H in all synch sessions (matched int) ^{ *PLOT 6}')
-title('mean H in all synco sessions (unmatched int) ^{ *PLOT 6-1}')
+% title('mean H in all synco sessions (unmatched int) ^{ *PLOT 6-1}')
 subplot(2,1,2);
 b=bar(H_LR_synco_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
 xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
 ylabel('H');
 hold on;
 yline(1,'color',deepyellow);
-yline(0.5,'color',deepyellow);
+% yline(0.5,'color',deepyellow);
+ylim([0.6 0.9]);
 title('mean H in all synco sessions (matched int) ^{ *PLOT 6}')
-title('mean H in all synco sessions (unmatched int) ^{ *PLOT 6-1}')
+% title('mean H in all synco sessions (unmatched int) ^{ *PLOT 6-1}')
 
 % combine synch and synco
 H_LR_syn_mean=[mean([H_L_uncouple_synch H_L_uncouple_synco H_R_uncouple_synch H_R_uncouple_synco]);...
@@ -1217,18 +1219,56 @@ H_LR_syn_mean=[mean([H_L_uncouple_synch H_L_uncouple_synco H_R_uncouple_synch H_
     mean([H_L_mutual_synch H_L_mutual_synco H_R_mutual_synch H_R_mutual_synco])];
 figure;
 b=bar(H_LR_syn_mean);
-xticks(1:4);xticklabels({'uncouple','Leading','Following','mutual'});
+xticks(1:4);xticklabels({'Uncouple','Leading','Following','Mutual'});
 ylabel('H');
 hold on;
-ylim([0 0.9])
-yline(0.5,'color',deepyellow);
+ylim([0.6 0.8])
+% yline(0.5,'color',deepyellow);
+set(gcf,'color','w'); % set background white for copying in ubuntu
 title('mean H in all sessions (matched int) ^{ *PLOT 6}');
-title('mean H in all sessions (unmatched int) ^{ *PLOT 6-1}');
+% title('mean H in all sessions (unmatched int) ^{ *PLOT 6-1}');
 
-% violin plots
+% separate synch and synco
+H_LR_synch_mean=[mean([H_L_uncouple_synch H_R_uncouple_synch]);...
+    mean([H_L_Llead_synch H_R_Rlead_synch]);... 
+    mean([H_R_Llead_synch H_L_Rlead_synch]);...
+    mean([H_L_mutual_synch H_R_mutual_synch])];
+H_LR_synco_mean=[mean([H_L_uncouple_synco H_R_uncouple_synco]);...
+    mean([H_L_Llead_synco H_R_Rlead_synco]);... 
+    mean([H_R_Llead_synco H_L_Rlead_synco]);...
+    mean([H_L_mutual_synco H_R_mutual_synco])];
+H_LR_synch_std=[std([H_L_uncouple_synch H_R_uncouple_synch]);...
+    std([H_L_Llead_synch H_R_Rlead_synch]);... 
+    std([H_R_Llead_synch H_L_Rlead_synch]);...
+    std([H_L_mutual_synch H_R_mutual_synch])];
+H_LR_synco_std=[std([H_L_uncouple_synco H_R_uncouple_synco]);...
+    std([H_L_Llead_synco H_R_Rlead_synco]);... 
+    std([H_R_Llead_synco H_L_Rlead_synco]);...
+    std([H_L_mutual_synco H_R_mutual_synco])];
+figure;
+for i=1:2;
+    hold on;
+    b=[];
+    if i==1; b=errorbar(1:4,H_LR_synch_mean,H_LR_synch_std),'go'; %title('mean H in synch');
+    else; b=errorbar(1:4,H_LR_synco_mean,H_LR_synch_std),'ro'; %title('mean H in synco');
+    end
+    xticks(1:4);xticklabels({'Uncouple','Leading','Following','Mutual'});xlim([0 5])
+    ylabel('H');
+    ylim([0.4 1])
+end
+set(gcf,'color','w'); % set background white for copying in ubuntu
+% sg=sgtitle({['mean H(matched int) ^{ *PLOT 6}'],char(datetime('now'))});
+% title('mean H in all sessions (unmatched int) ^{ *PLOT 6-1}');
+delete(findall(gcf,'type','annotation'))
+sg=annotation('textbox',[0.2 0.01 0.22 0.07],'string',...
+    {['mean H(matched int) ^{ *PLOT 6}'],char(datetime('now'))})
+sg.Rotation=90
+
+% Two violin plots
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/violin
 canvas(0.4,0.3);
-subplot(2,1,1);
+for violin2=1;
+    subplot(2,1,1);
 Y=[H_L_uncouple_synch', H_R_uncouple_synch', H_L_Llead_synch',H_R_Llead_synch',H_L_Rlead_synch',H_R_Rlead_synch',H_L_mutual_synch',H_R_mutual_synch'];
 v=violin(Y,...
     'facecolor',[1 0 0;0 0 1;1 0 0;0 0 1;1 0 0;0 0 1;1 0 0;0 0 1],...
@@ -1241,7 +1281,6 @@ ylabel('H');
 title('H synch (L - red; R - blue) (matched int) ^{ *PLOT 6}');
 title('H synch (L - red; R - blue) (unmatched int) ^{ *PLOT 6-1}');
 grid on;
-
 subplot(2,1,2);
 Y=[H_L_uncouple_synco', H_R_uncouple_synco', H_L_Llead_synco',H_R_Llead_synco',H_L_Rlead_synco',H_R_Rlead_synco',H_L_mutual_synco',H_R_mutual_synco'];
 v=violin(Y,...
@@ -1255,9 +1294,11 @@ ylabel('H');
 title('H synco (L - red; R - blue) (matched int) ^{ *PLOT 6}');
 title('H synco (L - red; R - blue) (unmatched int) ^{ *PLOT 6-1}');
 grid on;
+end
 
-% combine synch and synco
+% combine synch and synco in violin plot
 figure;
+for violin1=1;
 Y={[H_L_uncouple_synch H_L_uncouple_synco H_R_uncouple_synch H_R_uncouple_synco]',...
     [H_L_Llead_synch H_L_Llead_synco H_R_Rlead_synch H_R_Rlead_synco]',... 
     [H_R_Llead_synch H_R_Llead_synco H_L_Rlead_synch H_L_Rlead_synco]',...
@@ -1271,9 +1312,9 @@ v=violin(Y,...
 set(gca,'XtickLabel',{'uncouple','Leading','Following','mutual'});
 ylabel('H');
 title('mean H in all sessions (matched int) ^{ *PLOT 6}');
-title('mean H in all sessions (unmatched int) ^{ *PLOT 6-1}');
+% title('mean H in all sessions (unmatched int) ^{ *PLOT 6-1}');
 grid on;
-
+end
 
 %% SECT 7 Autocorr summary in all sessions (unmatched/matched int) (sorted order)
 clear
@@ -1444,7 +1485,7 @@ Autocorrs20lags_LR_synco_mean = [Autocorrs20lags_L_uncouple_synco Autocorrs20lag
     Autocorrs20lags_L_mutual_synco Autocorrs20lags_R_mutual_synco];
 
 canvas(0.4,0.5);
-condi4names={'uncouple','L-lead','R-lead','mutual'};
+condi4names={'Uncouple','L-lead','R-lead','Mutual'};
 for i=1:4
     subplot(2,4,i);
     plot(Autocorrs20lags_LR_synch_mean(:,2*i-1),'r');hold on;
@@ -3137,7 +3178,7 @@ for c=1:32
     gamma_LR_H_LR_corr(c)=corr(gamma_LR_chan(:,c),H_all_LR);
 end
 % Combine L and R in topoplots (1x5)
-canvas(0.5,0.1);
+canvas(0.5,0.25);
 cmin=-0.3;cmax=0.3;
 subplot(1,5,1);topoplot(delta_LR_H_LR_corr,channels,'nosedir','+X');title('delta & H');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(1,5,2);topoplot(theta_LR_H_LR_corr,channels,'nosedir','+X');title('theta & H');colorbar;colormap('jet');clim([cmin cmax]);
@@ -3215,13 +3256,14 @@ h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
 h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.81 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
-v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','mutual','color',condicolors(4,:))
-v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','following','color',condicolors(3,:))
-v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','leading','color',condicolors(2,:))
-v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','uncouple','color',condicolors(1,:))
+v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','Mutual','color',condicolors(4,:))
+v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','Following','color',condicolors(3,:))
+v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','Leading','color',condicolors(2,:))
+v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','Uncouple','color',condicolors(1,:))
 set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
-sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
-    {['Correlation of sum-EEG (-500ms) and H-int ^{* PLOT 13}'],,char(datetime('now'))});
+delete(sg)
+sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
+    {['Correlation of sum-EEG (-500ms) and H-int ^{* PLOT 13}'],char(datetime('now'))});
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
 set(gcf,'color','w'); % set background white for copying in ubuntu
@@ -3741,7 +3783,7 @@ for Fac=1:10;
     % Cal AIC
     AIC(Fac)=log(ssEr)+2*(Fac);
 end
-figure;
+canvas(0.3,0.25);
 subplot(2,1,1);
 plot(1:10,AIC,'.','MarkerSize',20);xlabel('nFac');ylabel('AIC');
 xlim([0 11]);
@@ -4295,7 +4337,7 @@ for c=1:3 % four states
 end
 sgtitle({['Lassoglm: H-EEG(-500ms) -> H-int'],char(datetime('now'))});
 
-%% SECT 18 Xcorr (original order)
+%% SECT 18 Xcorr Peak and Lag(original order)
 clear XcorrPeakLag XcorrPeak
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
@@ -4304,6 +4346,7 @@ sessions={'synch','synco','synch','synco','synch','synco','synch','synco','synch
     'synch','synco'};
 XcorrPeakLag=zeros(numSes,12);XcorrPeak=zeros(numSes,12);
 cd /ssd/zhibin/1overf/
+tic
 for r=1:numSes;
     clear intervals conditions sortorders
     runid = num2str(seeds(r,:));
@@ -4321,6 +4364,7 @@ for r=1:numSes;
         XcorrPeak(r,j)=max(r12);
     end
 end
+toc
 
 % Organize XcorrPeak for corr
 XcorrPeak; % (numSesx12) for all sessions 
@@ -4349,7 +4393,7 @@ Xcorr10Lag; % 12 numses x 12 blocks x 21 lags % from SECT 9 (matched int. sorted
 % Xcorr_L1R1=[Xcorr_L1; Xcorr_R1]; 
 % % We need original order for PLS
 
-%% PLOT 18-1 PLS (sum-EEG -> XcorrPeak / XcorrPeakLag / Xcorr(0)/ Xcorr(-1/+1))
+%% PLOT 18-1 PLS (sum-EEG -> XcorrPeak / XcorrPeakLag)
 % sum-EEG Power from PLOT 16
 % pow5forpls3; % 192 blocks x160 elements extracted colums-wise
 % (colums: delta chan1, theta chan 1, alpha chan1, beta chan1, gamma chan1, delta chan2...)
@@ -4365,20 +4409,20 @@ theta_LR_chan64 = theta_LR_chan64./(ones(96,1)*std(theta_LR_chan64));
 alpha_LR_chan64 = alpha_LR_chan64./(ones(96,1)*std(alpha_LR_chan64));
 beta_LR_chan64 = beta_LR_chan64./(ones(96,1)*std(beta_LR_chan64));
 gamma_LR_chan64 = gamma_LR_chan64./(ones(96,1)*std(gamma_LR_chan64));
-% combine 5 bands in a 3d matrix  "trials x chan x  freq" (96 x 64 x 5)
+% combine 5 bands in a 3d matrix  "trials x chan x  freq" (144 x 64 x 5)
 Band5_LR_chan64=cat(3,delta_LR_chan64,theta_LR_chan64,...
     alpha_LR_chan64,beta_LR_chan64,gamma_LR_chan64);
-% switch dismenstion to "freq x chan x trials" (5 x 64 x 96)
+% switch dismenstion to "freq x chan x trials" (5 x 64 x 144)
 Band5_LR_chan64_2=permute(Band5_LR_chan64,[3 2 1]);
 % reshape into 96 trials x ( 5 freq x 64 chan)
-% stack them in 2-d "trials x (freq x chan)"  (96 x 320)
-Band5_LR_chan64_3=reshape(Band5_LR_chan64_2,5*64,96)';% 96x320 elements extracted colums-wise
+% stack them in 2-d "trials x (freq x chan)"  (144 x 320)
+Band5_LR_chan64_3=reshape(Band5_LR_chan64_2,5*64,144)';% 144x320 elements extracted colums-wise
 % (colums: delta chan1, theta chan 1, alpha chan1, beta chan1, gamma chan1, delta chan2...)
 
-% XcorrPeak_all_LR; % (192 x 1) from SECT18
-XcorrPeak_all; % (96 x 1) from SECT18
-% XcorrPeakLag_all_LR; % (192 x 1) from SECT18
-XcorrPeakLag_all; % (96 x 1) from SECT18
+% XcorrPeak_all_LR; % (288 x 1) from SECT18
+XcorrPeak_all; % (144 x 1) from SECT18
+% XcorrPeakLag_all_LR; % (288 x 1) from SECT18
+XcorrPeakLag_all; % (144 x 1) from SECT18
 % cobine 2 depdent measures in 2d matrix
 XcorrPeakmat2=[XcorrPeak_all XcorrPeakLag_all];
 XcorrPeakmat2names={'Xcorr Peak','Xcorr Peak Lag'};
@@ -4413,7 +4457,7 @@ imagesc(plsmodel(depen_select).weights);colorbar; % caxis([-2 2]*10E-7); % by de
 yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
 set(gca, 'YDir','normal');
 colormap('jet'); 
-clim([cmin cmax]);
+% clim([cmin cmax]);
 xticks([1:64]);xticklabels([labelsL labelsR]);xtickangle(90);grid on;
 title({['PLS model (R2= ' num2str(round(R2,1)) ') in all 4 statues: sum-EEG(-500ms) -> '...
 XcorrPeakmat2names{depen_select} ' ^{* PLOT 18-1}'],char(datetime('now'))});
@@ -4422,8 +4466,8 @@ XcorrPeakmat2names{depen_select} ' ^{* PLOT 18-1}'],char(datetime('now'))});
 % similar code as in PLOT 16
 canvas(0.4,0.4);
 plsmodel=[];
-% cmin=-8e-3;cmax=8e-3;
-cmin=-0.07;cmax=0.07;
+cmin=-3e-7;cmax=3e-7;
+% cmin=-0.07;cmax=0.07;
 Fac=1;
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
@@ -4436,7 +4480,8 @@ for c=1:4 % four states
     yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
     set(gca, 'YDir','normal');
     xticks([1:64]);xticklabels([labelsL labelsR]);xtickangle(90);grid on; % from PLOT 18-1 
-    colormap('jet'); clim([cmin cmax]);% caxis([-0.1 0.1]);
+    colormap('jet'); 
+    % clim([cmin cmax]);% caxis([-0.1 0.1]);
     title([states4names{c} ': PLS model (R2= ' num2str(round(R2,1)) '  Fac= ' num2str(Fac) ') '], ...
         'Color',condicolors(c,:));
     grid on;
@@ -4549,8 +4594,8 @@ int_dmean_drm; % from SECT9 (matched int) (sorted order)
 
 % orgainized the synchronization trials into 4 conditions
 condi4Ind={[1:3],[4:6],[7:9],[10:12]};
-condi4names={'uncouple','L-lead','R-lead','mutual'};
-syn2Ind={[1:2:11],[2:2:12]};syn2names={'synch','synco'};
+condi4names={'Uncouple','L-lead','R-lead','Mutual'};
+syn2Ind={[1:2:11],[2:2:12]};syn2names={'Synch','Synco'};
 
 % test_data=int_dmean_drm(:,1:3,1:2:11); % uncouple synch
 % test_data=int_dmean_drm(:,4:6,1:2:11); % L-lead synch
@@ -4593,7 +4638,7 @@ for syn=1:2
     end
 end
 sgtitle({['GC: arfit (concatenate data)'],char(datetime('now'))});
-sgtitle({['GC: arfit (permuted concatenate data)',char(datetime('now'))});
+% sgtitle({['GC: arfit (permuted concatenate data)',char(datetime('now'))});
 
 % organize into time x 2 L/R matrix then apply MVGC and plot
 Fs=cell(2,4);
@@ -4758,31 +4803,33 @@ end
 % 3 subplots 
 for subplot3=1
 ymax=0.04;
-canvas(0.5, 0.4);
+canvas(0.5, 0.45);
 tiledlayout(1,3);
 % Tile 1
 nexttile
 bar(Fs(1));xticks([1]);xticklabels({'L<->R'});
-title('uncoupled');ylabel('GC');
+title('Uncoupled');ylabel('GC');
 ylim([0 ymax]);% xlim([0.25 1.75]);
 text(1-0.2, Fs(1)+0.005, sprintf('p=%.2f',Ps(1)),'Color',[0 0 0]);
 % Tile 2
 nexttile
 bar(Fs(2:3));xticks([1 2]);
 xticklabels({'Leader->Follower','Follower->Leader'});
-title('unidirectional');ylabel('GC');
+title('Unidirectional');ylabel('GC');
 ylim([0 ymax]);% xlim([0.25 2.75]);
 text(1-0.2, Fs(2)+0.005, sprintf('p=%.2f',Ps(2)),'Color',[1 0 0]);
 text(2-0.2, Fs(3)+0.005, sprintf('p=%.2f',Ps(3)),'Color',[0 0 0]);
 % Tile 1
 nexttile
 bar(Fs(4));xticks([1]);xticklabels({'L<->R'});
-title('bidirectional');ylabel('GC');
+title('Bidirectional');ylabel('GC');
 ylim([0 ymax]);% xlim([0.25 1.75]);
 text(1-0.2, Fs(4)+0.005, sprintf('p=%.2f',Ps(4)),'Color',[1 0 0]);
+set(gcf,'color','w'); % set background white for copying in ubuntu
 % sgtitle('GC: var-to-autocov (concatenate data)')
 % sgtitle('GC: var-to-autocov (permuted concatenate data)')
-sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
+delete(sg)
+sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
     {['MVGC (concatenate data) H-int ^{* SECT 21}'],char(datetime('now'))});
 end
 
@@ -4877,13 +4924,13 @@ Fs_LR=[Fs_L;Fs_R]; % to be used for corr and PLS
 % end
 % indices for 4 states from PLOT 10-1
 Inds4_LR;
-% fix the scale in the data (as in PLOT 16)
-delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); %organized in PLOT 13
-theta_LR_chan = theta_LR_chan./(ones(288,1)*std(theta_LR_chan));
-alpha_LR_chan = alpha_LR_chan./(ones(288,1)*std(alpha_LR_chan));
-beta_LR_chan = beta_LR_chan./(ones(288,1)*std(beta_LR_chan));
-gamma_LR_chan = gamma_LR_chan./(ones(288,1)*std(gamma_LR_chan));
-% Correlation in 4 states
+% Compute Correlation in 4 states
+% % fix the scale in the data (as in PLOT 16)
+% delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); %organized in PLOT 13
+% theta_LR_chan = theta_LR_chan./(ones(288,1)*std(theta_LR_chan));
+% alpha_LR_chan = alpha_LR_chan./(ones(288,1)*std(alpha_LR_chan));
+% beta_LR_chan = beta_LR_chan./(ones(288,1)*std(beta_LR_chan));
+% gamma_LR_chan = gamma_LR_chan./(ones(288,1)*std(gamma_LR_chan));
 delta_LR_F_LR_4corr=zeros(4,32);
 theta_LR_F_LR_4corr=zeros(4,32);
 alpha_LR_F_LR_4corr=zeros(4,32);
@@ -4935,7 +4982,8 @@ v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','Following','color',condi
 v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','Leading','color',condicolors(2,:))
 v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','Uncouple','color',condicolors(1,:))
 set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
-sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
+delete(sg)
+sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
     {['Correlation of sum-EEG (-500ms) and GC ^{* PLOT 21}'],char(datetime('now'))});
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
@@ -4992,7 +5040,7 @@ yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
 colormap('jet'); clim([cmin cmax]);
 set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
-title({['PLS model (R^2= ' num2str(round(R2,1)) ') in all statues: ...' ...
+title({['PLS model (R^2= ' num2str(round(R2,1)) ') in all statues: ' ...
     'sum-EEG(-500ms) -> GC  ^{* PLOT 21}'],char(datetime('now'))});
 set(gcf,'color','w'); % set background white for copying in ubuntu
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 72
@@ -5059,7 +5107,7 @@ for c=1:4
         'Color',condicolors(c,:));
     grid on;
 end
-sgtitle('PLS model: sum-EEG(-500ms) -> GC ^{* PLOT 21}')
+sgtitle({['PLS model: sum-EEG(-500ms) -> GC ^{* PLOT 21}'],char(datetime('now'))});
 set(gcf,'color','w'); % set background white for copying in ubuntu
 colormap(hnc)
 % topoplot for the 4 states
@@ -5111,7 +5159,7 @@ v3=annotation('textbox',[0.1 0.79 0.05 0.03],'string',...
             ,'color',condicolors(1,:));
 set(v3,'Rotation',90);
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
-    'PLS model: sum-EEG(-500ms) -> GC ^{* PLOT 21}')
+    {['PLS model: sum-EEG(-500ms) -> GC ^{* PLOT 21}'],char(datetime('now'))});
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
 
