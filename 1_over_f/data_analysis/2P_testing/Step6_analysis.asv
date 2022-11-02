@@ -879,7 +879,7 @@ saveas(gcf,figureName,'fig');
 
 
 % Plot each power band
-eegbandNames={'delta','theta','alpha','beta','gamma'};
+eegbandNames={'Delta','Theta','Alpha','Beta','Gamma'};
 selected_chan=[1:32]; % selected_chan=15;
 ylims=[500 700 1400 1800 2000];
 % seleted_band=4;
@@ -906,7 +906,7 @@ end
 
 %% SECT 5: GC between BPint and EEGpow
 GC1=[];GC2=[];
-eegbandNames={'delta','theta','alpha','beta','gamma'};
+eegbandNames={'Delta','Theta','Alpha','Beta','Gamma'};
 % selected_chan=15; % selected_chan=15;
 % seleted_band=4;
 tic 
@@ -1228,7 +1228,7 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 title('mean H in all sessions (matched int) ^{ *PLOT 6}');
 % title('mean H in all sessions (unmatched int) ^{ *PLOT 6-1}');
 
-% separate synch and synco
+% separate synch and synco with error bar
 H_LR_synch_mean=[mean([H_L_uncouple_synch H_R_uncouple_synch]);...
     mean([H_L_Llead_synch H_R_Rlead_synch]);... 
     mean([H_R_Llead_synch H_L_Rlead_synch]);...
@@ -1245,7 +1245,7 @@ H_LR_synco_std=[std([H_L_uncouple_synco H_R_uncouple_synco]);...
     std([H_L_Llead_synco H_R_Rlead_synco]);... 
     std([H_R_Llead_synco H_L_Rlead_synco]);...
     std([H_L_mutual_synco H_R_mutual_synco])];
-figure;
+canvas(0.23, 0.4);
 for i=1:2;
     hold on;
     b=[];
@@ -1256,12 +1256,13 @@ for i=1:2;
     ylabel('H');
     ylim([0.4 1])
 end
+legend('Synch','Synco')
 set(gcf,'color','w'); % set background white for copying in ubuntu
 % sg=sgtitle({['mean H(matched int) ^{ *PLOT 6}'],char(datetime('now'))});
 % title('mean H in all sessions (unmatched int) ^{ *PLOT 6-1}');
 delete(findall(gcf,'type','annotation'))
-sg=annotation('textbox',[0.2 0.01 0.22 0.07],'string',...
-    {['mean H(matched int) ^{ *PLOT 6}'],char(datetime('now'))})
+sg=annotation('textbox',[0.05 0.01 0.5 0.07],'string',...
+    {['mean H(matched int) ^{ *PLOT 6}' char(datetime('now'))]})
 sg.Rotation=90
 
 % Two violin plots
@@ -1835,6 +1836,7 @@ sgtitle({['peak lag from Xcorr in all sessions (-lag = L leading; +lag = R leadi
 
 
 % print XcorrPeakLag to a table
+for table1=1;
 XcorrPeakLag_synch1=XcorrPeakLag(:,1);
 XcorrPeakLag_synco1=XcorrPeakLag(:,2);
 XcorrPeakLag_synch2=XcorrPeakLag(:,3);
@@ -1847,6 +1849,7 @@ XcorrPeakLag_synch5=XcorrPeakLag(:,9);
 XcorrPeakLag_synco5=XcorrPeakLag(:,10);
 XcorrPeakLag_synch6=XcorrPeakLag(:,11);
 XcorrPeakLag_synco6=XcorrPeakLag(:,12);
+end
 Table_XcorrPeakLag=table(Trials, XcorrPeakLag_synch1,XcorrPeakLag_synco1,...
     XcorrPeakLag_synch2, XcorrPeakLag_synco2,...
     XcorrPeakLag_synch3, XcorrPeakLag_synco3,...
@@ -1854,6 +1857,7 @@ Table_XcorrPeakLag=table(Trials, XcorrPeakLag_synch1,XcorrPeakLag_synco1,...
     XcorrPeakLag_synch5, XcorrPeakLag_synco5,...
     XcorrPeakLag_synch6, XcorrPeakLag_synco6);
 Table_XcorrPeakLag
+
 
 % organize for PLOT (lag of peak)
 % average all trials of the same condition 
@@ -2113,7 +2117,7 @@ subtitle('(matched int) (after d removal)');
 
 %% PLOT 9-1 Xcorr10Lag before d removal (matched int) (sorted order)
 % average all trials of the same condition (synch vs synco)
-Xcorr10Lag; % sorted order (12 ses x 12 blocks x 21 lags)
+Xcorr10Lag; % sorted order (12 ses x 12 blocks x 21 lags) from SECT 9
 sorted4inds=[1:3; 4:6; 7:9; 10:12];
 % Examine all Xcorr10Lag
 canvas(1,1);
@@ -2138,24 +2142,22 @@ for s=1:12
     end
 end
 
-% organized into 2x4 conditions
-canvas(0.4,0.6);
-condi4names={'uncouple','L-lead','R-lead','mutual'};
+% organized into 2x4 conditions (now 1x4 with diff colors)
+canvas(0.3,0.2);
+condi4names={'Uncouple','L-lead','R-lead','Mutual'};
 for i=1:4
-    subplot(2,4,i);
-    plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(1:2:11,sorted4inds(i,:),:),2)),1),'k');
-    title(condi4names{i},'color',condicolors(i,:));
-    subtitle('xcorr synch');
-    ylabel('\rho(k)');xlabel('lag');ylim([-0.1 0.8])
-    yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
-    subplot(2,4,4+i);
-    plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(2:2:12,sorted4inds(i,:),:),2)),1),'k');
+    subplot(1,4,i);
+    plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(1:2:11,sorted4inds(i,:),:),2)),1),'b');hold on;
+    plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(2:2:12,sorted4inds(i,:),:),2)),1),'r');
     title(condi4names{i},'color',condicolors(i,:));
     subtitle('xcorr synco');
     ylabel('\rho(k)');xlabel('lag');ylim([-0.1 0.8])
     yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
 end
-suptitle('mean xcorr for 10 lags from all sessions (matched int) ^{ *PLOT 9-1}')
+lg=legend('Synch','Synco','location','eastoutside');
+lg.Position = [0.9475 0.25 0.01 0.25];
+sgtitle('mean xcorr for 10 lags from all sessions (matched int) ^{ *PLOT 9-1}')
+set(gcf,'color','w'); % set background white for copying in ubuntu
 
 % combine Xcorr10Lag in 3 directions
 Xcorr10Lag; % sorted order
@@ -2717,10 +2719,10 @@ for s=1:numSes;
         intL_good_dmean=intervals{b}(:,1)-mean(intervals{b}(:,1));
         intR_good_dmean=intervals{b}(:,2)-mean(intervals{b}(:,2));
         [r12,lags12]=xcorr(intL_good_dmean,intR_good_dmean,10,'normalized');
-        BPint_xcorrSeries(1,s,b)=r12(11);% xcorr(0)
-        BPint_xcorrSeries(2,s,b)=r12(11);% xcorr(0)
-%         BPint_xcorrSeries(1,s,b)=r12(10);% xcorr(-1)_
-%         BPint_xcorrSeries(2,s,b)=r12(12);
+%         BPint_xcorrSeries(1,s,b)=r12(11);% xcorr(0)
+%         BPint_xcorrSeries(2,s,b)=r12(11);% xcorr(0)
+        BPint_xcorrSeries(1,s,b)=r12(10);% xcorr(-1)
+        BPint_xcorrSeries(2,s,b)=r12(12);% xcorr(+1)
     end
 end
 toc % 77 sec
@@ -2735,6 +2737,18 @@ BPint_xcorrSeries_R=reshape(BPint_xcorrSeries_R',[],1);
 % Combine L and R
 BPint_xcorrSeries_LR=[BPint_xcorrSeries_L;BPint_xcorrSeries_R]; % to be used for corr and PLS
 
+% indices for synch or synco
+Inds_synch=[1:12 25:36 49:60 73:84 97:108 121:132]';
+Inds_synch_LR=[Inds_synch;12*numSes+Inds_synch];
+Inds_synco=[13:24 37:48 61:72 85:96 109:120 133:144]';
+Inds_synco_LR=[Inds_synco;12*numSes+Inds_synco];
+% ******
+% select_ind_LR=select_ind_LR;
+% select_ind_LR=Inds_synch_LR;
+% select_ind_LR=Inds_synco_LR;
+select_ind_LR;
+
+% indicies for 4 states
 Inds4_LR; % 1:288 for all sessions % from SECT 10-1 
 % indices for synch or synco
 Inds_synch4=Inds4_LR([1:3 7:9 13:15 19:21 25:27 31:33],:); % synchind
@@ -2742,10 +2756,10 @@ Inds_synch4_LR=[Inds_synch4;12*numSes+Inds_synch4];
 Inds_synco4=Inds4_LR([4:6 10:12 16:18 22:24 28:30 34:36],:); % syncoind
 Inds_synco4_LR=[Inds_synco4;12*numSes+Inds_synco4];
 % *******
-% select_ind_LR=Inds4_LR; 
-% select_ind_LR=Inds_synch4_LR; 
-% select_ind_LR=Inds_synco4_LR; 
-select_ind_LR; % *******
+% select_Inds4_LR=Inds4_LR; 
+% select_Inds4_LR=Inds_synch4_LR; 
+% select_Inds4_LR=Inds_synco4_LR; 
+select_Inds4_LR; % *******
 
 % run SECT 12 and PLOT 13 to organize EEG first (-500ms)
     % Corr
@@ -2779,11 +2793,11 @@ beta_LR_Xcorr_LR_4corr=zeros(4,32);
 gamma_LR_Xcorr_LR_4corr=zeros(4,32);
 for s=1:4
     for c=1:32
-        delta_LR_Xcorr_LR_4corr(s,c)=corr(delta_LR_chan(select_ind_LR(:,s),c),BPint_xcorrSeries_LR(select_ind_LR(:,s)));
-        theta_LR_Xcorr_LR_4corr(s,c)=corr(theta_LR_chan(select_ind_LR(:,s),c),BPint_xcorrSeries_LR(select_ind_LR(:,s)));
-        alpha_LR_Xcorr_LR_4corr(s,c)=corr(alpha_LR_chan(select_ind_LR(:,s),c),BPint_xcorrSeries_LR(select_ind_LR(:,s)));
-        beta_LR_Xcorr_LR_4corr(s,c)=corr(beta_LR_chan(select_ind_LR(:,s),c),BPint_xcorrSeries_LR(select_ind_LR(:,s)));
-        gamma_LR_Xcorr_LR_4corr(s,c)=corr(gamma_LR_chan(select_ind_LR(:,s),c),BPint_xcorrSeries_LR(select_ind_LR(:,s)));
+        delta_LR_Xcorr_LR_4corr(s,c)=corr(delta_LR_chan(select_Inds4_LR(:,s),c),BPint_xcorrSeries_LR(select_Inds4_LR(:,s)));
+        theta_LR_Xcorr_LR_4corr(s,c)=corr(theta_LR_chan(select_Inds4_LR(:,s),c),BPint_xcorrSeries_LR(select_Inds4_LR(:,s)));
+        alpha_LR_Xcorr_LR_4corr(s,c)=corr(alpha_LR_chan(select_Inds4_LR(:,s),c),BPint_xcorrSeries_LR(select_Inds4_LR(:,s)));
+        beta_LR_Xcorr_LR_4corr(s,c)=corr(beta_LR_chan(select_Inds4_LR(:,s),c),BPint_xcorrSeries_LR(select_Inds4_LR(:,s)));
+        gamma_LR_Xcorr_LR_4corr(s,c)=corr(gamma_LR_chan(select_Inds4_LR(:,s),c),BPint_xcorrSeries_LR(select_Inds4_LR(:,s)));
     end
 end
 % Combine L and R in 4 states(4x5)
@@ -2830,8 +2844,10 @@ end
 delete(sg)
 % sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
 %     'Correlation of sum-EEG (-500ms) and Xcorr(0) ^{* PLOT 11-3}')
+% sg=annotation('textbox',[0.3 0.01 0.45 0.07],'string',...
+%     {['Correlation of sum-EEG (-500ms) and Xcorr(-1/+1) in Synch ^{* PLOT 11-2} '], char(datetime('now'))})
 sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
-    {['Correlation of sum-EEG (-500ms) and Xcorr(-1/+1) ^{* PLOT 11-2} '], char(datetime('now'))})
+    {['Correlation of sum-EEG (-500ms) and Xcorr(0) in Synco ^{* PLOT 11-2} '], char(datetime('now'))})
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
 
@@ -2845,7 +2861,8 @@ pow5forpls3; % 288x160
 % -updated to use mynpls_pred function
 reg=[];ypred_fit=[];X_MC=[];Y_MC=[];
 clear plsmodel;
-[reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(pow5forpls3,BPint_xcorrSeries_LR);
+% [reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(pow5forpls3,BPint_xcorrSeries_LR);
+[reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(pow5forpls3(select_ind_LR,:),BPint_xcorrSeries_LR(select_ind_LR));
 ssOr=sum(sum((Y_MC-mean(Y_MC)).^2))
 AIC=nan(1,10);R2s=nan(1,10);ssERs=nan(1,10);
 for Fac=1:10;
@@ -2868,15 +2885,22 @@ xlim([0 11]);
 subtitle('All states');
 set(gcf,'color','w'); % set background white for copying in ubuntu
 % sgtitle({['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> Xcorr(0) ^{ *PLOT 11-2}'], char(datetime('now'))});
-sgtitle({['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> Xcorr(-1/+1) ^{ *PLOT 11-2}'], char(datetime('now'))});
+sgtitle({['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> Xcorr(-1/+1) in synch ^{ *PLOT 11-2}'], char(datetime('now'))});
+% sgtitle({['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> Xcorr(0) in synco ^{ *PLOT 11-2}'], char(datetime('now'))});
+
 
 % Try cross validation (myxvalidation)
 % select the Fac with minimal AIC
 Fac=1
+% Choose #of elements to remove
+% nSet=6; % for synch and synco combined
+% nSet=3; % for synch or synco only
 % do the 8-fold cross validation
 ssEr=[];R2=[];
-X=pow5forpls3;Y=BPint_xcorrSeries_LR;
-[ssEr,R2]  = myxvalidation(X,Y,Fac);
+% X=pow5forpls3;Y=BPint_xcorrSeries_LR;
+X=pow5forpls3(select_ind_LR,:);Y=BPint_xcorrSeries_LR(select_ind_LR);
+nSet=1;
+[ssEr,R2]  = myxvalidation(X,Y,Fac,nSet);
 % reshape regs{1:4}{Fac} 
 clear plsmodel
 % reshape from 160 x 1 back to 5 x 32 (freq x chan)
@@ -2884,7 +2908,7 @@ plsmodel.weights=reshape(reg{Fac},5,32);
 canvas(0.25,0.2)
 cmin=-0.02;cmax=0.02;
 imagesc(plsmodel.weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
-yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
 colormap('jet'); clim([cmin cmax]);
 set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
@@ -2892,7 +2916,9 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 % title({['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: ' ...
 %     'sum-EEG(-500ms) -> Xcorr(0)  ^{* PLOT 11-2}'], char(datetime('now'))});
 title({['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: ' ...
-    'sum-EEG(-500ms) -> Xcorr(-1/+1)  ^{* PLOT 11-2}'], char(datetime('now'))});
+    'sum-EEG(-500ms) -> Xcorr(-1/+1) in synch ^{* PLOT 11-2}'], char(datetime('now'))});
+title({['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: ' ...
+    'sum-EEG(-500ms) -> Xcorr(0) in synco ^{* PLOT 11-2}'], char(datetime('now'))});
 
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 72
 % trials)-updated to use mynpls_pred function
@@ -2900,7 +2926,7 @@ cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 regs=[];AIC=nan(2,10);R2s=nan(4,10);ssERs=nan(4,10);
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
-    [reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(pow5forpls3(Inds4_LR(:,c),:),BPint_xcorrSeries_LR(Inds4_LR(:,c)));
+    [reg,ypred_fit,X_MC,Y_MC] = mynpls_pred(pow5forpls3(select_Inds4_LR(:,c),:),BPint_xcorrSeries_LR(select_Inds4_LR(:,c)));
     regs{c}=reg;
     ssOr=[];
     ssOr=sum(sum((Y_MC-mean(Y_MC)).^2))
@@ -2927,16 +2953,21 @@ for c=1:4
 end
 set(gcf,'color','w'); % set background white for copying in ubuntu
 % sgtitle({['AIC & R^2 for PLS model in all 4 statues: sum-EEG(-500ms) -> Xcorr(0) ^{ *PLOT 11-2}'], char(datetime('now'))});
-sgtitle({['AIC & R^2 for PLS model in all 4 statues: sum-EEG(-500ms) -> Xcorr(-1/+1) ^{ *PLOT 11-2}'], char(datetime('now'))});
+sgtitle({['AIC & R^2 for PLS model in all 4 statues: sum-EEG(-500ms) -> Xcorr(-1/+1) in synch^{ *PLOT 11-2}'], char(datetime('now'))});
+% sgtitle({['AIC & R^2 for PLS model in all 4 statues: sum-EEG(-500ms) -> Xcorr(0) in synco^{ *PLOT 11-2}'], char(datetime('now'))});
 % Try cross validation (myxvalidation)
 % select the Fac with minimal AIC
 Fac=1
 ssErs=[];R2s=[];
+% Choose #of elements to remove
+% nSet=6; % for synch and synco combined
+% nSet=3; % for synch or synco only
 % do the cross validation
 for c=1:4
     ssEr=[];R2=[];
-    X=pow5forpls3(Inds4_LR(:,c),:);Y=BPint_xcorrSeries_LR(Inds4_LR(:,c));
-    [ssEr,R2]  = myxvalidation(X,Y,Fac);
+    X=pow5forpls3(select_Inds4_LR(:,c),:);Y=BPint_xcorrSeries_LR(select_Inds4_LR(:,c));
+    nSet=1;
+    [ssEr,R2]  = myxvalidation(X,Y,Fac,nSet);
     ssErs(c)=ssEr;
     R2s(c)=R2;
 end
@@ -2951,7 +2982,7 @@ cmin=-0.02;cmax=0.02;
 for c=1:4
     subplot(2,2,c);
     imagesc(plsmodel(c).weights);colorbar; 
-    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
     set(gca, 'YDir','normal');
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
     colormap('jet'); clim([cmin cmax]);
@@ -2963,7 +2994,8 @@ end
 set(gcf,'color','w'); % set background white for copying in ubuntu
 colormap(hnc)
 % sgtitle({['PLS model: sum-EEG(-500ms) -> Xcorr(0) ^{* PLOT 11-2}'], char(datetime('now'))});
-sgtitle({['PLS model: sum-EEG(-500ms) -> Xcorr(-1/+1) ^{* PLOT 11-2}'],char(datetime('now'))});
+sgtitle({['PLS model: sum-EEG(-500ms) -> Xcorr(-1/+1) in synch ^{* PLOT 11-2}'],char(datetime('now'))});
+sgtitle({['PLS model: sum-EEG(-500ms) -> Xcorr(0) in synco ^{* PLOT 11-2}'],char(datetime('now'))});
 % topoplot for uncouple and mutual (now in 4 states)
 addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
@@ -2972,6 +3004,7 @@ states2names={'Uncouple','Mutual'};
 states4names;
 % figure;
 canvas(0.3,0.8)
+for states4=1
 % c=[1 4];
 c=[1 2 3 4];
 for s=1:4 % 2
@@ -3013,13 +3046,84 @@ v3=annotation('textbox',[0.1 0.79 0.05 0.03],'string',...
             '  Fac= ' num2str(Fac) ') ']} ...
             ,'color',condicolors(1,:));
 set(v3,'Rotation',90);
+end
+delete(sg)
 % sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
 %     {['PLS model: sum-EEG(-500ms) -> Xcorr(0) ^{* PLOT 11-2}'],char(datetime('now'))});
-sg=annotation('textbox',[0.3 0.03 0.4 0.03],'string',...
-    {['PLS model: sum-EEG(-500ms) -> Xcorr(-1/+1) ^{* PLOT 11-2}'],char(datetime('now'))});
+sg=annotation('textbox',[0.3 0.03 0.4 0.06],'string',...
+    {['PLS model: sum-EEG(-500ms) -> Xcorr(-1/+1) in synch ^{* PLOT 11-2}'],char(datetime('now'))});
+sg=annotation('textbox',[0.3 0.03 0.4 0.06],'string',...
+    {['PLS model: sum-EEG(-500ms) -> Xcorr(0) in synco^{* PLOT 11-2}'],char(datetime('now'))});
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
+% topoplot for following state only in synco
+canvas(0.3,0.2)
+for states1=1;
+cmin=-0.007;cmax=0.007;
+c=[3];
+for s=1    
+    for b=1:5
+        subplot(1,5,(s-1)*5+b)
+        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');
+        clim([cmin cmax]);
+    end
+end
+colormap(hnc)
+cb=colorbar;
+cb.AxisLocation = 'out';
+cb.Position = [0.92 0.15 0.01 0.75];
+set(gcf,'color','w'); % set background white for copying in ubuntu
+delete(findall(gcf,'type','annotation'))
+h0=annotation('textbox',[0.17 0.95 0.05 0.03],'string','Delta','color',[0 0 0])
+h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
+h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
+h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
+h4=annotation('textbox',[0.82 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
+v0=annotation('textbox',[0.1 0.4 0.05 0.03],'string',...
+    {[states4names{c(1)}], [' (R^2= ' num2str(round(R2s(c(1)),1)) ...
+            '  Fac= ' num2str(Fac) ') ']}...
+            ,'color',condicolors(3,:));
+set(v0,'Rotation',90);
+end
+set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
+    'edgecolor','none')
+sg=annotation('textbox',[0.3 0.01 0.35 0.15],'string',...
+    {['PLS model: sum-EEG(-500ms) -> Xcorr(0) in synco^{* PLOT 11-2}'],char(datetime('now'))});
 
+
+% topoplot for leading state only in synch
+canvas(0.3,0.2);
+for states1=1;
+cmin=-0.005;cmax=0.005;
+c=[2];
+for s=1    
+    for b=1:5
+        subplot(1,5,(s-1)*5+b)
+        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');
+        clim([cmin cmax]);
+    end
+end
+colormap(hnc)
+cb=colorbar;
+cb.AxisLocation = 'out';
+cb.Position = [0.92 0.15 0.01 0.75];
+set(gcf,'color','w'); % set background white for copying in ubuntu
+delete(findall(gcf,'type','annotation'))
+h0=annotation('textbox',[0.17 0.95 0.05 0.03],'string','Delta','color',[0 0 0])
+h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
+h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
+h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
+h4=annotation('textbox',[0.82 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
+v0=annotation('textbox',[0.1 0.4 0.05 0.03],'string',...
+    {[states4names{c(1)}], [' (R^2= ' num2str(round(R2s(c(1)),1)) ...
+            '  Fac= ' num2str(Fac) ') ']}...
+            ,'color',condicolors(2,:));
+set(v0,'Rotation',90);
+end
+set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
+    'edgecolor','none')
+sg=annotation('textbox',[0.3 0.01 0.35 0.15],'string',...
+    {['PLS model: sum-EEG(-500ms) -> Xcorr(0) in synco^{* PLOT 11-2}'],char(datetime('now'))});
 %% SECT 12 Compute EEG power (-/+ 500ms) 5 bands
 % clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
@@ -3796,10 +3900,11 @@ sgtitle({['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> H-int^{ *P
 % Try cross validation (myxvalidation)
 % select the Fac with minimal AIC
 Fac=1
-% do the 8-fold cross validation
+% do the #-fold cross validation
 ssEr=[];R2=[];
 X=pow5forpls3;Y=H_all_LR;
-[ssEr,R2]  = myxvalidation(X,Y,Fac);
+nSet=1;
+[ssEr,R2]  = myxvalidation(X,Y,Fac,nSet);
 % reshape regs{1:4}{Fac} 
 clear plsmodel
 % reshape from 160 x 1 back to 5 x 32 (freq x chan)
@@ -3807,7 +3912,7 @@ plsmodel.weights=reshape(reg{Fac},5,32);
 canvas(0.2,0.2)
 cmin=-8e-3;cmax=8e-3;
 imagesc(plsmodel.weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
-yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
 colormap('jet'); clim([cmin cmax]);
 set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
@@ -3855,7 +3960,7 @@ ssErs=[];R2s=[];
 for c=1:4
     ssEr=[];R2=[];
     X=pow5forpls3(Inds4_LR(:,c),:);Y=H_all_LR(Inds4_LR(:,c));
-    [ssEr,R2]  = myxvalidation(X,Y,Fac);
+    [ssEr,R2]  = myxvalidation(X,Y,Fac,nSet);
     ssErs(c)=ssEr;
     R2s(c)=R2;
 end
@@ -3870,7 +3975,7 @@ cmin=-0.01;cmax=0.01;
 for c=1:4
     subplot(2,2,c);
     imagesc(plsmodel(c).weights);colorbar; 
-    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
     set(gca, 'YDir','normal');
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
     colormap('jet'); clim([cmin cmax]);
@@ -3882,18 +3987,19 @@ end
 sgtitle({['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'],char(datetime('now'))});
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
-% topoplot for uncouple and mutual
+% topoplot for uncouple and mutual (now 4 states)
 addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
-band5names={'delta','theta','alpha','beta','gamma'};
-states2names={'uncouple','mutual'};
+band5names={'Delta','Theta','Alpha','Beta','Gamma'};
+states2names={'Uncouple','Mutual'};
 states4names; 
 % figure;
-canvas(0.3,0.4)
-c=[1 4];
-for s=1:2
+canvas(0.3,0.8)
+for states4=1;
+c=[1 2 3 4];
+for s=1:4
     for b=1:5
-        subplot(2,5,(s-1)*5+b)
+        subplot(4,5,(s-1)*5+b)
         topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');
         % colorbar; 
         % colormap(hnc); % colormap('jet');
@@ -3916,19 +4022,63 @@ h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
 h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
 h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
 h4=annotation('textbox',[0.82 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
-v0=annotation('textbox',[0.1 0.2 0.05 0.03],'string',...
-    {[states4names{c(2)}], [' (R^2= ' num2str(round(R2s(c(2)),1)) ...
+v0=annotation('textbox',[0.1 0.15 0.05 0.03],'string',...
+    {[states4names{c(4)}], [' (R^2= ' num2str(round(R2s(c(4)),1)) ...
             '  Fac= ' num2str(Fac) ') ']}...
             ,'color',condicolors(4,:));
 set(v0,'Rotation',90);
-v3=annotation('textbox',[0.1 0.65 0.05 0.03],'string',...
+v1=annotation('textbox',[0.1 0.35 0.05 0.03],'string',...
+    {[states4names{c(3)}], [' (R^2= ' num2str(round(R2s(c(3)),1)) ...
+            '  Fac= ' num2str(Fac) ') ']} ...
+            ,'color',condicolors(3,:));
+set(v1,'Rotation',90);
+v2=annotation('textbox',[0.1 0.56 0.05 0.03],'string',...
+    {[states4names{c(2)}], [' (R^2= ' num2str(round(R2s(c(2)),1)) ...
+            '  Fac= ' num2str(Fac) ') ']} ...
+            ,'color',condicolors(2,:));
+set(v2,'Rotation',90);
+v3=annotation('textbox',[0.1 0.79 0.05 0.03],'string',...
     {[states4names{c(1)}], [' (R^2= ' num2str(round(R2s(c(1)),1)) ...
             '  Fac= ' num2str(Fac) ') ']} ...
             ,'color',condicolors(1,:));
 set(v3,'Rotation',90);
+end
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
-    'PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}')
-set([h0 h1 h2 h3 h4 v0 v3], 'fitboxtotext','on',...
+    {['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'],char(datetime('now'))});
+set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
+    'edgecolor','none')
+% topoplot only for mutual
+canvas(0.3,0.2)
+for states1=1;
+cmin=-0.005;cmax=0.005;
+c=[4];
+for s=1    
+    for b=1:5
+        subplot(1,5,(s-1)*5+b)
+        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');
+        clim([cmin cmax]);
+    end
+end
+colormap(hnc)
+cb=colorbar;
+cb.AxisLocation = 'out';
+cb.Position = [0.92 0.15 0.01 0.75];
+set(gcf,'color','w'); % set background white for copying in ubuntu
+delete(findall(gcf,'type','annotation'))
+h0=annotation('textbox',[0.17 0.95 0.05 0.03],'string','Delta','color',[0 0 0])
+h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
+h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
+h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
+h4=annotation('textbox',[0.82 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
+v0=annotation('textbox',[0.1 0.4 0.05 0.03],'string',...
+    {[states4names{c(1)}], [' (R^2= ' num2str(round(R2s(c(1)),1)) ...
+            '  Fac= ' num2str(Fac) ') ']}...
+            ,'color',condicolors(4,:));
+set(v0,'Rotation',90);
+end
+sg=annotation('textbox',[0.3 0.01 0.3 0.15],'string',...
+    {['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'],char(datetime('now'))});
+set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
 
 
@@ -3947,7 +4097,7 @@ for c=1:3 % four states
     plsmodel(c).ypred = ypred;
     subplot(1,3,c);
     imagesc(plsmodel(c).weights);colorbar; 
-    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
     set(gca, 'YDir','normal');
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
     colormap('jet'); clim([cmin cmax]);% caxis([-0.1 0.1]);
@@ -4005,7 +4155,7 @@ Fac=1
 % do the 8-fold cross validation
 ssEr=[];R2=[];
 X=H5forpls3;Y=H_all_LR;
-[ssEr,R2]  = myxvalidation(X,Y,Fac);
+[ssEr,R2]  = myxvalidation(X,Y,Fac,nSet);
 % reshape regs{1:4}{Fac} 
 clear plsmodel
 % reshape from 160 x 1 back to 5 x 32 (freq x chan)
@@ -4013,7 +4163,7 @@ plsmodel.weights=reshape(reg{Fac},5,32);
 canvas(0.2,0.2)
 cmin=-0.15;cmax=0.15;
 imagesc(plsmodel.weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
-yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
 colormap('jet'); clim([cmin cmax]);
 set(gca, 'YDir','normal');
 xticks([1:32]);xticklabels([labels]);xtickangle(90);grid on;
@@ -4059,7 +4209,7 @@ ssErs=[];R2s=[];
 for c=1:4
     ssEr=[];R2=[];
     X=H5forpls3(Inds4_LR(:,c),:);Y=H_all_LR(Inds4_LR(:,c));
-    [ssEr,R2]  = myxvalidation(X,Y,Fac);
+    [ssEr,R2]  = myxvalidation(X,Y,Fac,nSet);
     ssErs(c)=ssEr;
     R2s(c)=R2;
 end
@@ -4074,7 +4224,7 @@ cmin=-0.1;cmax=0.1;
 for c=1:4
     subplot(2,2,c);
     imagesc(plsmodel(c).weights);colorbar; 
-    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
     set(gca, 'YDir','normal');
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
     colormap('jet'); clim([cmin cmax]);
@@ -4088,8 +4238,8 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 % topoplot for uncouple and mutual
 addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
-band5names={'delta','theta','alpha','beta','gamma'};
-states2names={'uncouple','mutual'};
+band5names={'Delta','Theta','Alpha','Beta','Gamma'};
+states2names={'Uncouple','Mutual'};
 states4names;
 figure; % canvas(0.9,0.5)
 c=[1 4];
@@ -4122,7 +4272,7 @@ for c=1:3 % three states
     plsmodel(c).ypred = ypred;
     subplot(1,3,c);
     imagesc(plsmodel(c).weights);colorbar; 
-    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
     set(gca, 'YDir','normal');
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
     colormap('jet');clim([cmin cmax]);% caxis([-0.1 0.1]);
@@ -4163,7 +4313,7 @@ Lambda_coef = reshape(B(:,Lambda_select),5,32);
 cmin=-8e-3;cmax=8e-3;
 canvas(0.15,0.15)
 imagesc(Lambda_coef);colorbar;
-yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
 set(gca, 'YDir','normal');
 colormap('jet'); clim([cmin cmax]);
 xticks([1:32]);xticklabels([labels]);xtickangle(90);
@@ -4193,7 +4343,7 @@ for c=1:4 % three states
     Lambda_coef = reshape(B(:,Lambda_select),5,32);
     subplot(2,2,c);
     imagesc(Lambda_coef);colorbar;
-    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
     set(gca, 'YDir','normal');
     colormap('jet'); clim([cmin cmax]);
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
@@ -4227,7 +4377,7 @@ for c=1:3 % three states
     Lambda_coef = reshape(B(:,Lambda_select),5,32);
     subplot(1,3,c);
     imagesc(Lambda_coef);colorbar;
-    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
     set(gca, 'YDir','normal');
     colormap('jet'); clim([cmin cmax]);
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
@@ -4263,7 +4413,7 @@ Lambda_coef = reshape(B(:,Lambda_select),5,32);
 cmin=-8e-3;cmax=8e-3;
 canvas(0.2,0.2)
 imagesc(Lambda_coef);colorbar;
-yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
 set(gca, 'YDir','normal');
 colormap('jet'); clim([cmin cmax]);
 xticks([1:32]);xticklabels([labels]);xtickangle(90);
@@ -4294,7 +4444,7 @@ for c=1:4 % three states
     Lambda_coef = reshape(B(:,Lambda_select),5,32);
     subplot(2,2,c);
     imagesc(Lambda_coef);colorbar;
-    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
     set(gca, 'YDir','normal');
     colormap('jet'); clim([cmin cmax]);
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
@@ -4327,7 +4477,7 @@ for c=1:3 % four states
     Lambda_coef = reshape(B(:,Lambda_select),5,32);
     subplot(1,3,c);
     imagesc(Lambda_coef);colorbar;
-    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
     set(gca, 'YDir','normal');
     colormap('jet'); clim([cmin cmax]);
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
@@ -4454,7 +4604,7 @@ plsmodel(depen_select).weights = reshape(reg{1},5,64);
 plsmodel(depen_select).R2 = R2;
 plsmodel(depen_select).ypred = ypred;
 imagesc(plsmodel(depen_select).weights);colorbar; % caxis([-2 2]*10E-7); % by default, imagesc reverse the Y 
-yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
 set(gca, 'YDir','normal');
 colormap('jet'); 
 % clim([cmin cmax]);
@@ -4477,7 +4627,7 @@ for c=1:4 % four states
     plsmodel(c).ypred = ypred;
     subplot(2,2,c);
     imagesc(plsmodel(c).weights);colorbar; 
-    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
     set(gca, 'YDir','normal');
     xticks([1:64]);xticklabels([labelsL labelsR]);xtickangle(90);grid on; % from PLOT 18-1 
     colormap('jet'); 
@@ -4490,8 +4640,8 @@ sgtitle({['PLS model: sum-EEG(-500ms) ->' XcorrPeakmat2names{depen_select} ' ^{*
 % topoplot for uncouple and mutual
 addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
-band5names={'delta','theta','alpha','beta','gamma'};
-states2names={'uncouple','mutual'};
+band5names={'Delta','Theta','Alpha','Beta','Gamma'};
+states2names={'Uncouple','Mutual'};
 states4names;
 figure; % canvas(0.9,0.5)
 cmin=-8e-3;cmax=8e-3;
@@ -5025,10 +5175,10 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 % Try cross validation (myxvalidation)
 % select the Fac with minimal AIC
 Fac=1
-% do the 8-fold cross validation
+% do the #-fold cross validation
 ssEr=[];R2=[];
 X=pow5forpls3;Y=Fs_LR;
-[ssEr,R2]  = myxvalidation(X,Y,Fac);
+[ssEr,R2]  = myxvalidation(X,Y,Fac,nSet);
 % reshape regs{1:4}{Fac} 
 clear plsmodel
 % reshape from 160 x 1 back to 5 x 32 (freq x chan)
@@ -5083,7 +5233,7 @@ ssErs=[];R2s=[];
 for c=1:4
     ssEr=[];R2=[];
     X=pow5forpls3(Inds4_LR(:,c),:);Y=BPint_xcorrSeries_LR(Inds4_LR(:,c));
-    [ssEr,R2]  = myxvalidation(X,Y,Fac);
+    [ssEr,R2]  = myxvalidation(X,Y,Fac,nSet);
     ssErs(c)=ssEr;
     R2s(c)=R2;
 end
@@ -5098,7 +5248,7 @@ cmin=-0.005;cmax=0.005;
 for c=1:4
     subplot(2,2,c);
     imagesc(plsmodel(c).weights);colorbar; 
-    yticks([1:5]);yticklabels({'delta','theta','alpha','beta','gamma'});
+    yticks([1:5]);yticklabels({'Delta','Theta','Alpha','Beta','Gamma'});
     set(gca, 'YDir','normal');
     xticks([1:32]);xticklabels([labels]);xtickangle(90);
     colormap('jet'); clim([cmin cmax]);

@@ -1,5 +1,6 @@
-function [ssEr,R2] = myxvalidation(X,Y,Fac);
+function [ssEr,R2] = myxvalidation(X,Y,Fac,nSet);
 % Do cross-validation 
+% nSet: every nSet elements from the same subject were removed in each loop
 
 disp('/////Calculating cross-validation model/////')
 
@@ -12,9 +13,10 @@ n=size(X,1);
 % Y_means=zeros(8,1);
 T=zeros(n,Fac);
 
-for i=1:8; % 8 fold cross validation
-    nSet=n/8;
-    % Remove 6 from complete data set (every 6 were from the same subject)
+% % Remove 3 from complete data set (every 3 were from the same subject)
+% nSet=6;
+
+for i=1:(n/nSet); %  #(n/nSet) fold cross validation
     X_set=X(setdiff(1:n,((i-1)*nSet+1):((i-1)*nSet+nSet)),:);
     Y_set=Y(setdiff(1:n,((i-1)*nSet+1):((i-1)*nSet+nSet)),:);
 
@@ -53,7 +55,6 @@ for i=1:8; % 8 fold cross validation
 end
 
 % Calculate variance accounted for in cross-validated model
-
 ssEr=sum(sum((Y-ypred).^2))
 ssOr=sum(sum((Y-mean(Y)).^2))
 R2=100*(1-ssEr/ssOr)
