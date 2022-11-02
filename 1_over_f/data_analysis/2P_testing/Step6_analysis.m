@@ -1058,7 +1058,7 @@ for d=1:2
     for seleted_band=1:5
         for i=1:nTrials
             subplot(5,12,12*(seleted_band-1)+i)
-            topoplot(squeeze(GCmat(i,seleted_band,:)),chaninfo,'nosedir','+X');
+            topoplot(squeeze(GCmat(i,seleted_band,:)),chaninfo,'nosedir','+X','style','map');
             title(['\' eegbandNames{seleted_band} ' ' conditionNames{condiSeq(i)}],'Color',condicolors(condiSeq(i),:));
             colorbar; caxis([-0.1 0.1]);
         end
@@ -1121,7 +1121,7 @@ end
 toc
 
 %% PLOT 6 DFA H values for all sessions (matched/unmatched int)(sorted order)
-% print H to a table
+% print all H to a table
 Trials={'uncouple','uncouple','uncouple','L-lead','L-lead','L-lead',...
     'R-lead','R-lead','R-lead','mutual','mutual','mutual'}';
 H_L_synch1=H(1,:,1)';H_R_synch1=H(2,:,1)';
@@ -1142,8 +1142,7 @@ Table_H=table(Trials, H_L_synch1, H_R_synch1, H_L_synco1, H_R_synco1,...
     H_L_synch4, H_R_synch4, H_L_synco4, H_R_synco4,...
     H_L_synch5, H_R_synch5, H_L_synco5, H_R_synco5,...
     H_L_synch6, H_R_synch6, H_L_synco6, H_R_synco6);
-
-% plot
+% plot all
 canvas(0.5, 0.5);
 for r=1:numSes
     subplot(numSes,1,r);
@@ -1162,7 +1161,7 @@ end
 sgtitle('H from DFA in all sessions (matched int) ^{ *PLOT 6}')
 % sgtitle('H from DFA in all sessions (unmatched int) ^{ *PLOT 6-1}')
 
-% average all trials of the same condition
+% average all trials of the same condition in synch/0 (2 subplots)
 H_L_uncouple_synch = reshape(H(1,[1:3],[1:2:11]),1,[])  % L,uncouple,synch
 H_L_Llead_synch    = reshape(H(1,[4:6],[1:2:11]),1,[])  % L,L lead,synch
 H_L_Rlead_synch    = reshape(H(1,[7:9],[1:2:11]),1,[])  % L,R lead,synch
@@ -1176,7 +1175,6 @@ H_LR_synch_mean = [mean(H_L_uncouple_synch) mean(H_R_uncouple_synch);...
     mean(H_L_Rlead_synch) mean(H_R_Rlead_synch);...
     mean(H_L_mutual_synch) mean(H_R_mutual_synch)];
 
-
 H_L_uncouple_synco = reshape(H(1,[1:3],[2:2:12]),1,[])  % R,uncouple,synco
 H_L_Llead_synco    = reshape(H(1,[4:6],[2:2:12]),1,[])  % R,L lead,synco
 H_L_Rlead_synco    = reshape(H(1,[7:9],[2:2:12]),1,[])  % R,R lead,synco
@@ -1189,7 +1187,7 @@ H_LR_synco_mean = [mean(H_L_uncouple_synco) mean(H_R_uncouple_synco);...
     mean(H_L_Llead_synco) mean(H_R_Llead_synco);...
     mean(H_L_Rlead_synco) mean(H_R_Rlead_synco);...
     mean(H_L_mutual_synco) mean(H_R_mutual_synco)];
-
+% plot with bar groups for L/R
 figure;
 subplot(2,1,1);
 b=bar(H_LR_synch_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
@@ -1198,7 +1196,7 @@ ylabel('H');
 hold on;
 yline(1,'color',deepyellow);
 % yline(0.5,'color',deepyellow);
-ylim([0.6 0.9]);
+ylim([0.5 0.9]);
 title('mean H in all synch sessions (matched int) ^{ *PLOT 6}')
 % title('mean H in all synco sessions (unmatched int) ^{ *PLOT 6-1}')
 subplot(2,1,2);
@@ -1208,11 +1206,11 @@ ylabel('H');
 hold on;
 yline(1,'color',deepyellow);
 % yline(0.5,'color',deepyellow);
-ylim([0.6 0.9]);
+ylim([0.5 0.9]);
 title('mean H in all synco sessions (matched int) ^{ *PLOT 6}')
 % title('mean H in all synco sessions (unmatched int) ^{ *PLOT 6-1}')
 
-% combine synch and synco
+% combine synch/o
 H_LR_syn_mean=[mean([H_L_uncouple_synch H_L_uncouple_synco H_R_uncouple_synch H_R_uncouple_synco]);...
     mean([H_L_Llead_synch H_L_Llead_synco H_R_Rlead_synch H_R_Rlead_synco]);... 
     mean([H_R_Llead_synch H_R_Llead_synco H_L_Rlead_synch H_L_Rlead_synco]);...
@@ -1245,6 +1243,34 @@ H_LR_synco_std=[std([H_L_uncouple_synco H_R_uncouple_synco]);...
     std([H_L_Llead_synco H_R_Rlead_synco]);... 
     std([H_R_Llead_synco H_L_Rlead_synco]);...
     std([H_L_mutual_synco H_R_mutual_synco])];
+% grouped barplot with errorbar
+% https://www.mathworks.com/matlabcentral/answers/102220-how-do-i-place-errorbars-on-my-grouped-bar-graph-using-function-errorbar-in-matlab
+canvas(0.23, 0.4);
+model_series = [H_LR_synch_mean H_LR_synco_mean];
+model_error = [H_LR_synch_std H_LR_synco_std];
+b = bar(model_series, 'grouped');
+hold on;
+% Calculate the number of groups and number of bars in each group
+[ngroups,nbars] = size(model_series);
+% Get the x coordinate of the bars
+x = nan(nbars, ngroups);
+for i = 1:nbars
+    x(i,:) = b(i).XEndPoints;
+end
+% Plot the errorbars
+errorbar(x',model_series,model_error,'k','linestyle','none');
+hold off
+xticks(1:4);xticklabels({'Uncouple','Leading','Following','Mutual'});
+xlim([0.5 4.5]);
+ylabel('H'); ylim([0.5 1]);
+legend('Synch','Synco','location','north')
+set(gcf,'color','w'); % set background white for copying in ubuntu
+delete(findall(gcf,'type','annotation'))
+sg=annotation('textbox',[0.05 0.01 0.5 0.07],'string',...
+    {['mean H(matched int) ^{ *PLOT 6}' char(datetime('now'))]})
+sg.Rotation=90
+
+% plot lines with errorbar 
 canvas(0.23, 0.4);
 for i=1:2;
     hold on;
@@ -2719,10 +2745,10 @@ for s=1:numSes;
         intL_good_dmean=intervals{b}(:,1)-mean(intervals{b}(:,1));
         intR_good_dmean=intervals{b}(:,2)-mean(intervals{b}(:,2));
         [r12,lags12]=xcorr(intL_good_dmean,intR_good_dmean,10,'normalized');
-%         BPint_xcorrSeries(1,s,b)=r12(11);% xcorr(0)
-%         BPint_xcorrSeries(2,s,b)=r12(11);% xcorr(0)
-        BPint_xcorrSeries(1,s,b)=r12(10);% xcorr(-1)
-        BPint_xcorrSeries(2,s,b)=r12(12);% xcorr(+1)
+        BPint_xcorrSeries(1,s,b)=r12(11);% xcorr(0)
+        BPint_xcorrSeries(2,s,b)=r12(11);% xcorr(0)
+%         BPint_xcorrSeries(1,s,b)=r12(10);% xcorr(-1)
+%         BPint_xcorrSeries(2,s,b)=r12(12);% xcorr(+1)
     end
 end
 toc % 77 sec
@@ -2746,7 +2772,7 @@ Inds_synco_LR=[Inds_synco;12*numSes+Inds_synco];
 % select_ind_LR=select_ind_LR;
 % select_ind_LR=Inds_synch_LR;
 % select_ind_LR=Inds_synco_LR;
-select_ind_LR;
+select_ind_LR; % *******
 
 % indicies for 4 states
 Inds4_LR; % 1:288 for all sessions % from SECT 10-1 
@@ -2803,22 +2829,22 @@ end
 % Combine L and R in 4 states(4x5)
 for plot_4by5=1;
 canvas(0.3,0.5);
-cmin=-0.4;cmax=0.4;
+cmin=-0.7;cmax=0.7;
 for s=1:4
     subplot(4,5,5*(s-1)+1);
-    topoplot(delta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(delta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+2);
-    topoplot(theta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(theta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+3);
-    topoplot(alpha_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(alpha_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+4);
-    topoplot(beta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(beta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+5);
-    topoplot(gamma_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(gamma_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     clim([cmin cmax]);
 end
 colormap(hnc)
@@ -3010,7 +3036,7 @@ c=[1 2 3 4];
 for s=1:4 % 2
     for b=1:5
         subplot(4,5,(s-1)*5+b)
-        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');
+        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X','style','map');
         clim([cmin cmax]);
     end
 end
@@ -3065,7 +3091,7 @@ c=[3];
 for s=1    
     for b=1:5
         subplot(1,5,(s-1)*5+b)
-        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');
+        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X','style','map');
         clim([cmin cmax]);
     end
 end
@@ -3099,7 +3125,7 @@ c=[2];
 for s=1    
     for b=1:5
         subplot(1,5,(s-1)*5+b)
-        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');
+        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X','style','map');
         clim([cmin cmax]);
     end
 end
@@ -3261,16 +3287,16 @@ end
 % Topoplots (5x2)
 canvas(0.2,0.6);
 cmin=-0.5;cmax=0.5;
-subplot(5,2,1);topoplot(delta_L_H_L_corr,channels,'nosedir','+X');title('delta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,3);topoplot(theta_L_H_L_corr,channels,'nosedir','+X');title('theta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,5);topoplot(alpha_L_H_L_corr,channels,'nosedir','+X');title('alpha-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,7);topoplot(beta_L_H_L_corr,channels,'nosedir','+X');title('beta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,9);topoplot(gamma_L_H_L_corr,channels,'nosedir','+X');title('gamma-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,2);topoplot(delta_R_H_R_corr,channels,'nosedir','+X');title('delta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,4);topoplot(theta_R_H_R_corr,channels,'nosedir','+X');title('theta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,6);topoplot(alpha_R_H_R_corr,channels,'nosedir','+X');title('alpha-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,8);topoplot(beta_R_H_R_corr,channels,'nosedir','+X');title('beta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,10);topoplot(gamma_R_H_R_corr,channels,'nosedir','+X');title('gamma-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,1);topoplot(delta_L_H_L_corr,channels,'nosedir','+X','style','map');title('delta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,3);topoplot(theta_L_H_L_corr,channels,'nosedir','+X','style','map');title('theta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,5);topoplot(alpha_L_H_L_corr,channels,'nosedir','+X','style','map');title('alpha-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,7);topoplot(beta_L_H_L_corr,channels,'nosedir','+X','style','map');title('beta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,9);topoplot(gamma_L_H_L_corr,channels,'nosedir','+X','style','map');title('gamma-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,2);topoplot(delta_R_H_R_corr,channels,'nosedir','+X','style','map');title('delta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,4);topoplot(theta_R_H_R_corr,channels,'nosedir','+X','style','map');title('theta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,6);topoplot(alpha_R_H_R_corr,channels,'nosedir','+X','style','map');title('alpha-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,8);topoplot(beta_R_H_R_corr,channels,'nosedir','+X','style','map');title('beta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,10);topoplot(gamma_R_H_R_corr,channels,'nosedir','+X','style','map');title('gamma-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle({['corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}'],char(datetime('now'))});
 
 % Combine L and R in correlation;
@@ -3284,11 +3310,11 @@ end
 % Combine L and R in topoplots (1x5)
 canvas(0.5,0.25);
 cmin=-0.3;cmax=0.3;
-subplot(1,5,1);topoplot(delta_LR_H_LR_corr,channels,'nosedir','+X');title('delta & H');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,2);topoplot(theta_LR_H_LR_corr,channels,'nosedir','+X');title('theta & H');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,3);topoplot(alpha_LR_H_LR_corr,channels,'nosedir','+X');title('alpha & H');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,4);topoplot(beta_LR_H_LR_corr,channels,'nosedir','+X');title('beta & H');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,5);topoplot(gamma_LR_H_LR_corr,channels,'nosedir','+X');title('gamma & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,1);topoplot(delta_LR_H_LR_corr,channels,'nosedir','+X','style','map');title('delta & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,2);topoplot(theta_LR_H_LR_corr,channels,'nosedir','+X','style','map');title('theta & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,3);topoplot(alpha_LR_H_LR_corr,channels,'nosedir','+X','style','map');title('alpha & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,4);topoplot(beta_LR_H_LR_corr,channels,'nosedir','+X','style','map');title('beta & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,5);topoplot(gamma_LR_H_LR_corr,channels,'nosedir','+X','style','map');title('gamma & H');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle({['corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}'],char(datetime('now'))});
 colormap(hnc)
 
@@ -3309,30 +3335,30 @@ for s=1:4
 end
 % Combine L and R in 4 states(4x5)
 canvas(0.3,0.5);
-cmin=-0.4;cmax=0.4;
+cmin=-0.7;cmax=0.7;
 for s=1:4
     subplot(4,5,5*(s-1)+1);
-    topoplot(delta_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(delta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     % title([states4names{s} ': delta & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+2);
-    topoplot(theta_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(theta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     % title([states4names{s} ': theta & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+3);
-    topoplot(alpha_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(alpha_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     % title([states4names{s} ': alpha & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+4);
-    topoplot(beta_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(beta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     % title([states4names{s} ': beta & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+5);
-    topoplot(gamma_LR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(gamma_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     % title([states4names{s} ': gamma & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
@@ -3441,16 +3467,16 @@ end
 % Topoplots (5x2)
 canvas(0.2,0.5);
 cmin=-0.1;cmax=0.3;
-subplot(5,2,1);topoplot(delta_LL_H_L_corr,channels,'nosedir','+X');title('delta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,3);topoplot(theta_LL_H_L_corr,channels,'nosedir','+X');title('theta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,5);topoplot(alpha_LL_H_L_corr,channels,'nosedir','+X');title('alpha-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,7);topoplot(beta_LL_H_L_corr,channels,'nosedir','+X');title('beta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,9);topoplot(gamma_LL_H_L_corr,channels,'nosedir','+X');title('gamma-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,2);topoplot(delta_RR_H_R_corr,channels,'nosedir','+X');title('delta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,4);topoplot(theta_RR_H_R_corr,channels,'nosedir','+X');title('theta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,6);topoplot(alpha_RR_H_R_corr,channels,'nosedir','+X');title('alpha-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,8);topoplot(beta_RR_H_R_corr,channels,'nosedir','+X');title('beta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(5,2,10);topoplot(gamma_RR_H_R_corr,channels,'nosedir','+X');title('gamma-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,1);topoplot(delta_LL_H_L_corr,channels,'nosedir','+X','style','map');title('delta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,3);topoplot(theta_LL_H_L_corr,channels,'nosedir','+X','style','map');title('theta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,5);topoplot(alpha_LL_H_L_corr,channels,'nosedir','+X','style','map');title('alpha-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,7);topoplot(beta_LL_H_L_corr,channels,'nosedir','+X','style','map');title('beta-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,9);topoplot(gamma_LL_H_L_corr,channels,'nosedir','+X','style','map');title('gamma-L & H-L');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,2);topoplot(delta_RR_H_R_corr,channels,'nosedir','+X','style','map');title('delta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,4);topoplot(theta_RR_H_R_corr,channels,'nosedir','+X','style','map');title('theta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,6);topoplot(alpha_RR_H_R_corr,channels,'nosedir','+X','style','map');title('alpha-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,8);topoplot(beta_RR_H_R_corr,channels,'nosedir','+X','style','map');title('beta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(5,2,10);topoplot(gamma_RR_H_R_corr,channels,'nosedir','+X','style','map');title('gamma-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle({['corr of sum-EEG (+500ms) and H-int'],char(datetime('now'))});
 
 % Combine L and R in correlation;
@@ -3464,11 +3490,11 @@ end
 % Combine L and R in topoplots (1x5)
 canvas(0.5,0.1);
 cmin=-0.1;cmax=0.3;
-subplot(1,5,1);topoplot(delta_LLRR_H_LR_corr,channels,'nosedir','+X');title('delta & H');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,2);topoplot(theta_LLRR_H_LR_corr,channels,'nosedir','+X');title('theta & H');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,3);topoplot(alpha_LLRR_H_LR_corr,channels,'nosedir','+X');title('alpha & H');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,4);topoplot(beta_LLRR_H_LR_corr,channels,'nosedir','+X');title('beta & H');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,5);topoplot(gamma_LLRR_H_LR_corr,channels,'nosedir','+X');title('gamma & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,1);topoplot(delta_LLRR_H_LR_corr,channels,'nosedir','+X','style','map');title('delta & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,2);topoplot(theta_LLRR_H_LR_corr,channels,'nosedir','+X','style','map');title('theta & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,3);topoplot(alpha_LLRR_H_LR_corr,channels,'nosedir','+X','style','map');title('alpha & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,4);topoplot(beta_LLRR_H_LR_corr,channels,'nosedir','+X','style','map');title('beta & H');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,5);topoplot(gamma_LLRR_H_LR_corr,channels,'nosedir','+X','style','map');title('gamma & H');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle({['corr of sum-EEG (+500ms) and H-int ^{* PLOT 13-1}'],char(datetime('now'))});
 colormap(hnc)
 
@@ -3492,23 +3518,23 @@ canvas(0.5,0.6);
 cmin=-0.2;cmax=0.4;
 for s=1:4
     subplot(4,5,5*(s-1)+1);
-    topoplot(delta_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(delta_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     title([states4names{s} ': delta & H'],'Color',condicolors(s,:));
     colorbar;colormap('jet');clim([cmin cmax]);
     subplot(4,5,5*(s-1)+2);
-    topoplot(theta_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(theta_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     title([states4names{s} ': theta & H'],'Color',condicolors(s,:));
     colorbar;colormap('jet');clim([cmin cmax]);
     subplot(4,5,5*(s-1)+3);
-    topoplot(alpha_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(alpha_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     title([states4names{s} ': alpha & H'],'Color',condicolors(s,:));
     colorbar;colormap('jet');clim([cmin cmax]);
     subplot(4,5,5*(s-1)+4);
-    topoplot(beta_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(beta_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     title([states4names{s} ': beta & H'],'Color',condicolors(s,:));
     colorbar;colormap('jet');clim([cmin cmax]);
     subplot(4,5,5*(s-1)+5);
-    topoplot(gamma_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(gamma_LLRR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     title([states4names{s} ': gamma & H'],'Color',condicolors(s,:));
     colorbar;colormap('jet');clim([cmin cmax]);
 end
@@ -3567,11 +3593,11 @@ H_gamma_LR_chan=[H_gamma_L_chan;H_gamma_R_chan];
 % mean(H_gamma_LR_chan)
 canvas(0.5,0.2);
 cmin=0.3;cmax=0.7;
-subplot(1,5,1);topoplot(mean(H_delta_LR_chan),channels,'nosedir','+X');title('H-delta');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,2);topoplot(mean(H_theta_LR_chan),channels,'nosedir','+X');title('H-theta');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,3);topoplot(mean(H_alpha_LR_chan),channels,'nosedir','+X');title('H-alpha');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,4);topoplot(mean(H_beta_LR_chan),channels,'nosedir','+X');title('H-beta');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,5);topoplot(mean(H_gamma_LR_chan),channels,'nosedir','+X');title('H-gamma');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,1);topoplot(mean(H_delta_LR_chan),channels,'nosedir','+X','style','map');title('H-delta');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,2);topoplot(mean(H_theta_LR_chan),channels,'nosedir','+X','style','map');title('H-theta');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,3);topoplot(mean(H_alpha_LR_chan),channels,'nosedir','+X','style','map');title('H-alpha');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,4);topoplot(mean(H_beta_LR_chan),channels,'nosedir','+X','style','map');title('H-beta');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,5);topoplot(mean(H_gamma_LR_chan),channels,'nosedir','+X','style','map');title('H-gamma');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle({['mean H-EEG (- 500ms) ^{* PLOT 14}'],char(datetime('now'))});
 colormap(hnc)
 % only H-EEG of beta and gamma show complexity (H>0.5)
@@ -3582,23 +3608,23 @@ canvas(0.5,0.5);
 cmin=0.3;cmax=0.7;
 for c=1:4
 subplot(4,5,(c-1)*5+1);
-topoplot(mean(H_delta_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_delta_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X','style','map');
 title(['H-delta ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+2);
-topoplot(mean(H_theta_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_theta_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X','style','map');
 title(['H-theta ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+3);
-topoplot(mean(H_alpha_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_alpha_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X','style','map');
 title(['H-alpha ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+4);
-topoplot(mean(H_beta_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_beta_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X','style','map');
 title(['H-beta ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+5);
-topoplot(mean(H_gamma_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_gamma_LR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X','style','map');
 title(['H-gamma ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 end
@@ -3658,11 +3684,11 @@ H_gamma_LLRR_chan=[H_gamma_LL_chan;H_gamma_RR_chan];
 % mean(H_gamma_LLRR_chan)
 canvas(0.5,0.2);
 cmin=0.3;cmax=0.7;
-subplot(1,5,1);topoplot(mean(H_delta_LLRR_chan),channels,'nosedir','+X');title('H-delta');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,2);topoplot(mean(H_theta_LLRR_chan),channels,'nosedir','+X');title('H-theta');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,3);topoplot(mean(H_alpha_LLRR_chan),channels,'nosedir','+X');title('H-alpha');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,4);topoplot(mean(H_beta_LLRR_chan),channels,'nosedir','+X');title('H-beta');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,5);topoplot(mean(H_gamma_LLRR_chan),channels,'nosedir','+X');title('H-gamma');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,1);topoplot(mean(H_delta_LLRR_chan),channels,'nosedir','+X','style','map');title('H-delta');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,2);topoplot(mean(H_theta_LLRR_chan),channels,'nosedir','+X','style','map');title('H-theta');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,3);topoplot(mean(H_alpha_LLRR_chan),channels,'nosedir','+X','style','map');title('H-alpha');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,4);topoplot(mean(H_beta_LLRR_chan),channels,'nosedir','+X','style','map');title('H-beta');colorbar;colormap('jet');clim([cmin cmax]);
+subplot(1,5,5);topoplot(mean(H_gamma_LLRR_chan),channels,'nosedir','+X','style','map');title('H-gamma');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle({['mean H-EEG (+ 500ms) ^{* PLOT 14-1}'],char(datetime('now'))});
 colormap(hnc)
 % only H-EEG of beta and gamma show complexity (H>0.5)
@@ -3673,23 +3699,23 @@ canvas(0.5,0.5);
 cmin=0.3;cmax=0.7;
 for c=1:4
 subplot(4,5,(c-1)*5+1);
-topoplot(mean(H_delta_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_delta_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X','style','map');
 title(['H-delta ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+2);
-topoplot(mean(H_theta_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_theta_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X','style','map');
 title(['H-theta ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+3);
-topoplot(mean(H_alpha_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_alpha_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X','style','map');
 title(['H-alpha ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+4);
-topoplot(mean(H_beta_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_beta_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X','style','map');
 title(['H-beta ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(c-1)*5+5);
-topoplot(mean(H_gamma_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X');
+topoplot(mean(H_gamma_LLRR_chan(Inds4_LR(:,c),:)),channels,'nosedir','+X','style','map');
 title(['H-gamma ' states4names{c}],'Color',condicolors(c,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 end
@@ -3711,15 +3737,15 @@ end
 % Combine L and R in topoplots (1x5)
 canvas(0.5,0.2);
 cmin=-0.7;cmax=0.7;
-subplot(1,5,1);topoplot(H_delta_LR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,1);topoplot(H_delta_LR_H_LR_corr,channels,'nosedir','+X','style','map');
 title('H-delta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,2);topoplot(H_theta_LR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,2);topoplot(H_theta_LR_H_LR_corr,channels,'nosedir','+X','style','map');
 title('H-theta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,3);topoplot(H_alpha_LR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,3);topoplot(H_alpha_LR_H_LR_corr,channels,'nosedir','+X','style','map');
 title('H-alpha & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,4);topoplot(H_beta_LR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,4);topoplot(H_beta_LR_H_LR_corr,channels,'nosedir','+X','style','map');
 title('H-beta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,5);topoplot(H_gamma_LR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,5);topoplot(H_gamma_LR_H_LR_corr,channels,'nosedir','+X','style','map');
 title('H-gamma & H-int');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle({['corr of H-EEG (- 500ms) and H-interval ^{* PLOT 15}'],char(datetime('now'))});
 colormap(hnc)
@@ -3744,23 +3770,23 @@ canvas(0.5,0.8);
 cmin=-0.7;cmax=0.7;
 for s=1:4
 subplot(4,5,(s-1)*5+1);
-topoplot(H_delta_LR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_delta_LR_H_LR_corr4(s,:),channels,'nosedir','+X','style','map');
 title(['H-delta ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(s-1)*5+2);
-topoplot(H_theta_LR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_theta_LR_H_LR_corr4(s,:),channels,'nosedir','+X','style','map');
 title(['H-theta ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(s-1)*5+3);
-topoplot(H_alpha_LR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_alpha_LR_H_LR_corr4(s,:),channels,'nosedir','+X','style','map');
 title(['H-alpha ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(s-1)*5+4);
-topoplot(H_beta_LR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_beta_LR_H_LR_corr4(s,:),channels,'nosedir','+X','style','map');
 title(['H-beta ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(s-1)*5+5);
-topoplot(H_gamma_LR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_gamma_LR_H_LR_corr4(s,:),channels,'nosedir','+X','style','map');
 title(['H-gamma ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 end
@@ -3780,15 +3806,15 @@ end
 % Combine L and R in topoplots (1x5)
 canvas(0.5,0.2);
 cmin=-0.7;cmax=0.7;
-subplot(1,5,1);topoplot(H_delta_LLRR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,1);topoplot(H_delta_LLRR_H_LR_corr,channels,'nosedir','+X','style','map');
 title('H-delta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,2);topoplot(H_theta_LLRR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,2);topoplot(H_theta_LLRR_H_LR_corr,channels,'nosedir','+X','style','map');
 title('H-theta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,3);topoplot(H_alpha_LLRR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,3);topoplot(H_alpha_LLRR_H_LR_corr,channels,'nosedir','+X','style','map');
 title('H-alpha & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,4);topoplot(H_beta_LLRR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,4);topoplot(H_beta_LLRR_H_LR_corr,channels,'nosedir','+X','style','map');
 title('H-beta & H-int');colorbar;colormap('jet');clim([cmin cmax]);
-subplot(1,5,5);topoplot(H_gamma_LLRR_H_LR_corr,channels,'nosedir','+X');
+subplot(1,5,5);topoplot(H_gamma_LLRR_H_LR_corr,channels,'nosedir','+X','style','map');
 title('H-gamma & H-int');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle({['corr of H-EEG (+ 500ms) and H-interval  ^{* PLOT 15-1}'],char(datetime('now'))});
 colormap(hnc)
@@ -3813,23 +3839,23 @@ canvas(0.5,0.8);
 cmin=-0.7;cmax=0.7;
 for s=1:4
 subplot(4,5,(s-1)*5+1);
-topoplot(H_delta_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_delta_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X','style','map');
 title(['H-delta ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(s-1)*5+2);
-topoplot(H_theta_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_theta_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X','style','map');
 title(['H-theta ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(s-1)*5+3);
-topoplot(H_alpha_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_alpha_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X','style','map');
 title(['H-alpha ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(s-1)*5+4);
-topoplot(H_beta_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_beta_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X','style','map');
 title(['H-beta ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 subplot(4,5,(s-1)*5+5);
-topoplot(H_gamma_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X');
+topoplot(H_gamma_LLRR_H_LR_corr4(s,:),channels,'nosedir','+X','style','map');
 title(['H-gamma ' states4names{s} ' & H-int'],'Color',condicolors(s,:));
 colorbar;colormap('jet');clim([cmin cmax]);
 end
@@ -4000,7 +4026,7 @@ c=[1 2 3 4];
 for s=1:4
     for b=1:5
         subplot(4,5,(s-1)*5+b)
-        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');
+        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X','style','map');
         % colorbar; 
         % colormap(hnc); % colormap('jet');
         clim([cmin cmax]);
@@ -4055,7 +4081,7 @@ c=[4];
 for s=1    
     for b=1:5
         subplot(1,5,(s-1)*5+b)
-        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');
+        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X','style','map');
         clim([cmin cmax]);
     end
 end
@@ -4246,7 +4272,7 @@ c=[1 4];
 for s=1:2
     for b=1:5
         subplot(2,5,(s-1)*5+b)
-        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');colorbar; 
+        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X','style','map');colorbar; 
         colormap(hnc); % colormap('jet');
         clim([cmin cmax]);
         if b==3;title({['PLS model: H-EEG(-500ms) -> H-int ^{* PLOT 16-1}'], ...
@@ -4327,7 +4353,7 @@ canvas(0.4,0.4);
 cmin=-8e-2;cmax=8e-2;
 for c=1:4 % three states
     clear B FitInfo idxLambdaMinDeviance idxLambda1SE Lambda_coef
-    [B,FitInfo]  = lassoglm(pow5forpls3(Inds4_LR(:,c),:),H_all_LR(Inds4_LR(:,c)),'normal','CV',5);%normal or gamma
+    [B,FitInfo]  = lassoglm(pow5forpls3(Inds4_LR(:,c),:),H_all_LR(Inds4_LR(:,c)),'normal','CV',length(H_all_LR(Inds4_LR(:,c))));% normal or gamma
     % locate the point with minimum cross-validation error plus one standard deviation
     idxLambda1SE = FitInfo.Index1SE;
     min1coefs = find(B(:,idxLambda1SE));
@@ -4353,6 +4379,7 @@ for c=1:4 % three states
     grid on;
 end
 sgtitle({['Lassoglm: sum-EEG(-500ms) -> H-int'],char(datetime('now'))});
+set(gcf,'color','w'); % set background white for copying in ubuntu
 
 % 3 states - combine uncouple state and leading state and call it "independent"
 states3names={'Independent','Following','Mutual'};
@@ -4649,7 +4676,7 @@ c=[1 4];
 for s=1:2
     for b=1:5
         subplot(2,5,(s-1)*5+b)
-        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');colorbar; 
+        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X','style','map');colorbar; 
         colormap(hnc); % colormap('jet'); %  clim([cmin cmax]);
         if b==3;title({['PLS model: sum-EEG(-500ms) -> ' XcorrPeakmat2names{depen_select} ' ^{* PLOT 18-1}'], ...
                 [states4names{c(s)} '(R2= ' num2str(round(plsmodel(c(s)).R2,1)) ...
@@ -5100,19 +5127,19 @@ canvas(0.3,0.5);
 cmin=-0.4;cmax=0.4;
 for s=1:4
     subplot(4,5,5*(s-1)+1);
-    topoplot(delta_LR_F_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(delta_LR_F_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+2);
-    topoplot(theta_LR_F_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(theta_LR_F_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+3);
-    topoplot(alpha_LR_F_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(alpha_LR_F_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+4);
-    topoplot(beta_LR_F_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(beta_LR_F_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+5);
-    topoplot(gamma_LR_F_LR_4corr(s,:),channels,'nosedir','+X');
+    topoplot(gamma_LR_F_LR_4corr(s,:),channels,'nosedir','+X','style','map');
     clim([cmin cmax]);
 end
 colormap(hnc)
@@ -5272,7 +5299,7 @@ c=[1 2 3 4];
 for s=1:4
     for b=1:5
         subplot(4,5,(s-1)*5+b)
-        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X');
+        topoplot(plsmodel(c(s)).weights(b,:),channels,'nosedir','+X','style','map');
         clim([cmin cmax]);
     end
 end
