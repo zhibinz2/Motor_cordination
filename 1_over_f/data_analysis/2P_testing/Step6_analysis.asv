@@ -1243,7 +1243,7 @@ H_LR_synco_std=[std([H_L_uncouple_synco H_R_uncouple_synco]);...
     std([H_L_Llead_synco H_R_Rlead_synco]);... 
     std([H_R_Llead_synco H_L_Rlead_synco]);...
     std([H_L_mutual_synco H_R_mutual_synco])];
-% grouped barplot with errorbar
+% grouped barplot with errorbar (4 subplots) and statistical tests
 % https://www.mathworks.com/matlabcentral/answers/102220-how-do-i-place-errorbars-on-my-grouped-bar-graph-using-function-errorbar-in-matlab
 canvas(0.23, 0.4);
 model_series = [H_LR_synch_mean H_LR_synco_mean];
@@ -1257,15 +1257,40 @@ x = nan(nbars, ngroups);
 for i = 1:nbars
     x(i,:) = b(i).XEndPoints;
 end
-% Plot the errorbars
+% Plot the errorbars 
 errorbar(x',model_series,model_error,'k','linestyle','none');
 hold off
 xticks(1:4);xticklabels({'Uncouple','Leading','Following','Mutual'});
-ylim([0.5 1])
-legend('Synch','Synco','location','north')
+xlim([0.5 4.5]);
+ylabel('H'); ylim([0.4 1]);
 set(gcf,'color','w'); % set background white for copying in ubuntu
-
-
+delete(findall(gcf,'type','annotation'))
+sg=annotation('textbox',[0.05 0.01 0.5 0.07],'string',...
+    {['mean H(matched int) ^{ *PLOT 6}' char(datetime('now'))]})
+sg.Rotation=90
+yline(0.5,'color', deepyellow)
+legend({'Synch','Synco'},'location','north')
+% statistical test (ANOVA) 
+[p,tbl,stats] = anova1([...
+    [H_L_uncouple_synch H_R_uncouple_synch]' ...
+    [H_L_Llead_synch H_R_Rlead_synch]' ... 
+    [H_R_Llead_synch H_L_Rlead_synch]' ...
+    [H_L_mutual_synch H_R_mutual_synch]' ...
+    [H_L_uncouple_synco H_R_uncouple_synco]' ...
+    [H_L_Llead_synco H_R_Rlead_synco]' ... 
+    [H_R_Llead_synco H_L_Rlead_synco]' ...
+    [H_L_mutual_synco H_R_mutual_synco]'...
+    ]); % one-way ANOVA (work)
+% statistical test (Two sample t test)
+[h,p(1),ci,stats] = ttest2([H_L_uncouple_synch H_R_uncouple_synch]',[H_L_uncouple_synco H_R_uncouple_synco]') % Uncouple
+[h,p(2),ci,stats] = ttest2([H_L_Llead_synch H_R_Rlead_synch]',[H_L_Llead_synco H_R_Rlead_synco]') % Leading
+[h,p(3),ci,stats] = ttest2([H_R_Llead_synch H_L_Rlead_synch]',[H_R_Llead_synco H_L_Rlead_synco]','Alpha',0.01) % Following
+[h,p(4),ci,stats] = ttest2([H_L_mutual_synch H_R_mutual_synch]',[H_L_mutual_synco H_R_mutual_synco]') % Mutual
+sprintf('P values for each group: %0.3f\n',p)
+[h,p,ci,stats] = ttest2([H_L_mutual_synch H_R_mutual_synch H_L_Llead_synch H_R_Rlead_synch ...
+    H_R_Llead_synch H_L_Rlead_synch H_L_mutual_synch H_R_mutual_synch]',...
+    [H_L_mutual_synco H_R_mutual_synco H_L_Llead_synco H_R_Rlead_synco ...
+    H_R_Llead_synco H_L_Rlead_synco H_L_mutual_synco H_R_mutual_synco]') % Synch vs Synco
 % plot lines with errorbar 
 canvas(0.23, 0.4);
 for i=1:2;
@@ -2594,6 +2619,186 @@ sg=annotation('textbox',[0.07 0.01 0.22 0.05],'string',...
 sg.Rotation=90
 set(gcf,'color','w'); % set background white for copying in ubuntu
 end
+
+%% PLOT 10-3 EEG matching for theta only in mutual condition
+% select 6 channels  ---  Left: 5-F3,9-FC5,14-T7; Right: 7-F4,12-FC6,18-T6
+chan6=[5 7 9 12 14 18];
+chan6names={'F3','F4','FC5','FC6','T7','T6'};
+theta_LR_chan; % from PLOT13
+
+%********************** 6 subplots separating synch/o
+cmin=0;cmax=7;
+for subplots6 =1;
+canvas(0.25,0.7);
+for i=1:6
+subplot(3,2,i); %##############
+theta_L_chan=theta_LR_chan(1:144,chan6(i));
+theta_R_chan=theta_LR_chan(145:288,chan6(i));
+plot(theta_L_chan(mutualInd_LR(synchind(1:3))),theta_R_chan(mutualInd_LR(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);hold on;
+plot(theta_L_chan(mutualInd_LR(synchind(4:6))),theta_R_chan(mutualInd_LR(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(synchind(7:9))),theta_R_chan(mutualInd_LR(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(synchind(10:12))),theta_R_chan(mutualInd_LR(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(synchind(13:15))),theta_R_chan(mutualInd_LR(synchind(13:15))),'*','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(synchind(16:18))),theta_R_chan(mutualInd_LR(synchind(16:18))),'diamond','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(syncoind(1:3))),theta_R_chan(mutualInd_LR(syncoind(1:3))),'.','MarkerSize',30,'color',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(4:6))),theta_R_chan(mutualInd_LR(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(7:9))),theta_R_chan(mutualInd_LR(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(10:12))),theta_R_chan(mutualInd_LR(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(13:15))),theta_R_chan(mutualInd_LR(syncoind(13:15))),'*','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(16:18))),theta_R_chan(mutualInd_LR(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+xlabel('Theta power, Participant L');ylabel('Theta power, Participant R');
+title('bidirectional'); 
+% fit the synch data
+A=[];Alpha1=[];FitValues=[];RHO=[]
+A=polyfit(theta_L_chan(mutualInd_LR(1:2:35)),theta_R_chan(mutualInd_LR(1:2:35)),1);
+[RHO,~]=corr(theta_L_chan(mutualInd_LR(1:2:35)),theta_R_chan(mutualInd_LR(1:2:35)));
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,theta_L_chan(mutualInd_LR(1:2:35)));
+hold on; plot(theta_L_chan(mutualInd_LR(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
+text(max(theta_L_chan(mutualInd_LR(1:2:35))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+% fit the synco data
+A=[];Alpha1=[];FitValues=[];RHO=[]
+A=polyfit(theta_L_chan(mutualInd_LR(2:2:36)),theta_R_chan(mutualInd_LR(2:2:36)),1);
+[RHO,~]=corr(theta_L_chan(mutualInd_LR(2:2:36)),theta_R_chan(mutualInd_LR(2:2:36)));
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,theta_L_chan(mutualInd_LR(2:2:36)));
+hold on; plot(theta_L_chan(mutualInd_LR(2:2:36)),FitValues,'-','color',pink,'LineWidth',3);
+text(max(theta_L_chan(mutualInd_LR(2:2:36))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+xlim([cmin cmax]);ylim([cmin cmax]);
+plot([cmin cmax], [cmin cmax],'m--');
+hold off;
+% subtitle(['(mutual): linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
+grid on;
+title(chan6names{i});
+end;
+lg=legend('synch - subj pair 1','synch - subj pair 2','synch - subj pair 3','synch - subj pair 4', ...
+    'synch - subj pair 5','synch - subj pair 6', ...
+    'synco - subj pair 1','synco - subj pair 2','synco - subj pair 3','synco - subj pair 4',...
+    'synco - subj pair 5','synco - subj pair 6','location','eastoutside');
+lg.Position = [0.9475 0.15 0.01 0.025];
+% sgtitle(['H matching as in Marmelat 2012  ^{* PLOT 10-2}']);
+delete(findall(gcf,'type','annotation'))
+% sg=annotation('textbox',[0.07 0.01 0.22 0.05],'string',...
+%     'Sum of theta power for chanel 7-F4  ^{* PLOT 10-2}')
+% sg=annotation('textbox',[0.07 0.01 0.22 0.05],'string',...
+%     'Sum of theta power for chanel 14-T7  ^{* PLOT 10-2}')
+sg=annotation('textbox',[0.07 0.01 0.5 0.05],'string',...
+    'Sum of theta power for 6 channels in bidirectional state ^{* PLOT 10-2}')
+sg.Rotation=90
+set(gcf,'color','w'); % set background white for copying in ubuntu
+end
+
+% single regression for all 6 chan combining synch/o
+cmin=0;cmax=7;
+for subplots6 =1;
+canvas(0.25,0.25);
+for i=1:6
+subplot(3,2,i); %##############
+theta_L_chan=theta_LR_chan(1:144,chan6(i));
+theta_R_chan=theta_LR_chan(145:288,chan6(i));
+plot(theta_L_chan(mutualInd_LR(synchind(1:3))),theta_R_chan(mutualInd_LR(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);hold on;
+plot(theta_L_chan(mutualInd_LR(synchind(4:6))),theta_R_chan(mutualInd_LR(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(synchind(7:9))),theta_R_chan(mutualInd_LR(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(synchind(10:12))),theta_R_chan(mutualInd_LR(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(synchind(13:15))),theta_R_chan(mutualInd_LR(synchind(13:15))),'*','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(synchind(16:18))),theta_R_chan(mutualInd_LR(synchind(16:18))),'diamond','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(syncoind(1:3))),theta_R_chan(mutualInd_LR(syncoind(1:3))),'.','MarkerSize',30,'color',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(4:6))),theta_R_chan(mutualInd_LR(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(7:9))),theta_R_chan(mutualInd_LR(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(10:12))),theta_R_chan(mutualInd_LR(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(13:15))),theta_R_chan(mutualInd_LR(syncoind(13:15))),'*','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(16:18))),theta_R_chan(mutualInd_LR(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+xlabel('Theta power, Participant L');ylabel('Theta power, Participant R');
+title('bidirectional'); 
+% fit the synch/o combined data
+A=[];Alpha1=[];FitValues=[];RHO=[]
+A=polyfit(theta_L_chan(mutualInd_LR(1:36)),theta_R_chan(mutualInd_LR(1:36)),1);
+[RHO,~]=corr(theta_L_chan(mutualInd_LR),theta_R_chan(mutualInd_LR));
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,theta_L_chan(mutualInd_LR));
+hold on; plot(theta_L_chan(mutualInd_LR),FitValues,'-','color',[0 0 0],'LineWidth',3);
+text(max(theta_L_chan(mutualInd_LR)),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+xlim([cmin cmax]);ylim([cmin cmax]);
+plot([cmin cmax], [cmin cmax],'m--');
+hold off;
+% subtitle(['(mutual): linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
+grid on;
+title(chan6names{i});
+end;
+lg=legend('synch - subj pair 1','synch - subj pair 2','synch - subj pair 3','synch - subj pair 4', ...
+    'synch - subj pair 5','synch - subj pair 6', ...
+    'synco - subj pair 1','synco - subj pair 2','synco - subj pair 3','synco - subj pair 4',...
+    'synco - subj pair 5','synco - subj pair 6','location','eastoutside');
+lg.Position = [0.9475 0.15 0.01 0.025];
+% sgtitle(['H matching as in Marmelat 2012  ^{* PLOT 10-2}']);
+delete(findall(gcf,'type','annotation'))
+% sg=annotation('textbox',[0.07 0.01 0.22 0.05],'string',...
+%     'Sum of theta power for chanel 7-F4  ^{* PLOT 10-2}')
+% sg=annotation('textbox',[0.07 0.01 0.22 0.05],'string',...
+%     'Sum of theta power for chanel 14-T7  ^{* PLOT 10-2}')
+sg=annotation('textbox',[0.07 0.01 0.5 0.05],'string',...
+    'Sum of theta power for 6 channels in bidirectional state ^{* PLOT 10-2}')
+sg.Rotation=90
+set(gcf,'color','w'); % set background white for copying in ubuntu
+end
+
+
+% all six channels
+theta_L_chan=mean(theta_LR_chan(1:144,[5 7 9 12 14 18]),2);
+theta_R_chan=mean(theta_LR_chan(145:288,[5 7 9 12 14 18]),2);
+%********************** 6 subplots
+cmin=0;cmax=7;
+for subplots6to1 =1;
+canvas(0.25,0.25);
+plot(theta_L_chan(mutualInd_LR(synchind(1:3))),theta_R_chan(mutualInd_LR(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);hold on;
+plot(theta_L_chan(mutualInd_LR(synchind(4:6))),theta_R_chan(mutualInd_LR(synchind(4:6))),'square','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(synchind(7:9))),theta_R_chan(mutualInd_LR(synchind(7:9))),'^','MarkerSize',8,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(synchind(10:12))),theta_R_chan(mutualInd_LR(synchind(10:12))),'pentagram','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(synchind(13:15))),theta_R_chan(mutualInd_LR(synchind(13:15))),'*','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(synchind(16:18))),theta_R_chan(mutualInd_LR(synchind(16:18))),'diamond','MarkerSize',10,'color',darkgreen,'MarkerFaceColor',darkgreen);
+plot(theta_L_chan(mutualInd_LR(syncoind(1:3))),theta_R_chan(mutualInd_LR(syncoind(1:3))),'.','MarkerSize',30,'color',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(4:6))),theta_R_chan(mutualInd_LR(syncoind(4:6))),'square','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(7:9))),theta_R_chan(mutualInd_LR(syncoind(7:9))),'^','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(10:12))),theta_R_chan(mutualInd_LR(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(13:15))),theta_R_chan(mutualInd_LR(syncoind(13:15))),'*','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+plot(theta_L_chan(mutualInd_LR(syncoind(16:18))),theta_R_chan(mutualInd_LR(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
+xlabel('Theta power, Participant L');ylabel('Theta power, Participant R');
+title('Sum of theta power from F3,F4,FC5,FC6,T7,T6 in bidrectional state'); 
+% fit the synch data
+A=[];Alpha1=[];FitValues=[];RHO=[]
+A=polyfit(theta_L_chan(mutualInd_LR(1:2:35)),theta_R_chan(mutualInd_LR(1:2:35)),1);
+[RHO,~]=corr(theta_L_chan(mutualInd_LR(1:2:35)),theta_R_chan(mutualInd_LR(1:2:35)));
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,theta_L_chan(mutualInd_LR(1:2:35)));
+hold on; plot(theta_L_chan(mutualInd_LR(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
+text(max(theta_L_chan(mutualInd_LR(1:2:35))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+% fit the synco data
+A=[];Alpha1=[];FitValues=[];RHO=[]
+A=polyfit(theta_L_chan(mutualInd_LR(2:2:36)),theta_R_chan(mutualInd_LR(2:2:36)),1);
+[RHO,~]=corr(theta_L_chan(mutualInd_LR(2:2:36)),theta_R_chan(mutualInd_LR(2:2:36)));
+Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
+FitValues=polyval(A,theta_L_chan(mutualInd_LR(2:2:36)));
+hold on; plot(theta_L_chan(mutualInd_LR(2:2:36)),FitValues,'-','color',pink,'LineWidth',3);
+text(max(theta_L_chan(mutualInd_LR(2:2:36))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+xlim([cmin cmax]);ylim([cmin cmax]);
+plot([cmin cmax], [cmin cmax],'m--');
+hold off;
+% subtitle(['(mutual): linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
+grid on;
+lg=legend('synch - subj pair 1','synch - subj pair 2','synch - subj pair 3','synch - subj pair 4', ...
+    'synch - subj pair 5','synch - subj pair 6', ...
+    'synco - subj pair 1','synco - subj pair 2','synco - subj pair 3','synco - subj pair 4',...
+    'synco - subj pair 5','synco - subj pair 6','location','eastoutside');
+lg.Position = [0.9475 0.15 0.01 0.025];
+% sgtitle(['H matching as in Marmelat 2012  ^{* PLOT 10-2}']);
+delete(findall(gcf,'type','annotation'))
+sg=annotation('textbox',[0.07 0.01 0.5 0.05],'string',...
+    'Sum of theta power for 6 channels in bidirectional state ^{* PLOT 10-2}')
+sg.Rotation=90
+set(gcf,'color','w'); % set background white for copying in ubuntu
+end
+
+
 
 %% PLOT 11 Xcorr(0) with slinding win of 20 intervals (matched int) in one subj
 % clear
