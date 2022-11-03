@@ -2378,6 +2378,58 @@ H_all_LR=[H_Lall; H_Rall]
 % followingInd(1:24); % for L
 % mutualInd(1:24);
 
+%% SECT 10-2 Construct testing dataset
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
+        2022100402;20221005];
+numSes=size(seeds,1);
+
+% organize conditions in all sessions into a vector of 288
+condition_all=[]; % 12 session x 12 trials
+% initialize the testing dataset
+testing_data=[]; % 12 session x 12 trials
+tic
+for s=1:numSes
+    clear conditions
+    runid=num2str(seeds(s,:));
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ]);
+    condition_all(s,:)=conditions; 
+    % tesing_data has the following structure: L&R assinged same value
+    % synco are negaitive and synch are positive
+    % sessions marked with 0.01 to 0.12
+    if mod(s,2)==0;
+        % assigned negative to synco condi
+        testing_data(s,:)=-1*conditions-s/100; 
+    else mod(s,2)==1;
+        % append sequential integer as two decimals for each pair of subject in each session
+        testing_data(s,:)=conditions+s/100; 
+    end
+end
+toc % took 78 sec
+
+% reshape into a vector in time sequence
+condition_all=reshape(condition_all',[],1); % 144 x 1 
+testing_data_L=reshape(testing_data',[],1); % 144 x 1 
+testing_data_R=testing_data_L; % 144 x 1 
+testing_data_LR=[testing_data_L; testing_data_R];
+% testing EEG dataset in 32channels
+% same structure as testing data but mark each channel with 0.0001-0.0032
+channel_mark1=nan(12,32);
+for s=1:numSes
+    if mod(s,2)==0;
+        % assigned negative to synco condi
+        channel_mark1(s,:)=-[1:32]/10000; 
+    else mod(s,2)==1;
+        % append sequential integer as two decimals for each pair of subject in each session
+        channel_mark1(s,:)=[1:32]/10000; 
+    end
+end
+channel_mark2=nan(144,32);
+for s=1:numSes
+    channel_mark2([1:12]+12*(s-1),:)=repmat(channel_mark1(s,:),12,1);
+end
+testing_EEG_L=repmat(testing_data_L,1,32) + channel_mark2;
+testing_EEG_R=repmat(testing_data_R,1,32) + channel_mark2;
+testing_EEG_LR=[testing_EEG_L;testing_EEG_R];
 %% PLOT 10-2 H matching as in Marmelat 2012 (matched int)
 % H-int matching for L and R as in Marmelat 2012
 % indicies in the synch and synco time sequence
@@ -2624,10 +2676,19 @@ end
 % select 6 channels  ---  Left: 5-F3,9-FC5,14-T7; Right: 7-F4,12-FC6,18-T6
 chan6=[5 7 9 12 14 18];
 chan6names={'F3','F4','FC5','FC6','T7','T6'};
+
+% select the EEG data
 theta_LR_chan; % from PLOT13
+theta_LR_chan_copy=theta_LR_chan; % make a copy for testing
+theta_LR_chan=theta_LR_chan_copy; % restore;
+theta_LR_chan=testing_EEG_LR;
 
 %********************** 6 subplots separating synch/o
 cmin=0;cmax=7;
+cmin=-4.1232;cmax=-4.0101; % testing synco
+cmin=4.0101;cmax=4.1232; % testing synch
+cmin=-4.1232;cmax=4.1232; % testing both
+
 for subplots6 =1;
 canvas(0.25,0.7);
 for i=1:6
@@ -2649,7 +2710,7 @@ plot(theta_L_chan(mutualInd_LR(syncoind(16:18))),theta_R_chan(mutualInd_LR(synco
 xlabel('Theta power, Participant L');ylabel('Theta power, Participant R');
 title('bidirectional'); 
 % fit the synch data
-A=[];Alpha1=[];FitValues=[];RHO=[]
+A=[];Alpha1=[];FitValues=[];RHO=[];
 A=polyfit(theta_L_chan(mutualInd_LR(1:2:35)),theta_R_chan(mutualInd_LR(1:2:35)),1);
 [RHO,~]=corr(theta_L_chan(mutualInd_LR(1:2:35)),theta_R_chan(mutualInd_LR(1:2:35)));
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
@@ -2657,7 +2718,7 @@ FitValues=polyval(A,theta_L_chan(mutualInd_LR(1:2:35)));
 hold on; plot(theta_L_chan(mutualInd_LR(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
 text(max(theta_L_chan(mutualInd_LR(1:2:35))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
 % fit the synco data
-A=[];Alpha1=[];FitValues=[];RHO=[]
+A=[];Alpha1=[];FitValues=[];RHO=[];
 A=polyfit(theta_L_chan(mutualInd_LR(2:2:36)),theta_R_chan(mutualInd_LR(2:2:36)),1);
 [RHO,~]=corr(theta_L_chan(mutualInd_LR(2:2:36)),theta_R_chan(mutualInd_LR(2:2:36)));
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
@@ -2691,7 +2752,7 @@ end
 % single regression for all 6 chan combining synch/o
 cmin=0;cmax=7;
 for subplots6 =1;
-canvas(0.25,0.25);
+canvas(0.25,0.75);
 for i=1:6
 subplot(3,2,i); %##############
 theta_L_chan=theta_LR_chan(1:144,chan6(i));
@@ -2711,13 +2772,13 @@ plot(theta_L_chan(mutualInd_LR(syncoind(16:18))),theta_R_chan(mutualInd_LR(synco
 xlabel('Theta power, Participant L');ylabel('Theta power, Participant R');
 title('bidirectional'); 
 % fit the synch/o combined data
-A=[];Alpha1=[];FitValues=[];RHO=[]
+A=[];Alpha1=[];FitValues=[];RHO=[];
 A=polyfit(theta_L_chan(mutualInd_LR(1:36)),theta_R_chan(mutualInd_LR(1:36)),1);
-[RHO,~]=corr(theta_L_chan(mutualInd_LR),theta_R_chan(mutualInd_LR));
+[RHO,~]=corr(theta_L_chan(mutualInd_LR(1:36)),theta_R_chan(mutualInd_LR(1:36)));
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,theta_L_chan(mutualInd_LR));
-hold on; plot(theta_L_chan(mutualInd_LR),FitValues,'-','color',[0 0 0],'LineWidth',3);
-text(max(theta_L_chan(mutualInd_LR)),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+FitValues=polyval(A,theta_L_chan(mutualInd_LR(1:36)));
+hold on; plot(theta_L_chan(mutualInd_LR(1:36)),FitValues,'-','color',[0 0 0],'LineWidth',3);
+text(max(theta_L_chan(mutualInd_LR(1:36))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
 xlim([cmin cmax]);ylim([cmin cmax]);
 plot([cmin cmax], [cmin cmax],'m--');
 hold off;
@@ -2743,7 +2804,7 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 end
 
 
-% all six channels
+% all six channels in one plot
 theta_L_chan=mean(theta_LR_chan(1:144,[5 7 9 12 14 18]),2);
 theta_R_chan=mean(theta_LR_chan(145:288,[5 7 9 12 14 18]),2);
 %********************** 6 subplots
