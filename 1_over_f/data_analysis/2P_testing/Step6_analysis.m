@@ -394,16 +394,30 @@ darkgreen = [0 0.5 0];
 grey  = [0.5 0.5 0.5];
 yellow  = [1 1 0];
 deepyellow  = [1 0.8 0.2];
+gold = [212/255 175/255 55/255];
+brown = [150/255 75/255 0];
 megenta = [1 0 1];% fill([0 1 1 0],[0 0 1 1],megenta)
 cyan = [0 1 1]; % fill([0 1 1 0],[0 0 1 1],cc)
 purple = [0.6 0.1 0.9];
+% https://www.mathworks.com/help/matlab/creating_plots/specify-plot-colors.html
+matlab_blue=[0 0.4470 0.7410];
+matlab_orange=[0.8500 0.3250 0.0980];
+matlab_gold=[0.9290 0.6940 0.1250];
+matlab_purple=[0.4940 0.1840 0.5560];
+matlab_green=[0.4660 0.6740 0.1880];
+matlab_cyan=[0.3010 0.7450 0.9330];
+matlab_red=[0.6350 0.0780 0.1840];
+% combine colors
 condicolors=[darkgreen;red;blue;megenta;purple;purple];
+dire3colors=[darkgreen;brown;megenta];
+syn2colors=[matlab_blue;matlab_orange];
 HNLcolors = [darkgreen; deepyellow; pink];
 
-% % test color
-% showcolor=pink;
+% % % test color
+% showcolor=gold;
 % imagesc(cat(3,showcolor(1),showcolor(2),showcolor(3)));
 
+% colormap
 addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
 %% PLOT 2-1: Auto&Xcorr DFA GC PSA for each trial
@@ -1583,7 +1597,6 @@ ylabel('\rho(k)');
 title('mean autocorr sum for 20 lags in all sessions (matched int) ^{ *PLOT 7}');
 grid on;
 
-%
 % combine synch and synco of Autocorrs20lags in 3 directions
 direction3names={'uncouple','uni-directional','mutual'};
 Autocorrs20lags_LR_synch_3mean = [Autocorrs20lags_L_uncouple_synch  Autocorrs20lags_R_uncouple_synch ...
@@ -1761,7 +1774,6 @@ sgtitle('H from DFA after d removal in all sessions (using d=H-0.5) ^{* PLOT 8}'
 
 
 %% SECT 9 Xcorr before/after d removal and save new intervals (matched int) (sorted order) 
-clear
 Trials={'uncouple','uncouple','uncouple','L-lead','L-lead','L-lead',...
     'R-lead','R-lead','R-lead','mutual','mutual','mutual'}';
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
@@ -2206,30 +2218,32 @@ lg.Position = [0.9475 0.25 0.01 0.25];
 sgtitle('mean xcorr for 10 lags from all sessions (matched int) ^{ *PLOT 9-1}')
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
-% combine Xcorr10Lag in 3 directions
+% combine Xcorr10Lag in 3 directions (2x3suplots)
 Xcorr10Lag; % sorted order
-direction3names={'uncouple','uni-directional','mutual'};
+direction3names={'Uncoupled','Unidirectional','Bidirectional'};
 sorted3inds={[1:3],[4:9],[10:12]};
 canvas(0.45, 0.6);
 for i=1:3
 subplot(2,3,i)
     plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(1:2:11,sorted3inds{i},:),2)),1),'k');
     title(direction3names{i},'color',condicolors(i,:));
-    subtitle('xcorr synch');
-    ylabel('\rho(k)');xlabel('lag');ylim([-0.1 0.8])
+    subtitle('xcorr synch');ylabel('\rho');ylim([-0.1 0.8])
+    xlabel('lag (L-leading <- 0 -> R-leading)');
     yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
     subplot(2,3,3+i)
     plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(2:2:12,sorted3inds{i},:),2)),1),'k');
     title(direction3names{i},'color',condicolors(i,:));
-    subtitle('xcorr synco');
-    ylabel('\rho(k)');xlabel('lag');ylim([-0.1 0.8])
+    subtitle('xcorr synco');ylabel('\rho');ylim([-0.1 0.8])
+    xlabel('lag (L-leading <- 0 -> R-leading)');
+    end
     yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
 end
 sgtitle('mean xcorr sum for 10 lags in all sessions (matched int) ^{ *PLOT 9-1}');
+% in 1x3 with different colors and 
 
-% combine synch and synco
+% combine synch and synco in 1x3
 Xcorr10Lag; % sorted order
-direction3names={'uncoupled','unidirectional','bidirectional'};
+direction3names={'Uncoupled','Unidirectional','Bidirectional'};
 sorted3inds={[1:3],[4:9],[10:12]};
 sorted4inds=[1:3; 4:6; 7:9; 10:12];
 canvas(0.45, 0.35);
@@ -2262,34 +2276,41 @@ sg=annotation('textbox',[0.01 0.01 0.07 0.05],'string',...
     'Xcorr ^{* PLOT 9-1}')
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
-% for synch only
+% separate synch and synco with diff color (1 x 3 direction)
 Xcorr10Lag; % sorted order
-direction3names={'uncouple','uni-directional','mutual'};
+direction3names={'Uncoupled','Unidirectional','Bidirectional'};
 sorted3inds={[1:3],[4:9],[10:12]};
 sorted4inds=[1:3; 4:6; 7:9; 10:12];
+syn2Ind;
 canvas(0.45, 0.3);
 for i=1:3
-subplot(1,3,i)
+    for syn=1:2
+    subplot(1,3,i)
     if i==2;
         % L-lead
-        L_mat=squeeze(mean(Xcorr10Lag(1:2:11,sorted4inds(2,:),:),2));
+        L_mat=squeeze(mean(Xcorr10Lag(syn2Ind{syn},sorted4inds(2,:),:),2));
         % R-lead
-        R_mat=squeeze(mean(Xcorr10Lag(1:2:11,sorted4inds(3,:),:),2));
+        R_mat=squeeze(mean(Xcorr10Lag(syn2Ind{syn},sorted4inds(3,:),:),2));
         % combine
         LR_mean=mean([L_mat;fliplr(R_mat)]);
         % plot Leader vs Follower
-        plot(-10:1:10,LR_mean,'k');
-        title(direction3names{i},'color',condicolors(i,:));
-        ylabel('\rho(k)');xlabel('lag (Leader-leading <- 0 -> Follower-leading)');ylim([-0.1 0.8])
+        hold on;
+        plot(-10:1:10,LR_mean,'color',syn2colors(syn,:));
+        title(direction3names{i});
+        ylabel('\rho');xlabel('lag (Leader-leading <- 0 -> Follower-leading)');ylim([-0.1 0.8])
     elseif i==1 | i==3;
-        plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(1:2:11,sorted3inds{i},:),2)),1),'k');
-        title(direction3names{i},'color',condicolors(i,:));
-        ylabel('\rho(k)');xlabel('lag (L-leading <- 0 -> R-leading)');ylim([-0.1 0.8])
-end
-    yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
+        hold on;
+        plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(syn2Ind{syn},sorted3inds{i},:),2)),1),'color',syn2colors(syn,:));
+        title(direction3names{i});
+        ylabel('\rho');xlabel('lag (L-leading <- 0 -> R-leading)');ylim([-0.1 0.8])
+    end
+        yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
+        xline(-1,'color',[1 0.8 0.2]);xline(1,'color',[1 0.8 0.2]);
+    hold off;
+    end
 end
 sgtitle('mean xcorr sum for 10 lags in synch sessions (matched int) ^{ *PLOT 9-1}');
-
+set(gcf,'color','w'); % set background white for copying in ubuntu
 %% SECT 10 redo H and intervals_H_removed and save them separately (matched int)
 % in original order
 clear
@@ -3007,10 +3028,10 @@ for s=1:numSes;
         intL_good_dmean=intervals{b}(:,1)-mean(intervals{b}(:,1));
         intR_good_dmean=intervals{b}(:,2)-mean(intervals{b}(:,2));
         [r12,lags12]=xcorr(intL_good_dmean,intR_good_dmean,10,'normalized');
-        BPint_xcorrSeries(1,s,b)=r12(11);% xcorr(0)
-        BPint_xcorrSeries(2,s,b)=r12(11);% xcorr(0)
-%         BPint_xcorrSeries(1,s,b)=r12(10);% xcorr(-1)
-%         BPint_xcorrSeries(2,s,b)=r12(12);% xcorr(+1)
+        BPint_xcorrSeries(1,s,b)=r12(10);% xcorr(-1)
+        BPint_xcorrSeries(2,s,b)=r12(12);% xcorr(+1)
+%         BPint_xcorrSeries(1,s,b)=r12(11);% xcorr(0)
+%         BPint_xcorrSeries(2,s,b)=r12(11);% xcorr(0)
     end
 end
 toc % 77 sec
@@ -3088,7 +3109,7 @@ for s=1:4
         gamma_LR_Xcorr_LR_4corr(s,c)=corr(gamma_LR_chan(select_Inds4_LR(:,s),c),BPint_xcorrSeries_LR(select_Inds4_LR(:,s)));
     end
 end
-% Combine L and R in 4 states(4x5)
+% Plot 4 states(4x5)
 for plot_4by5=1;
 canvas(0.3,0.5);
 cmin=-0.7;cmax=0.7;
@@ -4159,7 +4180,7 @@ addpath /home/zhibin/Documents/GitHub/matlab/ramesh/plsmodel
 addpath(genpath('/home/zhibin/Documents/GitHub/matlab/external/')); 
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 
-% (ALL states: 5freq x 32chan = 160 predictors x 192 trials)
+% (ALL states: 5freq x 32chan = 160 predictors x 288 trials)
 % -updated to use mynpls_pred function
 reg=[];ypred_fit=[];X_MC=[];Y_MC=[];
 clear plsmodel;
@@ -4338,7 +4359,7 @@ set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
 % topoplot only for mutual
 canvas(0.3,0.2)
 for states1=1;
-cmin=-0.005;cmax=0.005;
+cmin=-0.01;cmax=0.01;
 c=[4];
 for s=1    
     for b=1:5
