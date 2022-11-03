@@ -1295,6 +1295,12 @@ legend({'Synch','Synco'},'location','north')
     [H_R_Llead_synco H_L_Rlead_synco]' ...
     [H_L_mutual_synco H_R_mutual_synco]'...
     ]); % one-way ANOVA (work)
+% Bonferroni correction
+[results,means,~,gnames] = multcompare(stats,"CriticalValueType","bonferroni"); % multi-comparison
+tbl = array2table([results],"VariableNames", ...
+    ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
+tb2 = array2table([means],"VariableNames", ["Mean","Standard Error"])
+p_bonf=results(:,6);
 % statistical test (Two sample t test)
 [h,p(1),ci,stats] = ttest2([H_L_uncouple_synch H_R_uncouple_synch]',[H_L_uncouple_synco H_R_uncouple_synco]') % Uncouple
 [h,p(2),ci,stats] = ttest2([H_L_Llead_synch H_R_Rlead_synch]',[H_L_Llead_synco H_R_Rlead_synco]') % Leading
@@ -3016,6 +3022,8 @@ sessions={'synch','synco','synch','synco','synch','synco','synch','synco','synch
 condition_all_mat=NaN(numSes,12); % (Refer to SECT 10-1)
 % Compute Xcorr(0)/Xcorr(-1/+1) for all trials
 BPint_xcorrSeries=nan(2,numSes,12);
+BPint_xcorrSeries_synch=nan(2,numSes,12);
+BPint_xcorrSeries_synco=nan(2,numSes,12);
 tic
 for s=1:numSes;
     clear intervals conditions
@@ -3028,13 +3036,24 @@ for s=1:numSes;
         intL_good_dmean=intervals{b}(:,1)-mean(intervals{b}(:,1));
         intR_good_dmean=intervals{b}(:,2)-mean(intervals{b}(:,2));
         [r12,lags12]=xcorr(intL_good_dmean,intR_good_dmean,10,'normalized');
-        BPint_xcorrSeries(1,s,b)=r12(10);% xcorr(-1)
-        BPint_xcorrSeries(2,s,b)=r12(12);% xcorr(+1)
-%         BPint_xcorrSeries(1,s,b)=r12(11);% xcorr(0)
-%         BPint_xcorrSeries(2,s,b)=r12(11);% xcorr(0)
+        % for synch
+        BPint_xcorrSeries_synch(1,s,b)=r12(10);% xcorr(-1)
+        BPint_xcorrSeries_synch(2,s,b)=r12(12);% xcorr(+1)
+        % for synco
+        BPint_xcorrSeries_synco(1,s,b)=r12(11);% xcorr(0)
+        BPint_xcorrSeries_synco(2,s,b)=r12(11);% xcorr(0)
     end
 end
 toc % 77 sec
+
+% make a copy of the results
+% BPint_xcorrSeries_synch=BPint_xcorrSeries;
+% BPint_xcorrSeries_synco=BPint_xcorrSeries;
+
+% select the result to analyze
+% BPint_xcorrSeries=BPint_xcorrSeries_synch;
+% BPint_xcorrSeries=BPint_xcorrSeries_synco;
+
 % Organize BPint_xcorrSeries for PLS
 % same way as we did with H in PLOT 13
 BPint_xcorrSeries; % (2xnumSesx12) for all sessions (matched int) (original order)
@@ -3087,7 +3106,7 @@ select_Inds4_LR; % *******
     % end
 % indices for 4 states from PLOT 10-1
 % fix the scale in the data (as in PLOT 16)
-% delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); %organized in PLOT 13
+% delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); %organized in SECT 13
 % theta_LR_chan = theta_LR_chan./(ones(288,1)*std(theta_LR_chan));
 % alpha_LR_chan = alpha_LR_chan./(ones(288,1)*std(alpha_LR_chan));
 % beta_LR_chan = beta_LR_chan./(ones(288,1)*std(beta_LR_chan));
@@ -3151,12 +3170,14 @@ set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
 end
 delete(sg)
-% sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
-%     'Correlation of sum-EEG (-500ms) and Xcorr(0) ^{* PLOT 11-3}')
-% sg=annotation('textbox',[0.3 0.01 0.45 0.07],'string',...
-%     {['Correlation of sum-EEG (-500ms) and Xcorr(-1/+1) in Synch ^{* PLOT 11-2} '], char(datetime('now'))})
+%{
+sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
+    'Correlation of sum-EEG (-500ms) and Xcorr(0) ^{* PLOT 11-3}')
+sg=annotation('textbox',[0.3 0.01 0.45 0.07],'string',...
+     {['Correlation of sum-EEG (-500ms) and Xcorr(-1/+1) in Synch ^{* PLOT 11-2} '], char(datetime('now'))})
 sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
     {['Correlation of sum-EEG (-500ms) and Xcorr(0) in Synco ^{* PLOT 11-2} '], char(datetime('now'))})
+%} 
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
 
@@ -3434,7 +3455,6 @@ set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
 sg=annotation('textbox',[0.3 0.01 0.35 0.15],'string',...
     {['PLS model: sum-EEG(-500ms) -> Xcorr(0) in synch^{* PLOT 11-2}'],char(datetime('now'))});
 %% SECT 12 Compute EEG power (-/+ 500ms) 5 bands
-% clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
 numSes=size(seeds,1);
@@ -3492,9 +3512,8 @@ for s=1:numSes % each session
         end
     end
 end
-toc % about 2 min
-
-%% PLOT 13 corr of sum-EEG power (- 500ms) and H-int all sessions
+toc  % about 2 min
+%% SECT 13 organize sum-EEG power and H for corr and PLS 
 % organize EEG power
 zEEG500_L; zEEG500_R; % for all sessions from SECT 12
 delta_L;theta_L;alpha_L;beta_L;gamma_L;
@@ -3516,6 +3535,7 @@ for s=1:numSes
         gamma_R_sum(s,b,:)=sum([gamma_R{s,b}]);
     end
 end
+
 % squeeze into 32 vectors for corr with H
 delta_L_chan=[];theta_L_chan=[];alpha_L_chan=[];beta_L_chan=[];gamma_L_chan=[];
 delta_R_chan=[];theta_R_chan=[];alpha_R_chan=[];beta_R_chan=[];gamma_R_chan=[];
@@ -3531,6 +3551,7 @@ for c=1:32
     beta_R_chan(:,c)=reshape(beta_R_sum(:,:,c)',[],1);
     gamma_R_chan(:,c)=reshape(gamma_R_sum(:,:,c)',[],1);
 end
+
 % Combine L and R for 288 predictors in PLS
 delta_LR_chan=[delta_L_chan;delta_R_chan]; % (288 x 32)
 theta_LR_chan=[theta_L_chan;theta_R_chan];
@@ -3538,7 +3559,7 @@ alpha_LR_chan=[alpha_L_chan;alpha_R_chan];
 beta_LR_chan=[beta_L_chan;beta_R_chan];
 gamma_LR_chan=[gamma_L_chan;gamma_R_chan];
 % fix the scale in the data (as in PLOT 16, now skiped in PLOT 16)
-delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); %organized in PLOT 13
+delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); % organized in SECT 13
 theta_LR_chan = theta_LR_chan./(ones(288,1)*std(theta_LR_chan));
 alpha_LR_chan = alpha_LR_chan./(ones(288,1)*std(alpha_LR_chan));
 beta_LR_chan = beta_LR_chan./(ones(288,1)*std(beta_LR_chan));
@@ -3554,6 +3575,8 @@ H_all_R=reshape(H_all_R',[],1);
 % Combine L and R
 H_all_LR=[H_all_L;H_all_R]; % to be used for corr and PLS
 
+
+%% PLOT 13 corr of sum-EEG power (- 500ms) and H-int all sessions
 % Compute the correlation between sum-EEG pow and H-int
 for c=1:32
     delta_L_H_L_corr(c)=corr(delta_L_chan(:,c),H_all_L);
@@ -3680,7 +3703,6 @@ sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
 set(gcf,'color','w'); % set background white for copying in ubuntu
-
 %% PLOT 13-1 corr of sum-EEG power (+ 500ms) and H-int all sessions
 zEEG500_LL; zEEG500_RR; % for all sessions from SECT 12
 delta_LL;theta_LL;alpha_LL;beta_LL;gamma_LL;
@@ -5386,7 +5408,7 @@ Fs_LR=[Fs_L;Fs_R]; % to be used for corr and PLS
 Inds4_LR;
 % Compute Correlation in 4 states
 % % fix the scale in the data (as in PLOT 16)
-% delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); %organized in PLOT 13
+% delta_LR_chan = delta_LR_chan./(ones(288,1)*std(delta_LR_chan)); %organized in SECT 13
 % theta_LR_chan = theta_LR_chan./(ones(288,1)*std(theta_LR_chan));
 % alpha_LR_chan = alpha_LR_chan./(ones(288,1)*std(alpha_LR_chan));
 % beta_LR_chan = beta_LR_chan./(ones(288,1)*std(beta_LR_chan));
