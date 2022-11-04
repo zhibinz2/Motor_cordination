@@ -36,3 +36,5 @@ https://www.mathworks.com/help/matlab/ref/tiledlayout.html
 https://www.mathworks.com/help/matlab/ref/colorbar.html
 
 https://www.mathworks.com/help/matlab/ref/matlab.graphics.illustration.colorbar-properties.html
+
+https://www.mathworks.com/matlabcentral/answers/60376-how-to-make-an-inset-of-matlab-figure-inside-the-figure

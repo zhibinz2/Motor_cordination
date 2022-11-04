@@ -2462,6 +2462,7 @@ testing_EEG_LR=[testing_EEG_L;testing_EEG_R];
 % indicies in the synch and synco time sequence
 synchind=[1:3 7:9 13:15 19:21 25:27 31:33]; % 3 trials x 6 sessions
 syncoind=[4:6 10:12 16:18 22:24 28:30 34:36]; % 3 trials x 6 sessions
+synind=[synchind;syncoind];
 
 %********************** 2 subplots (uncouple and mutual)
 for  subplots2 = 1;
@@ -3513,7 +3514,7 @@ for s=1:numSes % each session
     end
 end
 toc  % about 2 min
-%% SECT 13 organize sum-EEG power and H for corr and PLS 
+%% SECT 13 Organize sum-EEG power and H for corr and PLS
 % organize EEG power
 zEEG500_L; zEEG500_R; % for all sessions from SECT 12
 delta_L;theta_L;alpha_L;beta_L;gamma_L;
@@ -3521,6 +3522,7 @@ delta_R;theta_R;alpha_R;beta_R;gamma_R;
 % sum the band power in each channel in each block (8x12=96)
 delta_L_sum=[];theta_L_sum=[];alpha_L_sum=[];beta_L_sum=[];gamma_L_sum=[];
 delta_R_sum=[];theta_R_sum=[];alpha_R_sum=[];beta_R_sum=[];gamma_R_sum=[];
+
 for s=1:numSes
     for b=1:12
         delta_L_sum(s,b,:)=sum([delta_L{s,b}]);
@@ -3565,6 +3567,172 @@ alpha_LR_chan = alpha_LR_chan./(ones(288,1)*std(alpha_LR_chan));
 beta_LR_chan = beta_LR_chan./(ones(288,1)*std(beta_LR_chan));
 gamma_LR_chan = gamma_LR_chan./(ones(288,1)*std(gamma_LR_chan));
 
+% Examine the power according to condition and session type
+% indicies of synind from PLOT 10-2
+% Separating L/R
+cmin=1;cmax=4;
+for t=1:2 % type of session (synch/o)
+    canvas(0.65,0.5);
+    for s=1:4 % 4 states
+    % Delta
+    % Left suj
+    subplot(4,10,10*(s-1)+1)
+    topoplot(mean(delta_LR_chan(Inds4_LR(synind(t,:),s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]);
+    % Right suj
+    subplot(4,10,10*(s-1)+2)
+    topoplot(mean(delta_LR_chan(Inds4_LR(36+synind(t,:),s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]);
+    % Theta
+    % Left suj
+    subplot(4,10,10*(s-1)+3)
+    topoplot(mean(theta_LR_chan(Inds4_LR(synind(t,:),s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]);
+    % Right suj
+    subplot(4,10,10*(s-1)+4)
+    topoplot(mean(theta_LR_chan(Inds4_LR(36+synind(t,:),s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]);
+    % Alpha
+    % Left suj
+    subplot(4,10,10*(s-1)+5)
+    topoplot(mean(alpha_LR_chan(Inds4_LR(synind(t,:),s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]);
+    % Right suj
+    subplot(4,10,10*(s-1)+6)
+    topoplot(mean(alpha_LR_chan(Inds4_LR(36+synind(t,:),s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]);
+    % Beta
+    % Left suj
+    subplot(4,10,10*(s-1)+7)
+    topoplot(mean(beta_LR_chan(Inds4_LR(synind(t,:),s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]);
+    % Right suj
+    subplot(4,10,10*(s-1)+8)
+    topoplot(mean(beta_LR_chan(Inds4_LR(36+synind(t,:),s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]);
+    % Gamma
+    % Left suj
+    subplot(4,10,10*(s-1)+9)
+    topoplot(mean(gamma_LR_chan(Inds4_LR(synind(t,:),s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]);
+    % Right suj
+    subplot(4,10,10*(s-1)+10)
+    topoplot(mean(gamma_LR_chan(Inds4_LR(36+synind(t,:),s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]);
+    end
+    colormap(hnc)
+
+    cb=colorbar;
+    cb.AxisLocation = 'out';
+    cb.Position = [0.92 0.15 0.01 0.75];
+    delete(findall(gcf,'type','annotation'))
+    h0=annotation('textbox',[0.15 0.95 0.05 0.03],'string',{'Delta','L'},'color',[0 0 0]);
+    h01=annotation('textbox',[0.23 0.95 0.05 0.03],'string',{'Delta','R'},'color',[0 0 0]);
+    h1=annotation('textbox',[0.31 0.95 0.05 0.03],'string',{'Theta','L'},'color',[0 0 0]);
+    h11=annotation('textbox',[0.39 0.95 0.05 0.03],'string',{'Theta','R'},'color',[0 0 0]);
+    h2=annotation('textbox',[0.47 0.95 0.05 0.03],'string',{'Alpha','L'},'color',[0 0 0]);
+    h21=annotation('textbox',[0.55 0.95 0.05 0.03],'string',{'Alpha','R'},'color',[0 0 0]);
+    h3=annotation('textbox',[0.63 0.95 0.05 0.03],'string',{'Beta','L'},'color',[0 0 0]);
+    h31=annotation('textbox',[0.71 0.95 0.05 0.03],'string',{'Beta','R'},'color',[0 0 0]);
+    h4=annotation('textbox',[0.79 0.95 0.05 0.03],'string',{'Gamma','L'},'color',[0 0 0]);
+    h41=annotation('textbox',[0.86 0.95 0.05 0.03],'string',{'Gamma','R'},'color',[0 0 0]);
+    v0=annotation('textbox',[0.12 0.15 0.05 0.03],'string','Mutual','color',condicolors(4,:));
+    v1=annotation('textbox',[0.12 0.37 0.05 0.03],'string','Following','color',condicolors(3,:));
+    v2=annotation('textbox',[0.12 0.59 0.05 0.03],'string','Leading','color',condicolors(2,:));
+    v3=annotation('textbox',[0.12 0.81 0.05 0.03],'string','Uncouple','color',condicolors(1,:));
+    set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
+    set([h0 h1 h2 h3 h4 v0 v1 v2 v3 h01 h11 h21 h31 h41], 'fitboxtotext','on',...
+        'edgecolor','none')
+    set(gcf,'color','w'); % set background white for copying in ubuntu
+
+    % title annotation
+    % delete(sg);
+    if t==1; 
+        sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
+        {['Average of sum-EEG power (-500ms) in synch ^{* PLOT 13}'],char(datetime('now'))});
+    else t==2; 
+        sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
+        {['Average of sum-EEG power (-500ms) in synco ^{* PLOT 13}'],char(datetime('now'))});
+    end
+end
+
+% Combining L/R
+cmin=1;cmax=4;
+for t=1:2 % type of session (synch/o)
+    canvas(0.3,0.5);
+    for s=1:4 % 4 states
+    % Delta
+    % Both suj
+    subplot(4,5,5*(s-1)+1)
+    topoplot(mean(delta_LR_chan(Inds4_LR([synind(t,:) 36+synind(t,:)],s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]); 
+    % Theta
+    % Left suj
+    subplot(4,5,5*(s-1)+3)
+    topoplot(mean(theta_LR_chan(Inds4_LR([synind(t,:) 36+synind(t,:)],s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]);
+    % Alpha
+    % Left suj
+    subplot(4,5,5*(s-1)+5)
+    topoplot(mean(alpha_LR_chan(Inds4_LR([synind(t,:) 36+synind(t,:)],s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]);
+    % Beta
+    % Left suj
+    subplot(4,5,5*(s-1)+7)
+    topoplot(mean(beta_LR_chan(Inds4_LR([synind(t,:) 36+synind(t,:)],s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]);
+    % Gamma
+    % Left suj
+    subplot(4,5,5*(s-1)+9)
+    topoplot(mean(gamma_LR_chan(Inds4_LR([synind(t,:) 36+synind(t,:)],s),:),1),channels,'nosedir','+X','style','map');
+    % colorbar;
+    clim([cmin cmax]);
+    end
+    colormap(hnc)
+
+    cb=colorbar;
+    cb.AxisLocation = 'out';
+    cb.Position = [0.92 0.15 0.01 0.75];
+    delete(findall(gcf,'type','annotation'))
+    h0=annotation('textbox',[0.17 0.95 0.05 0.03],'string','Delta','color',[0 0 0])
+    h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
+    h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
+    h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
+    h4=annotation('textbox',[0.81 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
+    v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','Mutual','color',condicolors(4,:))
+    v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','Following','color',condicolors(3,:))
+    v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','Leading','color',condicolors(2,:))
+    v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','Uncouple','color',condicolors(1,:))
+    set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
+    set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
+    'edgecolor','none')
+    set(gcf,'color','w'); % set background white for copying in ubuntu
+
+    % title annotation
+    % delete(sg);
+    if t==1; 
+        sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
+        {['Average of sum-EEG power (-500ms) in synch ^{* PLOT 13}'],char(datetime('now'))});
+    else t==2; 
+        sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
+        {['Average of sum-EEG power (-500ms) in synco ^{* PLOT 13}'],char(datetime('now'))});
+    end
+end
+
 % Organize H_all for corr
 H_all; % (2xnumSesx12) for all sessions from SECT 10-1 (matched int)
 H_all_L=squeeze(H_all(1,:,:));
@@ -3579,16 +3747,16 @@ H_all_LR=[H_all_L;H_all_R]; % to be used for corr and PLS
 %% PLOT 13 corr of sum-EEG power (- 500ms) and H-int all sessions
 % Compute the correlation between sum-EEG pow and H-int
 for c=1:32
-    delta_L_H_L_corr(c)=corr(delta_L_chan(:,c),H_all_L);
-    theta_L_H_L_corr(c)=corr(theta_L_chan(:,c),H_all_L);
-    alpha_L_H_L_corr(c)=corr(alpha_L_chan(:,c),H_all_L);
-    beta_L_H_L_corr(c)=corr(beta_L_chan(:,c),H_all_L);
-    gamma_L_H_L_corr(c)=corr(gamma_L_chan(:,c),H_all_L);
-    delta_R_H_R_corr(c)=corr(delta_R_chan(:,c),H_all_R);
-    theta_R_H_R_corr(c)=corr(theta_R_chan(:,c),H_all_R);
-    alpha_R_H_R_corr(c)=corr(alpha_R_chan(:,c),H_all_R);
-    beta_R_H_R_corr(c)=corr(beta_R_chan(:,c),H_all_R);
-    gamma_R_H_R_corr(c)=corr(gamma_R_chan(:,c),H_all_R);
+    delta_L_H_L_corr(c)=corr(delta_LR_chan(1:144,c),H_all_L);
+    theta_L_H_L_corr(c)=corr(theta_LR_chan(1:144,c),H_all_L);
+    alpha_L_H_L_corr(c)=corr(alpha_LR_chan(1:144,c),H_all_L);
+    beta_L_H_L_corr(c)=corr(beta_LR_chan(1:144,c),H_all_L);
+    gamma_L_H_L_corr(c)=corr(gamma_LR_chan(1:144,c),H_all_L);
+    delta_R_H_R_corr(c)=corr(delta_LR_chan(145:288,c),H_all_R);
+    theta_R_H_R_corr(c)=corr(theta_LR_chan(145:288,c),H_all_R);
+    alpha_R_H_R_corr(c)=corr(alpha_LR_chan(145:288,c),H_all_R);
+    beta_R_H_R_corr(c)=corr(beta_LR_chan(145:288,c),H_all_R);
+    gamma_R_H_R_corr(c)=corr(gamma_LR_chan(145:288,c),H_all_R);
 end
 % Topoplots (5x2)
 canvas(0.2,0.6);
@@ -3604,6 +3772,7 @@ subplot(5,2,6);topoplot(alpha_R_H_R_corr,channels,'nosedir','+X','style','map');
 subplot(5,2,8);topoplot(beta_R_H_R_corr,channels,'nosedir','+X','style','map');title('beta-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
 subplot(5,2,10);topoplot(gamma_R_H_R_corr,channels,'nosedir','+X','style','map');title('gamma-R & H-R');colorbar;colormap('jet');clim([cmin cmax]);
 sgtitle({['corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}'],char(datetime('now'))});
+
 
 % Combine L and R in correlation;
 for c=1:32
@@ -3703,6 +3872,7 @@ sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
 set(gcf,'color','w'); % set background white for copying in ubuntu
+
 %% PLOT 13-1 corr of sum-EEG power (+ 500ms) and H-int all sessions
 zEEG500_LL; zEEG500_RR; % for all sessions from SECT 12
 delta_LL;theta_LL;alpha_LL;beta_LL;gamma_LL;
