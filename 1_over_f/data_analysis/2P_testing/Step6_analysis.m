@@ -3679,25 +3679,25 @@ for t=1:2 % type of session (synch/o)
     clim([cmin cmax]); 
     % Theta
     % Left suj
-    subplot(4,5,5*(s-1)+3)
+    subplot(4,5,5*(s-1)+2)
     topoplot(mean(theta_LR_chan(Inds4_LR([synind(t,:) 36+synind(t,:)],s),:),1),channels,'nosedir','+X','style','map');
     % colorbar;
     clim([cmin cmax]);
     % Alpha
     % Left suj
-    subplot(4,5,5*(s-1)+5)
+    subplot(4,5,5*(s-1)+3)
     topoplot(mean(alpha_LR_chan(Inds4_LR([synind(t,:) 36+synind(t,:)],s),:),1),channels,'nosedir','+X','style','map');
     % colorbar;
     clim([cmin cmax]);
     % Beta
     % Left suj
-    subplot(4,5,5*(s-1)+7)
+    subplot(4,5,5*(s-1)+4)
     topoplot(mean(beta_LR_chan(Inds4_LR([synind(t,:) 36+synind(t,:)],s),:),1),channels,'nosedir','+X','style','map');
     % colorbar;
     clim([cmin cmax]);
     % Gamma
     % Left suj
-    subplot(4,5,5*(s-1)+9)
+    subplot(4,5,5*(s-1)+5)
     topoplot(mean(gamma_LR_chan(Inds4_LR([synind(t,:) 36+synind(t,:)],s),:),1),channels,'nosedir','+X','style','map');
     % colorbar;
     clim([cmin cmax]);
