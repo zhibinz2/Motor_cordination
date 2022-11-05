@@ -3573,7 +3573,7 @@ beta_LR_chan = beta_LR_chan./(ones(288,1)*std(beta_LR_chan));
 gamma_LR_chan = gamma_LR_chan./(ones(288,1)*std(gamma_LR_chan));
 
 % Examine the power according to condition and session type
-%{ indicies of synind from PLOT 10-2 %}
+synind; %{ indicies of synind from PLOT 10-2 %}
 
 % Separating L/R
 cmin=1;cmax=4;
@@ -3679,11 +3679,11 @@ for t=1:2 % type of session (synch/o)
     canvas(0.65,0.5);
     for s=1:4 % 4 states
     % Delta
-    % Left suj vs % Right suj
+    % Left suj vs Right suj
     subplot(4,5,5*(s-1)+1)
     Corr4x5(t,1,s)
-    ans=corr(delta_LR_chan(Inds4_LR(synind(t,:),s),:),delta_LR_chan(Inds4_LR(36+synind(t,:),s),:));
-    imagesc(ans);
+    delta_corr=corr(delta_LR_chan(Inds4_LR(synind(t,:),s),:),delta_LR_chan(Inds4_LR(36+synind(t,:),s),:));
+    imagesc(delta_corr);
     % colorbar;
     clim([cmin cmax]);
     

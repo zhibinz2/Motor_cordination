@@ -3573,7 +3573,7 @@ beta_LR_chan = beta_LR_chan./(ones(288,1)*std(beta_LR_chan));
 gamma_LR_chan = gamma_LR_chan./(ones(288,1)*std(gamma_LR_chan));
 
 % Examine the power according to condition and session type
-%{ indicies of synind from PLOT 10-2 %}
+synind; %{ indicies of synind from PLOT 10-2 %}
 
 % Separating L/R
 cmin=1;cmax=4;
@@ -3682,8 +3682,8 @@ for t=1:2 % type of session (synch/o)
     % Left suj vs % Right suj
     subplot(4,5,5*(s-1)+1)
     Corr4x5(t,1,s)
-    ans=corr(delta_LR_chan(Inds4_LR(synind(t,:),s),:),delta_LR_chan(Inds4_LR(36+synind(t,:),s),:));
-    imagesc(ans);
+    delta_corr=corr(delta_LR_chan(Inds4_LR(synind(t,:),s),:),delta_LR_chan(Inds4_LR(36+synind(t,:),s),:));
+    imagesc(delta_corr);
     % colorbar;
     clim([cmin cmax]);
     
@@ -3742,7 +3742,7 @@ for t=1 % type of session (synch=1/o=2)
 %     cb=colorbar;
 %     cb.AxisLocation = 'out';
 %     cb.Position = [0.92 0.15 0.01 0.75];
-    if ture % annotations
+    if true % annotations
     delete(findall(gcf,'type','annotation'))
     h0=annotation('textbox',[0.17 0.95 0.05 0.03],'string','Delta','color',[0 0 0]);
     h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0]);
@@ -3794,7 +3794,7 @@ for t=2 % type of session (synch=1/o=2)
     topoplot(mean(alpha_LR_chan(Inds4_LR([synind(t,:) 36+synind(t,:)],s),:),1),channels,'nosedir','+X');
     % clim([cmin cmax]); 
     % colorbar;
-    clim([1 3.5]);
+    clim([1 2.5]);
     if s==4; cb3=colorbar; cb3.AxisLocation = 'out'; cbP3=cb3.Position; cb3.Position=[cbP3(1)+0.05 cbP3(2:3) 0.8];end
     % Beta
     % Left suj
@@ -3810,14 +3810,14 @@ for t=2 % type of session (synch=1/o=2)
     topoplot(mean(gamma_LR_chan(Inds4_LR([synind(t,:) 36+synind(t,:)],s),:),1),channels,'nosedir','+X');
     % clim([cmin cmax]); 
     % colorbar;
-    clim([1 2.5]);
+    clim([1 2]);
     if s==4; cb5=colorbar; cb5.AxisLocation = 'out'; cbP5=cb5.Position; cb5.Position=[cbP5(1)+0.05 cbP5(2:3) 0.8];end
     end
     colormap(hottermap)
 %     cb=colorbar;
 %     cb.AxisLocation = 'out';
 %     cb.Position = [0.92 0.15 0.01 0.75];
-    if ture % annotations
+    if true % annotations
     delete(findall(gcf,'type','annotation'))
     h0=annotation('textbox',[0.17 0.95 0.05 0.03],'string','Delta','color',[0 0 0]);
     h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0]);
