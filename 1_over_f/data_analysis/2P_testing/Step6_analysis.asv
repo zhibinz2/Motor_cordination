@@ -3516,7 +3516,7 @@ for s=1:numSes % each session
     end
 end
 toc  % about 2 min
-%% SECT 13 Organize sum-EEG power and H for corr and PLS
+%% SECT 13 Examine & Organize sum-EEG power and H for corr and PLS
 % organize EEG power
 zEEG500_L; zEEG500_R; % for all sessions from SECT 12
 delta_L;theta_L;alpha_L;beta_L;gamma_L;
@@ -3679,12 +3679,25 @@ for t=1:2 % type of session (synch/o)
     canvas(0.65,0.5);
     for s=1:4 % 4 states
     % Delta
-    % Left suj vs % Right suj
+    % Left suj vs Right suj
     subplot(4,5,5*(s-1)+1)
     Corr4x5(t,1,s)
     delta_corr=corr(delta_LR_chan(Inds4_LR(synind(t,:),s),:),delta_LR_chan(Inds4_LR(36+synind(t,:),s),:));
-    imagesc(delta_corr);
-    % colorbar;
+
+    imagesc(delta_corr);grid on; grid minor;
+    colorbar;
+    clim([cmin cmax]);
+
+
+    imagesc(corr([1:32],[1:32]));colorbar;
+    imagesc(corr(repmat([1:32],10,1),repmat([1:32],10,1)));colorbar;
+    imagesc(corr([repmat([1:7],10,1) rand(10,25)]),[repmat([1:7],10,1) rand(10,25)]);colorbar;
+
+
+    figure;
+    diag(32)
+    topoplot(diag(delta_corr),channels);
+    colorbar;
     clim([cmin cmax]);
     
 
