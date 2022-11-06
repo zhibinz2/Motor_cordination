@@ -3179,9 +3179,9 @@ delete(sg)
 sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     'Correlation of sum-EEG (-500ms) and Xcorr(0) ^{* PLOT 11-3}')
 sg=annotation('textbox',[0.3 0.01 0.45 0.07],'string',...
-     {['Correlation of sum-EEG (-500ms) and Xcorr(-1/+1) in Synch ^{* PLOT 11-2} '], char(datetime('now'))})
+     {['Correlation of sum-EEG (-500ms) and Xcorr(-1/+1) in Synch ^{* PLOT 11-2} '], char(datetime('now'))},'Color',syn2colors(1,:));
 sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
-    {['Correlation of sum-EEG (-500ms) and Xcorr(0) in Synco ^{* PLOT 11-2} '], char(datetime('now'))})
+    {['Correlation of sum-EEG (-500ms) and Xcorr(0) in Synco ^{* PLOT 11-2} '], char(datetime('now'))},'Color',syn2colors(2,:));
 %} 
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
@@ -3220,8 +3220,8 @@ xlim([0 11]);
 subtitle('All states');
 set(gcf,'color','w'); % set background white for copying in ubuntu
 % sgtitle({['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> Xcorr(0) ^{ *PLOT 11-2}'], char(datetime('now'))});
-sgtitle({['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> Xcorr(-1/+1) in synch ^{ *PLOT 11-2}'], char(datetime('now'))});
-% sgtitle({['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> Xcorr(0) in synco ^{ *PLOT 11-2}'], char(datetime('now'))});
+sgtitle({['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> Xcorr(-1/+1) in synch ^{ *PLOT 11-2}'], char(datetime('now'))},'Color',syn2colors(1,:));
+% sgtitle({['AIC & R^2 for PLS model in all statues: sum-EEG(-500ms) -> Xcorr(0) in synco ^{ *PLOT 11-2}'], char(datetime('now'))},'Color',syn2colors(2,:));
 
 
 % Try cross validation (myxvalidation)
@@ -3251,9 +3251,9 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 % title({['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: ' ...
 %     'sum-EEG(-500ms) -> Xcorr(0)  ^{* PLOT 11-2}'], char(datetime('now'))});
 title({['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: ' ...
-    'sum-EEG(-500ms) -> Xcorr(-1/+1) in synch ^{* PLOT 11-2}'], char(datetime('now'))});
+    'sum-EEG(-500ms) -> Xcorr(-1/+1) in synch ^{* PLOT 11-2}'], char(datetime('now'))},'Color',syn2colors(1,:));
 title({['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: ' ...
-    'sum-EEG(-500ms) -> Xcorr(0) in synco ^{* PLOT 11-2}'], char(datetime('now'))});
+    'sum-EEG(-500ms) -> Xcorr(0) in synco ^{* PLOT 11-2}'], char(datetime('now'))},'Color',syn2colors(2,:));
 
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 72
 % trials)-updated to use mynpls_pred function
