@@ -3047,6 +3047,9 @@ for s=1:numSes;
         % for synco
         BPint_xcorrSeries_synco(1,s,b)=r12(11);% xcorr(0)
         BPint_xcorrSeries_synco(2,s,b)=r12(11);% xcorr(0)
+        % for both syn types
+        % BPint_xcorrSeries(1,s,b)=r12(11);% xcorr(0)
+        % BPint_xcorrSeries(2,s,b)=r12(11);% xcorr(0)
     end
 end
 toc % 77 sec
@@ -3118,7 +3121,62 @@ select_Inds4_LR; % *******
 % gamma_LR_chan = gamma_LR_chan./(ones(288,1)*std(gamma_LR_chan));
 delta_LR_chan;theta_LR_chan;alpha_LR_chan;beta_LR_chan;gamma_LR_chan; %organized from PLOT 13
 
-% Correlation in 4 states
+% Correlation combining all states (all states x 5 freq)
+delta_LR_Xcorr_LR_corr=zeros(32,1);
+theta_LR_Xcorr_LR_corr=zeros(32,1);
+alpha_LR_Xcorr_LR_corr=zeros(32,1);
+beta_LR_Xcorr_LR_corr=zeros(32,1);
+gamma_LR_Xcorr_LR_corr=zeros(32,1);
+for c=1:32
+    delta_LR_Xcorr_LR_corr(c)=corr(delta_LR_chan(select_ind_LR,c),BPint_xcorrSeries_LR(select_ind_LR));
+    theta_LR_Xcorr_LR_corr(c)=corr(theta_LR_chan(select_ind_LR,c),BPint_xcorrSeries_LR(select_ind_LR));
+    alpha_LR_Xcorr_LR_corr(c)=corr(alpha_LR_chan(select_ind_LR,c),BPint_xcorrSeries_LR(select_ind_LR));
+    beta_LR_Xcorr_LR_corr(c)=corr(beta_LR_chan(select_ind_LR,c),BPint_xcorrSeries_LR(select_ind_LR));
+    gamma_LR_Xcorr_LR_corr(c)=corr(gamma_LR_chan(select_ind_LR,c),BPint_xcorrSeries_LR(select_ind_LR));
+end
+freq5_LR_Xcorr_LR_corr=[delta_LR_Xcorr_LR_corr theta_LR_Xcorr_LR_corr alpha_LR_Xcorr_LR_corr ...
+    beta_LR_Xcorr_LR_corr gamma_LR_Xcorr_LR_corr];
+% Plot the 5 freq (1 x 5 freq)
+for plot_1by5=1;
+canvas(0.3,0.2)
+cmin=-0.6;cmax=0.6;
+    for i=1:5
+    subplot(1,5,i)
+    selected_LR_Xcorr_LR_4corr=[];
+    selected_LR_Xcorr_LR_4corr=freq5_LR_Xcorr_LR_corr(:,i);
+    topoplot(selected_LR_Xcorr_LR_4corr,channels,'nosedir','+X','style','map');
+    clim([cmin cmax]);
+    end
+colormap(hnc)
+cb=colorbar;
+cb.AxisLocation = 'out';
+cb.Position = [0.92 0.15 0.01 0.75];
+set(gcf,'color','w'); % set background white for copying in ubuntu
+if true %annotations
+delete(findall(gcf,'type','annotation'))
+h0=annotation('textbox',[0.17 0.95 0.05 0.03],'string','Delta','color',[0 0 0])
+h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
+h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0])
+h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0])
+h4=annotation('textbox',[0.82 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
+v0=annotation('textbox',[0.1 0.4 0.05 0.03],'string','All conditions');
+set(v0,'Rotation',90);
+set([h0 h1 h2 h3 h4 v0], 'fitboxtotext','on',...
+    'edgecolor','none')
+end
+%{
+sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
+    'Correlation of sum-EEG (-500ms) and Xcorr(0) ^{* PLOT 11-3}')
+sg=annotation('textbox',[0.3 0.01 0.4 0.15],'string',...
+     {['Correlation of sum-EEG (-500ms) and Xcorr(-1/+1) in Synch ^{* PLOT 11-2} '], char(datetime('now'))},'Color',syn2colors(1,:));
+sg=annotation('textbox',[0.3 0.01 0.4 0.18],'string',...
+    {['Correlation of sum-EEG (-500ms) and Xcorr(0) in Synco ^{* PLOT 11-2} '], char(datetime('now'))},'Color',syn2colors(2,:));
+%} 
+
+end
+
+
+% Correlation in 4 states (4 states x 5 freq)
 delta_LR_Xcorr_LR_4corr=zeros(4,32);
 theta_LR_Xcorr_LR_4corr=zeros(4,32);
 alpha_LR_Xcorr_LR_4corr=zeros(4,32);
@@ -3738,9 +3796,6 @@ clim([cmin cmax]);
         {'Corr of sum-EEG power (-500ms) in synco ^{* PLOT 13}',char(datetime('now'))},'Color',syn2colors(2,:));
     end
 end
-
-
-
 
 % Combining L/R
 cmin=0;cmax=4;
@@ -4707,7 +4762,7 @@ sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     {['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'],char(datetime('now'))});
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
-% topoplot only for mutual
+% topoplot only for mutual ( 1 x 5 freq)
 canvas(0.3,0.2)
 for states1=1;
 cmin=-0.01;cmax=0.01;
@@ -4724,6 +4779,7 @@ cb=colorbar;
 cb.AxisLocation = 'out';
 cb.Position = [0.92 0.15 0.01 0.75];
 set(gcf,'color','w'); % set background white for copying in ubuntu
+if true %annotations
 delete(findall(gcf,'type','annotation'))
 h0=annotation('textbox',[0.17 0.95 0.05 0.03],'string','Delta','color',[0 0 0])
 h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0])
@@ -4735,11 +4791,13 @@ v0=annotation('textbox',[0.1 0.4 0.05 0.03],'string',...
             '  Fac= ' num2str(Fac) ') ']}...
             ,'color',condicolors(4,:));
 set(v0,'Rotation',90);
+set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
+    'edgecolor','none')
+end
 end
 sg=annotation('textbox',[0.3 0.01 0.3 0.15],'string',...
     {['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'],char(datetime('now'))});
-set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
-    'edgecolor','none')
+
 
 
 % 3 states - combine uncouple state and leading state and call it "independent"
