@@ -3533,7 +3533,7 @@ cd /ssd/zhibin/1overf/
 tic
 for s=1:numSes % each session
     runid=num2str(seeds(s,:));
-    clear dataL dataR
+    clear dataL dataR samples
     load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
     zEEG_L={};zEEG_R={};
     for b=1:12 % each block  
@@ -3566,7 +3566,7 @@ for s=1:numSes % each session
         zEEG_L{b}=zscore(dataL{b}(:,1:32),[],1);
         zEEG_R{b}=zscore(dataR{b}(:,1:32),[],1);
         for i=1:(size(samples{b},1)-2) % each matched interval (excluding the last tap or two)          
-            zEEG500_LL{s,b}{i}=zEEG_L{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % start from first matched tap (if not enough samples before, then consider starting from 2nd tap)
+            zEEG500_LL{s,b}{i}=zEEG_L{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % start from first matched tap 
             zEEG500_RR{s,b}{i}=zEEG_R{b}(samples{b}(i,2):samples{b}(i,2)+999,:); % end at the 2nd or 3rd last matched tap
             [delta_LL{s,b}(i,:), theta_LL{s,b}(i,:), alpha_LL{s,b}(i,:), beta_LL{s,b}(i,:), gamma_LL{s,b}(i,:)]...
                 =sum5band(zEEG500_LL{s,b}{i},sr,EEGwin);
@@ -3576,6 +3576,75 @@ for s=1:numSes % each session
     end
 end
 toc  % about 2 min
+
+%% SECT 12 Exact evoked potential to other's tapping
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
+        2022100402;20221005];
+numSes=size(seeds,1);
+erp_L={};erp_R={};
+zEEG500_LL={};zEEG500_RR={}; % saving EEG for computing EEG across all subjects
+tic
+for s=1:12; % session 1-12
+    runid=num2str(seeds(s,:));
+    clear dataL dataR samples conditions
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
+    zEEG_L={};zEEG_R={}; % saving individual blocks
+    for b=1:12; % block 1 -12
+    zEEG_L{b}=zscore(dataL{b}(:,1:32),[],1);
+    zEEG_R{b}=zscore(dataR{b}(:,1:32),[],1);
+            for i=1:(size(samples{b},1)-2) % each matched interval (excluding the last tap or two) 
+                if conditions(b)==1;
+            zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % start from first matched tap
+            zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{b}(i,2):samples{b}(i,2)+999,:); % end at the 2nd or 3rd last matched tap
+                elseif conditions(b)==2;
+            zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % start from first matched tap
+            zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % end at the 2nd or 3rd last matched tap
+                elseif conditions(b)==3;
+            zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(samples{b}(i,2):samples{b}(i,2)+999,:); % start from first matched tap
+            zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{b}(i,2):samples{b}(i,2)+999,:); % end at the 2nd or 3rd last matched tap
+                else conditions(b)==4;
+            zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(samples{b}(i,2):samples{b}(i,2)+999,:); % start from first matched tap
+            zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % end at the 2nd or 3rd last matched tap
+                end
+            end
+            erp_L{s,b}=mean(zEEG500_LL{s,b},3); % ERP in 32 channels
+            erp_R{s,b}=mean(zEEG500_RR{s,b},3);
+    end
+end
+toc; % 108 second
+
+% prepare indicies for conditions and states
+condition_all; % from SECT 10-1
+Inds4_LR=[uncoupleInd_LR leadingInd_LR followingInd_LR mutualInd_LR]; % from SECT 10-1
+% reorganzie cell sequence for zEEG500_LL and zEEG500_RR
+zEEG500_LL_all=reshape(zEEG500_LL',[],1);
+zEEG500_RR_all=reshape(zEEG500_RR',[],1);
+zEEG500_LLRR_all=[zEEG500_LL_all; zEEG500_RR_all]; % combine cell array
+% compute erp of 4 states across all sessions
+zEEG500_LL_4ss={};
+zEEG500_RR_4ss={};
+
+
+
+% concatenate subjects acorrding to the 4 states
+% plot conditional ERP
+figure;
+for s=1:4;
+    subplot(1,4,s);
+    plot(1:1000, mean(,3),'color',matlabblue)
+
+    
+
+end
+
+
+erp_L=mean(zEEG500_LL{s,b},3); % ERP in 32 channels
+erp_R=mean(zEEG500_RR{s,b},3);
+figure;% channel 7 F4
+plot(1:1000,erp_L(:,7));hold on;plot(1:1000,erp_R(:,7));title('ERP: L leading');
+legend('L','R')
+
+
 %% SECT 13 Examine & Organize sum-EEG power and H for corr and PLS
 % organize EEG power
 zEEG500_L; zEEG500_R; % for all sessions from SECT 12
