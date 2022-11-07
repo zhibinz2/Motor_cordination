@@ -3623,26 +3623,24 @@ zEEG500_LLRR_all=[zEEG500_LL_all; zEEG500_RR_all]; % combine cell array
 % compute erp of 4 states across all sessions
 zEEG500_LL_4ss={};
 zEEG500_RR_4ss={};
-
-
-
-% concatenate subjects acorrding to the 4 states
-% plot conditional ERP
 figure;
-for s=1:4;
-    subplot(1,4,s);
-    plot(1:1000, mean(,3),'color',matlabblue)
+selectChan=7; %F4
+for ss=1:4
+    cat_stateEEG=[];
+    cat_stateEEG=cat(3,zEEG500_LLRR_all{Inds4_LR(:,ss)});
+    stateERP=mean(cat_stateEEG,3);
+    for selectChan=1:32
+        subplot(4,6,selectChan)
+        plot([1:1000]/2,stateERP(:,selectChan),'color',condicolors(ss,:));
+        hold on;
+    end
+end
+legend(states4names);
+title(['ERP of 4 states: channel' labels{selectChan}]); xlabel('time (ms)')
+% concatenate subjects acorrding to the 4 states
+
 
     
-
-end
-
-
-erp_L=mean(zEEG500_LL{s,b},3); % ERP in 32 channels
-erp_R=mean(zEEG500_RR{s,b},3);
-figure;% channel 7 F4
-plot(1:1000,erp_L(:,7));hold on;plot(1:1000,erp_R(:,7));title('ERP: L leading');
-legend('L','R')
 
 
 %% SECT 13 Examine & Organize sum-EEG power and H for corr and PLS
