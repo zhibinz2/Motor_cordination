@@ -2361,7 +2361,7 @@ end
 toc
 %% SECT 10-1 extract H and condition from all sessions & 4 states (matched int)
 % original order
-clear
+% clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
 numSes=size(seeds,1);
@@ -3663,7 +3663,7 @@ for t=1:2
     canvas(0.5,1);
     for ss=1:4
     cat_stateEEG=[];
-    cat_stateEEG=cat(3,zEEG500_LLRR_all{Inds4_LR(synind(t,:),ss)});
+    cat_stateEEG=cat(3,zEEG500_LLRR_all{Inds4_LR([synind(t,:) 36+synind(t,:)],ss)});
     stateERP=mean(cat_stateEEG,3);
     for selectChan=1:32
         subplot(4,8,selectChan)
@@ -3685,11 +3685,11 @@ end
 syn2names={'Synch','Synco'};
 canvas(0.5,0.5);
 for t=1:2
-    zEEG500_LL_4ss={};
-    zEEG500_RR_4ss={};
+    % zEEG500_LL_4ss={};
+    % zEEG500_RR_4ss={};
     for ss=1:4
     cat_stateEEG=[];
-    cat_stateEEG=cat(3,zEEG500_LLRR_all{Inds4_LR(synind(t,:),ss)});
+    cat_stateEEG=cat(3,zEEG500_LLRR_all{Inds4_LR([synind(t,:) 36+synind(t,:)],ss)});
     stateERP=mean(cat_stateEEG,3);
     for selectChan=24:32
         subplot(2,9,(t-1)*9+selectChan-23)
@@ -3709,7 +3709,7 @@ end
 
 %% SECT 13 Examine & Organize sum-EEG power and H for corr and PLS
 % organize EEG power
-zEEG500_L; zEEG500_R; % for all sessions from SECT 12
+% zEEG500_L; zEEG500_R; % for all sessions from SECT 12
 delta_L;theta_L;alpha_L;beta_L;gamma_L;
 delta_R;theta_R;alpha_R;beta_R;gamma_R;
 
@@ -6163,6 +6163,95 @@ sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
 
+%% PLOT 22 For poster
+% histogram of intertap intervals 
+% organize intervals from all sessions
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
+        2022100402;20221005];
+numSes=size(seeds,1);
+cd /ssd/zhibin/1overf/
+intervals_L={}; % 12 session x 12 trials
+intervals_R={}; % 12 session x 12 trials
+tic
+for s=1:numSes
+    runid=num2str(seeds(s,:));
+    clear intervals
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ]);
+    for b=1:12
+        intervals_L{s,b}=intervals{b}(:,1); % L subject 
+        intervals_R{s,b}=intervals{b}(:,2); % R subject 
+    end
+end
+toc % 76 sec
+intervals_L;intervals_R;
+% reorganzie cell sequence for intervals_all_L and intervals_all_R;
+intervals_all_L=reshape(intervals_L',[],1);
+intervals_all_R=reshape(intervals_R',[],1);
+intervals_all_LR_all=[intervals_all_L; intervals_all_R]; % combine cell array
+% organize intervals for 4 states in 2 syn types
+syn2names={'Synch','Synco'};
+intervals_2t_4ss={}; % 2 x 4 cells
+tic
+for t=1:2
+    for ss=1:4
+    cat_stateIntervals=[];
+    cat_stateIntervals=cat(1,intervals_all_LR_all{Inds4_LR([synind(t,:) 36+synind(t,:)],ss)});
+    intervals_2t_4ss{t,ss}=cat_stateIntervals;
+    end
+end
+toc %
+% transpose to (4 sessions x 2 groups)
+intervals_2t_4ss=intervals_2t_4ss';
+% compute mean and std (4 sessions x 2 groups)
+intervals_2t_4ss_mean=[];intervals_2t_4ss_std=[];
+for t=1:2
+    for ss=1:4
+        intervals_2t_4ss_mean(ss,t)=mean(intervals_2t_4ss{ss,t});
+        intervals_2t_4ss_std(ss,t)=std(intervals_2t_4ss{ss,t});
+    end
+end
+
+
+% barplot with errorbar
+
+        plot([1:1000]/2,stateERP(:,selectChan),'color',condicolors(ss,:));
+        hold on;
+
+        title(['Chan' labels{selectChan}]); xlabel('time (ms)');
+        xlim([0 500]);ylim([-0.2 0.25])
+
+
+lg=legend(states4names,'location','eastoutside');
+lg.Position = [0.9475 0.4 0.01 0.25];
+set(gcf,'color','w'); % set background white for copying in ubuntu
+sgtitle('ERP of 4 states: Synch (top row); Synco (bottom row)');
+
+canvas(0.23, 0.4);
+model_series = [H_LR_synch_mean H_LR_synco_mean];
+model_error = [H_LR_synch_std H_LR_synco_std];
+b = bar(model_series, 'grouped');
+hold on;
+% Calculate the number of groups and number of bars in each group
+[ngroups,nbars] = size(model_series);
+% Get the x coordinate of the bars
+x = nan(nbars, ngroups);
+for i = 1:nbars
+    x(i,:) = b(i).XEndPoints;
+end
+% Plot the errorbars 
+errorbar(x',model_series,model_error,'k','linestyle','none');
+hold off
+xticks(1:4);xticklabels({'Uncouple','Leading','Following','Mutual'});
+xlim([0.5 4.5]);
+ylabel('H'); ylim([0.4 1]);
+set(gcf,'color','w'); % set background white for copying in ubuntu
+delete(findall(gcf,'type','annotation'))
+sg=annotation('textbox',[0.05 0.01 0.5 0.07],'string',...
+    {['mean H(matched int) ^{ *PLOT 6}' char(datetime('now'))]})
+sg.Rotation=90
+yline(0.5,'color', deepyellow)
+legend({'Synch','Synco'},'location','north')
+
 %%
 
 %% saves all variables from the current workspace
@@ -6176,8 +6265,9 @@ tic
 save(['20220713_1005workspace.mat']);
 toc
 
-
-
+tic 
+load(['20220713_1005workspace.mat']);
+toc
 %% Get variable names from mat file (faster)
 load("20220721.mat")
 
