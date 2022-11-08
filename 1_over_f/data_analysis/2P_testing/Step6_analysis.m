@@ -3206,22 +3206,22 @@ canvas(0.3,0.5);
 cmin=-0.7;cmax=0.7;
 for s=1:4
     subplot(4,5,5*(s-1)+1);
-    topoplot(delta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','map');
+    topoplot(delta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+2);
-    topoplot(theta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','map');
+    topoplot(theta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+3);
-    topoplot(alpha_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','map');
+    topoplot(alpha_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+4);
-    topoplot(beta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','map');
+    topoplot(beta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+5);
-    topoplot(gamma_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','map');
+    topoplot(gamma_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     clim([cmin cmax]);
 end
-colormap(hnc)
+colormap(hotncold(12))
 % https://www.mathworks.com/help/matlab/ref/matlab.graphics.illustration.colorbar-properties.html
 cb=colorbar;
 cb.AxisLocation = 'out';
@@ -3632,8 +3632,8 @@ zEEG500_LLRR_all=[zEEG500_LL_all; zEEG500_RR_all]; % combine cell array
 % compute erp of 4 states across all sessions
 zEEG500_LL_4ss={};
 zEEG500_RR_4ss={};
-canvas(1,1);
-% selectChan=7; %F4
+canvas(0.5,1);
+% selectChan=7; % F4
 tic
 for ss=1:4
     cat_stateEEG=[];
@@ -3655,6 +3655,57 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 sgtitle('ERP of 4 states')
 toc % 
 
+% separateing syn types - all 32 chan
+syn2names={'Synch','Synco'};
+for t=1:2
+    zEEG500_LL_4ss={};
+    zEEG500_RR_4ss={};
+    canvas(0.5,1);
+    for ss=1:4
+    cat_stateEEG=[];
+    cat_stateEEG=cat(3,zEEG500_LLRR_all{Inds4_LR(synind(t,:),ss)});
+    stateERP=mean(cat_stateEEG,3);
+    for selectChan=1:32
+        subplot(4,8,selectChan)
+        plot([1:1000]/2,stateERP(:,selectChan),'color',condicolors(ss,:));
+        hold on;
+        if ss==4;
+        title(['Chan' labels{selectChan}]); xlabel('time (ms)');
+        xlim([0 500]);ylim([-0.2 0.2])
+        end
+    end
+    end
+lg=legend(states4names,'location','eastoutside');
+lg.Position = [0.9475 0.4 0.01 0.25];
+set(gcf,'color','w'); % set background white for copying in ubuntu
+sgtitle(['ERP of 4 states: ' syn2names{t}],'Color',syn2colors(t,:));
+end
+
+% separateing syn types - chan 24-32
+syn2names={'Synch','Synco'};
+canvas(0.5,0.5);
+for t=1:2
+    zEEG500_LL_4ss={};
+    zEEG500_RR_4ss={};
+    for ss=1:4
+    cat_stateEEG=[];
+    cat_stateEEG=cat(3,zEEG500_LLRR_all{Inds4_LR(synind(t,:),ss)});
+    stateERP=mean(cat_stateEEG,3);
+    for selectChan=24:32
+        subplot(2,9,(t-1)*9+selectChan-23)
+        plot([1:1000]/2,stateERP(:,selectChan),'color',condicolors(ss,:));
+        hold on;
+        if ss==4;
+        title(['Chan' labels{selectChan}]); xlabel('time (ms)');
+        xlim([0 500]);ylim([-0.2 0.25])
+        end
+    end
+    end
+lg=legend(states4names,'location','eastoutside');
+lg.Position = [0.9475 0.4 0.01 0.25];
+set(gcf,'color','w'); % set background white for copying in ubuntu
+sgtitle('ERP of 4 states: Synch (top row); Synco (bottom row)');
+end
 
 %% SECT 13 Examine & Organize sum-EEG power and H for corr and PLS
 % organize EEG power
@@ -4111,33 +4162,33 @@ canvas(0.3,0.5);
 cmin=-0.7;cmax=0.7;
 for s=1:4
     subplot(4,5,5*(s-1)+1);
-    topoplot(delta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
+    topoplot(delta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     % title([states4names{s} ': delta & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+2);
-    topoplot(theta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
+    topoplot(theta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     % title([states4names{s} ': theta & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+3);
-    topoplot(alpha_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
+    topoplot(alpha_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     % title([states4names{s} ': alpha & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+4);
-    topoplot(beta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
+    topoplot(beta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     % title([states4names{s} ': beta & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+5);
-    topoplot(gamma_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','map');
+    topoplot(gamma_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     % title([states4names{s} ': gamma & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
 end
 % sgtitle('4states: Corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}')
-colormap(hnc)
+colormap(hotncold(12))
 % https://www.mathworks.com/help/matlab/ref/matlab.graphics.illustration.colorbar-properties.html
 cb=colorbar;
 cb.AxisLocation = 'out';
