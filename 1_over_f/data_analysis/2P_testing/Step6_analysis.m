@@ -6206,29 +6206,15 @@ intervals_2t_4ss=intervals_2t_4ss';
 intervals_2t_4ss_mean=[];intervals_2t_4ss_std=[];
 for t=1:2
     for ss=1:4
-        intervals_2t_4ss_mean(ss,t)=mean(intervals_2t_4ss{ss,t});
-        intervals_2t_4ss_std(ss,t)=std(intervals_2t_4ss{ss,t});
+        intervals_2t_4ss_mean(ss,t)=mean(intervals_2t_4ss{ss,t}./2); % and convert to ms
+        intervals_2t_4ss_std(ss,t)=std(intervals_2t_4ss{ss,t}./2);
     end
 end
 
-
 % barplot with errorbar
-
-        plot([1:1000]/2,stateERP(:,selectChan),'color',condicolors(ss,:));
-        hold on;
-
-        title(['Chan' labels{selectChan}]); xlabel('time (ms)');
-        xlim([0 500]);ylim([-0.2 0.25])
-
-
-lg=legend(states4names,'location','eastoutside');
-lg.Position = [0.9475 0.4 0.01 0.25];
-set(gcf,'color','w'); % set background white for copying in ubuntu
-sgtitle('ERP of 4 states: Synch (top row); Synco (bottom row)');
-
 canvas(0.23, 0.4);
-model_series = [H_LR_synch_mean H_LR_synco_mean];
-model_error = [H_LR_synch_std H_LR_synco_std];
+model_series = intervals_2t_4ss_mean;
+model_error = intervals_2t_4ss_std;
 b = bar(model_series, 'grouped');
 hold on;
 % Calculate the number of groups and number of bars in each group
@@ -6243,17 +6229,60 @@ errorbar(x',model_series,model_error,'k','linestyle','none');
 hold off
 xticks(1:4);xticklabels({'Uncouple','Leading','Following','Mutual'});
 xlim([0.5 4.5]);
-ylabel('H'); ylim([0.4 1]);
+ylabel('Mean tapping interval (ms)'); ylim([400 1000]);
 set(gcf,'color','w'); % set background white for copying in ubuntu
 delete(findall(gcf,'type','annotation'))
-sg=annotation('textbox',[0.05 0.01 0.5 0.07],'string',...
-    {['mean H(matched int) ^{ *PLOT 6}' char(datetime('now'))]})
+sg=annotation('textbox',[0.05 0.01 0.5 0.09],'string',...
+    {['mean tapping intervals(matched int) ^{ *PLOT 22}' char(datetime('now'))]})
 sg.Rotation=90
-yline(0.5,'color', deepyellow)
 legend({'Synch','Synco'},'location','north')
 
-%%
+% prepend different colors for xticks
+% https://www.mathworks.com/matlabcentral/answers/28537-set-the-yticklabel-to-different-colors
+%{
+        plot([1:1000]/2,stateERP(:,selectChan),'color',condicolors(ss,:));
+        hold on;
 
+        title(['Chan' labels{selectChan}]); xlabel('time (ms)');
+        xlim([0 500]);ylim([-0.2 0.25])
+
+
+lg=legend(states4names,'location','eastoutside');
+lg.Position = [0.9475 0.4 0.01 0.25];
+set(gcf,'color','w'); % set background white for copying in ubuntu
+sgtitle('ERP of 4 states: Synch (top row); Synco (bottom row)');
+%}
+
+
+% statistical test (ANOVA) with unequal size
+%{ 
+[p,tbl,stats] = anova1([...
+    [H_L_uncouple_synch H_R_uncouple_synch]' ...
+    [H_L_Llead_synch H_R_Rlead_synch]' ... 
+    [H_R_Llead_synch H_L_Rlead_synch]' ...
+    [H_L_mutual_synch H_R_mutual_synch]' ...
+    [H_L_uncouple_synco H_R_uncouple_synco]' ...
+    [H_L_Llead_synco H_R_Rlead_synco]' ... 
+    [H_R_Llead_synco H_L_Rlead_synco]' ...
+    [H_L_mutual_synco H_R_mutual_synco]'...
+    ]); % one-way ANOVA (work)
+% Bonferroni correction
+[results,means,~,gnames] = multcompare(stats,"CriticalValueType","bonferroni"); % multi-comparison
+tbl = array2table([results],"VariableNames", ...
+    ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
+tb2 = array2table([means],"VariableNames", ["Mean","Standard Error"])
+p_bonf=results(:,6);
+% statistical test (Two sample t test)
+[h,p(1),ci,stats] = ttest2([H_L_uncouple_synch H_R_uncouple_synch]',[H_L_uncouple_synco H_R_uncouple_synco]') % Uncouple
+[h,p(2),ci,stats] = ttest2([H_L_Llead_synch H_R_Rlead_synch]',[H_L_Llead_synco H_R_Rlead_synco]') % Leading
+[h,p(3),ci,stats] = ttest2([H_R_Llead_synch H_L_Rlead_synch]',[H_R_Llead_synco H_L_Rlead_synco]','Alpha',0.01) % Following
+[h,p(4),ci,stats] = ttest2([H_L_mutual_synch H_R_mutual_synch]',[H_L_mutual_synco H_R_mutual_synco]') % Mutual
+sprintf('P values for each group: %0.3f\n',p)
+[h,p,ci,stats] = ttest2([H_L_mutual_synch H_R_mutual_synch H_L_Llead_synch H_R_Rlead_synch ...
+    H_R_Llead_synch H_L_Rlead_synch H_L_mutual_synch H_R_mutual_synch]',...
+    [H_L_mutual_synco H_R_mutual_synco H_L_Llead_synco H_R_Rlead_synco ...
+    H_R_Llead_synco H_L_Rlead_synco H_L_mutual_synco H_R_mutual_synco]') % Synch vs Synco
+%}
 %% saves all variables from the current workspace
 tic
 save([num2str(seed) 'workspace.mat']);
