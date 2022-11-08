@@ -3054,7 +3054,7 @@ for s=1:numSes;
 end
 toc % 77 sec
 
-% make a copy of the results
+% make a copy of the results (skip)
 % BPint_xcorrSeries_synch=BPint_xcorrSeries;
 % BPint_xcorrSeries_synco=BPint_xcorrSeries;
 
@@ -3175,7 +3175,6 @@ sg=annotation('textbox',[0.3 0.01 0.4 0.18],'string',...
 
 end
 
-
 % Correlation in 4 states (4 states x 5 freq)
 delta_LR_Xcorr_LR_4corr=zeros(4,32);
 theta_LR_Xcorr_LR_4corr=zeros(4,32);
@@ -3191,6 +3190,16 @@ for s=1:4
         gamma_LR_Xcorr_LR_4corr(s,c)=corr(gamma_LR_chan(select_Inds4_LR(:,s),c),BPint_xcorrSeries_LR(select_Inds4_LR(:,s)));
     end
 end
+
+% Examine the corrcoef values
+%{ 
+clf
+EEG_test=beta_LR_chan(select_Inds4_LR(:,4),5);
+Xcorr_test=BPint_xcorrSeries_LR(select_Inds4_LR(:,4));
+plot(Xcorr_test,EEG_test,'b.');
+corrcoef(Xcorr_test,EEG_test) 
+%}
+
 % Plot 4 states(4x5)
 for plot_4by5=1;
 canvas(0.3,0.5);
@@ -3623,7 +3632,7 @@ zEEG500_LLRR_all=[zEEG500_LL_all; zEEG500_RR_all]; % combine cell array
 % compute erp of 4 states across all sessions
 zEEG500_LL_4ss={};
 zEEG500_RR_4ss={};
-figure;
+canvas(1,1);
 % selectChan=7; %F4
 tic
 for ss=1:4
@@ -3631,16 +3640,20 @@ for ss=1:4
     cat_stateEEG=cat(3,zEEG500_LLRR_all{Inds4_LR(:,ss)});
     stateERP=mean(cat_stateEEG,3);
     for selectChan=1:32
-        subplot(4,6,selectChan)
+        subplot(4,8,selectChan)
         plot([1:1000]/2,stateERP(:,selectChan),'color',condicolors(ss,:));
         hold on;
-        if selectChan==32;
-        legend(states4names);
-        title(['ERP of 4 states: channel' labels{selectChan}]); xlabel('time (ms)');
+        if ss==4;
+        title(['Chan' labels{selectChan}]); xlabel('time (ms)');
+        xlim([0 500]);ylim([-0.15 0.2])
         end
     end
 end
-toc
+lg=legend(states4names,'location','eastoutside');
+lg.Position = [0.9475 0.4 0.01 0.25];
+set(gcf,'color','w'); % set background white for copying in ubuntu
+sgtitle('ERP of 4 states')
+toc % 
 
 
 %% SECT 13 Examine & Organize sum-EEG power and H for corr and PLS
