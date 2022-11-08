@@ -3630,8 +3630,8 @@ zEEG500_LL_all=reshape(zEEG500_LL',[],1);
 zEEG500_RR_all=reshape(zEEG500_RR',[],1);
 zEEG500_LLRR_all=[zEEG500_LL_all; zEEG500_RR_all]; % combine cell array
 % compute erp of 4 states across all sessions
-zEEG500_LL_4ss={};
-zEEG500_RR_4ss={};
+% zEEG500_LL_4ss={};
+% zEEG500_RR_4ss={};
 canvas(0.5,1);
 % selectChan=7; % F4
 tic
@@ -3645,7 +3645,7 @@ for ss=1:4
         hold on;
         if ss==4;
         title(['Chan' labels{selectChan}]); xlabel('time (ms)');
-        xlim([0 500]);ylim([-0.15 0.2])
+        xlim([0 500]);ylim([-0.2 0.2])
         end
     end
 end
@@ -3653,7 +3653,7 @@ lg=legend(states4names,'location','eastoutside');
 lg.Position = [0.9475 0.4 0.01 0.25];
 set(gcf,'color','w'); % set background white for copying in ubuntu
 sgtitle('ERP of 4 states')
-toc % 
+toc % 7 sec
 
 % separateing syn types - all 32 chan
 syn2names={'Synch','Synco'};
@@ -3696,7 +3696,7 @@ for t=1:2
         plot([1:1000]/2,stateERP(:,selectChan),'color',condicolors(ss,:));
         hold on;
         if ss==4;
-        title(['Chan' labels{selectChan}]); xlabel('time (ms)');
+        title(['Chan' labels{selectChan}],'Color',syn2colors(t,:)); xlabel('time (ms)');
         xlim([0 500]);ylim([-0.2 0.25])
         end
     end
