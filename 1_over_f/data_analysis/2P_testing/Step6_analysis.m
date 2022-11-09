@@ -410,7 +410,8 @@ matlab_red=[0.6350 0.0780 0.1840];
 % combine colors
 condicolors=[darkgreen;red;blue;megenta;purple;purple];
 dire3colors=[darkgreen;brown;megenta];
-syn2colors=[matlab_blue;matlab_orange];
+% syn2colors=[matlab_blue;matlab_orange];
+syn2colors=[darkgreen;pink];
 HNLcolors = [darkgreen; deepyellow; pink];
 
 % test color
@@ -1215,7 +1216,7 @@ H_LR_synco_mean = [mean(H_L_uncouple_synco) mean(H_R_uncouple_synco);...
 figure;
 subplot(2,1,1);
 b=bar(H_LR_synch_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
-xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
+xticks(1:4);xticklabels({ 'Uncouple','L-lead','R-lead','Mutual'});
 ylabel('H');
 hold on;
 yline(1,'color',deepyellow);
@@ -1225,7 +1226,7 @@ title('mean H in all synch sessions (matched int) ^{ *PLOT 6}')
 % title('mean H in all synco sessions (unmatched int) ^{ *PLOT 6-1}')
 subplot(2,1,2);
 b=bar(H_LR_synco_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
-xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
+xticks(1:4);xticklabels({ 'Uncouple','L-lead','R-lead','Mutual'});
 ylabel('H');
 hold on;
 yline(1,'color',deepyellow);
@@ -1522,13 +1523,13 @@ Autocorrs_LR_synco_mean = [mean(Autocorrs_L_uncouple_synco) mean(Autocorrs_R_unc
 figure;
 subplot(2,1,1);
 b=bar(Autocorrs_LR_synch_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
-xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
+xticks(1:4);xticklabels({ 'Uncouple','L-lead','R-lead','Mutual'});
 ylabel('\rho(k)');
 % title('mean autocorr sum for 20 lags in all synch sessions (unmatched int) ^{ *PLOT7}')
 title('Synchronization')
 subplot(2,1,2);
 b=bar(Autocorrs_LR_synco_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
-xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
+xticks(1:4);xticklabels({ 'Uncouple','L-lead','R-lead','Mutual'});
 ylabel('\rho(k)');
 % title('mean autocorr sum for 20 lags in all synco sessions (unmatched int) ^{ *PLOT7}')
 title('Syncopation')
@@ -1563,7 +1564,7 @@ Autocorrs20lags_LR_synco_mean = [Autocorrs20lags_L_uncouple_synco Autocorrs20lag
     Autocorrs20lags_L_mutual_synco Autocorrs20lags_R_mutual_synco];
 
 canvas(0.4,0.5);
-condi4names={ 'Uncoupled','L-lead','R-lead','Mutual'};
+condi4names={ 'Uncouple','L-lead','R-lead','Mutual'};
 for i=1:4
     subplot(2,4,i);
     plot(Autocorrs20lags_LR_synch_mean(:,2*i-1),'r');hold on;
@@ -2045,7 +2046,7 @@ XcorrPeakLag_LR_synco_std = [std(XcorrPeakLag_uncouple_synco);...
 canvas(0.2, 0.6);
 subplot(2,1,1);
 errorbar(1:4,XcorrPeakLag_LR_synch_mean,XcorrPeakLag_LR_synch_std,'ko');
-xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
+xticks(1:4);xticklabels({ 'Uncouple','L-lead','R-lead','Mutual'});
 ylabel('average lag of the peak'); % ylabel('\rho(k)');
 ylim([-10 10]);yline(0,'color',red);set(gca, 'YDir','reverse');
 xlim([0 5]);grid on;  grid minor;
@@ -2054,7 +2055,7 @@ title('average lag of xcorr peak in all synch sessions (-lag: L leading; +lag: R
 subtitle('(matched int) (after d removal)');
 subplot(2,1,2);
 errorbar(1:4,XcorrPeakLag_LR_synco_mean,XcorrPeakLag_LR_synco_std,'ko');
-xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
+xticks(1:4);xticklabels({ 'Uncouple','L-lead','R-lead','Mutual'});
 ylabel('average lag of the peak'); % ylabel('\rho(k)');
 ylim([-10 10]);yline(0,'color',red);set(gca, 'YDir','reverse')
 xlim([0 5]);grid on; grid minor;
@@ -2165,7 +2166,7 @@ XcorrPeak_LR_synco_std = [std(XcorrPeak_uncouple_synco);...
     std(XcorrPeak_Rlead_synco);...
     std(XcorrPeak_mutual_synco)];
 % plot average peak
-% condi4names={ 'Uncoupled','L-lead','R-lead','Mutual'};
+% condi4names={ 'Uncouple','L-lead','R-lead','Mutual'};
 canvas(0.1, 0.5);
 subplot(2,1,1);
 errorbar(1:4,XcorrPeak_LR_synch_mean,XcorrPeak_LR_synch_std,'ko');
@@ -2173,7 +2174,7 @@ errorbar(1:4,XcorrPeak_LR_synch_mean,XcorrPeak_LR_synch_std,'ko');
 %     errorbar(i,XcorrPeak_LR_synch_mean(i),XcorrPeak_LR_synch_std(i),'o','Color',condicolors(i,:));
 %     hold on;
 % end
-xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
+xticks(1:4);xticklabels({ 'Uncouple','L-lead','R-lead','Mutual'});
 ylabel('\rho(k)'); grid on;  grid minor;
 ylim([-0.1 1]);yline(0,'color',red);xlim([0 5]);
 title('average peak of xcorr in all synch sessions ^{* PLOT 9}');
@@ -2181,7 +2182,7 @@ title('average peak of xcorr in all synch sessions ^{* PLOT 9}');
 subtitle('(matched int) (after d removal)');
 subplot(2,1,2);
 errorbar(1:4,XcorrPeak_LR_synco_mean,XcorrPeak_LR_synco_std,'ko');
-xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
+xticks(1:4);xticklabels({ 'Uncouple','L-lead','R-lead','Mutual'});
 ylabel('\rho(k)'); grid on;  grid minor;
 ylim([-0.1 1]);yline(0,'color',red);xlim([0 5]);
 title('average peak of xcorr in all synco sessions ^{* PLOT 9}');
@@ -2218,7 +2219,7 @@ end
 
 % organized into 2x4 conditions (now 1x4 with diff colors)
 canvas(0.3,0.2);
-condi4names={ 'Uncoupled','L-lead','R-lead','Mutual'};
+condi4names={ 'Uncouple','L-lead','R-lead','Mutual'};
 for i=1:4
     subplot(1,4,i);
     plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(1:2:11,sorted4inds(i,:),:),2)),1),'b');hold on;
@@ -5618,7 +5619,7 @@ int_dmean_drm; % from SECT9 (matched int) (sorted order)
 
 % orgainized the synchronization trials into 4 conditions
 condi4Ind={[1:3],[4:6],[7:9],[10:12]};
-condi4names={'Uncoupled','L-lead','R-lead','Mutual'};
+condi4names={'Uncouple','L-lead','R-lead','Mutual'};
 syn2Ind={[1:2:11],[2:2:12]};syn2names={'Synch','Synco'};
 
 % test_data=int_dmean_drm(:,1:3,1:2:11); % uncouple synch
@@ -5865,13 +5866,14 @@ end
 
 % organize into time x 2 L/R matrix then apply MVGC and collect p values (2 suplots separate synch/o)
 Fs=nan(2,4);Ps=nan(2,4); % 2 syn type x 4 conditions
+if true % calculation of GC and P values
 for condi=1
     for t=1:2
     test_data=[];
     test_data=int_dmean_drm(:,condi4Ind{condi},syn2Ind{t});
     L_mat=[];R_mat=[];
-    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),36,1));
-    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),36,1));
+    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),18,1));
+    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),18,1));
     X=[];
     X=[L_mat R_mat; R_mat L_mat];
     X=permute(X,[2,1]);
@@ -5886,16 +5888,16 @@ for condi=[2 3]
     test_data=[];
     test_data=int_dmean_drm(:,condi4Ind{2},syn2Ind{t});
     L_mat=[];R_mat=[];
-    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),36,1));
-    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),36,1));
+    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),18,1));
+    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),18,1));
     X1=[];
     X1=[L_mat R_mat];
 
     test_data=[];
     test_data=int_dmean_drm(:,condi4Ind{3},syn2Ind{t});
     L_mat=[];R_mat=[];
-    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),36,1));
-    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),36,1));
+    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),18,1));
+    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),18,1));
     X2=[];
     X2=[R_mat L_mat];
     
@@ -5913,8 +5915,8 @@ for condi=4
     test_data=[];
     test_data=int_dmean_drm(:,condi4Ind{condi},syn2Ind{t});
     L_mat=[];R_mat=[];
-    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),36,1));
-    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),36,1));
+    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),18,1));
+    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),18,1));
     X=[];
     X=[L_mat R_mat; R_mat L_mat];
     X=permute(X,[2,1]);
@@ -5923,9 +5925,58 @@ for condi=4
     Ps(t,4)=pval(2,1);
     end
 end
+end
 
-% 3 subplots 
-for subplot3=1
+% 1 barplots 
+canvas(0.23, 0.4);
+model_series = Fs';
+clear b
+b = bar(model_series, 'FaceColor','flat');
+b(1).FaceColor=darkgreen;b(2).FaceColor=pink;
+xticks(1:4);xticklabels({'Uncoupled','Leading','Following','Mutual'});
+% label p values
+for t=1:2
+    for p=1:4
+        if Ps(t,p) <0.05; signifColor=red; else; signifColor=black; end
+        if t==1;
+            text(p-0.25, Fs(t,p)+0.005, sprintf('p=%.2f',Ps(t,p)),'Color',signifColor);
+        else
+            text(p+0.25, Fs(t,p)+0.005, sprintf('p=%.2f',Ps(t,p)),'Color',signifColor);
+        end
+    end
+end
+        
+% barplot 
+canvas(0.23, 0.4);
+model_series = intervals_2t_4ss_mean;
+model_error = intervals_2t_4ss_std;
+b = bar(model_series, 'grouped');
+hold on;
+% Calculate the number of groups and number of bars in each group
+[ngroups,nbars] = size(model_series);
+% Get the x coordinate of the bars
+x = nan(nbars, ngroups);
+for i = 1:nbars
+    x(i,:) = b(i).XEndPoints;
+end
+% Plot the errorbars 
+errorbar(x',model_series,model_error,'k','linestyle','none');
+hold off
+xticks(1:4);xticklabels({'Uncouple','Leading','Following','Mutual'});
+xlim([0.5 4.5]);
+ylabel('Mean tapping interval (ms)'); ylim([400 1000]);
+set(gcf,'color','w'); % set background white for copying in ubuntu
+delete(findall(gcf,'type','annotation'))
+sg=annotation('textbox',[0.05 0.01 0.5 0.09],'string',...
+    {['mean tapping intervals(matched int) ^{ *PLOT 22}' char(datetime('now'))]})
+sg.Rotation=90
+legend({'Synch','Synco'},'location','north')
+
+
+
+
+
+if true % subplot2
 ymax=0.04;
 canvas(0.5, 0.45);
 tiledlayout(1,3);
@@ -5955,9 +6006,6 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 delete(sg)
 sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
     {['MVGC (concatenate data) H-int ^{* SECT 21}'],char(datetime('now'))});
-
-
-
 end
 
 
@@ -6355,7 +6403,7 @@ end
 % Plot the errorbars 
 errorbar(x',model_series,model_error,'k','linestyle','none');
 hold off
-xticks(1:4);xticklabels({'Uncouple','Leading','Following','Mutual'});
+xticks(1:4);xticklabels({'Uncoupled','Leading','Following','Mutual'});
 xlim([0.5 4.5]);
 ylabel('Mean tapping interval (ms)'); ylim([400 1000]);
 set(gcf,'color','w'); % set background white for copying in ubuntu
@@ -6418,6 +6466,7 @@ toc
 % takes about 11 min for one session
 
 cd /ssd/zhibin/1overf/all_session20220713_1005
+
 tic
 save(['20220713_1005workspace.mat']);
 toc
