@@ -1215,7 +1215,7 @@ H_LR_synco_mean = [mean(H_L_uncouple_synco) mean(H_R_uncouple_synco);...
 figure;
 subplot(2,1,1);
 b=bar(H_LR_synch_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
-xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
 ylabel('H');
 hold on;
 yline(1,'color',deepyellow);
@@ -1225,7 +1225,7 @@ title('mean H in all synch sessions (matched int) ^{ *PLOT 6}')
 % title('mean H in all synco sessions (unmatched int) ^{ *PLOT 6-1}')
 subplot(2,1,2);
 b=bar(H_LR_synco_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
-xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
 ylabel('H');
 hold on;
 yline(1,'color',deepyellow);
@@ -1522,13 +1522,13 @@ Autocorrs_LR_synco_mean = [mean(Autocorrs_L_uncouple_synco) mean(Autocorrs_R_unc
 figure;
 subplot(2,1,1);
 b=bar(Autocorrs_LR_synch_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
-xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
 ylabel('\rho(k)');
 % title('mean autocorr sum for 20 lags in all synch sessions (unmatched int) ^{ *PLOT7}')
 title('Synchronization')
 subplot(2,1,2);
 b=bar(Autocorrs_LR_synco_mean);b(1).FaceColor = [1 0 0]; b(2).FaceColor = [0 0 1];
-xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
 ylabel('\rho(k)');
 % title('mean autocorr sum for 20 lags in all synco sessions (unmatched int) ^{ *PLOT7}')
 title('Syncopation')
@@ -1563,7 +1563,7 @@ Autocorrs20lags_LR_synco_mean = [Autocorrs20lags_L_uncouple_synco Autocorrs20lag
     Autocorrs20lags_L_mutual_synco Autocorrs20lags_R_mutual_synco];
 
 canvas(0.4,0.5);
-condi4names={'Uncouple','L-lead','R-lead','Mutual'};
+condi4names={ 'Uncoupled','L-lead','R-lead','Mutual'};
 for i=1:4
     subplot(2,4,i);
     plot(Autocorrs20lags_LR_synch_mean(:,2*i-1),'r');hold on;
@@ -2045,7 +2045,7 @@ XcorrPeakLag_LR_synco_std = [std(XcorrPeakLag_uncouple_synco);...
 canvas(0.2, 0.6);
 subplot(2,1,1);
 errorbar(1:4,XcorrPeakLag_LR_synch_mean,XcorrPeakLag_LR_synch_std,'ko');
-xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
 ylabel('average lag of the peak'); % ylabel('\rho(k)');
 ylim([-10 10]);yline(0,'color',red);set(gca, 'YDir','reverse');
 xlim([0 5]);grid on;  grid minor;
@@ -2054,7 +2054,7 @@ title('average lag of xcorr peak in all synch sessions (-lag: L leading; +lag: R
 subtitle('(matched int) (after d removal)');
 subplot(2,1,2);
 errorbar(1:4,XcorrPeakLag_LR_synco_mean,XcorrPeakLag_LR_synco_std,'ko');
-xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
 ylabel('average lag of the peak'); % ylabel('\rho(k)');
 ylim([-10 10]);yline(0,'color',red);set(gca, 'YDir','reverse')
 xlim([0 5]);grid on; grid minor;
@@ -2165,7 +2165,7 @@ XcorrPeak_LR_synco_std = [std(XcorrPeak_uncouple_synco);...
     std(XcorrPeak_Rlead_synco);...
     std(XcorrPeak_mutual_synco)];
 % plot average peak
-% condi4names={'uncouple','L-lead','R-lead','mutual'};
+% condi4names={ 'Uncoupled','L-lead','R-lead','Mutual'};
 canvas(0.1, 0.5);
 subplot(2,1,1);
 errorbar(1:4,XcorrPeak_LR_synch_mean,XcorrPeak_LR_synch_std,'ko');
@@ -2173,7 +2173,7 @@ errorbar(1:4,XcorrPeak_LR_synch_mean,XcorrPeak_LR_synch_std,'ko');
 %     errorbar(i,XcorrPeak_LR_synch_mean(i),XcorrPeak_LR_synch_std(i),'o','Color',condicolors(i,:));
 %     hold on;
 % end
-xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
 ylabel('\rho(k)'); grid on;  grid minor;
 ylim([-0.1 1]);yline(0,'color',red);xlim([0 5]);
 title('average peak of xcorr in all synch sessions ^{* PLOT 9}');
@@ -2181,7 +2181,7 @@ title('average peak of xcorr in all synch sessions ^{* PLOT 9}');
 subtitle('(matched int) (after d removal)');
 subplot(2,1,2);
 errorbar(1:4,XcorrPeak_LR_synco_mean,XcorrPeak_LR_synco_std,'ko');
-xticks(1:4);xticklabels({'uncouple','L-lead','R-lead','mutual'});
+xticks(1:4);xticklabels({ 'Uncoupled','L-lead','R-lead','Mutual'});
 ylabel('\rho(k)'); grid on;  grid minor;
 ylim([-0.1 1]);yline(0,'color',red);xlim([0 5]);
 title('average peak of xcorr in all synco sessions ^{* PLOT 9}');
@@ -2218,7 +2218,7 @@ end
 
 % organized into 2x4 conditions (now 1x4 with diff colors)
 canvas(0.3,0.2);
-condi4names={'Uncouple','L-lead','R-lead','Mutual'};
+condi4names={ 'Uncoupled','L-lead','R-lead','Mutual'};
 for i=1:4
     subplot(1,4,i);
     plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(1:2:11,sorted4inds(i,:),:),2)),1),'b');hold on;
@@ -2388,11 +2388,12 @@ for s=1:numSes
     condition_all(s,:)=conditions; % 12 session x 12 trials
 end
 toc % 78 sec
+clear dataR dataL
 % reshape into a vector in time sequence
 condition_all=reshape(condition_all',[],1); % 144 x 1 
 
 % indices for 4 states
-states4names={'Uncouple','Leading','Following','Mutual'};
+states4names={'Uncoupled','Leading','Following','Mutual'};
 % find the indices for each condition in L R conbined sequence (4 states)
 % and organize for PLS
 uncoupleInd_LR=[find(condition_all==1);12*numSes+find(condition_all==1)];
@@ -2591,19 +2592,25 @@ title('uncoupled');
 % Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 % FitValues=polyval(A,H_Lall(uncoupleInd_LR(1:36)));
 % hold on; plot(H_Lall(uncoupleInd_LR(1:36)),FitValues,'k-','LineWidth',3);
+
 % fit the synch data
-A=[];Alpha1=[];FitValues=[];
+A=[];Alpha1=[];FitValues=[];RHO=[];
 A=polyfit(H_Lall(uncoupleInd_LR(1:2:35)),H_Rall(uncoupleInd_LR(1:2:35)),1);
+[RHO,~]=corr(H_Lall(uncoupleInd_LR(1:2:35)),H_Rall(uncoupleInd_LR(1:2:35)));
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,H_Lall(uncoupleInd_LR(1:2:35)));
 hold on; plot(H_Lall(uncoupleInd_LR(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
+text(max(H_Lall(uncoupleInd_LR(1:2:35))),min(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+
 % fit the synco data
-A=[];Alpha1=[];FitValues=[];
+A=[];Alpha1=[];FitValues=[];RHO=[];
 A=polyfit(H_Lall(uncoupleInd_LR(2:2:36)),H_Rall(uncoupleInd_LR(2:2:36)),1);
+[RHO,~]=corr(H_Lall(uncoupleInd_LR(2:2:36)),H_Rall(uncoupleInd_LR(2:2:36)));
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,H_Lall(uncoupleInd_LR(2:2:36)));
 hold on; plot(H_Lall(uncoupleInd_LR(2:2:36)),FitValues,'-','color',pink,'LineWidth',3);
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+text(max(H_Lall(uncoupleInd_LR(2:2:36))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
 % legend('synch','','','','synco','','','','location','northwest');
 % subtitle(['(uncouple: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 grid on;
@@ -2642,18 +2649,22 @@ title('unidirectional');
 % FitValues=polyval(A,[H_Lall(leadingInd_LR(1:36)); H_Rall(followingInd_LR(1:36))]);
 % hold on; plot([H_Lall(leadingInd_LR(1:36)); H_Rall(followingInd_LR(1:36))],FitValues,'k-','LineWidth',3);
 % fit the synch data
-A=[];Alpha1=[];FitValues=[];
+A=[];Alpha1=[];FitValues=[];RHO=[];
 A=polyfit([H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))], [H_Rall(leadingInd_LR(1:2:35)); H_Lall(followingInd_LR(1:2:35))],1);
+[RHO,~]=corr([H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))], [H_Rall(leadingInd_LR(1:2:35)); H_Lall(followingInd_LR(1:2:35))]);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,[H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))]);
 hold on; 
 plot([H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))],FitValues,'-','color',darkgreen,'LineWidth',3);
+text(max([H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))]),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
 % fit the synco data
-A=[];Alpha1=[];FitValues=[];
+A=[];Alpha1=[];FitValues=[];RHO=[];
 A=polyfit([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))], [H_Rall(leadingInd_LR(2:2:36)); H_Lall(followingInd_LR(2:2:36))],1);
+[RHO,~]=corr([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))], [H_Rall(leadingInd_LR(2:2:36)); H_Lall(followingInd_LR(2:2:36))]);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,[H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))]);
 hold on; plot([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))],FitValues,'-','color',pink,'LineWidth',3);
+text(max([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))]),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 % legend('synch','','','','synco','','','','','','','','','','','','location','northwest');
 % subtitle(['(leading or following: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
@@ -2681,17 +2692,21 @@ title('bidirectional');
 % FitValues=polyval(A,H_Lall(mutualInd_LR(1:36)));
 % hold on; plot(H_Lall(mutualInd_LR(1:36)),FitValues,'k-','LineWidth',3);
 % fit the synch data
-A=[];Alpha1=[];FitValues=[];
+A=[];Alpha1=[];FitValues=[];RHO=[];
 A=polyfit(H_Lall(mutualInd_LR(1:2:35)),H_Rall(mutualInd_LR(1:2:35)),1);
+[RHO,~]=corr(H_Lall(mutualInd_LR(1:2:35)),H_Rall(mutualInd_LR(1:2:35)));
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,H_Lall(mutualInd_LR(1:2:35)));
 hold on; plot(H_Lall(mutualInd_LR(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
+text(max(H_Lall(mutualInd_LR(1:2:35))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
 % fit the synco data
-A=[];Alpha1=[];FitValues=[];
+A=[];Alpha1=[];FitValues=[];RHO=[];
 A=polyfit(H_Lall(mutualInd_LR(2:2:36)),H_Rall(mutualInd_LR(2:2:36)),1);
+[RHO,~]=corr(H_Lall(mutualInd_LR(2:2:36)),H_Rall(mutualInd_LR(2:2:36)));
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,H_Lall(mutualInd_LR(2:2:36)));
 hold on; plot(H_Lall(mutualInd_LR(2:2:36)),FitValues,'-','color',pink,'LineWidth',3);
+text(max(H_Lall(mutualInd_LR(2:2:36)))-0.2,max(FitValues)-0.05,sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 % subtitle(['(mutual): linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 grid on;
@@ -2721,9 +2736,9 @@ theta_LR_chan=testing_EEG_LR;
 
 %********************** 6 subplots separating synch/o
 cmin=0;cmax=7;
-cmin=-4.1232;cmax=-4.0101; % testing synco
-cmin=4.0101;cmax=4.1232; % testing synch
-cmin=-4.1232;cmax=4.1232; % testing both
+% cmin=-4.1232;cmax=-4.0101; % testing synco
+% cmin=4.0101;cmax=4.1232; % testing synch
+% cmin=-4.1232;cmax=4.1232; % testing both
 
 for subplots6 =1;
 canvas(0.25,0.7);
@@ -2843,7 +2858,7 @@ end
 % all six channels in one plot
 theta_L_chan=mean(theta_LR_chan(1:144,[5 7 9 12 14 18]),2);
 theta_R_chan=mean(theta_LR_chan(145:288,[5 7 9 12 14 18]),2);
-%********************** 6 subplots
+%********************** 6 subplots in 1
 cmin=0;cmax=7;
 for subplots6to1 =1;
 canvas(0.25,0.25);
@@ -2890,7 +2905,7 @@ lg.Position = [0.9475 0.15 0.01 0.025];
 % sgtitle(['H matching as in Marmelat 2012  ^{* PLOT 10-2}']);
 delete(findall(gcf,'type','annotation'))
 sg=annotation('textbox',[0.07 0.01 0.5 0.05],'string',...
-    'Sum of theta power for 6 channels in bidirectional state ^{* PLOT 10-2}')
+    'Sum of theta power for 6 channels in bidirectional state ^{* PLOT 10-3}')
 sg.Rotation=90
 set(gcf,'color','w'); % set background white for copying in ubuntu
 end
@@ -3559,6 +3574,8 @@ for s=1:numSes % each session
     end
 end
 toc % about 2 min
+% clear working space
+clear zEEG_L zEEG_R zEEG500_L zEEG500_R 
 
 % EEG +500ms After the matched tap
 delta_LL=cell(numSes,12);theta_LL=cell(numSes,12);alpha_LL=cell(numSes,12);beta_LL=cell(numSes,12);gamma_LL=cell(numSes,12);
@@ -3621,7 +3638,8 @@ for s=1:12; % session 1-12
     end
 end
 toc; % 108 second
-
+% clear for workspace
+clear dataL dataR erp_L erp_R 
 % prepare indicies for conditions and states
 condition_all; % from SECT 10-1
 Inds4_LR=[uncoupleInd_LR leadingInd_LR followingInd_LR mutualInd_LR]; % from SECT 10-1
@@ -3629,9 +3647,11 @@ Inds4_LR=[uncoupleInd_LR leadingInd_LR followingInd_LR mutualInd_LR]; % from SEC
 zEEG500_LL_all=reshape(zEEG500_LL',[],1);
 zEEG500_RR_all=reshape(zEEG500_RR',[],1);
 zEEG500_LLRR_all=[zEEG500_LL_all; zEEG500_RR_all]; % combine cell array
+% clear for workspace
+clear zEEG500_LL_all zEEG500_RR_all
 % compute erp of 4 states across all sessions
-zEEG500_LL_4ss={};
-zEEG500_RR_4ss={};
+% zEEG500_LL_4ss={};
+% zEEG500_RR_4ss={};
 canvas(0.5,1);
 % selectChan=7; % F4
 tic
@@ -3645,7 +3665,7 @@ for ss=1:4
         hold on;
         if ss==4;
         title(['Chan' labels{selectChan}]); xlabel('time (ms)');
-        xlim([0 500]);ylim([-0.15 0.2])
+        xlim([0 500]);ylim([-0.2 0.2])
         end
     end
 end
@@ -3653,8 +3673,9 @@ lg=legend(states4names,'location','eastoutside');
 lg.Position = [0.9475 0.4 0.01 0.25];
 set(gcf,'color','w'); % set background white for copying in ubuntu
 sgtitle('ERP of 4 states')
-toc % 
-
+toc % 7 sec
+% clear for workspace
+clear cat_stateEEG
 % separateing syn types - all 32 chan
 syn2names={'Synch','Synco'};
 for t=1:2
@@ -3696,7 +3717,7 @@ for t=1:2
         plot([1:1000]/2,stateERP(:,selectChan),'color',condicolors(ss,:));
         hold on;
         if ss==4;
-        title(['Chan' labels{selectChan}]); xlabel('time (ms)');
+        title(['Chan' labels{selectChan}],'Color',syn2colors(t,:)); xlabel('time (ms)');
         xlim([0 500]);ylim([-0.2 0.25])
         end
     end
@@ -3733,7 +3754,8 @@ for s=1:numSes
         gamma_R_sum(s,b,:)=sum([gamma_R{s,b}]);
     end
 end
-
+% clear out some variables for workspace
+clear delta_L theta_L alpha_L beta_L gamma_L delta_R theta_R alpha_R beta_R gamma_R
 % squeeze into 32 vectors for corr with H
 delta_L_chan=[];theta_L_chan=[];alpha_L_chan=[];beta_L_chan=[];gamma_L_chan=[];
 delta_R_chan=[];theta_R_chan=[];alpha_R_chan=[];beta_R_chan=[];gamma_R_chan=[];
@@ -3749,7 +3771,8 @@ for c=1:32
     beta_R_chan(:,c)=reshape(beta_R_sum(:,:,c)',[],1);
     gamma_R_chan(:,c)=reshape(gamma_R_sum(:,:,c)',[],1);
 end
-
+% clear out variables for workspace
+clear delta_L_sum theta_L_sum alpha_L_sum beta_L_sum gamma_L_sum delta_R_sum theta_R_sum alpha_R_sum beta_R_sum gamma_R_sum 
 % Combine L and R for 288 predictors in PLS
 delta_LR_chan=[delta_L_chan;delta_R_chan]; % (288 x 32)
 theta_LR_chan=[theta_L_chan;theta_R_chan];
@@ -4383,6 +4406,7 @@ for s=1:numSes
         end
     end
 end
+
 % squeeze into 32 vectors for corr with H
 H_delta_L_chan=[];H_theat_L_chan=[];H_alpha_L_chan=[];H_beta_L_chan=[];H_gamma_L_chan=[];
 H_delta_R_chan=[];H_theat_R_chan=[];H_alpha_R_chan=[];H_beta_R_chan=[];H_gamma_R_chan=[];
@@ -5594,7 +5618,7 @@ int_dmean_drm; % from SECT9 (matched int) (sorted order)
 
 % orgainized the synchronization trials into 4 conditions
 condi4Ind={[1:3],[4:6],[7:9],[10:12]};
-condi4names={'Uncouple','L-lead','R-lead','Mutual'};
+condi4names={'Uncoupled','L-lead','R-lead','Mutual'};
 syn2Ind={[1:2:11],[2:2:12]};syn2names={'Synch','Synco'};
 
 % test_data=int_dmean_drm(:,1:3,1:2:11); % uncouple synch
@@ -5602,6 +5626,7 @@ syn2Ind={[1:2:11],[2:2:12]};syn2names={'Synch','Synco'};
 % test_data=int_dmean_drm(:,7:9,1:2:11); % R-lead synch
 % test_data=int_dmean_drm(:,10:12,1:2:11); % R-lead synch
 
+% arfit
 % organize into time x 2 L/R matrix then apply arfit and plot GC
 pmin=1; % minimal order
 pmax=10; % maximal order
@@ -5640,6 +5665,7 @@ end
 sgtitle({['GC: arfit (concatenate data)'],char(datetime('now'))});
 % sgtitle({['GC: arfit (permuted concatenate data)',char(datetime('now'))});
 
+% MVGC
 % organize into time x 2 L/R matrix then apply MVGC and plot
 Fs=cell(2,4);
 for syn=1:2
@@ -5749,7 +5775,7 @@ sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
     'MVGC (concatenate data) H-int ^{* SECT 21}')
 end
 
-% organize into time x 2 L/R matrix then apply MVGC and collect p values
+% organize into time x 2 L/R matrix then apply MVGC and collect p values (1x3 suplots)
 % and plot
 Fs=nan(1,4);Ps=nan(1,4);
 for condi=1
@@ -5832,6 +5858,103 @@ delete(sg)
 sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
     {['MVGC (concatenate data) H-int ^{* SECT 21}'],char(datetime('now'))});
 end
+
+
+% organize into time x 2 L/R matrix then apply MVGC and collect p values (2 suplots separate synch/o)
+Fs=nan(2,4);Ps=nan(2,4); % 2 syn type x 4 conditions
+for condi=1
+    for t=1:2
+    test_data=[];
+    test_data=int_dmean_drm(:,condi4Ind{condi},syn2Ind{t});
+    L_mat=[];R_mat=[];
+    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),36,1));
+    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),36,1));
+    X=[];
+    X=[L_mat R_mat; R_mat L_mat];
+    X=permute(X,[2,1]);
+    [F,pval,sig] = myGCautocov(X);
+    Fs(t,1)=F(2,1);
+    Ps(t,1)=pval(2,1);
+    end
+end
+
+for condi=[2 3]
+    for t=1:2
+    test_data=[];
+    test_data=int_dmean_drm(:,condi4Ind{2},syn2Ind{t});
+    L_mat=[];R_mat=[];
+    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),36,1));
+    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),36,1));
+    X1=[];
+    X1=[L_mat R_mat];
+    test_data=[];
+    test_data=int_dmean_drm(:,condi4Ind{3},:);
+    L_mat=[];R_mat=[];
+    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),36,1));
+    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),36,1));
+    X2=[];
+    X2=[R_mat L_mat];
+    X=[];
+    X=[X1; X2];
+    X=permute(X,[2,1]);
+    [F,pval,sig] = myGCautocov(X);
+    Fs(t,2)=F(2,1);Fs(3)=F(1,2);
+    Ps(t,2)=pval(2,1);Ps(3)=pval(1,2);
+    end
+end
+
+for condi=4
+    for
+    test_data=[];
+    test_data=int_dmean_drm(:,condi4Ind{condi},:);
+    L_mat=[];R_mat=[];
+    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),36,1));
+    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),36,1));
+    X=[];
+    X=[L_mat R_mat; R_mat L_mat];
+    X=permute(X,[2,1]);
+    [F,pval,sig] = myGCautocov(X);
+    Fs(t,4)=F(2,1);
+    Ps(t,4)=pval(2,1);
+    end
+end
+
+% 3 subplots 
+for subplot3=1
+ymax=0.04;
+canvas(0.5, 0.45);
+tiledlayout(1,3);
+% Tile 1
+nexttile
+bar(Fs(1));xticks([1]);xticklabels({'L<->R'});
+title('Uncoupled');ylabel('GC');
+ylim([0 ymax]);% xlim([0.25 1.75]);
+text(1-0.2, Fs(1)+0.005, sprintf('p=%.2f',Ps(1)),'Color',[0 0 0]);
+% Tile 2
+nexttile
+bar(Fs(2:3));xticks([1 2]);
+xticklabels({'Leader->Follower','Follower->Leader'});
+title('Unidirectional');ylabel('GC');
+ylim([0 ymax]);% xlim([0.25 2.75]);
+text(1-0.2, Fs(2)+0.005, sprintf('p=%.2f',Ps(2)),'Color',[1 0 0]);
+text(2-0.2, Fs(3)+0.005, sprintf('p=%.2f',Ps(3)),'Color',[0 0 0]);
+% Tile 1
+nexttile
+bar(Fs(4));xticks([1]);xticklabels({'L<->R'});
+title('Bidirectional');ylabel('GC');
+ylim([0 ymax]);% xlim([0.25 1.75]);
+text(1-0.2, Fs(4)+0.005, sprintf('p=%.2f',Ps(4)),'Color',[1 0 0]);
+set(gcf,'color','w'); % set background white for copying in ubuntu
+% sgtitle('GC: var-to-autocov (concatenate data)')
+% sgtitle('GC: var-to-autocov (permuted concatenate data)')
+delete(sg)
+sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
+    {['MVGC (concatenate data) H-int ^{* SECT 21}'],char(datetime('now'))});
+
+
+
+end
+
 
 %% PLOT 21 EEG (-500ms) -> GC (MVGC): -Corr -PLS
 % Organize GC for PLS
@@ -6237,7 +6360,8 @@ sg=annotation('textbox',[0.05 0.01 0.5 0.09],'string',...
 sg.Rotation=90
 legend({'Synch','Synco'},'location','north')
 
-% prepend 
+% prepend different colors for xticks
+% https://www.mathworks.com/matlabcentral/answers/28537-set-the-yticklabel-to-different-colors
 %{
         plot([1:1000]/2,stateERP(:,selectChan),'color',condicolors(ss,:));
         hold on;
@@ -6250,6 +6374,7 @@ lg=legend(states4names,'location','eastoutside');
 lg.Position = [0.9475 0.4 0.01 0.25];
 set(gcf,'color','w'); % set background white for copying in ubuntu
 sgtitle('ERP of 4 states: Synch (top row); Synco (bottom row)');
+%}
 
 
 % statistical test (ANOVA) with unequal size
@@ -6281,8 +6406,6 @@ sprintf('P values for each group: %0.3f\n',p)
     [H_L_mutual_synco H_R_mutual_synco H_L_Llead_synco H_R_Rlead_synco ...
     H_R_Llead_synco H_L_Rlead_synco H_L_mutual_synco H_R_mutual_synco]') % Synch vs Synco
 %}
-
-
 %% saves all variables from the current workspace
 tic
 save([num2str(seed) 'workspace.mat']);
