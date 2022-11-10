@@ -1290,7 +1290,7 @@ errorbar(x',model_series,model_error,'k','linestyle','none');
 hold off
 xticks(1:4);xticklabels({'Uncoupled','Leading','Following','Mutual'});
 xlim([0.5 4.5]);
-ylabel('H'); ylim([0.4 1]);
+ylabel('H','FontSize',15); ylim([0.4 1]);
 set(gcf,'color','w'); % set background white for copying in ubuntu
 delete(findall(gcf,'type','annotation'))
 sg=annotation('textbox',[0.05 0.01 0.5 0.07],'string',...
@@ -2319,8 +2319,8 @@ for i=1:3
     elseif i==1 | i==3;
         hold on;
         plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(syn2Ind{syn},sorted3inds{i},:),2)),1),'color',syn2colors(syn,:));
-        title(direction3names{i});
-        ylabel('\rho');xlabel('lag (L-leading <- 0 -> R-leading)');ylim([-0.1 0.8])
+        title(direction3names{i},'FontSize',15);
+        ylabel('\rho','FontSize',15);xlabel('lag (L-leading <- 0 -> R-leading)','FontSize',15);ylim([-0.1 0.8])
     end    
     hold off;
     end
@@ -2589,8 +2589,9 @@ plot(H_Lall(uncoupleInd_LR(syncoind(7:9))),H_Rall(uncoupleInd_LR(syncoind(7:9)))
 plot(H_Lall(uncoupleInd_LR(syncoind(10:12))),H_Rall(uncoupleInd_LR(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(H_Lall(uncoupleInd_LR(syncoind(13:15))),H_Rall(uncoupleInd_LR(syncoind(13:15))),'*','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
 plot(H_Lall(uncoupleInd_LR(syncoind(16:18))),H_Rall(uncoupleInd_LR(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('Uncoupled');
+xlabel('DFA exponent, Participant L','FontSize',15);
+ylabel('DFA exponent, Participant R','FontSize',15);
+title('Uncoupled','FontSize',15);
 % A=[];S=[]; Alpha1=[];FitValues=[];
 % A=polyfit(H_Lall(uncoupleInd_LR(1:36)),H_Rall(uncoupleInd_LR_LR(1:36)),1);
 % Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
@@ -2645,8 +2646,9 @@ plot(H_Rall(followingInd_LR(syncoind(7:9))),H_Lall(followingInd_LR(syncoind(7:9)
 plot(H_Rall(followingInd_LR(syncoind(10:12))),H_Lall(followingInd_LR(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(H_Rall(followingInd_LR(syncoind(13:15))),H_Lall(followingInd_LR(syncoind(13:15))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(H_Rall(followingInd_LR(syncoind(16:18))),H_Lall(followingInd_LR(syncoind(16:18))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-xlabel('DFA exponent, Leader');ylabel('DFA exponent, Follower');
-title('Unidirectional'); 
+xlabel('DFA exponent, Leader','FontSize',15);
+ylabel('DFA exponent, Follower','FontSize',15);
+title('Unidirectional','FontSize',15);
 % A=[];Alpha1=[];FitValues=[];
 % A=polyfit([H_Lall(leadingInd_LR(1:36)); H_Rall(followingInd_LR(1:36))], [H_Rall(leadingInd_LR(1:36)); H_Lall(followingInd_LR(1:36))],1);
 % Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
@@ -2688,13 +2690,18 @@ plot(H_Lall(mutualInd_LR(syncoind(7:9))),H_Rall(mutualInd_LR(syncoind(7:9))),'^'
 plot(H_Lall(mutualInd_LR(syncoind(10:12))),H_Rall(mutualInd_LR(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(H_Lall(mutualInd_LR(syncoind(13:15))),H_Rall(mutualInd_LR(syncoind(13:15))),'*','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(H_Lall(mutualInd_LR(syncoind(16:18))),H_Rall(mutualInd_LR(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('Bidirectional'); 
-% A=[];Alpha1=[];FitValues=[];
-% A=polyfit(H_Lall(mutualInd_LR(1:36)),H_Rall(mutualInd_LR(1:36)),1);
-% Alpha1=A(1); 
-% FitValues=polyval(A,H_Lall(mutualInd_LR(1:36)));
-% hold on; plot(H_Lall(mutualInd_LR(1:36)),FitValues,'k-','LineWidth',3);
+xlabel('DFA exponent, Participant L','FontSize',15);
+ylabel('DFA exponent, Participant R','FontSize',15);
+title('Bidirectional','FontSize',15); 
+
+A=[];Alpha1=[];FitValues=[];RHO=[];
+A=polyfit(H_Lall(mutualInd_LR(1:36)),H_Rall(mutualInd_LR(1:36)),1);
+[RHO,~]=corr(H_Lall(mutualInd_LR(1:36)),H_Rall(mutualInd_LR(1:36)));
+Alpha1=A(1); 
+FitValues=polyval(A,H_Lall(mutualInd_LR(1:36)));
+hold on; plot(H_Lall(mutualInd_LR(1:36)),FitValues,'k-','LineWidth',3);
+text(max(H_Lall(mutualInd_LR(1:36)))-0.11,max(FitValues)-0.12,sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+
 % fit the synch data
 A=[];Alpha1=[];FitValues=[];RHO=[];
 A=polyfit(H_Lall(mutualInd_LR(1:2:35)),H_Rall(mutualInd_LR(1:2:35)),1);
@@ -2878,7 +2885,7 @@ plot(theta_L_chan(mutualInd_LR(syncoind(7:9))),theta_R_chan(mutualInd_LR(syncoin
 plot(theta_L_chan(mutualInd_LR(syncoind(10:12))),theta_R_chan(mutualInd_LR(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(theta_L_chan(mutualInd_LR(syncoind(13:15))),theta_R_chan(mutualInd_LR(syncoind(13:15))),'*','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(theta_L_chan(mutualInd_LR(syncoind(16:18))),theta_R_chan(mutualInd_LR(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-xlabel('Theta power, Participant L');ylabel('Theta power, Participant R');
+xlabel('Theta power, Participant L','FontSize',15);ylabel('Theta power, Participant R''FontSize',15);
 title('Sum of theta power from F3,F4,FC5,FC6,T7,T6 in bidrectional state'); 
 % fit the synch data
 A=[];Alpha1=[];FitValues=[];RHO=[]
@@ -3222,25 +3229,25 @@ corrcoef(Xcorr_test,EEG_test)
 % Plot 4 states(4x5)
 for plot_4by5=1;
 canvas(0.3,0.5);
-cmin=-0.6;cmax=0.6;
+cmin=-0.7;cmax=0.7;
 for s=1:4
     subplot(4,5,5*(s-1)+1);
-    topoplot(delta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
+    topoplot(delta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+2);
-    topoplot(theta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
+    topoplot(theta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+3);
-    topoplot(alpha_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
+    topoplot(alpha_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+4);
-    topoplot(beta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
+    topoplot(beta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+5);
-    topoplot(gamma_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
+    topoplot(gamma_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     clim([cmin cmax]);
 end
-colormap(hotncold(6))
+colormap(hotncold(12))
 % https://www.mathworks.com/help/matlab/ref/matlab.graphics.illustration.colorbar-properties.html
 cb=colorbar;
 cb.AxisLocation = 'out';
@@ -3255,7 +3262,7 @@ h4=annotation('textbox',[0.81 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
 v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','Mutual','color',condicolors(4,:))
 v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','Following','color',condicolors(3,:))
 v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','Leading','color',condicolors(2,:))
-v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','Uncouple','color',condicolors(1,:))
+v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','Uncoupled','color',condicolors(1,:))
 set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
@@ -4186,36 +4193,36 @@ for s=1:4
 end
 % Combine L and R in 4 states(4x5)
 canvas(0.3,0.5);
-cmin=-0.6;cmax=0.6;
+cmin=-0.7;cmax=0.7;
 for s=1:4
     subplot(4,5,5*(s-1)+1);
-    topoplot(delta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
+    topoplot(delta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     % title([states4names{s} ': delta & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+2);
-    topoplot(theta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
+    topoplot(theta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     % title([states4names{s} ': theta & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+3);
-    topoplot(alpha_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
+    topoplot(alpha_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     % title([states4names{s} ': alpha & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+4);
-    topoplot(beta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
+    topoplot(beta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     % title([states4names{s} ': beta & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+5);
-    topoplot(gamma_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
+    topoplot(gamma_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
     % title([states4names{s} ': gamma & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
 end
 % sgtitle('4states: Corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}')
-colormap(hotncold(6))
+colormap(hotncold(12))
 % https://www.mathworks.com/help/matlab/ref/matlab.graphics.illustration.colorbar-properties.html
 cb=colorbar;
 cb.AxisLocation = 'out';
@@ -5938,6 +5945,8 @@ clear b
 b = bar(model_series, 'FaceColor','flat');
 b(1).FaceColor=darkgreen;b(2).FaceColor=pink;
 xticks(1:4);xticklabels({'Uncoupled','Leading','Following','Mutual'});
+xl = get(gca,'XTickLabel');  
+set(gca,'XTickLabel',xl,'fontsize',14,'FontWeight','bold')
 % set(gca,'XTickLabel',{'Uncoupled','Leading','Following','Mutual'},'fontsize',12,'FontWeight','bold');
 % label p values
 % delete(findall(gcf,'type','text'))
@@ -5952,7 +5961,9 @@ for t=1:2
     end
 end
 legend({'Synch','Synco'},'location','northwest','FontSize', 10);
-ylabel('GC','FontSize', 10);
+ylabel('GC','FontSize','FontSize',15); 
+yl = get(gca,'YTickLabel');  
+set(gca,'YTickLabel',yl,'fontsize',14,'FontWeight','bold');
 % delete(sg)
 sg=annotation('textbox',[0.2 0.01 0.7 0.07],'string',...
     {['MVGC (concatenate data) H-int ^{* SECT 21}'],char(datetime('now'))});
@@ -6355,8 +6366,12 @@ end
 errorbar(x',model_series,model_error,'k','linestyle','none');
 hold off
 xticks(1:4);xticklabels({'Uncoupled','Leading','Following','Mutual'});
+xl = get(gca,'XTickLabel');  
+set(gca,'XTickLabel',xl,'fontsize',14,'FontWeight','bold')
 xlim([0.5 4.5]);
-ylabel('Mean tapping interval (ms)'); ylim([400 1000]);
+ylabel('Mean tapping interval (ms)','FontSize',15); ylim([400 1000]);
+yl = get(gca,'YTickLabel');  
+set(gca,'YTickLabel',yl,'fontsize',14,'FontWeight','bold')
 set(gcf,'color','w'); % set background white for copying in ubuntu
 delete(findall(gcf,'type','annotation'))
 sg=annotation('textbox',[0.05 0.01 0.5 0.09],'string',...
