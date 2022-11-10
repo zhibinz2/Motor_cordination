@@ -387,6 +387,8 @@ end
 % Plots - color scheme
 red   = [1 0 0];
 pink  = [1 0.65 0.75];
+black = [0 0 0];
+white = [1 1 1];
 blue  = [0 0 1];
 mediumblue = [0 0.4 0.7];
 green = [0 1 0];
@@ -415,7 +417,7 @@ syn2colors=[darkgreen;pink];
 HNLcolors = [darkgreen; deepyellow; pink];
 
 % test color
-showcolor=gold;
+showcolor=black;
 imagesc(cat(3,showcolor(1),showcolor(2),showcolor(3)));
 
 % colormap
@@ -1274,6 +1276,7 @@ canvas(0.23, 0.4);
 model_series = [H_LR_synch_mean H_LR_synco_mean];
 model_error = [H_LR_synch_std H_LR_synco_std];
 b = bar(model_series, 'grouped');
+b(1).FaceColor=darkgreen;b(2).FaceColor=pink;
 hold on;
 % Calculate the number of groups and number of bars in each group
 [ngroups,nbars] = size(model_series);
@@ -1285,7 +1288,7 @@ end
 % Plot the errorbars 
 errorbar(x',model_series,model_error,'k','linestyle','none');
 hold off
-xticks(1:4);xticklabels({'Uncouple','Leading','Following','Mutual'});
+xticks(1:4);xticklabels({'Uncoupled','Leading','Following','Mutual'});
 xlim([0.5 4.5]);
 ylabel('H'); ylim([0.4 1]);
 set(gcf,'color','w'); % set background white for copying in ubuntu
@@ -2318,12 +2321,12 @@ for i=1:3
         plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(syn2Ind{syn},sorted3inds{i},:),2)),1),'color',syn2colors(syn,:));
         title(direction3names{i});
         ylabel('\rho');xlabel('lag (L-leading <- 0 -> R-leading)');ylim([-0.1 0.8])
-    end
-        yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
-        xline(-1,'color',[1 0.8 0.2]);xline(1,'color',[1 0.8 0.2]);
+    end    
     hold off;
-    legend('synch','synco');
     end
+    yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
+    xline(-1,'color',[1 0.8 0.2]);xline(1,'color',[1 0.8 0.2]);
+    legend({'synch','synco','','','',''});
 end
 % lg=legend('synch','synco','location','eastoutside');
 sgtitle('mean xcorr sum for 10 lags in synch/o sessions (matched int) ^{ *PLOT 9-1}');
@@ -2587,7 +2590,7 @@ plot(H_Lall(uncoupleInd_LR(syncoind(10:12))),H_Rall(uncoupleInd_LR(syncoind(10:1
 plot(H_Lall(uncoupleInd_LR(syncoind(13:15))),H_Rall(uncoupleInd_LR(syncoind(13:15))),'*','MarkerSize',8,'color',pink,'MarkerFaceColor',pink);
 plot(H_Lall(uncoupleInd_LR(syncoind(16:18))),H_Rall(uncoupleInd_LR(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('uncoupled');
+title('Uncoupled');
 % A=[];S=[]; Alpha1=[];FitValues=[];
 % A=polyfit(H_Lall(uncoupleInd_LR(1:36)),H_Rall(uncoupleInd_LR_LR(1:36)),1);
 % Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
@@ -2643,7 +2646,7 @@ plot(H_Rall(followingInd_LR(syncoind(10:12))),H_Lall(followingInd_LR(syncoind(10
 plot(H_Rall(followingInd_LR(syncoind(13:15))),H_Lall(followingInd_LR(syncoind(13:15))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(H_Rall(followingInd_LR(syncoind(16:18))),H_Lall(followingInd_LR(syncoind(16:18))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Leader');ylabel('DFA exponent, Follower');
-title('unidirectional'); 
+title('Unidirectional'); 
 % A=[];Alpha1=[];FitValues=[];
 % A=polyfit([H_Lall(leadingInd_LR(1:36)); H_Rall(followingInd_LR(1:36))], [H_Rall(leadingInd_LR(1:36)); H_Lall(followingInd_LR(1:36))],1);
 % Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
@@ -2686,7 +2689,7 @@ plot(H_Lall(mutualInd_LR(syncoind(10:12))),H_Rall(mutualInd_LR(syncoind(10:12)))
 plot(H_Lall(mutualInd_LR(syncoind(13:15))),H_Rall(mutualInd_LR(syncoind(13:15))),'*','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(H_Lall(mutualInd_LR(syncoind(16:18))),H_Rall(mutualInd_LR(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Participant L');ylabel('DFA exponent, Participant R');
-title('bidirectional'); 
+title('Bidirectional'); 
 % A=[];Alpha1=[];FitValues=[];
 % A=polyfit(H_Lall(mutualInd_LR(1:36)),H_Rall(mutualInd_LR(1:36)),1);
 % Alpha1=A(1); 
@@ -3219,25 +3222,25 @@ corrcoef(Xcorr_test,EEG_test)
 % Plot 4 states(4x5)
 for plot_4by5=1;
 canvas(0.3,0.5);
-cmin=-0.7;cmax=0.7;
+cmin=-0.6;cmax=0.6;
 for s=1:4
     subplot(4,5,5*(s-1)+1);
-    topoplot(delta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
+    topoplot(delta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+2);
-    topoplot(theta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
+    topoplot(theta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+3);
-    topoplot(alpha_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
+    topoplot(alpha_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+4);
-    topoplot(beta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
+    topoplot(beta_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+5);
-    topoplot(gamma_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
+    topoplot(gamma_LR_Xcorr_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
     clim([cmin cmax]);
 end
-colormap(hotncold(12))
+colormap(hotncold(6))
 % https://www.mathworks.com/help/matlab/ref/matlab.graphics.illustration.colorbar-properties.html
 cb=colorbar;
 cb.AxisLocation = 'out';
@@ -4183,36 +4186,36 @@ for s=1:4
 end
 % Combine L and R in 4 states(4x5)
 canvas(0.3,0.5);
-cmin=-0.7;cmax=0.7;
+cmin=-0.6;cmax=0.6;
 for s=1:4
     subplot(4,5,5*(s-1)+1);
-    topoplot(delta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
+    topoplot(delta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
     % title([states4names{s} ': delta & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+2);
-    topoplot(theta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
+    topoplot(theta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
     % title([states4names{s} ': theta & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+3);
-    topoplot(alpha_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
+    topoplot(alpha_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
     % title([states4names{s} ': alpha & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+4);
-    topoplot(beta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
+    topoplot(beta_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
     % title([states4names{s} ': beta & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
     subplot(4,5,5*(s-1)+5);
-    topoplot(gamma_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',12);
+    topoplot(gamma_LR_H_LR_4corr(s,:),channels,'nosedir','+X','style','fill','numcontour',6);
     % title([states4names{s} ': gamma & H'],'Color',condicolors(s,:));
     % colorbar;colormap('jet');
     clim([cmin cmax]);
 end
 % sgtitle('4states: Corr of sum-EEG (-500ms) and H-int ^{* PLOT 13}')
-colormap(hotncold(12))
+colormap(hotncold(6))
 % https://www.mathworks.com/help/matlab/ref/matlab.graphics.illustration.colorbar-properties.html
 cb=colorbar;
 cb.AxisLocation = 'out';
@@ -4235,7 +4238,7 @@ h4=annotation('textbox',[0.81 0.95 0.05 0.03],'string','Gamma','color',[0 0 0])
 v0=annotation('textbox',[0.14 0.15 0.05 0.03],'string','Mutual','color',condicolors(4,:))
 v1=annotation('textbox',[0.14 0.37 0.05 0.03],'string','Following','color',condicolors(3,:))
 v2=annotation('textbox',[0.14 0.59 0.05 0.03],'string','Leading','color',condicolors(2,:))
-v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','Uncouple','color',condicolors(1,:))
+v3=annotation('textbox',[0.14 0.81 0.05 0.03],'string','Uncoupled','color',condicolors(1,:))
 set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
 delete(sg)
 sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
@@ -5928,86 +5931,33 @@ end
 end
 
 % 1 barplots 
+if true % barplot 4groups x 2types
 canvas(0.23, 0.4);
 model_series = Fs';
 clear b
 b = bar(model_series, 'FaceColor','flat');
 b(1).FaceColor=darkgreen;b(2).FaceColor=pink;
 xticks(1:4);xticklabels({'Uncoupled','Leading','Following','Mutual'});
+% set(gca,'XTickLabel',{'Uncoupled','Leading','Following','Mutual'},'fontsize',12,'FontWeight','bold');
 % label p values
+% delete(findall(gcf,'type','text'))
 for t=1:2
     for p=1:4
         if Ps(t,p) <0.05; signifColor=red; else; signifColor=black; end
         if t==1;
             text(p-0.25, Fs(t,p)+0.005, sprintf('p=%.2f',Ps(t,p)),'Color',signifColor);
         else
-            text(p+0.25, Fs(t,p)+0.005, sprintf('p=%.2f',Ps(t,p)),'Color',signifColor);
+            text(p+0.002, Fs(t,p)+0.005, sprintf('p=%.2f',Ps(t,p)),'Color',signifColor);
         end
     end
 end
-        
-% barplot 
-canvas(0.23, 0.4);
-model_series = intervals_2t_4ss_mean;
-model_error = intervals_2t_4ss_std;
-b = bar(model_series, 'grouped');
-hold on;
-% Calculate the number of groups and number of bars in each group
-[ngroups,nbars] = size(model_series);
-% Get the x coordinate of the bars
-x = nan(nbars, ngroups);
-for i = 1:nbars
-    x(i,:) = b(i).XEndPoints;
-end
-% Plot the errorbars 
-errorbar(x',model_series,model_error,'k','linestyle','none');
-hold off
-xticks(1:4);xticklabels({'Uncouple','Leading','Following','Mutual'});
-xlim([0.5 4.5]);
-ylabel('Mean tapping interval (ms)'); ylim([400 1000]);
-set(gcf,'color','w'); % set background white for copying in ubuntu
-delete(findall(gcf,'type','annotation'))
-sg=annotation('textbox',[0.05 0.01 0.5 0.09],'string',...
-    {['mean tapping intervals(matched int) ^{ *PLOT 22}' char(datetime('now'))]})
-sg.Rotation=90
-legend({'Synch','Synco'},'location','north')
-
-
-
-
-
-if true % subplot2
-ymax=0.04;
-canvas(0.5, 0.45);
-tiledlayout(1,3);
-% Tile 1
-nexttile
-bar(Fs(1));xticks([1]);xticklabels({'L<->R'});
-title('Uncoupled');ylabel('GC');
-ylim([0 ymax]);% xlim([0.25 1.75]);
-text(1-0.2, Fs(1)+0.005, sprintf('p=%.2f',Ps(1)),'Color',[0 0 0]);
-% Tile 2
-nexttile
-bar(Fs(2:3));xticks([1 2]);
-xticklabels({'Leader->Follower','Follower->Leader'});
-title('Unidirectional');ylabel('GC');
-ylim([0 ymax]);% xlim([0.25 2.75]);
-text(1-0.2, Fs(2)+0.005, sprintf('p=%.2f',Ps(2)),'Color',[1 0 0]);
-text(2-0.2, Fs(3)+0.005, sprintf('p=%.2f',Ps(3)),'Color',[0 0 0]);
-% Tile 1
-nexttile
-bar(Fs(4));xticks([1]);xticklabels({'L<->R'});
-title('Bidirectional');ylabel('GC');
-ylim([0 ymax]);% xlim([0.25 1.75]);
-text(1-0.2, Fs(4)+0.005, sprintf('p=%.2f',Ps(4)),'Color',[1 0 0]);
-set(gcf,'color','w'); % set background white for copying in ubuntu
-% sgtitle('GC: var-to-autocov (concatenate data)')
-% sgtitle('GC: var-to-autocov (permuted concatenate data)')
-delete(sg)
-sg=annotation('textbox',[0.3 0.01 0.4 0.07],'string',...
+legend({'Synch','Synco'},'location','northwest','FontSize', 10);
+ylabel('GC','FontSize', 10);
+% delete(sg)
+sg=annotation('textbox',[0.2 0.01 0.7 0.07],'string',...
     {['MVGC (concatenate data) H-int ^{* SECT 21}'],char(datetime('now'))});
+set(gcf,'color','w'); % set background white for copying in ubuntu
 end
-
 
 %% PLOT 21 EEG (-500ms) -> GC (MVGC): -Corr -PLS
 % Organize GC for PLS
@@ -6392,6 +6342,7 @@ canvas(0.23, 0.4);
 model_series = intervals_2t_4ss_mean;
 model_error = intervals_2t_4ss_std;
 b = bar(model_series, 'grouped');
+b(1).FaceColor=darkgreen;b(2).FaceColor=pink;
 hold on;
 % Calculate the number of groups and number of bars in each group
 [ngroups,nbars] = size(model_series);
