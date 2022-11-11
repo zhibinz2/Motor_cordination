@@ -2313,14 +2313,14 @@ for i=1:3
         LR_mean=mean([L_mat;fliplr(R_mat)]);
         % plot Leader vs Follower
         hold on;
-        plot(-10:1:10,LR_mean,'color',syn2colors(syn,:));
-        title(direction3names{i});
-        ylabel('\rho');xlabel('lag (Leader-leading <- 0 -> Follower-leading)');ylim([-0.1 0.8])
+        plot(-10:1:10,LR_mean,'linewidth',4,'color',syn2colors(syn,:));
+        title(direction3names{i},'FontSize',15);
+        ylabel('\rho','FontSize',20,'FontWeight','bold');xlabel('lag (Leader-leading <- 0 -> Follower-leading)','FontSize',15);ylim([-0.1 0.8])
     elseif i==1 | i==3;
         hold on;
-        plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(syn2Ind{syn},sorted3inds{i},:),2)),1),'color',syn2colors(syn,:));
+        plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(syn2Ind{syn},sorted3inds{i},:),2)),1),'linewidth',4,'color',syn2colors(syn,:));
         title(direction3names{i},'FontSize',15);
-        ylabel('\rho','FontSize',15);xlabel('lag (L-leading <- 0 -> R-leading)','FontSize',15);ylim([-0.1 0.8])
+        ylabel('\rho','FontSize',20,'FontWeight','bold');xlabel('lag (L-leading <- 0 -> R-leading)','FontSize',15);ylim([-0.1 0.8])
     end    
     hold off;
     end
@@ -2750,7 +2750,6 @@ cmin=0;cmax=7;
 % cmin=-4.1232;cmax=-4.0101; % testing synco
 % cmin=4.0101;cmax=4.1232; % testing synch
 % cmin=-4.1232;cmax=4.1232; % testing both
-
 for subplots6 =1;
 canvas(0.25,0.7);
 for i=1:6
@@ -2831,7 +2830,8 @@ plot(theta_L_chan(mutualInd_LR(syncoind(7:9))),theta_R_chan(mutualInd_LR(syncoin
 plot(theta_L_chan(mutualInd_LR(syncoind(10:12))),theta_R_chan(mutualInd_LR(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(theta_L_chan(mutualInd_LR(syncoind(13:15))),theta_R_chan(mutualInd_LR(syncoind(13:15))),'*','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(theta_L_chan(mutualInd_LR(syncoind(16:18))),theta_R_chan(mutualInd_LR(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-xlabel('Theta power, Participant L');ylabel('Theta power, Participant R');
+xlabel('Theta power, Participant L','FontSize',15);
+ylabel('Theta power, Participant R','FontSize',15);
 title('bidirectional'); 
 % fit the synch/o combined data
 A=[];Alpha1=[];FitValues=[];RHO=[];
@@ -5961,7 +5961,7 @@ for t=1:2
     end
 end
 legend({'Synch','Synco'},'location','northwest','FontSize', 10);
-ylabel('GC','FontSize','FontSize',15); 
+ylabel('GC','FontSize',15); 
 yl = get(gca,'YTickLabel');  
 set(gca,'YTickLabel',yl,'fontsize',14,'FontWeight','bold');
 % delete(sg)
