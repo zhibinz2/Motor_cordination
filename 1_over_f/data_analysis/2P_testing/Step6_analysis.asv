@@ -3614,7 +3614,7 @@ for s=1:numSes % each session
 end
 toc  % about 2 min
 
-%% SECT 12 Exact evoked potential to other's tapping
+%% SECT 12-1 Exact evoked potential to other's tapping (based on matched BP only)
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
 numSes=size(seeds,1);
@@ -3740,7 +3740,7 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 sgtitle('ERP of 4 states: Synch (top row); Synco (bottom row)');
 end
 
-%%
+%% SECT 12-2 Exact evoked potential to other or one's own history (based on matched BP and pacers)
 
 % use prevous synch session's sample as time 0 for uncouple and leading...
 
@@ -3840,7 +3840,14 @@ cd G:\1overf\all_session20220713_1005
 save("matched_Psamp.mat",'matched_Psamp');
 % clear workspace
 clear PacerTime01_all FB_all zEEG500_LLRR_all
+
+cd /ssd/zhibin/1overf/all_session20220713_1005
+load('matched_Psamp.mat')
+
 % extract EEG again (this time based on matched BP and Pacers in uncouple and leding in synco
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
+        2022100402;20221005];
+numSes=size(seeds,1);
 zEEG500_LL={};zEEG500_RR={}; % saving EEG for computing EEG across all subjects
 tic
 % extract EEG based on matched BP only
@@ -3864,12 +3871,12 @@ for s=1:12; % session 1-12
             zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % end at the 2nd or 3rd last matched tap
                 elseif conditions(b)==2 & mod(s,2)==0 % synco
             zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(matched_Psamp{s}{b}(i,1):matched_Psamp{s}{b}(i,1)+999,:); % start from first matched tap
-            zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{s}{b}(i,1):samples{s}{b}(i,1)+999,:); % end at the 2nd or 3rd last matched tap
+            zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % end at the 2nd or 3rd last matched tap
                 elseif conditions(b)==3 & mod(s,2)==1 % synch
             zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(samples{b}(i,2):samples{b}(i,2)+999,:); % start from first matched tap
             zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{b}(i,2):samples{b}(i,2)+999,:); % end at the 2nd or 3rd last matched tap
                 elseif conditions(b)==3 & mod(s,2)==0 % synco
-            zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(samples{s}{b}(i,2):samples{s}{b}(i,2)+999,:); % start from first matched tap
+            zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(samples{b}(i,2):samples{b}(i,2)+999,:); % start from first matched tap
             zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(matched_Psamp{s}{b}(i,2):matched_Psamp{s}{b}(i,2)+999,:); % end at the 2nd or 3rd last matched tap
                 else conditions(b)==4;
             zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(samples{b}(i,2):samples{b}(i,2)+999,:); % start from first matched tap
@@ -3883,9 +3890,20 @@ end
 toc; %  second
 % clear for workspace
 clear dataL dataR zEEG_L zEEG_R erp_L erp_R 
-
-
-
+% prepare indicies for conditions and states
+condition_all; % from SECT 10-1
+Inds4_LR=[uncoupleInd_LR leadingInd_LR followingInd_LR mutualInd_LR]; % from SECT 10-1
+% reorganzie cell sequence for zEEG500_LL and zEEG500_RR
+zEEG500_LL_all=reshape(zEEG500_LL',[],1);
+zEEG500_RR_all=reshape(zEEG500_RR',[],1);
+zEEG500_LLRR_all=[zEEG500_LL_all; zEEG500_RR_all]; % combine cell array
+% clear for workspace
+clear zEEG500_LL_all zEEG500_RR_all
+% save 
+cd /ssd/zhibin/1overf/all_session20220713_1005
+tic
+save('zEEG500_LLRR_all.mat','zEEG500_LLRR_all');
+toc
 %% SECT 13 Examine & Organize sum-EEG power and H for corr and PLS
 % organize EEG power
 % zEEG500_L; zEEG500_R; % for all sessions from SECT 12
