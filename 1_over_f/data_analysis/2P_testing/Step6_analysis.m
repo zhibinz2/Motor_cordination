@@ -6436,12 +6436,15 @@ sprintf('P values for each group: %0.3f\n',p)
 %}
 %% Working from home
 cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\2P_testing
-addpath cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\2P_testing
 
+% addpath
+addpath D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\2P_testing
 
+% load workspace
 cd G:\1overf\all_session20220713_1005
 load('20220713_1005workspace.mat')
 
+% git commit
 cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination
 run git_control.m   
 
