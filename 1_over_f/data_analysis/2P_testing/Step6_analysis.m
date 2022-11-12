@@ -6432,6 +6432,9 @@ addpath cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_o
 cd G:\1overf\all_session20220713_1005
 load('20220713_1005workspace.mat')
 
+cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination
+run git_control.m   
+
 %% saves all variables from the current workspace
 tic
 save([num2str(seed) 'workspace.mat']);
