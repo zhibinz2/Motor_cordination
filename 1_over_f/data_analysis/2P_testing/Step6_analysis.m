@@ -3618,7 +3618,7 @@ toc  % about 2 min
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
 numSes=size(seeds,1);
-erp_L={};erp_R={};
+% erp_L={};erp_R={};
 zEEG500_LL={};zEEG500_RR={}; % saving EEG for computing EEG across all subjects
 tic
 for s=1:12; % session 1-12
@@ -3644,8 +3644,8 @@ for s=1:12; % session 1-12
             zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % end at the 2nd or 3rd last matched tap
                 end
             end
-            erp_L{s,b}=mean(zEEG500_LL{s,b},3); % ERP in 32 channels
-            erp_R{s,b}=mean(zEEG500_RR{s,b},3);
+            % erp_L{s,b}=mean(zEEG500_LL{s,b},3); % ERP in 32 channels
+            % erp_R{s,b}=mean(zEEG500_RR{s,b},3);
     end
 end
 toc; % 108 second
@@ -3738,6 +3738,16 @@ lg.Position = [0.9475 0.4 0.01 0.25];
 set(gcf,'color','w'); % set background white for copying in ubuntu
 sgtitle('ERP of 4 states: Synch (top row); Synco (bottom row)');
 end
+
+% use prevous synch session's sample as time 0 for uncouple and leading...
+
+% or extract pacers from synco sessions
+Pacers={}; % 12 sessions x 12 blocks
+for s=1:12; % session 1-12
+    runid=num2str(seeds(s,:));
+    clear dataL dataR 
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
+    Pacers=?
 
 %% SECT 13 Examine & Organize sum-EEG power and H for corr and PLS
 % organize EEG power

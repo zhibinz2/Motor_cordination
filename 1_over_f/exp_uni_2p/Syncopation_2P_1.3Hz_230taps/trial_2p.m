@@ -14,7 +14,7 @@ end
 %% initialize variables
 pressedL1=[]; RBkeyL1=[]; 
 pressedL2=[]; RBkeyL2=[]; 
-pressedR1=[]; RBkeyR1=[];
+pressedR1=[]; RBkeyR1=[]; 
 pressedR2=[]; RBkeyR2=[]; 
 
 % fliptimes=[];
