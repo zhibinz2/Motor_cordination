@@ -3741,27 +3741,48 @@ end
 
 % use prevous synch session's sample as time 0 for uncouple and leading...
 
-% or extract pacers from synco sessions
+% or extract pacers from synco sessions (skip)
 Pacers={}; % 12 sessions x 12 blocks
 for s=1:12; % session 1-12
     runid=num2str(seeds(s,:));
     clear dataL dataR 
     load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
-    Pacers=?
+    % Pacers=?
 end
-    
-PacerTime01_all=zeros(2,12,numSes);
+
+% or extract pacers photocells (optimal, saved)
+PacerTime01_all=cell(2,12,numSes);
+cd /ssd/zhibin/1overf/
+for r=1:numSes;
+    clearvars -except PacerTime01_all r seeds numSes
+    tic
+    runid = num2str(seeds(r,:));
+    path = [runid '_2P/'];
+    % load([path runid 'workspace.mat']);
+    load([path runid 'workspace.mat'],'PacerTimeL01','PacerTimeR01','SegIndL','SegIndR');
+    for i=1:12
+    PacerTime01_all{1,r,i}=PacerTimeL01(SegIndL(2*i-1):SegIndL(2*i),:); % in cells
+    PacerTime01_all{2,r,i}=PacerTimeR01(SegIndR(2*i-1):SegIndR(2*i),:);
+    end
+    toc
+end
+clearvars -except PacerTime01_all 
+cd /ssd/zhibin/1overf/all_session20220713_1005
+save("PacerTime01_all.mat",'PacerTime01_all');
+
+
+% or extract showframes from synco session (skip)
 cd /ssd/zhibin/1overf/
 for r=1:numSes;
     clearvars -except PacerTimeL01
     runid = num2str(seeds(r,:));
-    path = [runid '_2P/'];
-    load([path runid 'workspace.mat']);
-    PacerTime01_all{}
-    Plot(1:length(PacerTimeL01),PacerTimeL01,'r'); hold on; Plot(1:length(PacerTimeR01),Pacer   TimeR01,'r');
+    path = [runid '_2P/Segmented_data/'];
+    load([path  'Showframes' runid '.mat']);
+    Showframes(1)
+    Showframes(2)
 end
 
-% extract FB and samples from all sessions
+% extract FB and samples from all sessions (saved)
 tic
 FB_all=cell(2*numSes,1);
 samples_all=cell(numSes,1);
