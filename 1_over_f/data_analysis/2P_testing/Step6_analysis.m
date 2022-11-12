@@ -3748,6 +3748,38 @@ for s=1:12; % session 1-12
     clear dataL dataR 
     load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
     Pacers=?
+end
+    
+PacerTime01_all=zeros(2,12,numSes);
+cd /ssd/zhibin/1overf/
+for r=1:numSes;
+    clearvars -except PacerTimeL01
+    runid = num2str(seeds(r,:));
+    path = [runid '_2P/'];
+    load([path runid 'workspace.mat']);
+    PacerTime01_all{}
+    Plot(1:length(PacerTimeL01),PacerTimeL01,'r'); hold on; Plot(1:length(PacerTimeR01),Pacer   TimeR01,'r');
+end
+
+tic
+FB_all=cell(2*numSes,1);
+samples_all=cell(numSes,1);
+cd /ssd/zhibin/1overf/
+for r=1:numSes;
+    clearvars -except FB_all samples_all seeds r numSes
+    runid = num2str(seeds(r,:));
+    path = [runid '_2P/Segmented_data/'];
+    load([path  'data_variables' runid '.mat']);
+    FB_all{r*2-1,1}=FB(1,1).FB;
+    FB_all{r*2,1}=FB(2,1).FB;
+    clearvars -except FB_all samples_all seeds runid r numSes
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ]);
+    samples_all{r}=samples;
+end
+clearvars -except FB_all samples_all
+cd /ssd/zhibin/1overf/all_session20220713_1005
+save("FB_all_samples_all.mat",'FB_all','samples_all');
+toc 232 sec
 
 %% SECT 13 Examine & Organize sum-EEG power and H for corr and PLS
 % organize EEG power

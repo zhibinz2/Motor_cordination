@@ -3618,7 +3618,7 @@ toc  % about 2 min
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
 numSes=size(seeds,1);
-erp_L={};erp_R={};
+% erp_L={};erp_R={};
 zEEG500_LL={};zEEG500_RR={}; % saving EEG for computing EEG across all subjects
 tic
 for s=1:12; % session 1-12
@@ -3644,8 +3644,8 @@ for s=1:12; % session 1-12
             zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % end at the 2nd or 3rd last matched tap
                 end
             end
-            erp_L{s,b}=mean(zEEG500_LL{s,b},3); % ERP in 32 channels
-            erp_R{s,b}=mean(zEEG500_RR{s,b},3);
+            % erp_L{s,b}=mean(zEEG500_LL{s,b},3); % ERP in 32 channels
+            % erp_R{s,b}=mean(zEEG500_RR{s,b},3);
     end
 end
 toc; % 108 second
@@ -3739,6 +3739,47 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 sgtitle('ERP of 4 states: Synch (top row); Synco (bottom row)');
 end
 
+% use prevous synch session's sample as time 0 for uncouple and leading...
+
+% or extract pacers from synco sessions
+Pacers={}; % 12 sessions x 12 blocks
+for s=1:12; % session 1-12
+    runid=num2str(seeds(s,:));
+    clear dataL dataR 
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
+    Pacers=?
+end
+    
+PacerTime01_all=zeros(2,12,numSes);
+cd /ssd/zhibin/1overf/
+for r=1:numSes;
+    clearvars -except PacerTimeL01
+    runid = num2str(seeds(r,:));
+    path = [runid '_2P/'];
+    load([path runid 'workspace.mat']);
+    PacerTime01_all{}
+    Plot(1:length(PacerTimeL01),PacerTimeL01,'r'); hold on; Plot(1:length(PacerTimeR01),Pacer   TimeR01,'r');
+end
+
+tic
+FB_all=cell(2*numSes,1);
+samples_all=cell(numSes,1);
+cd /ssd/zhibin/1overf/
+for r=1:numSes;
+    clearvars -except FB_all samples_all seeds r numSes
+    runid = num2str(seeds(r,:));
+    path = [runid '_2P/Segmented_data/'];
+    load([path  'data_variables' runid '.mat']);
+    FB_all{r*2-1,1}=FB(1,1).FB;
+    FB_all{r*2,1}=FB(2,1).FB;
+    clearvars -except FB_all samples_all seeds runid r numSes
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ]);
+    samples_all{r}=samples;
+end
+clearvars -except FB_all samples_all
+cd /ssd/zhibin/1overf/all_session20220713_1005
+save("FB_all_samples_all.mat",'FB_all','samples_all');
+toc % 
 %% SECT 13 Examine & Organize sum-EEG power and H for corr and PLS
 % organize EEG power
 % zEEG500_L; zEEG500_R; % for all sessions from SECT 12
@@ -6425,6 +6466,18 @@ sprintf('P values for each group: %0.3f\n',p)
     H_R_Llead_synco H_L_Rlead_synco H_L_mutual_synco H_R_mutual_synco]') % Synch vs Synco
 %}
 %% Working from home
+cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\2P_testing
+
+% addpath
+addpath D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\2P_testing
+
+% load workspace
+cd G:\1overf\all_session20220713_1005
+load('20220713_1005workspace.mat')
+
+% git commit
+cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination
+run git_control.m   
 
 %% saves all variables from the current workspace
 tic
