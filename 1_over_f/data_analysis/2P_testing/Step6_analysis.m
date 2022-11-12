@@ -6300,7 +6300,7 @@ sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
 
-%% PLOT 22 For poster
+%% PLOT 22 Intervals histogram
 % histogram of intertap intervals 
 % organize intervals from all sessions
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
@@ -6395,7 +6395,6 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 sgtitle('ERP of 4 states: Synch (top row); Synco (bottom row)');
 %}
 
-
 % statistical test (ANOVA) with unequal size
 %{ 
 [p,tbl,stats] = anova1([...
@@ -6425,6 +6424,14 @@ sprintf('P values for each group: %0.3f\n',p)
     [H_L_mutual_synco H_R_mutual_synco H_L_Llead_synco H_R_Rlead_synco ...
     H_R_Llead_synco H_L_Rlead_synco H_L_mutual_synco H_R_mutual_synco]') % Synch vs Synco
 %}
+%% Working from home
+cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\2P_testing
+addpath cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\2P_testing
+
+
+cd G:\1overf\all_session20220713_1005
+load('20220713_1005workspace.mat')
+
 %% saves all variables from the current workspace
 tic
 save([num2str(seed) 'workspace.mat']);
