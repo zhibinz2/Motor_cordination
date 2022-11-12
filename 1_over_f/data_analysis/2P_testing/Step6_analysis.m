@@ -3761,6 +3761,7 @@ for r=1:numSes;
     Plot(1:length(PacerTimeL01),PacerTimeL01,'r'); hold on; Plot(1:length(PacerTimeR01),Pacer   TimeR01,'r');
 end
 
+% extract FB and samples from all sessions
 tic
 FB_all=cell(2*numSes,1);
 samples_all=cell(numSes,1);
@@ -6475,6 +6476,7 @@ addpath D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over
 % load workspace
 cd G:\1overf\all_session20220713_1005
 load('20220713_1005workspace.mat')
+load('FB_all_samples_all.mat')
 
 % git commit
 cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination
