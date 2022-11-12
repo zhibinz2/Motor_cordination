@@ -3614,13 +3614,14 @@ for s=1:numSes % each session
 end
 toc  % about 2 min
 
-%% SECT 12 Exact evoked potential to other's tapping
+%% SECT 12 Exact evoked potential to other's tapping (based on matched BP only)
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
 numSes=size(seeds,1);
 % erp_L={};erp_R={};
 zEEG500_LL={};zEEG500_RR={}; % saving EEG for computing EEG across all subjects
 tic
+% extract EEG based on matched BP only
 for s=1:12; % session 1-12
     runid=num2str(seeds(s,:));
     clear dataL dataR samples conditions
@@ -3739,6 +3740,8 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 sgtitle('ERP of 4 states: Synch (top row); Synco (bottom row)');
 end
 
+%% Exact evoked potential to other or one's own history (based on matched BP and pacers)
+
 % use prevous synch session's sample as time 0 for uncouple and leading...
 
 % or extract pacers from synco sessions (skip)
@@ -3751,7 +3754,7 @@ for s=1:12; % session 1-12
 end
 
 % or extract pacers photocells (optimal, saved)
-PacerTime01_all=cell(2,12,numSes);
+PacerTime01_all=cell(2,numSes,12);
 cd /ssd/zhibin/1overf/
 for r=1:numSes;
     clearvars -except PacerTime01_all r seeds numSes
@@ -3769,7 +3772,7 @@ end
 clearvars -except PacerTime01_all 
 cd /ssd/zhibin/1overf/all_session20220713_1005
 save("PacerTime01_all.mat",'PacerTime01_all');
-
+load('PacerTime01_all.mat');
 
 % or extract showframes from synco session (skip)
 cd /ssd/zhibin/1overf/
@@ -3802,6 +3805,86 @@ clearvars -except FB_all samples_all
 cd /ssd/zhibin/1overf/all_session20220713_1005
 save("FB_all_samples_all.mat",'FB_all','samples_all');
 toc 232 sec
+
+% matched PacerTime01_all to samples_all
+PacerTime01_all; % 2 subj x 12 sessions x 12 blocks
+samples_all; % 12 sessions (12 blocks; taps x 2 subj)
+condition_all;
+matched_Psamp=[];
+for s=1:12
+    for b=1:12
+        tic
+        BPsampL=samples_all{s}{b}(:,1);
+        PsampL=find(PacerTime01_all{1,s,b}==1); 
+        % only even# session (synco uncouple and leading) has pacers all the way to end of blocks
+        % and mutual might have empty Psampl
+        BPsampR=samples_all{s}{b}(:,2);
+        PsampR=find(PacerTime01_all{2,s,b}==1);
+        % matche the pacers to the already matched BPsamp
+        % find the closest pacer before each matched BPsamp
+        for i=1:size(samples_all{s}{b},1)
+            clear all_positive_PsampL all_positive_PsampR
+            if ~isempty(PsampL) % if empty 
+            all_positive_PsampL=PsampL((BPsampL(i)-PsampL)>0); % all positive difference in PsampL
+            matched_Psamp{s}{b}(i,1)=all_positive_PsampL(end);
+            end
+            if ~isempty(PsampR) % if only one value, there is 
+            all_positive_PsampR=PsampR((BPsampR(i)-PsampR)>0); % all positive difference in PsampR
+            matched_Psamp{s}{b}(i,2)=all_positive_PsampR(end);
+            end
+        end
+        toc
+    end
+end
+cd G:\1overf\all_session20220713_1005
+save("matched_Psamp.mat",'matched_Psamp');
+% clear workspace
+clear PacerTime01_all FB_all zEEG500_LLRR_all
+% extract EEG again (this time based on matched BP and Pacers in uncouple and leding in synco
+zEEG500_LL={};zEEG500_RR={}; % saving EEG for computing EEG across all subjects
+tic
+% extract EEG based on matched BP only
+for s=1:12; % session 1-12
+    runid=num2str(seeds(s,:));
+    clear dataL dataR samples conditions
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ])
+    zEEG_L={};zEEG_R={}; % saving individual blocks
+    for b=1:12; % block 1 -12
+    zEEG_L{b}=zscore(dataL{b}(:,1:32),[],1);
+    zEEG_R{b}=zscore(dataR{b}(:,1:32),[],1);
+            for i=1:(size(samples{b},1)-2) % each matched interval (excluding the last tap or two) 
+                if conditions(b)==1 & mod(s,2)==1 % synch
+            zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % start from first matched tap
+            zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{b}(i,2):samples{b}(i,2)+999,:); % end at the 2nd or 3rd last matched tap
+                elseif conditions(b)==1 & mod(s,2)==0 % synco
+            zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(matched_Psamp{s}{b}(i,1):matched_Psamp{s}{b}(i,1)+999,:); % start from first matched tap
+            zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(matched_Psamp{s}{b}(i,2):matched_Psamp{s}{b}(i,2)+999,:); % end at the 2nd or 3rd last matched tap
+                elseif conditions(b)==2 & mod(s,2)==1 % synch
+            zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % start from first matched tap
+            zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % end at the 2nd or 3rd last matched tap
+                elseif conditions(b)==2 & mod(s,2)==0 % synco
+            zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(matched_Psamp{s}{b}(i,1):matched_Psamp{s}{b}(i,1)+999,:); % start from first matched tap
+            zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{s}{b}(i,1):samples{s}{b}(i,1)+999,:); % end at the 2nd or 3rd last matched tap
+                elseif conditions(b)==3 & mod(s,2)==1 % synch
+            zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(samples{b}(i,2):samples{b}(i,2)+999,:); % start from first matched tap
+            zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{b}(i,2):samples{b}(i,2)+999,:); % end at the 2nd or 3rd last matched tap
+                elseif conditions(b)==3 & mod(s,2)==0 % synco
+            zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(samples{s}{b}(i,2):samples{s}{b}(i,2)+999,:); % start from first matched tap
+            zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(matched_Psamp{s}{b}(i,2):matched_Psamp{s}{b}(i,2)+999,:); % end at the 2nd or 3rd last matched tap
+                else conditions(b)==4;
+            zEEG500_LL{s,b}(:,:,i)=zEEG_L{b}(samples{b}(i,2):samples{b}(i,2)+999,:); % start from first matched tap
+            zEEG500_RR{s,b}(:,:,i)=zEEG_R{b}(samples{b}(i,1):samples{b}(i,1)+999,:); % end at the 2nd or 3rd last matched tap
+                end
+            end
+            % erp_L{s,b}=mean(zEEG500_LL{s,b},3); % ERP in 32 channels
+            % erp_R{s,b}=mean(zEEG500_RR{s,b},3);
+    end
+end
+toc; %  second
+% clear for workspace
+clear dataL dataR zEEG_L zEEG_R erp_L erp_R 
+
+
 
 %% SECT 13 Examine & Organize sum-EEG power and H for corr and PLS
 % organize EEG power
