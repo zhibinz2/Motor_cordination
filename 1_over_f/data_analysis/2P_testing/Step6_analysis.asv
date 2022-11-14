@@ -1289,15 +1289,17 @@ end
 errorbar(x',model_series,model_error,'k','linestyle','none');
 hold off
 xticks(1:4);xticklabels({'Uncoupled','Leading','Following','Mutual'});
+xl = get(gca,'XTickLabel');  
+set(gca,'XTickLabel',xl,'fontsize',17,'FontWeight','bold')
 xlim([0.5 4.5]);
-ylabel('H','FontSize',15); ylim([0.4 1]);
+ylabel('H','FontSize',17); ylim([0.4 1]);
 set(gcf,'color','w'); % set background white for copying in ubuntu
 delete(findall(gcf,'type','annotation'))
 sg=annotation('textbox',[0.05 0.01 0.5 0.07],'string',...
     {['mean H(matched int) ^{ *PLOT 6}' char(datetime('now'))]})
 sg.Rotation=90
 yline(0.5,'color', deepyellow)
-legend({'Synch','Synco'},'location','north')
+lg=legend({'Synch','Synco'},'location','north');lg.FontSize-17;
 % statistical test (ANOVA) 
 [p,tbl,stats] = anova1([...
     [H_L_uncouple_synch H_R_uncouple_synch]' ...
@@ -2239,7 +2241,7 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 
 % combine Xcorr10Lag in 3 directions (2x3suplots)
 Xcorr10Lag; % sorted order
-direction3names={'Uncoupled','Unidirectional','Bidirectional'};
+direction3names={'Independent','Unidirectional','Bidirectional'};
 sorted3inds={[1:3],[4:9],[10:12]};
 canvas(0.45, 0.6);
 for i=1:3
@@ -2261,7 +2263,7 @@ sgtitle('mean xcorr sum for 10 lags in all sessions (matched int) ^{ *PLOT 9-1}'
 
 % combine synch and synco in 1x3
 Xcorr10Lag; % sorted order
-direction3names={'Uncoupled','Unidirectional','Bidirectional'};
+direction3names={'Independent','Unidirectional','Bidirectional'};
 sorted3inds={[1:3],[4:9],[10:12]};
 sorted4inds=[1:3; 4:6; 7:9; 10:12];
 canvas(0.45, 0.35);
@@ -2296,11 +2298,11 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 
 % separate synch and synco with diff color (1 x 3 direction)
 Xcorr10Lag; % sorted order
-direction3names={'Uncoupled','Unidirectional','Bidirectional'};
+direction3names={'Independent','Unidirectional','Bidirectional'};
 sorted3inds={[1:3],[4:9],[10:12]};
 sorted4inds=[1:3; 4:6; 7:9; 10:12];
 syn2Ind;
-canvas(0.45, 0.3);
+canvas(0.45, 0.3); % figure;
 for i=1:3
     for syn=1:2
     subplot(1,3,i)
@@ -2319,17 +2321,18 @@ for i=1:3
     elseif i==1 | i==3;
         hold on;
         plot(-10:1:10,mean(squeeze(mean(Xcorr10Lag(syn2Ind{syn},sorted3inds{i},:),2)),1),'linewidth',4,'color',syn2colors(syn,:));
-        title(direction3names{i},'FontSize',15);
-        ylabel('\rho','FontSize',20,'FontWeight','bold');xlabel('lag (L-leading <- 0 -> R-leading)','FontSize',15);ylim([-0.1 0.8])
+        title(direction3names{i},'FontSize',17);
+        ylabel('\rho','FontSize',20,'FontWeight','bold');xlabel('lag (L-leading <- 0 -> R-leading)','FontSize',17);ylim([-0.1 0.8])
     end    
     hold off;
     end
     yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
     xline(-1,'color',[1 0.8 0.2]);xline(1,'color',[1 0.8 0.2]);
-    legend({'synch','synco','','','',''});
+    lg=legend({'synch','synco','','','',''});
+    lg.FontSize=17;
 end
 % lg=legend('synch','synco','location','eastoutside');
-sgtitle('mean xcorr sum for 10 lags in synch/o sessions (matched int) ^{ *PLOT 9-1}');
+% sgtitle('mean xcorr sum for 10 lags in synch/o sessions (matched int) ^{ *PLOT 9-1}');
 set(gcf,'color','w'); % set background white for copying in ubuntu
 %% SECT 10 redo H and intervals_H_removed and save them separately (matched int)
 % in original order
@@ -2574,7 +2577,7 @@ end
 
 %********************** 3 subplots
 for subplots3 =1;
-canvas(0.5,0.35);
+figure; % canvas(0.5,0.35);
 subplot(1,3,1); %##############
 for subplot1 =1;
 plot(H_Lall(uncoupleInd_LR(synchind(1:3))),H_Rall(uncoupleInd_LR(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);hold on;
@@ -2591,7 +2594,7 @@ plot(H_Lall(uncoupleInd_LR(syncoind(13:15))),H_Rall(uncoupleInd_LR(syncoind(13:1
 plot(H_Lall(uncoupleInd_LR(syncoind(16:18))),H_Rall(uncoupleInd_LR(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 xlabel('DFA exponent, Participant L','FontSize',15);
 ylabel('DFA exponent, Participant R','FontSize',15);
-title('Uncoupled','FontSize',15);
+title('Independent','FontSize',15);
 % A=[];S=[]; Alpha1=[];FitValues=[];
 % A=polyfit(H_Lall(uncoupleInd_LR(1:36)),H_Rall(uncoupleInd_LR_LR(1:36)),1);
 % Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
@@ -2605,7 +2608,7 @@ A=polyfit(H_Lall(uncoupleInd_LR(1:2:35)),H_Rall(uncoupleInd_LR(1:2:35)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,H_Lall(uncoupleInd_LR(1:2:35)));
 hold on; plot(H_Lall(uncoupleInd_LR(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
-text(max(H_Lall(uncoupleInd_LR(1:2:35))),min(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+text(max(H_Lall(uncoupleInd_LR(1:2:35))),min(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
 
 % fit the synco data
 A=[];Alpha1=[];FitValues=[];RHO=[];
@@ -2615,7 +2618,7 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,H_Lall(uncoupleInd_LR(2:2:36)));
 hold on; plot(H_Lall(uncoupleInd_LR(2:2:36)),FitValues,'-','color',pink,'LineWidth',3);
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-text(max(H_Lall(uncoupleInd_LR(2:2:36))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+text(max(H_Lall(uncoupleInd_LR(2:2:36))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
 % legend('synch','','','','synco','','','','location','northwest');
 % subtitle(['(uncouple: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 grid on;
@@ -2662,7 +2665,7 @@ Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (H
 FitValues=polyval(A,[H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))]);
 hold on; 
 plot([H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))],FitValues,'-','color',darkgreen,'LineWidth',3);
-text(max([H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))]),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+text(max([H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))]),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
 % fit the synco data
 A=[];Alpha1=[];FitValues=[];RHO=[];
 A=polyfit([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))], [H_Rall(leadingInd_LR(2:2:36)); H_Lall(followingInd_LR(2:2:36))],1);
@@ -2670,7 +2673,7 @@ A=polyfit([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))], [H_R
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,[H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))]);
 hold on; plot([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))],FitValues,'-','color',pink,'LineWidth',3);
-text(max([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))]),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+text(max([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))]),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 % legend('synch','','','','synco','','','','','','','','','','','','location','northwest');
 % subtitle(['(leading or following: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
@@ -2700,7 +2703,7 @@ A=polyfit(H_Lall(mutualInd_LR(1:36)),H_Rall(mutualInd_LR(1:36)),1);
 Alpha1=A(1); 
 FitValues=polyval(A,H_Lall(mutualInd_LR(1:36)));
 hold on; plot(H_Lall(mutualInd_LR(1:36)),FitValues,'k-','LineWidth',3);
-text(max(H_Lall(mutualInd_LR(1:36)))-0.11,max(FitValues)-0.12,sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+text(max(H_Lall(mutualInd_LR(1:36)))-0.17,max(FitValues)-0.2,sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
 
 % fit the synch data
 A=[];Alpha1=[];FitValues=[];RHO=[];
@@ -2709,7 +2712,7 @@ A=polyfit(H_Lall(mutualInd_LR(1:2:35)),H_Rall(mutualInd_LR(1:2:35)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,H_Lall(mutualInd_LR(1:2:35)));
 hold on; plot(H_Lall(mutualInd_LR(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
-text(max(H_Lall(mutualInd_LR(1:2:35))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+text(max(H_Lall(mutualInd_LR(1:2:35))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
 % fit the synco data
 A=[];Alpha1=[];FitValues=[];RHO=[];
 A=polyfit(H_Lall(mutualInd_LR(2:2:36)),H_Rall(mutualInd_LR(2:2:36)),1);
@@ -2717,7 +2720,7 @@ A=polyfit(H_Lall(mutualInd_LR(2:2:36)),H_Rall(mutualInd_LR(2:2:36)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,H_Lall(mutualInd_LR(2:2:36)));
 hold on; plot(H_Lall(mutualInd_LR(2:2:36)),FitValues,'-','color',pink,'LineWidth',3);
-text(max(H_Lall(mutualInd_LR(2:2:36)))-0.2,max(FitValues)-0.05,sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+text(max(H_Lall(mutualInd_LR(2:2:36)))-0.25,max(FitValues)-0.05,sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
 xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
 % subtitle(['(mutual): linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 grid on;
@@ -2814,8 +2817,8 @@ end
 cmin=0;cmax=7;
 for subplots6 =1;
 canvas(0.25,0.75);
-for i=1:6
-subplot(3,2,i); %##############
+for i=1:2
+subplot(1,2,i); %##############
 theta_L_chan=theta_LR_chan(1:144,chan6(i));
 theta_R_chan=theta_LR_chan(145:288,chan6(i));
 plot(theta_L_chan(mutualInd_LR(synchind(1:3))),theta_R_chan(mutualInd_LR(synchind(1:3))),'.','MarkerSize',30,'color',darkgreen);hold on;
@@ -2840,13 +2843,13 @@ A=polyfit(theta_L_chan(mutualInd_LR(1:36)),theta_R_chan(mutualInd_LR(1:36)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 FitValues=polyval(A,theta_L_chan(mutualInd_LR(1:36)));
 hold on; plot(theta_L_chan(mutualInd_LR(1:36)),FitValues,'-','color',[0 0 0],'LineWidth',3);
-text(max(theta_L_chan(mutualInd_LR(1:36))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0])
+text(max(theta_L_chan(mutualInd_LR(1:36))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
 xlim([cmin cmax]);ylim([cmin cmax]);
 plot([cmin cmax], [cmin cmax],'m--');
 hold off;
 % subtitle(['(mutual): linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 grid on;
-title(chan6names{i});
+title(['Channel ' chan6names{i}] ,'FontSize', 14)
 end;
 lg=legend('synch - subj pair 1','synch - subj pair 2','synch - subj pair 3','synch - subj pair 4', ...
     'synch - subj pair 5','synch - subj pair 6', ...
@@ -3713,6 +3716,8 @@ lg.Position = [0.9475 0.4 0.01 0.25];
 set(gcf,'color','w'); % set background white for copying in ubuntu
 sgtitle(['ERP of 4 states: ' syn2names{t}],'Color',syn2colors(t,:));
 end
+% clear for workspace
+clear cat_stateEEG
 
 % separateing syn types - chan 24-32
 syn2names={'Synch','Synco'};
@@ -3739,6 +3744,8 @@ lg.Position = [0.9475 0.4 0.01 0.25];
 set(gcf,'color','w'); % set background white for copying in ubuntu
 sgtitle('ERP of 4 states: Synch (top row); Synco (bottom row)');
 end
+% clear for workspace
+clear cat_stateEEG
 
 %% SECT 12-2 Exact evoked potential to other or one's own history (based on matched BP and pacers)
 
@@ -3903,7 +3910,36 @@ clear zEEG500_LL_all zEEG500_RR_all
 cd /ssd/zhibin/1overf/all_session20220713_1005
 tic
 save('zEEG500_LLRR_all.mat','zEEG500_LLRR_all');
-toc
+toc % 271 sec
+
+% separateing syn types - chan 24-32
+syn2names={'Synch','Synco'};
+figure; % canvas(0.5,0.5);
+for t=1:2
+    % zEEG500_LL_4ss={};
+    % zEEG500_RR_4ss={};
+    for ss=1:4
+    cat_stateEEG=[];
+    cat_stateEEG=cat(3,zEEG500_LLRR_all{Inds4_LR([synind(t,:) 36+synind(t,:)],ss)});
+    stateERP=mean(cat_stateEEG,3);
+    for selectChan=24:32
+        subplot(2,9,(t-1)*9+selectChan-23)
+        plot([1:1000]/2,stateERP(:,selectChan),'color',condicolors(ss,:));
+        hold on;
+        if ss==4;
+        title(['Chan' labels{selectChan}],'Color',syn2colors(t,:)); xlabel('time (ms)');
+        xlim([0 500]);ylim([-0.2 0.28])
+        end
+    end
+    end
+lg=legend(states4names,'location','eastoutside');
+lg.Position = [0.9475 0.4 0.01 0.25];
+set(gcf,'color','w'); % set background white for copying in ubuntu
+sgtitle('ERP of 4 states: Synch (top row); Synco (bottom row)');
+end
+% clear for workspace
+clear cat_stateEEG
+
 %% SECT 13 Examine & Organize sum-EEG power and H for corr and PLS
 % organize EEG power
 % zEEG500_L; zEEG500_R; % for all sessions from SECT 12
@@ -6111,27 +6147,27 @@ b = bar(model_series, 'FaceColor','flat');
 b(1).FaceColor=darkgreen;b(2).FaceColor=pink;
 xticks(1:4);xticklabels({'Uncoupled','Leading','Following','Mutual'});
 xl = get(gca,'XTickLabel');  
-set(gca,'XTickLabel',xl,'fontsize',14,'FontWeight','bold')
+set(gca,'XTickLabel',xl,'fontsize',20,'FontWeight','bold')
 % set(gca,'XTickLabel',{'Uncoupled','Leading','Following','Mutual'},'fontsize',12,'FontWeight','bold');
 % label p values
 % delete(findall(gcf,'type','text'))
 for t=1:2
     for p=1:4
-        if Ps(t,p) <0.05; signifColor=red; else; signifColor=black; end
+        if Ps(t,p) <0.01; signifColor=red; else; signifColor=black; end
         if t==1;
-            text(p-0.25, Fs(t,p)+0.005, sprintf('p=%.2f',Ps(t,p)),'Color',signifColor);
+            text(p-0.27, Fs(t,p)+0.005, sprintf('p=%.2f',Ps(t,p)),'Color',signifColor,'FontSize',16);
         else
-            text(p+0.002, Fs(t,p)+0.005, sprintf('p=%.2f',Ps(t,p)),'Color',signifColor);
+            text(p+0.01, Fs(t,p)+0.005, sprintf('p=%.2f',Ps(t,p)),'Color',signifColor,'FontSize',16);
         end
     end
 end
-legend({'Synch','Synco'},'location','northwest','FontSize', 10);
-ylabel('GC','FontSize',15); 
+legend({'Synch','Synco'},'location','northwest','FontSize', 30);
+ylabel('GC','FontSize',17); 
 yl = get(gca,'YTickLabel');  
-set(gca,'YTickLabel',yl,'fontsize',14,'FontWeight','bold');
+set(gca,'YTickLabel',yl,'fontsize',20,'FontWeight','bold');
 % delete(sg)
-sg=annotation('textbox',[0.2 0.01 0.7 0.07],'string',...
-    {['MVGC (concatenate data) H-int ^{* SECT 21}'],char(datetime('now'))});
+% sg=annotation('textbox',[0.2 0.01 0.7 0.07],'string',...
+%     {['MVGC (concatenate data) H-int ^{* SECT 21}'],char(datetime('now'))});
 set(gcf,'color','w'); % set background white for copying in ubuntu
 end
 
@@ -6532,17 +6568,17 @@ errorbar(x',model_series,model_error,'k','linestyle','none');
 hold off
 xticks(1:4);xticklabels({'Uncoupled','Leading','Following','Mutual'});
 xl = get(gca,'XTickLabel');  
-set(gca,'XTickLabel',xl,'fontsize',14,'FontWeight','bold')
+set(gca,'XTickLabel',xl,'fontsize',17,'FontWeight','bold')
 xlim([0.5 4.5]);
 ylabel('Mean tapping interval (ms)','FontSize',15); ylim([400 1000]);
 yl = get(gca,'YTickLabel');  
-set(gca,'YTickLabel',yl,'fontsize',14,'FontWeight','bold')
+set(gca,'YTickLabel',yl,'fontsize',17,'FontWeight','bold')
 set(gcf,'color','w'); % set background white for copying in ubuntu
 delete(findall(gcf,'type','annotation'))
 sg=annotation('textbox',[0.05 0.01 0.5 0.09],'string',...
     {['mean tapping intervals(matched int) ^{ *PLOT 22}' char(datetime('now'))]})
 sg.Rotation=90
-legend({'Synch','Synco'},'location','north')
+lg=legend({'Synch','Synco'},'location','north');lg.FontSize=17;
 
 % prepend different colors for xticks
 % https://www.mathworks.com/matlabcentral/answers/28537-set-the-yticklabel-to-different-colors
@@ -6561,6 +6597,18 @@ sgtitle('ERP of 4 states: Synch (top row); Synco (bottom row)');
 %}
 
 % statistical test (ANOVA) with unequal size
+% prepare a matrictwo vectors for unbalance ANOVA, one for values, one for group labels
+invertal_2t_4ss_anova=[];
+invertal_2t_4ss_group=[];
+for t=1:2
+    for ss=1:4
+        invertal_2t_4ss_anova=[invertal_2t_4ss_anova;intervals_2t_4ss{ss,t}./2]; % and convert to ms
+        invertal_2t_4ss_group=[invertal_2t_4ss_group; ones(size(intervals_2t_4ss{ss,t})).*(t*10+ss)];
+    end
+end
+[p,tbl,stats] = anova1(invertal_2t_4ss_anova,invertal_2t_4ss_group);
+% statistical test (Two sample t test)
+[h,p,ci,stats] = ttest2([intervals_2t_4ss{4,1}./2],[intervals_2t_4ss{2,1}./2])
 %{ 
 [p,tbl,stats] = anova1([...
     [H_L_uncouple_synch H_R_uncouple_synch]' ...
