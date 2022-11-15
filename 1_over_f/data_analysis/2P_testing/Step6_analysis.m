@@ -6501,7 +6501,7 @@ sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
 set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
     'edgecolor','none')
 
-%% PLOT 22 Intervals histogram
+%% PLOT 22 Intervals histogram (p test with all intervals)
 % histogram of intertap intervals 
 % organize intervals from all sessions
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
@@ -6542,17 +6542,19 @@ toc %
 intervals_2t_4ss=intervals_2t_4ss';
 % compute mean and std (4 sessions x 2 groups)
 intervals_2t_4ss_mean=[];intervals_2t_4ss_std=[];
+intervals_2t_4ss_ste=[]; % standard error
 for t=1:2
     for ss=1:4
         intervals_2t_4ss_mean(ss,t)=mean(intervals_2t_4ss{ss,t}./2); % and convert to ms
         intervals_2t_4ss_std(ss,t)=std(intervals_2t_4ss{ss,t}./2);
+        intervals_2t_4ss_ste(ss,t)=std(intervals_2t_4ss{ss,t}./2)/sqrt(length(intervals_2t_4ss{ss,t}));
     end
 end
 
 % barplot with errorbar
 canvas(0.23, 0.4);
 model_series = intervals_2t_4ss_mean;
-model_error = intervals_2t_4ss_std;
+model_error = intervals_2t_4ss_ste;
 b = bar(model_series, 'grouped');
 b(1).FaceColor=darkgreen;b(2).FaceColor=pink;
 hold on;
@@ -6569,8 +6571,8 @@ hold off
 xticks(1:4);xticklabels({'Uncoupled','Leading','Following','Mutual'});
 xl = get(gca,'XTickLabel');  
 set(gca,'XTickLabel',xl,'fontsize',17,'FontWeight','bold')
-xlim([0.5 4.5]);
-ylabel('Mean tapping interval (ms)','FontSize',15); ylim([400 1000]);
+xlim([0.5 4.5]);ylim([400 1000]);
+ylabel('Mean tapping interval (ms)','FontSize',15); 
 yl = get(gca,'YTickLabel');  
 set(gca,'YTickLabel',yl,'fontsize',17,'FontWeight','bold')
 set(gcf,'color','w'); % set background white for copying in ubuntu
@@ -6608,7 +6610,20 @@ for t=1:2
 end
 [p,tbl,stats] = anova1(invertal_2t_4ss_anova,invertal_2t_4ss_group);
 % statistical test (Two sample t test)
-[h,p,ci,stats] = ttest2([intervals_2t_4ss{4,1}./2],[intervals_2t_4ss{1,1}./2])
+p={};
+for t=1:2
+    for ss=1:4
+        % [h,p,ci,stats] = ttest2([intervals_2t_4ss{4,1}./2],[intervals_2t_4ss{1,1}./2]);
+        [~,p{t,ss}(1),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{1,1}./2]);
+        [~,p{t,ss}(2),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{2,1}./2]);
+        [~,p{t,ss}(3),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{3,1}./2]);
+        [~,p{t,ss}(4),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{4,1}./2]);
+        [~,p{t,ss}(5),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{1,2}./2]);
+        [~,p{t,ss}(6),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{2,2}./2]);
+        [~,p{t,ss}(7),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{3,2}./2]);
+        [~,p{t,ss}(8),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{4,2}./2]);
+    end
+end
 %{ 
 [p,tbl,stats] = anova1([...
     [H_L_uncouple_synch H_R_uncouple_synch]' ...
@@ -6636,6 +6651,91 @@ sprintf('P values for each group: %0.3f\n',p)
     H_R_Llead_synch H_L_Rlead_synch H_L_mutual_synch H_R_mutual_synch]',...
     [H_L_mutual_synco H_R_mutual_synco H_L_Llead_synco H_R_Rlead_synco ...
     H_R_Llead_synco H_L_Rlead_synco H_L_mutual_synco H_R_mutual_synco]') % Synch vs Synco
+%}
+
+%% PLOT 22-1 Intervals histogram (p test with mean interval in each block)
+intervals_all_LR_all; % combined cell array from PLOT 22
+for i=1:288;
+    intervals_all_LR_all_m(i)=mean(intervals_all_LR_all{i});
+end
+% organize intervals for 4 states in 2 syn types
+syn2names={'Synch','Synco'};
+% compute mean and std (4 sessions x 2 groups)
+intervals_2t_4ss_mean=[];intervals_2t_4ss_std=[];
+intervals_2t_4ss_ste=[]; % standard error
+for t=1:2
+    for ss=1:4
+    intervals_2t_4ss_mean(ss,t)=mean(intervals_all_LR_all_m(Inds4_LR([synind(t,:) 36+synind(t,:)],ss)))./2;
+    intervals_2t_4ss_std(ss,t)=std(intervals_all_LR_all_m(Inds4_LR([synind(t,:) 36+synind(t,:)],ss)))./2;
+    intervals_2t_4ss_ste(ss,t)=(std(intervals_all_LR_all_m(Inds4_LR([synind(t,:) 36+synind(t,:)],ss)))./2)/...
+        sqrt(length(intervals_all_LR_all_m(Inds4_LR([synind(t,:) 36+synind(t,:)],ss))));
+    end
+end
+% barplot with errorbar
+figure; % canvas(0.23, 0.4);
+model_series = intervals_2t_4ss_mean;
+model_error = intervals_2t_4ss_ste;
+b = bar(model_series, 'grouped');
+b(1).FaceColor=darkgreen;b(2).FaceColor=pink;
+hold on;
+% Calculate the number of groups and number of bars in each group
+[ngroups,nbars] = size(model_series);
+% Get the x coordinate of the bars
+x = nan(nbars, ngroups);
+for i = 1:nbars
+    x(i,:) = b(i).XEndPoints;
+end
+% Plot the errorbars 
+errorbar(x',model_series,model_error,'k','linestyle','none');
+hold off
+xticks(1:4);xticklabels({'Uncoupled','Leading','Following','Mutual'});
+xl = get(gca,'XTickLabel');  
+set(gca,'XTickLabel',xl,'fontsize',17,'FontWeight','bold')
+xlim([0.5 4.5]);ylim([400 1000]);
+ylabel('Mean tapping interval (ms)','FontSize',15); 
+yl = get(gca,'YTickLabel');  
+set(gca,'YTickLabel',yl,'fontsize',17,'FontWeight','bold')
+set(gcf,'color','w'); % set background white for copying in ubuntu
+% delete(findall(gcf,'type','annotation'))
+% sg=annotation('textbox',[0.05 0.01 0.5 0.09],'string',...
+%     {['mean tapping intervals(matched int) ^{ *PLOT 22}' char(datetime('now'))]})
+% sg.Rotation=90
+lg=legend({'Synch','Synco'},'location','north');lg.FontSize=17;
+
+
+% statistical test (ANOVA) with unequal size
+% prepare a matrictwo vectors for unbalance ANOVA, one for values, one for group labels
+invertal_2t_4ss_anova=[];
+invertal_2t_4ss_group=[];
+for t=1:2
+    for ss=1:4
+        invertal_2t_4ss_anova=[invertal_2t_4ss_anova; (intervals_all_LR_all_m(Inds4_LR([synind(t,:) 36+synind(t,:)],ss))./2)']; % and convert to ms
+        invertal_2t_4ss_group=[invertal_2t_4ss_group; (ones(size(intervals_all_LR_all_m(Inds4_LR([synind(t,:) 36+synind(t,:)],ss)))).*(t*10+ss))'];
+    end
+end
+[p,tbl,stats] = anova1(invertal_2t_4ss_anova,invertal_2t_4ss_group);
+% statistical test (Two sample t test)
+p={};
+for t=1:2
+    for ss=1:4
+        % [h,p,ci,stats] = ttest2([intervals_2t_4ss{4,1}./2],[intervals_2t_4ss{1,1}./2]);
+        [~,p{t,ss}(1),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{1,1}./2]);
+        [~,p{t,ss}(2),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{2,1}./2]);
+        [~,p{t,ss}(3),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{3,1}./2]);
+        [~,p{t,ss}(4),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{4,1}./2]);
+        [~,p{t,ss}(5),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{1,2}./2]);
+        [~,p{t,ss}(6),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{2,2}./2]);
+        [~,p{t,ss}(7),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{3,2}./2]);
+        [~,p{t,ss}(8),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{4,2}./2]);
+    end
+end
+%{ 
+% Bonferroni correction
+[results,means,~,gnames] = multcompare(stats,"CriticalValueType","bonferroni"); % multi-comparison
+tbl = array2table([results],"VariableNames", ...
+    ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
+tb2 = array2table([means],"VariableNames", ["Mean","Standard Error"])
+p_bonf=results(:,6);
 %}
 %% Working from home
 cd D:\360MoveData\Users\alienware\Documents\GitHub\Motor_cordination\1_over_f\data_analysis\2P_testing
