@@ -2868,7 +2868,6 @@ sg.Rotation=90
 set(gcf,'color','w'); % set background white for copying in ubuntu
 end
 
-
 % all six channels in one plot
 theta_L_chan=mean(theta_LR_chan(1:144,[5 7 9 12 14 18]),2);
 theta_R_chan=mean(theta_LR_chan(145:288,[5 7 9 12 14 18]),2);
@@ -2888,7 +2887,7 @@ plot(theta_L_chan(mutualInd_LR(syncoind(7:9))),theta_R_chan(mutualInd_LR(syncoin
 plot(theta_L_chan(mutualInd_LR(syncoind(10:12))),theta_R_chan(mutualInd_LR(syncoind(10:12))),'pentagram','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(theta_L_chan(mutualInd_LR(syncoind(13:15))),theta_R_chan(mutualInd_LR(syncoind(13:15))),'*','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
 plot(theta_L_chan(mutualInd_LR(syncoind(16:18))),theta_R_chan(mutualInd_LR(syncoind(16:18))),'diamond','MarkerSize',10,'color',pink,'MarkerFaceColor',pink);
-xlabel('Theta power, Participant L','FontSize',15);ylabel('Theta power, Participant R''FontSize',15);
+xlabel('Theta power, Participant L','FontSize',15);ylabel('Theta power, Participant R','FontSize',15);
 title('Sum of theta power from F3,F4,FC5,FC6,T7,T6 in bidrectional state'); 
 % fit the synch data
 A=[];Alpha1=[];FitValues=[];RHO=[]
@@ -4002,7 +4001,7 @@ gamma_LR_chan = gamma_LR_chan./(ones(288,1)*std(gamma_LR_chan));
 synind; %{ indicies of synind from PLOT 10-2 %}
 
 % Separating L/R
-cmin=1;cmax=4;
+cmin=-4;cmax=4;
 for t=1:2 % type of session (synch/o)
     canvas(0.65,0.5);
     for s=1:4 % 4 states
@@ -4098,7 +4097,7 @@ for t=1:2 % type of session (synch/o)
     end
 end
 
-% Correlation L/R
+% Correlation L/R (32 corrcoef values)
 % Compute corrleation
 % cmin=-1;cmax=1;
 Corr4x5=nan(2,4,5,32); % Corr coef for 2 syn_types x 4 states x 5 freq x 32 chan
@@ -4163,7 +4162,66 @@ clim([cmin cmax]);
     end
 end
 
-% Combining L/R
+% Correlation L/R (32x32 corrcoef values)
+% Compute corrleation
+% cmin=-1;cmax=1;
+Corr4x5=[];
+Corr4x5=nan(2,4,5,32,32); % Corr coef for 2 syn_types x 4 states x 5 freq x 32 chan x32 chan
+f5_LR_chan=cat(3,delta_LR_chan,theta_LR_chan,alpha_LR_chan,beta_LR_chan,gamma_LR_chan);
+for t=1:2 % type of session (synch/o)
+    for s=1:4 % 4 states
+        for f=1:5 % 5 freq
+        fselected_LR_chan=[];
+        fselected_LR_chan=f5_LR_chan(:,:,f);
+        Corr4x5(t,s,f,:,:)=...
+            corr(fselected_LR_chan(Inds4_LR(synind(t,:),s),:),fselected_LR_chan(Inds4_LR(36+synind(t,:),s),:));
+        end
+    end
+end
+% Plot
+cmin=-0.6;cmax=0.6;
+for t=1:2;
+    canvas(0.3,0.7);
+    for s=1:4;
+        for f=1:5;
+        subplot(4,5,5*(s-1)+f)
+        imagesc(squeeze(Corr4x5(t,s,f,:,:)));
+        clim([cmin cmax]);
+        ylabel('chans (L)');xlabel('chans (R)');
+        end
+    end
+    colormap(hnc)
+    if true % annotation
+    cb=colorbar;
+    cb.AxisLocation = 'out';
+    cb.Position = [0.92 0.15 0.01 0.75];
+    delete(findall(gcf,'type','annotation'))
+    h0=annotation('textbox',[0.17 0.95 0.05 0.03],'string','Delta','color',[0 0 0]);
+    h1=annotation('textbox',[0.33 0.95 0.05 0.03],'string','Theta','color',[0 0 0]);
+    h2=annotation('textbox',[0.5 0.95 0.05 0.03],'string','Alpha','color',[0 0 0]);
+    h3=annotation('textbox',[0.66 0.95 0.05 0.03],'string','Beta','color',[0 0 0]);
+    h4=annotation('textbox',[0.81 0.95 0.05 0.03],'string','Gamma','color',[0 0 0]);
+    v0=annotation('textbox',[0.1 0.15 0.05 0.03],'string','Mutual','color',condicolors(4,:));
+    v1=annotation('textbox',[0.1 0.37 0.05 0.03],'string','Following','color',condicolors(3,:));
+    v2=annotation('textbox',[0.1 0.59 0.05 0.03],'string','Leading','color',condicolors(2,:));
+    v3=annotation('textbox',[0.1 0.81 0.05 0.03],'string','Uncouple','color',condicolors(1,:));
+    set(v0,'Rotation',90);set(v1,'Rotation',90);set(v2,'Rotation',90);set(v3,'Rotation',90);
+    set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
+    'edgecolor','none')
+    set(gcf,'color','w'); % set background white for copying in ubuntu
+    end
+    % title annotation
+    % delete(sg);
+    if t == 1
+        sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
+        {'Corr of sum-EEG power (-500ms) in synch ^{* PLOT 13}',char(datetime('now'))},'Color',syn2colors(1,:));
+    else % t == 2; 
+        sg=annotation('textbox',[0.3 0.01 0.4 0.05],'string',...
+        {'Corr of sum-EEG power (-500ms) in synco ^{* PLOT 13}',char(datetime('now'))},'Color',syn2colors(2,:));
+    end
+end
+
+% Combining L&R (plot average power)
 cmin=0;cmax=4;
 % Synch
 for t=1 % type of session (synch=1/o=2)
