@@ -3958,44 +3958,68 @@ LR_all_chan=cat(2,delta_LR_all,theta_LR_all,alpha_LR_all,beta_LR_all,gamma_LR_al
 toc
 clear delta_L theta_L alpha_L beta_L gamma_L delta_R theta_R alpha_R beta_R gamma_R;
 clear delta_LR_all theta_LR_all alpha_LR_all beta_LR_all gamma_LR_all
-% select trial
-t=2 % synch/o
-s=1 % one of 4 states
-f=2 % frequency band
-subj=1; %trials
-% plot
-cmin=-0.6;cmax=0.6;
-figure
-for subj=1:18
-    clf
+% select trial and compute the corr
+tic
+Corr4x5_all=cell(2,3,5,18);
+for t=1:2 % t=1 % synch/o
+for s=[1 2 4] % s=4 % one of 4 states
+for f=1:5 % f=2 % frequency band
+for subj=1:18 % subj=1; %trials
     Corr4x5=[];
-    if s==1 | s==4;
+    if s==1;
      Corr4x5=...
     corr( ...
     LR_all_chan{(Inds4_LR(synind(t,subj),s)),f},...
     LR_all_chan{(Inds4_LR(36+synind(t,subj),s)),f}...
     );
      Corr4x5=(Corr4x5+Corr4x5')./2;
-%     elseif ss==2;
-%      Corr4x5=...
-%     corr( ...
-%     LR_all_chan{(Inds4_LR(synind(t,subj),2)),f},...
-%     LR_all_chan{(Inds4_LR(36+synind(t,subj),3)),f}...
-%     );   
+    Corr4x5_all{t,1,f,subj}=Corr4x5;
+    elseif s==4;
+     Corr4x5=...
+    corr( ...
+    LR_all_chan{(Inds4_LR(synind(t,subj),s)),f},...
+    LR_all_chan{(Inds4_LR(36+synind(t,subj),s)),f}...
+    );
+     Corr4x5=(Corr4x5+Corr4x5')./2;
+    Corr4x5_all{t,3,f,subj}=Corr4x5;
     else s==2 | s==3;
      Corr4x5=...
     corr( ...
     [LR_all_chan{(Inds4_LR(synind(t,subj),2)),f}; LR_all_chan{(Inds4_LR(36+synind(t,subj),2)),f}],...
     [LR_all_chan{(Inds4_LR(36+synind(t,subj),3)),f}; LR_all_chan{(Inds4_LR(synind(t,subj),3)),f}]...
     );   
+    Corr4x5_all{t,2,f,subj}=Corr4x5;
     end
-    imagesc(Corr4x5);colorbar;title(num2str(subj));
+end
+end
+end
+end
+toc
+% plot
+for t=1:2 % t=1 % synch/o
+    cmin=-0.6;cmax=0.6;
+    figure
+    clf
+for s=1:3 % one of 4 states
+for f=1:5 % f
+    Corr4x5select=[];
+    for subj=1:18    
+        Corr4x5select=cat(3, Corr4x5select,Corr4x5_all{t,s,f,subj}); 
+    end
+    % average of corrcoef 
+    Corr4x5m=mean(Corr4x5select,3);
+    subplot(3,5,5*(s-1)+f)
+    imagesc(Corr4x5m);colorbar; title('band5names')
     if s==1;  ylabel('Subject A');xlabel('Subject B');subtitle('Independent');
-    elseif s==2 | s==3; ylabel('Leader');xlabel('Follower');subtitle('Unidirectional');
-    else s==4; ylabel('Subject A');xlabel('Subject B');subtitle('Bidirectional');end
+    elseif s==2; ylabel('Leader');xlabel('Follower');subtitle('Unidirectional');
+    else s==3; ylabel('Subject A');xlabel('Subject B');subtitle('Bidirectional');
+    end
     colormap(hnc)
     clim([cmin cmax]);
     pause(1);
+end
+end
+    if t==1; sgtitle(['synch ']); else t==2; sgtitle(['synco']);end;
 end
 
 % sum the band power in each channel in each block (8x12=96)
