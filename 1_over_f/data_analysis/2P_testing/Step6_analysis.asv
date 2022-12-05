@@ -3990,10 +3990,9 @@ for subj=1:18
     );   
     end
     imagesc(Corr4x5);colorbar;title(num2str(subj));
-
     if s==1;  ylabel('Subject A');xlabel('Subject B');subtitle('Independent');
     elseif s==2 | s==3; ylabel('Leader');xlabel('Follower');subtitle('Unidirectional');
-    else s==4; ylabel('Subject A');xlabel('Subject B');subtitle('Bidirectional');
+    else s==4; ylabel('Subject A');xlabel('Subject B');subtitle('Bidirectional');end
     colormap(hnc)
     clim([cmin cmax]);
     pause(1);

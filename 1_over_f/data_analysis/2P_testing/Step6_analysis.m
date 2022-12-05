@@ -3960,7 +3960,7 @@ clear delta_L theta_L alpha_L beta_L gamma_L delta_R theta_R alpha_R beta_R gamm
 clear delta_LR_all theta_LR_all alpha_LR_all beta_LR_all gamma_LR_all
 % select trial
 t=2 % synch/o
-s=1 % one of 4 states
+s=2 % one of 4 states
 f=2 % frequency band
 subj=1; %trials
 % plot
@@ -3989,11 +3989,13 @@ for subj=1:18
     [LR_all_chan{(Inds4_LR(36+synind(t,subj),3)),f}; LR_all_chan{(Inds4_LR(synind(t,subj),3)),f}]...
     );   
     end
-    imagesc(Corr4x5);colorbar;title(num2str(subj));
-
+    imagesc(Corr4x5);colorbar;
+    if t==1; title(['synch ' num2str(subj)]); else t==2; title(['synco' num2str(subj)])
+    end;
     if s==1;  ylabel('Subject A');xlabel('Subject B');subtitle('Independent');
     elseif s==2 | s==3; ylabel('Leader');xlabel('Follower');subtitle('Unidirectional');
     else s==4; ylabel('Subject A');xlabel('Subject B');subtitle('Bidirectional');
+    end
     colormap(hnc)
     clim([cmin cmax]);
     pause(1);
