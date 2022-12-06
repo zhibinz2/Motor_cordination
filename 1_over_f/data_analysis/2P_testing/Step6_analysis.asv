@@ -4009,18 +4009,21 @@ for f=1:5 % f
     % average of corrcoef 
     Corr4x5m=mean(Corr4x5select,3);
     subplot(3,5,5*(s-1)+f)
-    imagesc(Corr4x5m);colorbar; title('band5names')
+    imagesc(Corr4x5m);colorbar; title(band5names{f})
     if s==1;  ylabel('Subject A');xlabel('Subject B');subtitle('Independent');
     elseif s==2; ylabel('Leader');xlabel('Follower');subtitle('Unidirectional');
     else s==3; ylabel('Subject A');xlabel('Subject B');subtitle('Bidirectional');
     end
     colormap(hnc)
     clim([cmin cmax]);
-    pause(1);
 end
 end
     if t==1; sgtitle(['synch ']); else t==2; sgtitle(['synco']);end;
 end
+% only select gamma to display
+for t=1:2
+    cmin=-0.8; cm
+
 
 % sum the band power in each channel in each block (8x12=96)
 delta_L_sum=[];theta_L_sum=[];alpha_L_sum=[];beta_L_sum=[];gamma_L_sum=[];

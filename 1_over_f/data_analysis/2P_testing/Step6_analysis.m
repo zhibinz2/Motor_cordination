@@ -4020,6 +4020,11 @@ end
 end
     if t==1; sgtitle(['synch ']); else t==2; sgtitle(['synco']);end;
 end
+% only select gamma to display
+for t=1:2
+    cmin=-0.5; cmax=0.5;
+end
+
 
 % sum the band power in each channel in each block (8x12=96)
 delta_L_sum=[];theta_L_sum=[];alpha_L_sum=[];beta_L_sum=[];gamma_L_sum=[];
