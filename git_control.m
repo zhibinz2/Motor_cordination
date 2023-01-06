@@ -1,4 +1,4 @@
-% cd /home/zhibin/Documents/GitHub/Motor_cordination % hnlb
+% cd /home/zhibinz2/Documents/GitHub/Motor_cordination % hnlb
 % cd /home/hnl/Documents/GitHub/Motor_cordination % hnlstim2
 ! git status
 ! git add .

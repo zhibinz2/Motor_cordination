@@ -1,9 +1,9 @@
 %% SECT 1: Auto&Xcorr DFA GC for each trial
 
-cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA/Sim_plots
-cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA/Sim_plots
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
 
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data
 cd /ssd/zhibin/1overf/20220721_2P/Segmented_data
@@ -17,12 +17,12 @@ load('data_variables20220721.mat')
 
 % d estimate and removal
 % http://www.lucafaes.net/LMSE-MSE_VARFI.html
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/MSE-VARFI
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/MSE-VARFI
 % Granger Causality
-addpath(genpath('/home/zhibin/Documents/GitHub/MVGC1'));
-cd /home/zhibin/Documents/GitHub/MVGC1
+addpath(genpath('/home/zhibinz2/Documents/GitHub/MVGC1'));
+cd /home/zhibinz2/Documents/GitHub/MVGC1
 run startup
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/VAR_Granger
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/VAR_Granger
 
 % Calculation
 y1=[];y2=[];y12=[];XcorrR=[];
@@ -80,7 +80,7 @@ for i=1:nTrials
     y12(i).sig=sig;
 end
 
-%% PLOT 1:  Auto&Xcorr DFA GC for each trial
+%% PLOT 1: Auto&Xcorr DFA GC for each trial
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data/Plots/Corr_DFA
 cd /ssd/zhibin/1overf/20220804_2P/Segmented_data/Plots/Corr_DFA
 
@@ -163,10 +163,10 @@ end
 close all;
 
 %% SECT 2: Auto&Xcorr DFA GC PSA for each trial
-cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA/Sim_plots
-cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA/Sim_plots
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
 
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data
 cd /ssd/zhibin/1overf/20220721_2P/Segmented_data
@@ -175,23 +175,23 @@ load('data_variables20220713.mat')
 load('data_variables20220721.mat')
 
 % d estimate and removal
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/MSE-VARFI
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/MSE-VARFI
 % Granger Causality
-addpath(genpath('/home/zhibin/Documents/GitHub/MVGC1'));
-% rmpath('/home/zhibin/Documents/GitHub/MVGC1'); % remove duplecate startup file from path
+addpath(genpath('/home/zhibinz2/Documents/GitHub/MVGC1'));
+% rmpath('/home/zhibinz2/Documents/GitHub/MVGC1'); % remove duplecate startup file from path
 
 % Structure viewer not showing properly after running the following 2 lines
 % No need to run the following 2 lines
-% cd /home/zhibin/Documents/GitHub/MVGC1
+% cd /home/zhibinz2/Documents/GitHub/MVGC1
 % run startup
 
 % remove this path to recover structure viewing
-% rmpath(genpath('/home/zhibin/Documents/GitHub/MVGC1')); 
+% rmpath(genpath('/home/zhibinz2/Documents/GitHub/MVGC1')); 
 
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/VAR_Granger
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/VAR_Granger
 
 % parameters for powers
-% open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/spectra2
+% open /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/spectra2
 maxfreq=50; EEGwin=10; % 10 Second with df of 0.1Hz
 
 % Calculation on BP
@@ -421,8 +421,8 @@ showcolor=black;
 imagesc(cat(3,showcolor(1),showcolor(2),showcolor(3)));
 
 % colormap
-cd /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
-addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
+cd /home/zhibinz2/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
+addpath /home/zhibinz2/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
 hottermap=hotter(100);
 
@@ -547,10 +547,10 @@ saveas(gcf,figureName,'fig');
 
 
 %% SECT 3 (unfinished): slinding window: DFA Autocov GC for each trial
-cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA/Sim_plots
-cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA/Sim_plots
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
 
 cd /ssd/zhibin/1overf/20220713_2P/Segmented_data
 load('data_variables20220713.mat')
@@ -560,18 +560,18 @@ load('data_variables20220721.mat')
 
 
 % d estimate and removal
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/MSE-VARFI
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/MSE-VARFI
 % Granger Causality
-addpath(genpath('/home/zhibin/Documents/GitHub/MVGC1'));
-% cd /home/zhibin/Documents/GitHub/MVGC1
+addpath(genpath('/home/zhibinz2/Documents/GitHub/MVGC1'));
+% cd /home/zhibinz2/Documents/GitHub/MVGC1
 % run startup
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/VAR_Granger
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/VAR_Granger
 
 % remove this path to recover structure viewing
-% rmpath(genpath('/home/zhibin/Documents/GitHub/MVGC1')); 
+% rmpath(genpath('/home/zhibinz2/Documents/GitHub/MVGC1')); 
 
 % parameters for powers
-% open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/spectra2
+% open /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing/spectra2
 maxfreq=50; win=10; % 10 Second with df of 0.1Hz
 
 % Sliding win on BP01 for DFA and GC
@@ -641,11 +641,11 @@ for i=1:nTrials
 end
 
 % remove this path to recover structure viewing
-rmpath(genpath('/home/zhibin/Documents/GitHub/MVGC1')); 
+rmpath(genpath('/home/zhibinz2/Documents/GitHub/MVGC1')); 
 open ys1;
 open ys12;
 open ys2;
-addpath(genpath('/home/zhibin/Documents/GitHub/MVGC1')); 
+addpath(genpath('/home/zhibinz2/Documents/GitHub/MVGC1')); 
 
 tic
 % Heading structure (preferred)
@@ -714,11 +714,11 @@ end
 toc
 
 % remove this path to recover structure viewing
-rmpath(genpath('/home/zhibin/Documents/GitHub/MVGC1')); 
+rmpath(genpath('/home/zhibinz2/Documents/GitHub/MVGC1')); 
 open ys1;
 open ys12;
 open ys2;
-addpath(genpath('/home/zhibin/Documents/GitHub/MVGC1')); 
+addpath(genpath('/home/zhibinz2/Documents/GitHub/MVGC1')); 
 
 
 % sum EEG power
@@ -1349,7 +1349,7 @@ sg=annotation('textbox',[0.05 0.01 0.5 0.07],'string',...
 sg.Rotation=90
 
 % Two violin plots
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/violin
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/violin
 canvas(0.4,0.3);
 for violin2=1;
     subplot(2,1,1);
@@ -1601,7 +1601,7 @@ hold on;
 title('mean autocorr sum for 20 lags in all sessions (matched int) ^{ *PLOT7}');
 
 % combine synch and synco of Autocorrs (sum) in violin plot
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/violin
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/violin
 figure;
 Y={[Autocorrs_L_uncouple_synch Autocorrs_L_uncouple_synco Autocorrs_R_uncouple_synch Autocorrs_R_uncouple_synco]',...
     [Autocorrs_L_Llead_synch Autocorrs_L_Llead_synco Autocorrs_R_Rlead_synch Autocorrs_R_Rlead_synco]',... 
@@ -2602,23 +2602,27 @@ title('Independent','FontSize',15);
 % hold on; plot(H_Lall(uncoupleInd_LR(1:36)),FitValues,'k-','LineWidth',3);
 
 % fit the synch data
-A=[];Alpha1=[];FitValues=[];RHO=[];
-A=polyfit(H_Lall(uncoupleInd_LR(1:2:35)),H_Rall(uncoupleInd_LR(1:2:35)),1);
-[RHO,~]=corr(H_Lall(uncoupleInd_LR(1:2:35)),H_Rall(uncoupleInd_LR(1:2:35)));
+A=[];Alpha1=[];FitValues=[];RHO=[];xxx=[];yyy=[];
+[xxx,yyy]=keepvalues(H_Lall(uncoupleInd_LR(1:2:35)),H_Rall(uncoupleInd_LR(1:2:35)),0.5,1);
+A=polyfit(xxx,yyy,1);
+[RHO,~]=corr(xxx,yyy);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(uncoupleInd_LR(1:2:35)));
-hold on; plot(H_Lall(uncoupleInd_LR(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
-text(max(H_Lall(uncoupleInd_LR(1:2:35))),min(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
+FitValues=polyval(A,xxx);
+hold on; plot(xxx,FitValues,'-','color',darkgreen,'LineWidth',3);
+text(min(xxx),max(FitValues)+0.025,sprintf('\\rho=%.2f',RHO),'Color',darkgreen,'FontSize', 15)
 
 % fit the synco data
-A=[];Alpha1=[];FitValues=[];RHO=[];
-A=polyfit(H_Lall(uncoupleInd_LR(2:2:36)),H_Rall(uncoupleInd_LR(2:2:36)),1);
-[RHO,~]=corr(H_Lall(uncoupleInd_LR(2:2:36)),H_Rall(uncoupleInd_LR(2:2:36)));
+A=[];Alpha1=[];FitValues=[];RHO=[];xxx=[];yyy=[];
+[xxx,yyy]=keepvalues(H_Lall(uncoupleInd_LR(2:2:36)),H_Rall(uncoupleInd_LR(2:2:36)),0.5,1);
+A=polyfit(xxx,yyy,1);
+[RHO,~]=corr(xxx,yyy);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(uncoupleInd_LR(2:2:36)));
-hold on; plot(H_Lall(uncoupleInd_LR(2:2:36)),FitValues,'-','color',pink,'LineWidth',3);
-xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
-text(max(H_Lall(uncoupleInd_LR(2:2:36))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
+FitValues=polyval(A,xxx);
+hold on; plot(xxx,FitValues,'-','color',pink,'LineWidth',3);
+xlim([0.5 1]);ylim([0.5 1]);
+plot([0.5 1], [0.5 1],'m--');
+hold off;
+text(min(xxx),min(FitValues)-0.025,sprintf('\\rho=%.2f',RHO),'Color',pink,'FontSize', 15)
 % legend('synch','','','','synco','','','','location','northwest');
 % subtitle(['(uncouple: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 grid on;
@@ -2652,29 +2656,36 @@ plot(H_Rall(followingInd_LR(syncoind(16:18))),H_Lall(followingInd_LR(syncoind(16
 xlabel('DFA exponent, Leader','FontSize',15);
 ylabel('DFA exponent, Follower','FontSize',15);
 title('Unidirectional','FontSize',15);
+
 % A=[];Alpha1=[];FitValues=[];
 % A=polyfit([H_Lall(leadingInd_LR(1:36)); H_Rall(followingInd_LR(1:36))], [H_Rall(leadingInd_LR(1:36)); H_Lall(followingInd_LR(1:36))],1);
 % Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
 % FitValues=polyval(A,[H_Lall(leadingInd_LR(1:36)); H_Rall(followingInd_LR(1:36))]);
 % hold on; plot([H_Lall(leadingInd_LR(1:36)); H_Rall(followingInd_LR(1:36))],FitValues,'k-','LineWidth',3);
 % fit the synch data
-A=[];Alpha1=[];FitValues=[];RHO=[];
-A=polyfit([H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))], [H_Rall(leadingInd_LR(1:2:35)); H_Lall(followingInd_LR(1:2:35))],1);
-[RHO,~]=corr([H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))], [H_Rall(leadingInd_LR(1:2:35)); H_Lall(followingInd_LR(1:2:35))]);
+A=[];Alpha1=[];FitValues=[];RHO=[];xxx=[];yyy=[];
+[xxx,yyy]=keepvalues([H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))], ...
+    [H_Rall(leadingInd_LR(1:2:35)); H_Lall(followingInd_LR(1:2:35))],0.5,1);
+A=polyfit(xxx, yyy,1);
+[RHO,~]=corr(xxx, yyy);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,[H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))]);
+FitValues=polyval(A,xxx);
 hold on; 
-plot([H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))],FitValues,'-','color',darkgreen,'LineWidth',3);
-text(max([H_Lall(leadingInd_LR(1:2:35)); H_Rall(followingInd_LR(1:2:35))]),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
+plot(xxx,FitValues,'-','color',darkgreen,'LineWidth',3);
+text(max(xxx)-0.1,max(FitValues)+0.02,sprintf('\\rho=%.2f',RHO),'Color',darkgreen,'FontSize', 15)
 % fit the synco data
-A=[];Alpha1=[];FitValues=[];RHO=[];
-A=polyfit([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))], [H_Rall(leadingInd_LR(2:2:36)); H_Lall(followingInd_LR(2:2:36))],1);
-[RHO,~]=corr([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))], [H_Rall(leadingInd_LR(2:2:36)); H_Lall(followingInd_LR(2:2:36))]);
+A=[];Alpha1=[];FitValues=[];RHO=[];xxx=[];yyy=[];
+[xxx,yyy]=keepvalues([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))],...
+    [H_Rall(leadingInd_LR(2:2:36)); H_Lall(followingInd_LR(2:2:36))],0.5,1);
+A=polyfit(xxx, yyy,1);
+[RHO,~]=corr(xxx, yyy);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,[H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))]);
-hold on; plot([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))],FitValues,'-','color',pink,'LineWidth',3);
-text(max([H_Lall(leadingInd_LR(2:2:36)); H_Rall(followingInd_LR(2:2:36))]),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
-xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+FitValues=polyval(A,xxx);
+hold on; plot(xxx,FitValues,'-','color',pink,'LineWidth',3);
+text(max(xxx)-0.1,max(FitValues)-0.03,sprintf('\\rho=%.2f',RHO),'Color',pink,'FontSize', 15)
+xlim([0.5 1]);ylim([0.5 1]);
+plot([0.5 1], [0.5 1],'m--');
+hold off;
 % legend('synch','','','','synco','','','','','','','','','','','','location','northwest');
 % subtitle(['(leading or following: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 grid on;
@@ -2696,32 +2707,41 @@ plot(H_Lall(mutualInd_LR(syncoind(16:18))),H_Rall(mutualInd_LR(syncoind(16:18)))
 xlabel('DFA exponent, Participant L','FontSize',15);
 ylabel('DFA exponent, Participant R','FontSize',15);
 title('Bidirectional','FontSize',15); 
+xlim([0.5 1]);ylim([0.5 1]);
 
-A=[];Alpha1=[];FitValues=[];RHO=[];
-A=polyfit(H_Lall(mutualInd_LR(1:36)),H_Rall(mutualInd_LR(1:36)),1);
-[RHO,~]=corr(H_Lall(mutualInd_LR(1:36)),H_Rall(mutualInd_LR(1:36)));
+% fit all the data
+A=[];Alpha1=[];FitValues=[];RHO=[];xxx=[];yyy=[];
+[xxx,yyy]=keepvalues(H_Lall(mutualInd_LR(1:36)),...
+    H_Rall(mutualInd_LR(1:36)),0.5,1);
+A=polyfit(xxx,yyy,1);
+[RHO,~]=corr(xxx,yyy);
 Alpha1=A(1); 
-FitValues=polyval(A,H_Lall(mutualInd_LR(1:36)));
-hold on; plot(H_Lall(mutualInd_LR(1:36)),FitValues,'k-','LineWidth',3);
-text(max(H_Lall(mutualInd_LR(1:36)))-0.17,max(FitValues)-0.2,sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
-
+FitValues=polyval(A,xxx);
+hold on; plot(xxx,FitValues,'k-','LineWidth',3);
+text(min(xxx),min(FitValues)-0.025,sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
 % fit the synch data
-A=[];Alpha1=[];FitValues=[];RHO=[];
-A=polyfit(H_Lall(mutualInd_LR(1:2:35)),H_Rall(mutualInd_LR(1:2:35)),1);
-[RHO,~]=corr(H_Lall(mutualInd_LR(1:2:35)),H_Rall(mutualInd_LR(1:2:35)));
+A=[];Alpha1=[];FitValues=[];RHO=[];xxx=[];yyy=[];
+[xxx,yyy]=keepvalues(H_Lall(mutualInd_LR(1:2:35)),...
+    H_Rall(mutualInd_LR(1:2:35)),0.5,1);
+A=polyfit(xxx,yyy,1);
+[RHO,~]=corr(xxx,yyy);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(mutualInd_LR(1:2:35)));
-hold on; plot(H_Lall(mutualInd_LR(1:2:35)),FitValues,'-','color',darkgreen,'LineWidth',3);
-text(max(H_Lall(mutualInd_LR(1:2:35))),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
+FitValues=polyval(A,xxx);
+hold on; plot(xxx,FitValues,'-','color',darkgreen,'LineWidth',3);
+text(min(xxx),min(FitValues)+0.07,sprintf('\\rho=%.2f',RHO),'Color',darkgreen,'FontSize', 15)
 % fit the synco data
-A=[];Alpha1=[];FitValues=[];RHO=[];
-A=polyfit(H_Lall(mutualInd_LR(2:2:36)),H_Rall(mutualInd_LR(2:2:36)),1);
-[RHO,~]=corr(H_Lall(mutualInd_LR(2:2:36)),H_Rall(mutualInd_LR(2:2:36)));
+A=[];Alpha1=[];FitValues=[];RHO=[];xxx=[];yyy=[];
+[xxx,yyy]=keepvalues(H_Lall(mutualInd_LR(2:2:36)),...
+    H_Rall(mutualInd_LR(2:2:36)),0.5,1);
+A=polyfit(xxx,yyy,1);
+[RHO,~]=corr(xxx,yyy);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-FitValues=polyval(A,H_Lall(mutualInd_LR(2:2:36)));
-hold on; plot(H_Lall(mutualInd_LR(2:2:36)),FitValues,'-','color',pink,'LineWidth',3);
-text(max(H_Lall(mutualInd_LR(2:2:36)))-0.25,max(FitValues)-0.05,sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
-xlim([0.2 1.4]);ylim([0.2 1.4]);plot([0 1.4], [0 1.4],'m--');hold off;
+FitValues=polyval(A,xxx);
+hold on; plot(xxx,FitValues,'-','color',pink,'LineWidth',3);
+text(max(xxx)-0.15,max(FitValues)-0.025,sprintf('\\rho=%.2f',RHO),'Color',pink,'FontSize', 15)
+xlim([0.5 1]);ylim([0.5 1]);
+plot([0.5 1], [0.5 1],'m--');
+hold off;
 % subtitle(['(mutual): linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 grid on;
 end
@@ -2737,6 +2757,7 @@ sg=annotation('textbox',[0.07 0.01 0.22 0.05],'string',...
 sg.Rotation=90
 set(gcf,'color','w'); % set background white for copying in ubuntu
 end
+
 %% PLOT 10-3 EEG matching for theta only in mutual condition
 % select 6 channels  ---  Left: 5-F3,9-FC5,14-T7; Right: 7-F4,12-FC6,18-T6
 chan6=[5 7 9 12 14 18];
@@ -3282,9 +3303,9 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 
 
 % PLS
-addpath /home/zhibin/Documents/GitHub/matlab/ramesh/plsmodel
-addpath(genpath('/home/zhibin/Documents/GitHub/matlab/external/')); 
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
+addpath /home/zhibinz2/Documents/GitHub/matlab/ramesh/plsmodel
+addpath(genpath('/home/zhibinz2/Documents/GitHub/matlab/external/')); 
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 % get pow5forpls3 from PLOT 16
 pow5forpls3; % 288x160
 % (ALL states: 5freq x 32chan = 160 predictors x 288 trials)
@@ -3352,7 +3373,7 @@ title({['PLS model (R2= ' num2str(round(R2,1)) ') in all statues: ' ...
 
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 72
 % trials)-updated to use mynpls_pred function
-cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 regs=[];AIC=nan(2,10);R2s=nan(4,10);ssERs=nan(4,10);
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
@@ -3427,7 +3448,7 @@ colormap(hnc)
 sgtitle({['PLS model: sum-EEG(-500ms) -> Xcorr(-1/+1) in synch ^{* PLOT 11-2}'],char(datetime('now'))});
 sgtitle({['PLS model: sum-EEG(-500ms) -> Xcorr(0) in synco ^{* PLOT 11-2}'],char(datetime('now'))});
 % topoplot for uncouple and mutual (now in 4 states)
-addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
+addpath /home/zhibinz2/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
 band5names={'Delta','Theta','Alpha','Beta','Gamma'};
 states2names={'Uncouple','Mutual'};
@@ -5349,9 +5370,9 @@ clear pow5forpls pow5forpls2
 % H-int
 H_all_LR; % form PLOT 13
 
-addpath /home/zhibin/Documents/GitHub/matlab/ramesh/plsmodel
-addpath(genpath('/home/zhibin/Documents/GitHub/matlab/external/')); 
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
+addpath /home/zhibinz2/Documents/GitHub/matlab/ramesh/plsmodel
+addpath(genpath('/home/zhibinz2/Documents/GitHub/matlab/external/')); 
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 
 % (ALL states: 5freq x 32chan = 160 predictors x 288 trials)
 % -updated to use mynpls_pred function
@@ -5404,7 +5425,7 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48
 % trials)-updated to use mynpls_pred function
-cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 regs=[];AIC=nan(2,10);R2s=nan(4,10);ssERs=nan(4,10);
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
@@ -5470,7 +5491,7 @@ sgtitle({['PLS model: sum-EEG(-500ms) -> H-int ^{* PLOT 16}'],char(datetime('now
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
 % topoplot for uncouple and mutual (now 4 states)
-addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
+addpath /home/zhibinz2/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
 band5names={'Delta','Theta','Alpha','Beta','Gamma'};
 states2names={'Uncouple','Mutual'};
@@ -5649,7 +5670,7 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 end
 
 % PLS on 4 states 
-cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 regs=[];AIC=nan(2,10);R2s=nan(4,10);ssERs=nan(4,10);
 for c=1:4 % four states
     reg=[];ypred=[];ypred_fit=[];
@@ -5819,8 +5840,8 @@ H5forpls3=reshape(H5forpls2,5*32,288)'; % 288x160 elements extracted colums-wise
 % H-int
 H_all_LR; % form PLOT 13
 
-addpath /home/zhibin/Documents/GitHub/matlab/ramesh/plsmodel
-addpath(genpath('/home/zhibin/Documents/GitHub/matlab/external/')); 
+addpath /home/zhibinz2/Documents/GitHub/matlab/ramesh/plsmodel
+addpath(genpath('/home/zhibinz2/Documents/GitHub/matlab/external/')); 
 
 % (ALL states: 5freq x 32chan = 160 predictors x 192 trials)
 % -updated to use mynpls_pred function
@@ -5871,7 +5892,7 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 48 trials)
 % -updated to use mynpls_pred function
-cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 regs=[];AIC=nan(2,10);R2s=nan(4,10);ssERs=nan(4,10);
 for c=1:4 % four states
     reg=[];ypred=[];ypred_fit=[];
@@ -5935,7 +5956,7 @@ end
 sgtitle({['PLS model: H-EEG(-500ms) -> H-int ^{* PLOT 16-1}'],char(datetime('now'))});
 set(gcf,'color','w'); % set background white for copying in ubuntu
 % topoplot for uncouple and mutual
-addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
+addpath /home/zhibinz2/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
 band5names={'Delta','Theta','Alpha','Beta','Gamma'};
 states2names={'Uncouple','Mutual'};
@@ -6338,7 +6359,7 @@ for c=1:4 % four states
 end
 sgtitle({['PLS model: sum-EEG(-500ms) ->' XcorrPeakmat2names{depen_select} ' ^{* PLOT 18-1}'],char(datetime('now'))});
 % topoplot for uncouple and mutual
-addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
+addpath /home/zhibinz2/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
 band5names={'Delta','Theta','Alpha','Beta','Gamma'};
 states2names={'Uncouple','Mutual'};
@@ -6420,7 +6441,7 @@ plot(EEG);
 subplot(2,1,2);
 
 % try Re reference
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 % This function pass filtered_data and get back average referenced data.
 [reRef_data] = reRef2(EEG);
 plot(reRef_data);
@@ -6942,9 +6963,9 @@ set([h0 h1 h2 h3 h4 v0 v1 v2 v3], 'fitboxtotext','on',...
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
 % PLS
-addpath /home/zhibin/Documents/GitHub/matlab/ramesh/plsmodel
-addpath(genpath('/home/zhibin/Documents/GitHub/matlab/external/')); 
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
+addpath /home/zhibinz2/Documents/GitHub/matlab/ramesh/plsmodel
+addpath(genpath('/home/zhibinz2/Documents/GitHub/matlab/external/')); 
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 % get pow5forpls3 from PLOT 16
 pow5forpls3;
 % (ALL states: 5freq x 32chan = 160 predictors x 288 trials)
@@ -6997,7 +7018,7 @@ title({['PLS model (R^2= ' num2str(round(R2,1)) ') in all statues: ' ...
 set(gcf,'color','w'); % set background white for copying in ubuntu
 % (Each of the 4 states: 5freq x 32 chan = 160 predictors x 72
 % trials)-updated to use mynpls_pred function
-cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/PLS
 regs=[];AIC=nan(2,10);R2s=nan(4,10);ssERs=nan(4,10);
 for c=1:4 % four states
     R2=[];reg=[];ypred=[];
@@ -7063,7 +7084,7 @@ sgtitle({['PLS model: sum-EEG(-500ms) -> GC ^{* PLOT 21}'],char(datetime('now'))
 set(gcf,'color','w'); % set background white for copying in ubuntu
 colormap(hnc)
 % topoplot for the 4 states
-addpath /home/zhibin/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
+addpath /home/zhibinz2/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 hnc = hotncold(100);
 band5names={'Delta','Theta','Alpha','Beta','Gamma'};
 states2names={'Uncouple','Mutual'};
