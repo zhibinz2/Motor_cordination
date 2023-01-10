@@ -1,4 +1,4 @@
-function [pow,freqs,df,corr,ampcorr,fcoef] = allspectra1(data,rate,maxfreq,goodepochs,win,varargin);
+function [pow,freqs,df,corr,ampcorr,fcoef] = allspectra1(data,rate,maxfreq,goodepochs,win,varargin)
 %% DESCRIPTION-
 %% function to extract speatral measures from any 
 %% segmented data in a SEGEEG structure .m
@@ -44,8 +44,8 @@ for k = 1:nbins % for each frequency
 %  coh(k,:,:) = abs(corr).^2;
 %  phase(k,:,:) = angle(sf);
   ampcorr(k,:,:) = corrcoef(transpose(squeeze(abs(fcoef(k,:,goodepochs)))));% amplitude correlation
-end;
-end;
+end
+end
 
 
 
