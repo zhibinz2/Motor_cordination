@@ -12,7 +12,7 @@ run get_pow_all.m
 % name of the 4 states
 states4names={'Uncoupled','Leading','Following','Mutual'};
 % get the averge pow for each state
-run avg_state_pow.m
+run get_state_pow.m
 
 %% Plot the average pow for the 4 states
 % set plot colors
