@@ -433,7 +433,7 @@ mymat=repmat(-0.99:0.02:0.99,100,1); % transitional color
 imagesc(mymat);colorbar;
 colormap(mycolormap);
 
-%% PLOT 2-1: Auto&Xcorr DFA GC PSA for each trial
+%% PLOT 2-1: Auto&Xcorr DFA GC PSA EEG Spectra for each trial
 % check condiSeq for synchronization
 % condiSeq=allPerm;
 
