@@ -20,7 +20,6 @@ function [pow,freqs,df,corr,ampcorr,fcoef] = allspectra1(data,rate,maxfreq,goode
 %% NOTES-
 %%
 %% 
-%
 
 if nargin < 3 || isempty(maxfreq)
   maxfreq = 50;

@@ -3,6 +3,7 @@
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
 numSes=size(seeds,1); 
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/spectra/pow_4states
 % get the sequence of conditions in all sessions
 run get_condition_all.m 
 % get the pow matrix in all essions
