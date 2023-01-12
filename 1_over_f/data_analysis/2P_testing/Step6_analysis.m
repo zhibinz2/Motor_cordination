@@ -423,6 +423,7 @@ imagesc(cat(3,showcolor(1),showcolor(2),showcolor(3)));
 % colormap
 cd /home/zhibinz2/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
 addpath /home/zhibinz2/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/color
+cd 
 hnc = hotncold(100);
 hottermap=hotter(100);
 
