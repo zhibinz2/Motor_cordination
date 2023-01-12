@@ -29,7 +29,7 @@ seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;2
         2022100402;20221005];
 numSes=size(seeds,1); 
 % get the sequence of conditions in all sessions
-run get_condition_all.m 
+run get_condition_all.m
 % get the pow matrix in all essions
 run get_pow_all.m 
 
@@ -44,7 +44,19 @@ run plot_settings.m
 % draw the plots
 run draw_plots.m
 
+%% compute coh and ampcorr
 
+
+%% compute coh between L & R
+clear
+cd /ssd/zhibin/1overf/20220721_2P/Cleaned_data
+load('clean_20220721.mat')
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/spectra
+% combine dataR and dataL 
+for t=1:12
+    data=
+% cut data into epoches of 1 sec
+[epoches] = intoepoches(dataL{t}(:,1:32),sr,1);
 
             
 

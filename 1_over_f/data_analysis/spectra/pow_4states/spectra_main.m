@@ -1,5 +1,6 @@
 %% compute pow in all sessions 
 % original order of the experiment sessions
+clear
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
 numSes=size(seeds,1); 

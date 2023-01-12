@@ -22,21 +22,17 @@ for s=1:numSes
             elseif condition_all(s,t)==3; % R-lead
                 condi_pow_all{2}=cat(3,condi_pow_all{2}, squeeze(pow_all(s,2,t,:,:)));% R leading
                 condi_pow_all{3}=cat(3,condi_pow_all{3}, squeeze(pow_all(s,1,t,:,:)));% L following
-                condi_corr_all{2}=cat(4,condi_corr_all{2}, squeeze(corr_all(s,2,t,:,:,:)));
-                condi_corr_all{3}=cat(4,condi_corr_all{3}, squeeze(corr_all(s,1,t,:,:,:)));
-                condi_ampcorr_all{2}=cat(4,condi_ampcorr_all{2}, squeeze(ampcorr_all(s,2,t,:,:,:)));
-                condi_ampcorr_all{3}=cat(4,condi_ampcorr_all{3}, squeeze(ampcorr_all(s,1,t,:,:,:)));
+                condi_corr_all{2}=cat(4,condi_corr_all{1}, squeeze(corr_all(s,1,t,:,:,:)));
+                condi_corr_all{3}=cat(4,condi_corr_all{1}, squeeze(corr_all(s,2,t,:,:,:)));
+                condi_ampcorr_all{1}=cat(4,condi_ampcorr_all{1}, squeeze(ampcorr_all(s,1,t,:,:,:)));
+                condi_ampcorr_all{1}=cat(4,condi_ampcorr_all{1}, squeeze(ampcorr_all(s,2,t,:,:,:)));
             else
                 condi_pow_all{4}=cat(3,condi_pow_all{4}, squeeze(pow_all(s,1,t,:,:)));
                 condi_pow_all{4}=cat(3,condi_pow_all{4}, squeeze(pow_all(s,2,t,:,:)));
-                condi_corr_all{4}=cat(4,condi_corr_all{4}, squeeze(corr_all(s,1,t,:,:,:)));
-                condi_corr_all{4}=cat(4,condi_corr_all{4}, squeeze(corr_all(s,2,t,:,:,:)));
-                condi_ampcorr_all{4}=cat(4,condi_ampcorr_all{4}, squeeze(ampcorr_all(s,1,t,:,:,:)));
-                condi_ampcorr_all{4}=cat(4,condi_ampcorr_all{4}, squeeze(ampcorr_all(s,2,t,:,:,:)));
             end
         end
 end
-toc % Elapsed time is 5.812487 seconds.
+toc % Elapsed time is 0.055227 seconds.
 
 % % Z-score across 72 values of power separately in each of the 4 states
 % for st=1:4
@@ -51,13 +47,13 @@ for st=1:4
     condi_pow_all{st}=(condi_pow_all{st}-repmat(grand_mean,1,1,72))./repmat(grand_std,1,1,72);
 end
 
+
+
 % get average pow for each state
 avg_state_pow=nan(4,51,32); % 4 state x 51 freq x 32 chan
 for st=1:4
     avg_state_pow(st,:,:)=mean(condi_pow_all{st},3);
 end
-
-% get average corr and ampcorr for each state
 
 
 %% tryout
