@@ -20,4 +20,4 @@ run get_state_pow.m
 % set plot colors
 run plot_settings.m
 % draw the plot
-run draw_plots.m
+open draw_plots.m

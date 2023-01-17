@@ -47,8 +47,8 @@ for freq=1:51
 end
 figure;
 for st=1:4
-plot((1:51)-1,sum_ampcorr(:,st),'color',condicolors(st,:),'linewidth',2);
-title('sum of ampcorr');xlabel('freq (Hz)');ylabel('Sum of ampcorr')
+plot(0:51,sum_ampcorr(:,st),'color',condicolors(st,:));
+title('sum of ampcorr');xlabel('freq (Hz)')
 hold on;
 end
 legend(states4names{1:4});

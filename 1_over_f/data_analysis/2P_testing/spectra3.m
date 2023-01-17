@@ -24,7 +24,7 @@ xx=[];
 for i=1:nTrials
 %     xx1(:,i)=x1((SamplesLength*(i-1)+1):(SamplesLength*i),:);
 %     xx2(:,i)=x2((SamplesLength*(i-1)+1):(SamplesLength*i),:);
-    xx(:,:,nTrials)=x((SamplesLength*(i-1)+1):(SamplesLength*i),:);
+    xx(:,:,i)=x((SamplesLength*(i-1)+1):(SamplesLength*i),:);
 end
 
 %% fft

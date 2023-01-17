@@ -1,4 +1,4 @@
-function [pow,freqs,df,corr,ampcorr,fcoef] = allspectra1(data,rate,maxfreq,goodepochs,win,varargin)
+function [pow,freqs,df,coh,cprod,ampcorr,fcoef] = allspectra1(data,rate,maxfreq,goodepochs,win,varargin)
 %% DESCRIPTION-
 %% function to extract speatral measures from any 
 %% segmented data in a SEGEEG structure .m
@@ -24,7 +24,7 @@ function [pow,freqs,df,corr,ampcorr,fcoef] = allspectra1(data,rate,maxfreq,goode
 if nargin < 3 || isempty(maxfreq)
   maxfreq = 50;
 end
-if nargin < 4 || isempty(goodepochs)
+if nargin < 4 | isempty(goodepochs)
   goodepochs = 1:size(data,3);
 end
 if nargin < 5 || isempty(win)
@@ -39,8 +39,12 @@ eppow = abs(squeeze(mean(fcoef(1:nbins,:,goodepochs),3))).^2; % absolute power -
 pow = squeeze(var(fcoef(1:nbins,:,goodepochs),[],3)); % relative power - variance
 if nargout > 4
 for k = 1:nbins % for each frequency
-   corr(k,:,:) = corrcoef(transpose(squeeze(fcoef(k,:,goodepochs)))); % coherence = correlation cofficiences
+   sf = corrcoef(transpose(squeeze(fcoef(k,:,goodepochs)))); 
+   % corr = sf;
+   coh(k,:,:) = abs(sf).^2; % coherence = correlation cofficiences
+   cprod(k,:,:) = cov(transpose(squeeze(fcoef(k,:,goodepochs))));% cross spectra -Covariance
    ampcorr(k,:,:) = corrcoef(transpose(squeeze(abs(fcoef(k,:,goodepochs)))));% amplitude correlation
+end
 end
 end
 

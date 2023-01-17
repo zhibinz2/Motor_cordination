@@ -14,7 +14,7 @@ zdata=zscore(data);
 % reorganize the time series into trials (time x chans x chunks)
 epoches=[];
 for i=1:nTrials
-    epoches(:,:,nTrials)=zdata((SamplesLength*(i-1)+1):(SamplesLength*i),:);
+    epoches(:,:,i)=zdata((SamplesLength*(i-1)+1):(SamplesLength*i),:);
 end
 
 end

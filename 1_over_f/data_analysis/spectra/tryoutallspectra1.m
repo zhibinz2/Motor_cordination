@@ -2,7 +2,8 @@
 clear
 cd /ssd/zhibin/1overf/20220721_2P/Cleaned_data
 load('clean_20220721.mat')
-cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/spectra
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/spectra
+
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 tic
@@ -15,7 +16,7 @@ for t=1:12
     pow=[]; corr=[];ampcorr=[];fcoef=[];
     % cut data into epoches of 1 sec
     [epoches] = intoepoches(data{t}(:,1:32),sr,1);
-    [pow,~,~,corr,ampcorr,fcoef] = allspectra1(epoches,sr,50);
+    [pow,freqs,~,corr,ampcorr,fcoef] = allspectra1(epoches,sr,50);
     subplot(2,12,(s-1)*12+t);
     imagesc(pow);colorbar;colormap('jet');
     clim([cmin cmax]);
@@ -45,7 +46,24 @@ run plot_settings.m
 run draw_plots.m
 
 %% compute coh and ampcorr
+clear
+cd /ssd/zhibin/1overf/20220721_2P/Cleaned_data
+load('clean_20220721.mat','dataL')
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/spectra/pow_4states
 
+dataL;
+sr=2000;
+for t=1
+    epoches=[];
+    pow=[]; coh=[];ampcorr=[];fcoef=[];
+    % cut data into epoches of 1 sec
+    [epoches] = intoepoches(dataL{t}(:,1:32),sr,1);
+    [pow,~,~,coh,~,ampcorr,fcoef] = allspectra1(epoches,sr,50);
+    % imagesc(pow);colorbar;colormap('jet');
+    imagesc(squeeze(coh(6,:,:)));colorbar;colormap('jet');
+    imagesc(squeeze(ampcorr(6,:,:)));colorbar;colormap('jet');
+    % clim([cmin cmax]);
+end
 
 %% compute coh between L & R
 clear
