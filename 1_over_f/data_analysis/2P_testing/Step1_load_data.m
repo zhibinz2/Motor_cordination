@@ -3,8 +3,9 @@ clear;
 close all;
 
 % add load data functions
-cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing;
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing;
+addpath(genpath('/home/zhibinz2/Documents/GitHub/TMSi_SAGA_matlab'))
 
 % data directories
 cd /ssd/zhibin/1overf/20220515_2P/Segmented_data/Plots % Kenta and Jenny: Synch 2 - 3 Hz

@@ -2392,7 +2392,7 @@ tic
 for s=1:numSes
     clear conditions
     runid=num2str(seeds(s,:));
-    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ]);
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat'],'conditions');
     condition_all(s,:)=conditions; % 12 session x 12 trials
 end
 toc % 78 sec

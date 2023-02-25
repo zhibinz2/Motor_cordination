@@ -97,17 +97,6 @@ pos=pos';
 figure;
 plot(pos(:,1),pos(:,2),'r.','MarkerSize',25);
 text(pos(:,1),pos(:,2),labels,'VerticalAlignment','bottom','HorizontalAlignment','right');
-
-% move to origin
-halfx=(max(pos(:,1))-min(pos(:,1)))/2;
-halfy=(max(pos(:,2))-min(pos(:,2)))/2;
-pos(:,1)=pos(:,1)-halfx;
-pos(:,2)=pos(:,2)-halfy;
-figure;
-plot(pos(:,1),pos(:,2),'r.','MarkerSize',25);
-text(pos(:,1),pos(:,2),labels,'VerticalAlignment','bottom','HorizontalAlignment','right');
-
-
 % save for networkx
 save('pos.mat','pos')
 
