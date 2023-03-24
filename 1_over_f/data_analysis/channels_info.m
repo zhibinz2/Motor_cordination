@@ -48,6 +48,7 @@ text(XXPLOT,YYPLOT,labels,'VerticalAlignment','bottom','HorizontalAlignment','ri
 
 %% Extract values from chaninfo
 cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info
+load('chaninfo.mat')
 theta = extractfield(chaninfo,'theta');
 radius = extractfield(chaninfo,'radius');
 sph_theta = extractfield(chaninfo,'sph_theta');
@@ -57,6 +58,9 @@ X = extractfield(chaninfo,'X');
 Y = extractfield(chaninfo,'Y');
 Z = extractfield(chaninfo,'Z');
 labels = extractfield(chaninfo,'labels');
+
+
+
 
 Xx=X;
 Yy=Y;
@@ -107,6 +111,11 @@ figure;
 plot(pos(:,1),pos(:,2),'r.','MarkerSize',25);
 text(pos(:,1),pos(:,2),labels,'VerticalAlignment','bottom','HorizontalAlignment','right');
 
+% reverse x axis
+pos(:,1)=pos(:,1)*(-1);
+figure;
+plot(pos(:,1),pos(:,2),'r.','MarkerSize',25);
+text(pos(:,1),pos(:,2),labels,'VerticalAlignment','bottom','HorizontalAlignment','right');
 
 % save for networkx
 save('pos.mat','pos')
