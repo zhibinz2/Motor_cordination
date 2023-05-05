@@ -52,8 +52,8 @@ if ntapL <= ntapR % This means nL>nR. Will remove bad tap in L
     end
 	goodlist = setdiff([1:ntapL],find(badlist)); % for L % or ~badlist 
 	goodlistR = mindistindexL(goodlist); % get the correponding index in R
-	if goodlist(1) == 1 | goodlistR(1) == 1 % if the first tap is good
-		goodlistR = goodlistR(2:end); % Then start list from the second tap, because index of the intervals are counted before each tap from the second tap.
+	if goodlist(1) == 1 | goodlistR(1) == 1 % if the first good tap happen to be the first sample in L or R
+		goodlistR = goodlistR(2:end); % Then start from the second good tap, because index of the intervals are counted before each tap.
 		goodlist = goodlist(2:end);
 	end
 	samples(:,1) = sampL(goodlist);
