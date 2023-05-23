@@ -2223,6 +2223,19 @@ for s=1:12
     end
 end
 
+% Examine Xcorr10Lag in Mutual Synch, to see how many trials have two peak
+figure
+for s=[1 3 5 7 9 11]
+    for b=10:12
+        subplot(6,3,3*((s+1)/2-1)+b-9)
+        plot(-10:1:10,squeeze(Xcorr10Lag(s,b,:)),'k');
+        title([syn2names{1} '   ' condi4names{4}],'color',condicolors(i,:));
+        ylabel('\rho(k)');xlabel('lag');ylim([-0.2 1])
+        yline(0,'color',[1 0.8 0.2]);xline(0,'color',[1 0.8 0.2]);
+        xline(-1,'color',[1 0.8 0.2]);xline(1,'color',[1 0.8 0.2]);
+    end
+end
+
 % organized into 2x4 conditions (now 1x4 with diff colors)
 canvas(0.3,0.2);
 condi4names={ 'Uncouple','L-lead','R-lead','Mutual'};
