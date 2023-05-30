@@ -54,6 +54,12 @@ cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA
 addpath(genpath('/home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA'));
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
+
+% XPS 17
+addpath(genpath('C:\Users\zhouz\GitHub\Motor_cordination\1_over_f\data_analysis/ARFIMA'));
+addpath C:\Users\zhouz\GitHub\Motor_cordination\1_over_f/data_analysis/2P_testing
+addpath C:\Users\zhouz\GitHub\Motor_cordination\1_over_f/data_analysis/DFA
+
 %%% ARFIMA(0,d,0)
 figure('units','normalized','outerposition',[0 0 1 0.5]);
 N=600;d=0.5;stdx=20;
@@ -66,6 +72,8 @@ subplot(1,4,4); [D,Alpha1]=DFA_main(y);
 
 % Function 2
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/ARFIMA/dgp_arfima
+% XPS 17
+addpahh addpath C:\Users\zhouz\GitHub\Motor_cordination\1_over_f/ARFIMA/dgp_arfima
 % ARFIMA(0,0.8,0) >>>>  Results=dgp_arfima(0,[],[],600,1,0.8);
 figure('units','normalized','outerposition',[0 0 1 0.5]);
 T=600;SD=20;d=0.5;F=0;
@@ -120,7 +128,8 @@ for i=1:length(ds)
 end
 % cd /usr/local/MATLAB/R2019a/toolbox/bioinfo/biodemos/ %suptitle.m
 % cd /usr/local/MATLAB/R2022a/toolbox/bioinfo/biodemos/ % suptitle.m
-suptitle(['Different d with same std = ' num2str(stdx)]);
+% suptitle(['Different d with same std = ' num2str(stdx)]);
+sgtitle(['Different d with same std = ' num2str(stdx)]);
 
 figureName=['Different_d'];
 saveas(gcf,figureName,'fig');
@@ -282,6 +291,7 @@ legend({'H','H=d+0.5'},'Location','southeast');
 suptitle(['Beta and H with different d repeating 100 times (ARFIMA ([],d,[]); length of ' num2str(N) ')']);
 
 %% PLOT-6-2-1 : 2 plots with error bar for 3 different length
+addpath C:\Users\zhouz\GitHub\Motor_cordination\1_over_f\data_analysis\MSE-VARFI
 Ns=[100 600 1000]; ds=[0.1:0.1:1]; repeat=10; stdx=20;
 figure;
 tic;
@@ -290,17 +300,17 @@ for i=1:3
     subplot(1,2,1);
         hold on;
         errorbar(ds,mean(Betass,2),BetassErr,'.','color',ARFIMAcolors(i,:));
-        xlabel('d');ylabel('Beta');xlim([0 1.1]);
-        title(['Beta with standard error']);
+        xlabel('d');ylabel('alpha');xlim([0 1.1]);ylim([0 2.5])
+        title(['alpha with standard error']);
         hold off;
         if i==3;
             B=2.*ds; hold on; plot(ds,B,'color',purple);hold off;
-            legend({'N=100','N=600','N=1000','B=2*d'},'Location','southeast');
+            legend({'N=100','N=600','N=1000','Alpha=2*d'},'Location','southeast');
         end
     subplot(1,2,2);
         hold on;
         errorbar(ds,mean(Hss,2),HssErr,'.','color',ARFIMAcolors(i,:))
-        xlabel('d');ylabel('H');xlim([0 1.1]);
+        xlabel('d');ylabel('H');xlim([0 1.1]);ylim([0.5 1.6])
         title(['H with standard error']);
         hold off;
         if i==3;
@@ -308,7 +318,8 @@ for i=1:3
             legend({'N=100','N=600','N=1000','H=d+0.5'},'Location','southeast');
         end
 end
-suptitle(['Beta and H with different d repeating 100 times (ARFIMA([],d,[]); length of ' num2str(Ns) ')']);
+% suptitle(['alpha and H with different d repeating 100 times (ARFIMA([],d,[]); length of ' num2str(Ns) ')']);
+% sgtitle(['alpha and H with different d repeating 100 times (ARFIMA([],d,[]); length of ' num2str(Ns) ')']);
 toc
 
 %Elapsed time is 640.222034 seconds.
