@@ -51,9 +51,9 @@ ARFIMAcolors=[deepyellow;darkgreen;pink];
 %% PLOT-2 Try the 2 functions fit the slope to find d
 % Function 1
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA
-addpath(genpath('/home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA'));
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
+addpath(genpath('/home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA'));
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
 %%% ARFIMA(0,d,0)
 figure('units','normalized','outerposition',[0 0 1 0.5]);
 N=600;d=0.5;stdx=20;
@@ -95,9 +95,15 @@ for i=1:length(ds)
     y=Z+750;
     subplot(length(ds),4,(i-1)*4+1); 
         plot(y,'b');title(['d = ' num2str(ds(i))]);
+        ax = gca;
+        ax.FontSize = 15; 
+        xlabel('Taps');ylabel('Tapping interval (ms)')
         % ylim([680 840]);
     subplot(length(ds),4,(i-1)*4+2); 
         autocorr(y,N-1);title(['d = ' num2str(ds(i))]);
+        ylabel('Autocorrelation (\rho)')
+        ax = gca;
+        ax.FontSize = 15; 
         % ylim([-0.5 1]);
     subplot(length(ds),4,(i-1)*4+3); 
         Fs=1.3; [freqs,fcoef,beta,xx,yy,FitValues] = oneoverf(y,Fs);
@@ -105,12 +111,16 @@ for i=1:length(ds)
         hold on;
         plot(xx',FitValues,'r--');
 %         plotAdded(mdl);
+        ax = gca;
+        ax.FontSize = 15; 
         legend({'Data',['Fit (Beta=' num2str(beta) ')']},'Location','northeast');
         title(['d = ' num2str(ds(i)) '   (beta = d*2)']);
         % ylim([-2.5 1]);
     subplot(length(ds),4,(i-1)*4+4); 
         [D,Alpha1,n,F_n,FitValues]=DFA_main(y);
         plot(log10(n),log10(F_n),'bx');
+        ax = gca;
+        ax.FontSize = 15; 
         xlabel('Scale [log10(n)]'); ylabel('RMS [log10(F-n)]');
         hold on;
         plot(log10(n(1:end)),FitValues,'r--');
@@ -118,6 +128,7 @@ for i=1:length(ds)
         title(['d = ' num2str(ds(i)) '   (H = d+0.5)']);
         % ylim([0 3]);
 end
+set(gcf,'color','w'); % set background white for copying in ubuntu
 % cd /usr/local/MATLAB/R2019a/toolbox/bioinfo/biodemos/ %suptitle.m
 % cd /usr/local/MATLAB/R2022a/toolbox/bioinfo/biodemos/ % suptitle.m
 suptitle(['Different d with same std = ' num2str(stdx)]);
