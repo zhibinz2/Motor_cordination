@@ -2311,7 +2311,7 @@ sg=annotation('textbox',[0.01 0.01 0.07 0.05],'string',...
     'Xcorr ^{* PLOT 9-1}')
 set(gcf,'color','w'); % set background white for copying in ubuntu
 
-% separate synch and synco with diff color (1 x 3 direction) (publised)
+% separate synch and synco with diff color (1 x 3 direction) (published)
 Xcorr10Lag; % sorted order
 direction3names={'Independent','Unidirectional','Bidirectional'};
 sorted3inds={[1:3],[4:9],[10:12]};
@@ -7405,7 +7405,7 @@ tic
 for s=1:numSes
     runid=num2str(seeds(s,:));
     clear intervals
-    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat' ]);
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat'],'intervals');
     for b=1:12
         intervals_L{s,b}=intervals{b}(:,1); % L subject 
         intervals_R{s,b}=intervals{b}(:,2); % R subject 
