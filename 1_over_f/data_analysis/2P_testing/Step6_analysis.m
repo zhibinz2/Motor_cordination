@@ -1812,7 +1812,7 @@ H=zeros(2,12,numSes);XcorrPeakLag=zeros(12,numSes);XcorrPeak=zeros(12,numSes);
 Xcorr10Lag=nan(numSes,12,21);
 cd /ssd/zhibin/1overf/
 tic
-for r=1:numSes;
+for r=1:numSes
     clear intervals conditions sortorders
     runid = num2str(seeds(r,:));
     path = [runid '_2P/Cleaned_data/'];

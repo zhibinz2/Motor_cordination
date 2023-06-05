@@ -1,5 +1,4 @@
 clear
-
 %% addpath
 addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
@@ -325,5 +324,6 @@ sg.Rotation=90
 set(gcf,'color','w'); % set background white for copying in ubuntu
 end
 
-
+%%
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/Publish_figures
 

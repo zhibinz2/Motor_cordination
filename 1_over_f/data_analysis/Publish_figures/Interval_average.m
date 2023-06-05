@@ -1,3 +1,4 @@
+clear
 %% addpath
 addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
@@ -55,13 +56,26 @@ addpath /home/zhibinz2/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/c
 hnc = hotncold(100);
 hottermap=hotter(100);
 
-%%
-% PLOT 22 Intervals histogram (p test with all intervals) (published)
-% histogram of intertap intervals 
-% organize intervals from all sessions
+%% condition_all
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
 numSes=size(seeds,1);
+condition_all=[];
+for s=1:numSes
+    clear conditions
+    runid=num2str(seeds(s,:));
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat'],'conditions');
+    condition_all(s,:)=conditions; % 12 session x 12 trials
+end
+% reshape into a vector in time sequence
+condition_all=reshape(condition_all',[],1); % 144 x 1 
+
+%%
+
+% PLOT 22 Intervals histogram (p test with all intervals) (published)
+% histogram of intertap intervals 
+% organize intervals from all sessions
+
 cd /ssd/zhibin/1overf/
 intervals_L={}; % 12 session x 12 trials
 intervals_R={}; % 12 session x 12 trials
