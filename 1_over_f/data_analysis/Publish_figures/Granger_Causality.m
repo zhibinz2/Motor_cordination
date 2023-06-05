@@ -75,41 +75,53 @@ numSes=size(seeds,1);
 
 % (Before d removal)********
 % d estimation from H (DFA method) based on the good matched intervals
-% H=zeros(2,12,numSes);XcorrPeakLag=zeros(12,numSes);XcorrPeak=zeros(12,numSes);
-% Xcorr10Lag=nan(numSes,12,21);
-% cd /ssd/zhibin/1overf/
-% tic
-% for r=1:numSes
-%     clear intervals conditions sortorders
-%     runid = num2str(seeds(r,:));
-%     path = [runid '_2P/Cleaned_data/'];
-%     load([path  'clean_' runid '.mat']);
-%     % sort order and plot results
-%     [x,sortorder]=sort(conditions);
-%     for j = 1:12
-%         clear intL_good_dmean intR_good_dmean
-%         % After aligment
-%         % intervals{sortorder(j)}(:,1);
-%         % intervals{sortorder(j)}(:,2);
-%         % remove the mean
-%         intL_good_dmean=intervals{sortorder(j)}(:,1)-mean(intervals{sortorder(j)}(:,1));
-%         intR_good_dmean=intervals{sortorder(j)}(:,2)-mean(intervals{sortorder(j)}(:,2));
-%         % estimate the d
-%         [~,H(1,j,r)]=DFA_main(intL_good_dmean);
-%         [~,H(2,j,r)]=DFA_main(intR_good_dmean);
+H=zeros(2,12,numSes);XcorrPeakLag=zeros(12,numSes);XcorrPeak=zeros(12,numSes);
+Xcorr10Lag=nan(numSes,12,21);
+cd /ssd/zhibin/1overf/
+tic
+for r=1:numSes
+    clear intervals conditions sortorders
+    runid = num2str(seeds(r,:));
+    path = [runid '_2P/Cleaned_data/'];
+    load([path  'clean_' runid '.mat'],'intervals','conditions');
+    % sort order and plot results
+    [x,sortorder]=sort(conditions);
+    for j = 1:12
+        clear intL_good_dmean intR_good_dmean
+        % After aligment
+        % intervals{sortorder(j)}(:,1);
+        % intervals{sortorder(j)}(:,2);
+        % remove the mean
+        intL_good_dmean=intervals{sortorder(j)}(:,1)-mean(intervals{sortorder(j)}(:,1));
+        intR_good_dmean=intervals{sortorder(j)}(:,2)-mean(intervals{sortorder(j)}(:,2));
+        % estimate the d
+        [~,H(1,j,r)]=DFA_main(intL_good_dmean);
+        [~,H(2,j,r)]=DFA_main(intR_good_dmean);
 %         % Xcorr based on int_dmean_drm (before d removal)********
 %         r12=[];lags12=[];
 %         [r12,lags12]=xcorr(intL_good_dmean,intR_good_dmean,10,'normalized');
 %         XcorrPeakLag(j,r)=lags12(find(r12==max(r12)));
 %         XcorrPeak(j,r)=max(r12);
 %         Xcorr10Lag(r,j,1:21)=r12;
-%     end
-% end
-% toc
-% % 80 sec
- 
+    end
+end
+toc
 
+d1=H-0.5;
 
+%%
+
+condition_all=[];
+for s=1:numSes
+    clear conditions
+    runid=num2str(seeds(s,:));
+    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat'],'conditions');
+    condition_all(s,:)=conditions; % 12 session x 12 trials
+end
+% reshape into a vector in time sequence
+condition_all=reshape(condition_all',[],1); % 144 x 1 
+
+%%
 % d removal
 H_est2=zeros(2,12,numSes);
 int_dmean_drm=cell(2,12,numSes);
@@ -119,7 +131,7 @@ for r=1:numSes;
     clear intervals conditions sortorders
     runid = num2str(seeds(r,:));
     path = [runid '_2P/Cleaned_data/'];
-    load([path  'clean_' runid '.mat'],'intervals');
+    load([path  'clean_' runid '.mat'],'intervals','conditions');
     % sort order and plot results
     [x,sortorder]=sort(conditions);
     for j = 1:12
@@ -142,6 +154,10 @@ toc
 
 
 %%
+% orgainized the synchronization trials into 4 conditions
+condi4Ind={[1:3],[4:6],[7:9],[10:12]};
+condi4names={'Uncouple','L-lead','R-lead','Mutual'};
+syn2Ind={[1:2:11],[2:2:12]};syn2names={'Synch','Synco'};
 
 % MVGC
 % organize into time x 2 L/R matrix then apply MVGC and plot
@@ -211,6 +227,106 @@ for syn=1:2
         % F(2,1): L->R; F(1,2): R->L;
         Fs{syn,condi}=[F(2,1) F(1,2)];
     end
+end
+
+%%
+% organize into time x 2 L/R matrix then apply MVGC and collect p values (2 suplots separate synch/o)
+Fs=nan(2,4);Ps=nan(2,4); % 2 syn type x 4 conditions
+if true % calculation of GC and P values
+for condi=1
+    for t=1:2
+    test_data=[];
+    test_data=int_dmean_drm(:,condi4Ind{condi},syn2Ind{t});
+    L_mat=[];R_mat=[];
+    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),18,1));
+    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),18,1));
+    X=[];
+    X=[L_mat R_mat; R_mat L_mat];
+    X=permute(X,[2,1]);
+    [F,pval,sig] = myGCautocov(X);
+    Fs(t,1)=F(2,1);
+    Ps(t,1)=pval(2,1);
+    end
+end
+
+for condi=[2 3]
+    for t=1:2
+    test_data=[];
+    test_data=int_dmean_drm(:,condi4Ind{2},syn2Ind{t});
+    L_mat=[];R_mat=[];
+    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),18,1));
+    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),18,1));
+    X1=[];
+    X1=[L_mat R_mat];
+
+    test_data=[];
+    test_data=int_dmean_drm(:,condi4Ind{3},syn2Ind{t});
+    L_mat=[];R_mat=[];
+    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),18,1));
+    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),18,1));
+    X2=[];
+    X2=[R_mat L_mat];
+    
+    X=[];
+    X=[X1; X2];
+    X=permute(X,[2,1]);
+    [F,pval,sig] = myGCautocov(X);
+    Fs(t,2)=F(2,1);Fs(t,3)=F(1,2);
+    Ps(t,2)=pval(2,1);Ps(t,3)=pval(1,2);
+    end
+end
+
+for condi=4
+    for t=1:2
+    test_data=[];
+    test_data=int_dmean_drm(:,condi4Ind{condi},syn2Ind{t});
+    L_mat=[];R_mat=[];
+    L_mat=cell2mat(reshape(squeeze(test_data(1,:,:)),18,1));
+    R_mat=cell2mat(reshape(squeeze(test_data(2,:,:)),18,1));
+    X=[];
+    X=[L_mat R_mat; R_mat L_mat];
+    X=permute(X,[2,1]);
+    [F,pval,sig] = myGCautocov(X);
+    Fs(t,4)=F(2,1);
+    Ps(t,4)=pval(2,1);
+    end
+end
+end
+
+%%
+
+if true % barplot 4groups x 2types
+canvas(0.23, 0.4);
+model_series = Fs';
+clear b
+b = bar(model_series, 'FaceColor','flat');
+b(1).FaceColor=darkgreen;b(2).FaceColor=pink;
+xticks(1:4);xticklabels({'Uncoupled','Leader -> Follower','Follower -> Leader','Mutual'});
+xl = get(gca,'XTickLabel');  
+set(gca,'XTickLabel',xl,'fontsize',20,'FontWeight','bold')
+% set(gca,'XTickLabel',{'Uncoupled','Leading','Following','Mutual'},'fontsize',12,'FontWeight','bold');
+% label p values
+% delete(findall(gcf,'type','text'))
+% for t=1:2
+%     for p=1:4
+%         if Ps(t,p) <0.01; signifColor=red; else; signifColor=black; end
+%         if t==1
+%             text(p-0.27, Fs(t,p)+0.005, sprintf('*','Color',signifColor,'FontSize',16))
+%             % text(p-0.27, Fs(t,p)+0.005, sprintf('p=%.2f',Ps(t,p)),'Color',signifColor,'FontSize',16);
+%         else
+%             text(p+0.01, Fs(t,p)+0.005, sprintf('*','Color',signifColor,'FontSize',16))
+%             % text(p+0.01, Fs(t,p)+0.005, sprintf('p=%.2f',Ps(t,p)),'Color',signifColor,'FontSize',16);
+%         end
+%     end
+% end
+legend({'Synch','Synco'},'location','northwest','FontSize', 30);
+ylabel('GC','FontSize',17); 
+yl = get(gca,'YTickLabel');  
+set(gca,'YTickLabel',yl,'fontsize',20,'FontWeight','bold');
+% delete(sg)
+% sg=annotation('textbox',[0.2 0.01 0.7 0.07],'string',...
+%     {['MVGC (concatenate data) H-int ^{* SECT 21}'],char(datetime('now'))});
+set(gcf,'color','w'); % set background white for copying in ubuntu
 end
 
 
