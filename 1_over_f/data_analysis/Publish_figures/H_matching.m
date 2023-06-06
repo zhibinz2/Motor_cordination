@@ -327,3 +327,382 @@ end
 %%
 cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/Publish_figures
 
+
+%% real H
+figure
+xxx=H_Lall(mutualInd_LR(1:36));
+yyy=H_Rall(mutualInd_LR(1:36));
+A=polyfit(xxx,yyy,1)
+subplot(121);plot(xxx,yyy,'r.')
+hold on; plot(linspace(0,36,36),A(1)*linspace(0,36,36)+A(2),'m-');hold off
+xlabel('x');ylabel('y')
+text(max(xxx)-1,max(yyy)-0.5,sprintf('slope=%.2f',A(1)),'Color',pink,'FontSize', 15)
+ylim([0,1.4]);xlim([0,1.4])
+grid on
+
+A=polyfit(yyy,xxx,1)
+subplot(122);plot(yyy,xxx,'b.')
+hold on; plot(linspace(0,36,36),A(1)*linspace(0,36,36)+A(2),'m-');hold off
+xlabel('y');ylabel('x')
+text(max(yyy)-1,max(xxx)-0.5,sprintf('slope=%.2f',A(1)),'Color',pink,'FontSize', 15)
+ylim([0,1.4]);xlim([0,1.4])
+grid on
+
+sgtitle('real H')
+set(gcf,'color','w');
+
+
+%% simulate near perfect aligned H
+figure
+xxx=H_Lall(mutualInd_LR(1:36));
+yyy=H_Rall(mutualInd_LR(1:36));
+A=polyfit(xxx,yyy,1)
+x=linspace(0,1.4,36);
+y=A(1)*linspace(0,1.4,36)+A(2);
+subplot(121);
+plot(x,y,'r.');hold off
+xlabel('x');ylabel('y')
+text(max(xxx)-1,max(yyy)-0.5,sprintf('slope=%.2f',A(1)),'Color',pink,'FontSize', 15)
+ylim([0,1.4]);xlim([0,1.4])
+grid on
+
+subplot(122);
+plot(y,x,'b.');
+xlabel('y');ylabel('x')
+AA=polyfit(y,x,1)
+text(max(y)-1,max(x)-0.5,sprintf('slope=%.2f',AA(1)),'Color',pink,'FontSize', 15)
+ylim([0,1.4]);xlim([0,1.4]);
+grid on
+
+
+sgtitle('simulated H (perfectly alligned)')
+set(gcf,'color','w');
+
+
+%% 262144 combinations for uncouple
+H_Lsynch_uncouple=[
+H_Lall(uncoupleInd_LR(synchind(1:3)))        ;
+H_Lall(uncoupleInd_LR(synchind(4:6)))        ;
+H_Lall(uncoupleInd_LR(synchind(7:9)))        ;
+H_Lall(uncoupleInd_LR(synchind(10:12)))      ;
+H_Lall(uncoupleInd_LR(synchind(13:15)))      ;
+H_Lall(uncoupleInd_LR(synchind(16:18)))      ];
+
+H_Rsynch_uncouple=[
+H_Rall(uncoupleInd_LR(synchind(1:3)));
+H_Rall(uncoupleInd_LR(synchind(4:6)));
+H_Rall(uncoupleInd_LR(synchind(7:9)));
+H_Rall(uncoupleInd_LR(synchind(10:12)));
+H_Rall(uncoupleInd_LR(synchind(13:15)));
+H_Rall(uncoupleInd_LR(synchind(16:18)))];
+
+H_LRall_uncouple=[H_Lsynch_uncouple H_Rsynch_uncouple];
+
+size(ff2n(18),1)
+
+all_combinations=ff2n(18);
+
+orginal_combination=[H_Lsynch_uncouple'; H_Rsynch_uncouple']
+H_LRall_uncouple_synch_combinations=zeros(2,18,size(ff2n(18),1));
+for i = 1:size(ff2n(18),1)
+    logical_combination=[logical(all_combinations(i,:));
+        ~logical(all_combinations(i,:))];
+    H_LRall_uncouple_synch_combinations(:,:,i)=[orginal_combination(logical_combination)';
+        orginal_combination(~logical_combination)'];
+end
+
+H_LRall_uncouple_synch_combinations_reshape=reshape( ...
+    H_LRall_uncouple_synch_combinations,2,size(ff2n(18),1)*18);
+
+size(H_LRall_uncouple_synch_combinations_reshape)
+
+H_LRall_uncouple_synch_combinations_reshape(:,1:18)
+H_LRall_uncouple_synch_combinations(:,1:18,1)
+
+H_LRall_uncouple_synch_combinations_reshape(:,end-17:end)
+H_LRall_uncouple_synch_combinations(:,1:18,end)
+
+H_LRall_uncouple_synch_combinations_reshape;
+
+xxx=H_LRall_uncouple_synch_combinations_reshape(1,:);
+yyy=H_LRall_uncouple_synch_combinations_reshape(2,:);
+A=polyfit(xxx,yyy,1)
+
+
+
+H_Lsynco_uncouple=[
+H_Lall(uncoupleInd_LR(syncoind(1:3)))     ; 
+H_Lall(uncoupleInd_LR(syncoind(4:6)))     ; 
+H_Lall(uncoupleInd_LR(syncoind(7:9)))     ; 
+H_Lall(uncoupleInd_LR(syncoind(10:12)))   ; 
+H_Lall(uncoupleInd_LR(syncoind(13:15)))   ; 
+H_Lall(uncoupleInd_LR(syncoind(16:18)))   ];
+
+H_Rsynco_uncouple=[
+H_Rall(uncoupleInd_LR(syncoind(1:3)));
+H_Rall(uncoupleInd_LR(syncoind(4:6)));
+H_Rall(uncoupleInd_LR(syncoind(7:9)));
+H_Rall(uncoupleInd_LR(syncoind(10:12)));
+H_Rall(uncoupleInd_LR(syncoind(13:15)));
+H_Rall(uncoupleInd_LR(syncoind(16:18)))];
+
+
+H_LRsynco_uncouple=[H_Lsynco_uncouple H_Rsynco_uncouple];
+
+
+size(ff2n(18),1)
+
+all_combinations=ff2n(18);
+
+orginal_combination=[H_Lsynco_uncouple'; H_Rsynco_uncouple']
+H_LRall_uncouple_synco_combinations=zeros(2,18,size(ff2n(18),1));
+for i = 1:size(ff2n(18),1)
+    logical_combination=[logical(all_combinations(i,:));
+        ~logical(all_combinations(i,:))];
+    H_LRall_uncouple_synco_combinations(:,:,i)=[orginal_combination(logical_combination)';
+        orginal_combination(~logical_combination)'];
+end
+
+H_LRall_uncouple_synco_combinations_reshape=reshape( ...
+    H_LRall_uncouple_synco_combinations,2,size(ff2n(18),1)*18);
+
+size(H_LRall_uncouple_synco_combinations_reshape)
+
+H_LRall_uncouple_synco_combinations_reshape(:,1:18)
+H_LRall_uncouple_synco_combinations(:,1:18,1)
+
+H_LRall_uncouple_synco_combinations_reshape(:,end-17:end)
+H_LRall_uncouple_synco_combinations(:,1:18,end)
+
+H_LRall_uncouple_synco_combinations_reshape;
+
+xxx=H_LRall_uncouple_synco_combinations_reshape(1,:);
+yyy=H_LRall_uncouple_synco_combinations_reshape(2,:);
+A=polyfit(xxx,yyy,1)
+
+
+xxx=[H_LRall_uncouple_synch_combinations_reshape(1,:) H_LRall_uncouple_synco_combinations_reshape(1,:)];
+yyy=[H_LRall_uncouple_synch_combinations_reshape(2,:) H_LRall_uncouple_synco_combinations_reshape(2,:)];
+A=polyfit(xxx,yyy,1)
+
+%% 262144 combinations for Mutual
+H_Lsynch_mutual=[
+H_Lall(mutualInd_LR(synchind(1:3)))          ;
+H_Lall(mutualInd_LR(synchind(4:6)))          ;
+H_Lall(mutualInd_LR(synchind(7:9)))          ;
+H_Lall(mutualInd_LR(synchind(10:12)))        ;
+H_Lall(mutualInd_LR(synchind(13:15)))        ;
+H_Lall(mutualInd_LR(synchind(16:18)))        ];
+
+H_Rsynch_mutual=[
+H_Rall(mutualInd_LR(synchind(1:3)))         ;
+H_Rall(mutualInd_LR(synchind(4:6)))         ;
+H_Rall(mutualInd_LR(synchind(7:9)))         ;
+H_Rall(mutualInd_LR(synchind(10:12)))       ;
+H_Rall(mutualInd_LR(synchind(13:15)))       ;
+H_Rall(mutualInd_LR(synchind(16:18)))       ];
+
+H_LRall_mutual=[H_Lsynch_mutual H_Rsynch_mutual];
+
+
+size(ff2n(18),1)
+
+all_combinations=ff2n(18);
+
+orginal_combination=[H_Lsynch_mutual'; H_Rsynch_mutual']
+H_LRall_mutual_synch_combinations=zeros(2,18,size(ff2n(18),1));
+for i = 1:size(ff2n(18),1)
+    logical_combination=[logical(all_combinations(i,:));
+        ~logical(all_combinations(i,:))];
+    H_LRall_mutual_synch_combinations(:,:,i)=[orginal_combination(logical_combination)';
+        orginal_combination(~logical_combination)'];
+end
+
+H_LRall_mutual_synch_combinations_reshape=reshape( ...
+    H_LRall_mutual_synch_combinations,2,size(ff2n(18),1)*18);
+
+size(H_LRall_mutual_synch_combinations_reshape)
+
+H_LRall_mutual_synch_combinations_reshape(:,1:18)
+H_LRall_mutual_synch_combinations(:,1:18,1)
+
+H_LRall_mutual_synch_combinations_reshape(:,end-17:end)
+H_LRall_mutual_synch_combinations(:,1:18,end)
+
+H_LRall_mutual_synch_combinations_reshape;
+
+xxx=H_LRall_mutual_synch_combinations_reshape(1,:);
+yyy=H_LRall_mutual_synch_combinations_reshape(2,:);
+A=polyfit(xxx,yyy,1)
+
+
+H_Lsynco_mutual=[
+H_Lall(mutualInd_LR(syncoind(1:3)))   ;       
+H_Lall(mutualInd_LR(syncoind(4:6)))   ;       
+H_Lall(mutualInd_LR(syncoind(7:9)))   ;       
+H_Lall(mutualInd_LR(syncoind(10:12))) ;       
+H_Lall(mutualInd_LR(syncoind(13:15))) ;       
+H_Lall(mutualInd_LR(syncoind(16:18)))    ];    
+
+
+H_Rsynco_mutual=[
+H_Rall(mutualInd_LR(syncoind(1:3)));
+H_Rall(mutualInd_LR(syncoind(4:6)));
+H_Rall(mutualInd_LR(syncoind(7:9)));
+H_Rall(mutualInd_LR(syncoind(10:12)));
+H_Rall(mutualInd_LR(syncoind(13:15)));
+H_Rall(mutualInd_LR(syncoind(16:18)))];
+
+
+H_LRsynco_mutual=[H_Lsynco_mutual H_Rsynco_mutual];
+
+
+size(ff2n(18),1)
+
+all_combinations=ff2n(18);
+
+orginal_combination=[H_Lsynco_mutual'; H_Rsynco_mutual']
+H_LRall_mutual_synco_combinations=zeros(2,18,size(ff2n(18),1));
+for i = 1:size(ff2n(18),1)
+    logical_combination=[logical(all_combinations(i,:));
+        ~logical(all_combinations(i,:))];
+    H_LRall_mutual_synco_combinations(:,:,i)=[orginal_combination(logical_combination)';
+        orginal_combination(~logical_combination)'];
+end
+
+H_LRall_mutual_synco_combinations_reshape=reshape( ...
+    H_LRall_mutual_synco_combinations,2,size(ff2n(18),1)*18);
+
+size(H_LRall_mutual_synco_combinations_reshape)
+
+H_LRall_mutual_synco_combinations_reshape(:,1:18)
+H_LRall_mutual_synco_combinations(:,1:18,1)
+
+H_LRall_mutual_synco_combinations_reshape(:,end-17:end)
+H_LRall_mutual_synco_combinations(:,1:18,end)
+
+H_LRall_mutual_synco_combinations_reshape;
+
+xxx=H_LRall_mutual_synco_combinations_reshape(1,:);
+yyy=H_LRall_mutual_synco_combinations_reshape(2,:);
+A=polyfit(xxx,yyy,1)
+
+xxx=[H_LRall_mutual_synch_combinations_reshape(1,:) H_LRall_mutual_synco_combinations_reshape(1,:)];
+yyy=[H_LRall_mutual_synch_combinations_reshape(2,:) H_LRall_mutual_synco_combinations_reshape(2,:)];
+A=polyfit(xxx,yyy,1)
+
+plot(xxx,yyy,'r.')
+
+%% 64 combinations for Mutual
+H_Lsynch_mutual=[
+H_Lall(mutualInd_LR(synchind(1:3)))          ;
+H_Lall(mutualInd_LR(synchind(4:6)))          ;
+H_Lall(mutualInd_LR(synchind(7:9)))          ;
+H_Lall(mutualInd_LR(synchind(10:12)))        ;
+H_Lall(mutualInd_LR(synchind(13:15)))        ;
+H_Lall(mutualInd_LR(synchind(16:18)))        ];
+
+H_Rsynch_mutual=[
+H_Rall(mutualInd_LR(synchind(1:3)))         ;
+H_Rall(mutualInd_LR(synchind(4:6)))         ;
+H_Rall(mutualInd_LR(synchind(7:9)))         ;
+H_Rall(mutualInd_LR(synchind(10:12)))       ;
+H_Rall(mutualInd_LR(synchind(13:15)))       ;
+H_Rall(mutualInd_LR(synchind(16:18)))       ];
+
+H_LRall_mutual=[H_Lsynch_mutual H_Rsynch_mutual];
+
+combinations=ff2n(6)
+size(combinations,1)
+all_combinations=nan(size(ff2n(6),1),size(ff2n(6),2)*3)
+for i = 1:6
+    all_combinations(:,[1:3]+(i-1)*3)=repmat(combinations(:,i),1,3);
+end
+
+orginal_combination=[H_Lsynch_mutual'; H_Rsynch_mutual']
+H_LRall_mutual_synch_combinations=nan(2,18,size(all_combinations,1));
+for i = 1:size(all_combinations,1)
+    logical_combination=[logical(all_combinations(i,:));
+        ~logical(all_combinations(i,:))];
+    H_LRall_mutual_synch_combinations(:,:,i)=[orginal_combination(logical_combination)';
+        orginal_combination(~logical_combination)'];
+end
+
+H_LRall_mutual_synch_combinations_reshape=reshape( ...
+    H_LRall_mutual_synch_combinations,2,size(all_combinations,1)*18);
+
+size(H_LRall_mutual_synch_combinations_reshape)
+
+H_LRall_mutual_synch_combinations_reshape(:,1:18)
+H_LRall_mutual_synch_combinations(:,1:18,1)
+
+H_LRall_mutual_synch_combinations_reshape(:,end-17:end)
+H_LRall_mutual_synch_combinations(:,1:18,end)
+
+H_LRall_mutual_synch_combinations_reshape;
+
+xxx=H_LRall_mutual_synch_combinations_reshape(1,:);
+yyy=H_LRall_mutual_synch_combinations_reshape(2,:);
+A_synch=polyfit(xxx,yyy,1)
+
+
+H_Lsynco_mutual=[
+H_Lall(mutualInd_LR(syncoind(1:3)))   ;       
+H_Lall(mutualInd_LR(syncoind(4:6)))   ;       
+H_Lall(mutualInd_LR(syncoind(7:9)))   ;       
+H_Lall(mutualInd_LR(syncoind(10:12))) ;       
+H_Lall(mutualInd_LR(syncoind(13:15))) ;       
+H_Lall(mutualInd_LR(syncoind(16:18)))    ];    
+
+
+H_Rsynco_mutual=[
+H_Rall(mutualInd_LR(syncoind(1:3)));
+H_Rall(mutualInd_LR(syncoind(4:6)));
+H_Rall(mutualInd_LR(syncoind(7:9)));
+H_Rall(mutualInd_LR(syncoind(10:12)));
+H_Rall(mutualInd_LR(syncoind(13:15)));
+H_Rall(mutualInd_LR(syncoind(16:18)))];
+
+
+H_LRsynco_mutual=[H_Lsynco_mutual H_Rsynco_mutual];
+
+
+combinations=ff2n(6);
+size(combinations,1);
+all_combinations=nan(size(ff2n(6),1),size(ff2n(6),2)*3);
+for i = 1:6
+    all_combinations(:,[1:3]+(i-1)*3)=repmat(combinations(:,i),1,3);
+end
+
+orginal_combination=[H_Lsynco_mutual'; H_Rsynco_mutual']
+H_LRall_mutual_synco_combinations=zeros(2,18,size(all_combinations,1));
+for i = 1:size(all_combinations,1)
+    logical_combination=[logical(all_combinations(i,:));
+        ~logical(all_combinations(i,:))];
+    H_LRall_mutual_synco_combinations(:,:,i)=[orginal_combination(logical_combination)';
+        orginal_combination(~logical_combination)'];
+end
+
+H_LRall_mutual_synco_combinations_reshape=reshape( ...
+    H_LRall_mutual_synco_combinations,2,size(all_combinations,1)*18);
+
+size(H_LRall_mutual_synco_combinations_reshape)
+
+H_LRall_mutual_synco_combinations_reshape(:,1:18);
+H_LRall_mutual_synco_combinations(:,1:18,1);
+
+H_LRall_mutual_synco_combinations_reshape(:,end-17:end);
+H_LRall_mutual_synco_combinations(:,1:18,end);
+
+H_LRall_mutual_synco_combinations_reshape;
+
+xxx=H_LRall_mutual_synco_combinations_reshape(1,:);
+yyy=H_LRall_mutual_synco_combinations_reshape(2,:);
+A_synco=polyfit(xxx,yyy,1)
+
+xxx=[H_LRall_mutual_synch_combinations_reshape(1,:) H_LRall_mutual_synco_combinations_reshape(1,:)];
+yyy=[H_LRall_mutual_synch_combinations_reshape(2,:) H_LRall_mutual_synco_combinations_reshape(2,:)];
+A_syn=polyfit(xxx,yyy,1)
+
+plot(xxx,yyy,'r.')
+
