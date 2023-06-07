@@ -127,13 +127,18 @@ end
 % transpose to (4 sessions x 2 groups)
 intervals_2t_4ss=intervals_2t_4ss';
 % compute mean and std (4 sessions x 2 groups)
-intervals_2t_4ss_mean=[];intervals_2t_4ss_std=[];
+intervals_2t_4ss_mean=[];
+intervals_2t_4ss_std=[];
 intervals_2t_4ss_ste=[]; % standard error
+intervals_2t_4ss_25=[]; % percentile
+intervals_2t_4ss_75=[]; % percentile
 for t=1:2
     for ss=1:4
         intervals_2t_4ss_mean(ss,t)=mean(intervals_2t_4ss{ss,t}./2); % and convert to ms
         intervals_2t_4ss_std(ss,t)=std(intervals_2t_4ss{ss,t}./2);
         intervals_2t_4ss_ste(ss,t)=std(intervals_2t_4ss{ss,t}./2)/sqrt(length(intervals_2t_4ss{ss,t}));
+        intervals_2t_4ss_25(ss,t)=prctile(intervals_2t_4ss{ss,t}./2,25);
+        intervals_2t_4ss_75(ss,t)=prctile(intervals_2t_4ss{ss,t}./2,75);
     end
 end
 
@@ -152,7 +157,14 @@ for i = 1:nbars
     x(i,:) = b(i).XEndPoints;
 end
 % Plot the errorbars 
-errorbar(x',model_series,model_error,'k','linestyle','none');
+errorbar(x',model_series,model_error,'k','linestyle','none','LineWidth',2);
+% Mark the 25-75 percentile on eror bars
+for t=1:2
+    for ss=1:4
+        plot(x(t,ss),intervals_2t_4ss_75(ss,t),'b_','LineWidth',2)
+        plot(x(t,ss),intervals_2t_4ss_25(ss,t),'b_','LineWidth',2)
+    end
+end
 hold off
 xticks(1:4);xticklabels({'Independent','Leader','Follower','Bidirectional'});
 xl = get(gca,'XTickLabel');  
@@ -168,3 +180,33 @@ set(gcf,'color','w'); % set background white for copying in ubuntu
 % sg.Rotation=90
 lg=legend({'Synch','Synco'},'location','north');lg.FontSize=17;
 
+
+
+%% Boxchart https://www.mathworks.com/help/matlab/ref/boxchart.html
+syn2names={'Synch','Synco'};
+st4names={'Independent','Leader','Follower','Bidirectional'};
+% organize the arrays into a table
+intervals=[];syn={};st={};
+for t=1:2
+    for ss=1:4
+        intervals_temp=intervals_2t_4ss{ss,t}./2; % and convert to ms
+        len_temp=length(intervals_temp);
+        intervals=[intervals; intervals_temp];
+        syn=[syn;repelem(syn2names(t),len_temp)'];
+        st=[st;repelem(st4names(ss),len_temp)'];
+    end
+end
+
+% put the above 3 array into 3 columns of a table
+tdl=table(intervals);
+tdl.syn=categorical(syn);
+tdl.st=categorical(st,st4names);
+boxchart(tdl.st,tdl.intervals,'GroupByColor',tdl.syn);
+ylabel('intervals (ms)');
+legend
+
+%% boxplot https://www.mathworks.com/matlabcentral/answers/566745-how-to-group-boxplots-on-matlab
+
+
+%%
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/Publish_figures

@@ -296,7 +296,7 @@ end
 %%
 
 if true % barplot 4groups x 2types
-canvas(0.23, 0.4);
+canvas(0.4, 0.5);
 model_series = Fs';
 clear b
 b = bar(model_series, 'FaceColor','flat');

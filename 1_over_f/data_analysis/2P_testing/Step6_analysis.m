@@ -7517,6 +7517,15 @@ for t=1:2
         [~,p{t,ss}(8),~,~] = ttest2([intervals_2t_4ss{ss,t}./2],[intervals_2t_4ss{4,2}./2]);
     end
 end
+figure;
+for t=1:2
+    for ss=1:4
+        subplot(2,4,(t-1)*4+ss)
+        bar(p{t,ss})
+        ylim([0,0.5])
+    end
+end
+
 %{ 
 [p,tbl,stats] = anova1([...
     [H_L_uncouple_synch H_R_uncouple_synch]' ...

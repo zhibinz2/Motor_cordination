@@ -133,13 +133,30 @@ H_LR_synco_std=[std([H_L_uncouple_synco H_R_uncouple_synco]);...
     std([H_L_Llead_synco H_R_Rlead_synco]);... 
     std([H_R_Llead_synco H_L_Rlead_synco]);...
     std([H_L_mutual_synco H_R_mutual_synco])];
-
+H_LR_synch_25=[prctile([H_L_uncouple_synch H_R_uncouple_synch],25);...
+    prctile([H_L_Llead_synch H_R_Rlead_synch],25);... 
+    prctile([H_R_Llead_synch H_L_Rlead_synch],25);...
+    prctile([H_L_mutual_synch H_R_mutual_synch],25)];
+H_LR_synco_25=[prctile([H_L_uncouple_synco H_R_uncouple_synco],25);...
+    prctile([H_L_Llead_synco H_R_Rlead_synco],25);... 
+    prctile([H_R_Llead_synco H_L_Rlead_synco],25);...
+    prctile([H_L_mutual_synco H_R_mutual_synco],25)];
+H_LR_synch_75=[prctile([H_L_uncouple_synch H_R_uncouple_synch],75);...
+    prctile([H_L_Llead_synch H_R_Rlead_synch],75);... 
+    prctile([H_R_Llead_synch H_L_Rlead_synch],75);...
+    prctile([H_L_mutual_synch H_R_mutual_synch],75)];
+H_LR_synco_75=[prctile([H_L_uncouple_synco H_R_uncouple_synco],75);...
+    prctile([H_L_Llead_synco H_R_Rlead_synco],75);... 
+    prctile([H_R_Llead_synco H_L_Rlead_synco],75);...
+    prctile([H_L_mutual_synco H_R_mutual_synco],75)];
 %% grouped barplot with errorbar (4 subplots) and statistical tests
 % (Publised)
 % https://www.mathworks.com/matlabcentral/answers/102220-how-do-i-place-errorbars-on-my-grouped-bar-graph-using-function-errorbar-in-matlab
 canvas(0.23, 0.4);
 model_series = [H_LR_synch_mean H_LR_synco_mean];
 model_error = [H_LR_synch_std H_LR_synco_std];
+model_25 = [H_LR_synch_25 H_LR_synco_25];
+model_75 = [H_LR_synch_75 H_LR_synco_75];
 b = bar(model_series, 'grouped');
 b(1).FaceColor=darkgreen;b(2).FaceColor=pink;
 hold on;
@@ -151,7 +168,14 @@ for i = 1:nbars
     x(i,:) = b(i).XEndPoints;
 end
 % Plot the errorbars 
-errorbar(x',model_series,model_error,'k','linestyle','none');
+errorbar(x',model_series,model_error,'k','linestyle','none','LineWidth',2);
+% Mark the 25-75 percentile on eror bars
+for t=1:2
+    for ss=1:4
+        plot(x(t,ss),model_75(ss,t),'b_','LineWidth',2)
+        plot(x(t,ss),model_25(ss,t),'b_','LineWidth',2)
+    end
+end
 hold off
 xticks(1:4);xticklabels({'Independent','Leader','Follower','Bidirectional'});
 xl = get(gca,'XTickLabel');  
@@ -166,4 +190,5 @@ sg.Rotation=90
 yline(0.5,'color', deepyellow,'LineWidth',5)
 lg=legend({'Synch','Synco'},'location','north');lg.FontSize-17;
 
-
+%%
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/Publish_figures

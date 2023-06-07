@@ -148,12 +148,15 @@ xlabel('DFA Hurst Exponent, Participant A','FontSize',15);
 ylabel('DFA Husrt Exponent, Participant B','FontSize',15);
 title('Independent','FontSize',15);
 
-
-% A=[];S=[]; Alpha1=[];FitValues=[];
-% A=polyfit(H_Lall(uncoupleInd_LR(1:36)),H_Rall(uncoupleInd_LR_LR(1:36)),1);
-% Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-% FitValues=polyval(A,H_Lall(uncoupleInd_LR(1:36)));
-% hold on; plot(H_Lall(uncoupleInd_LR(1:36)),FitValues,'k-','LineWidth',3);
+% fit the combined
+A=[];Alpha1=[];FitValues=[];RHO=[];xxx=[];yyy=[];
+[xxx,yyy]=keepvalues(H_Lall(uncoupleInd_LR(1:36)),H_Rall(uncoupleInd_LR(1:36)),0.2,1.4);
+A=polyfit(xxx,yyy,1);
+[RHO,~]=corr(xxx,yyy);
+Alpha1=A(1); 
+FitValues=polyval(A,xxx);
+hold on; plot(xxx,FitValues,'k-','LineWidth',3);
+text(max(xxx)+0.01,min(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
 
 % fit the synch data
 A=[];Alpha1=[];FitValues=[];RHO=[];xxx=[];yyy=[];
@@ -177,7 +180,7 @@ hold on; plot(xxx,FitValues,'-','color',pink,'LineWidth',3);
 xlim([0.2 1.4]);ylim([0.2 1.4]);
 plot([0.5 1], [0.5 1],'m--');
 hold off;
-text(max(xxx),max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',pink,'FontSize', 15)
+text(max(xxx),max(FitValues)+0.01,sprintf('\\rho=%.2f',RHO),'Color',pink,'FontSize', 15)
 % legend('synch','','','','synco','','','','location','northwest');
 % subtitle(['(uncouple: linear regression slope = ' num2str(Alpha1,'%.3f') ')'])
 grid on;
@@ -214,11 +217,16 @@ xlabel('DFA Hurst Exponent, Leader','FontSize',15);
 ylabel('DFA Hurst Exponent, Follower','FontSize',15);
 title('Unidirectional','FontSize',15);
 
-% A=[];Alpha1=[];FitValues=[];
-% A=polyfit([H_Lall(leadingInd_LR(1:36)); H_Rall(followingInd_LR(1:36))], [H_Rall(leadingInd_LR(1:36)); H_Lall(followingInd_LR(1:36))],1);
-% Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-% FitValues=polyval(A,[H_Lall(leadingInd_LR(1:36)); H_Rall(followingInd_LR(1:36))]);
-% hold on; plot([H_Lall(leadingInd_LR(1:36)); H_Rall(followingInd_LR(1:36))],FitValues,'k-','LineWidth',3);
+% fit the combined data
+A=[];Alpha1=[];FitValues=[];RHO=[];xxx=[];yyy=[];
+[xxx,yyy]=keepvalues([H_Lall(leadingInd_LR(1:36)); H_Rall(followingInd_LR(1:36))], ...
+    [H_Rall(leadingInd_LR(1:36)); H_Lall(followingInd_LR(1:36))],0.2,1.4);
+A=polyfit(xxx,yyy,1);
+[RHO,~]=corr(xxx,yyy);
+Alpha1=A(1); 
+FitValues=polyval(A,xxx);
+hold on; plot(xxx,FitValues,'k-','LineWidth',3);
+text(max(xxx)+0.01,max(FitValues),sprintf('\\rho=%.2f',RHO),'Color',[0 0 0],'FontSize', 15)
 
 % fit the synch data
 A=[];Alpha1=[];FitValues=[];RHO=[];xxx=[];yyy=[];
