@@ -163,7 +163,7 @@ delete(findall(gcf,'type','annotation'))
 sg=annotation('textbox',[0.05 0.01 0.5 0.07],'string',...
     {['mean H(matched int) ^{ *PLOT 6}' char(datetime('now'))]})
 sg.Rotation=90
-yline(0.5,'color', deepyellow)
+yline(0.5,'color', deepyellow,'LineWidth',5)
 lg=legend({'Synch','Synco'},'location','north');lg.FontSize-17;
 
 

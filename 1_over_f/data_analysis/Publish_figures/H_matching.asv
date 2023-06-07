@@ -675,7 +675,7 @@ mean(slopes)
 mean(intercepts)
 end
 
-for method3=1 % flip one subject at a time (This method gets slope of 1 !)
+for method3=1 % flip one subject at a time
 combinations=[1 0 0 0 0 0; 0 1 0 0 0 0; 0 0 1 0 0 0;
     0 0 0 1 0 0; 0 0 0 0 1 0; 0 0 0 0 0 1]
 all_combinations=nan(size(combinations,1),size(combinations,2)*3)
@@ -692,7 +692,7 @@ for i = 1:size(all_combinations,1)
         orginal_combination(~logical_combination)'];
 end
 
-slopes=nan(6,1); % intercepts=nan(6,1);
+slopes=nan(6,1); intercepts=nan(6,1);
 for i = 1:6
     xxx=H_LRall_mutual_synch_combinations(1,:,i);
     yyy=H_LRall_mutual_synch_combinations(2,:,i);
@@ -701,12 +701,12 @@ for i = 1:6
     A_synch=fitlm(xxx,yyy)%,'intercept',false)
     slopes(i)=A_synch.Coefficients.Estimate(2);
     intercepts(i)=A_synch.Coefficients.Estimate(1);
-    A_synch=fitlm(xxx,yyy,'intercept',false)
-    slopes(i)=A_synch.Coefficients.Estimate(1);
 end
 mean(slopes)
-% mean(intercepts)
+mean(intercepts)
 end
+
+
 
 H_Lsynco_mutual=[
 H_Lall(mutualInd_LR(syncoind(1:3)))   ;       
