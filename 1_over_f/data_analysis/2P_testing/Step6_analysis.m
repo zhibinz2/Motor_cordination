@@ -1190,27 +1190,27 @@ sgtitle('H from DFA in all sessions (matched int) ^{ *PLOT 6}')
 % sgtitle('H from DFA in all sessions (unmatched int) ^{ *PLOT 6-1}')
 
 % average all trials of the same condition in synch/0 (2 subplots)
-H_L_uncouple_synch = reshape(H(1,[1:3],[1:2:11]),1,[])  % L,uncouple,synch
-H_L_Llead_synch    = reshape(H(1,[4:6],[1:2:11]),1,[])  % L,L lead,synch
-H_L_Rlead_synch    = reshape(H(1,[7:9],[1:2:11]),1,[])  % L,R lead,synch
-H_L_mutual_synch   = reshape(H(1,[10:12],[1:2:11]),1,[])% L, mutual,synch
-H_R_uncouple_synch = reshape(H(2,[1:3],[1:2:11]),1,[])  % R,uncouple,synch
-H_R_Llead_synch    = reshape(H(2,[4:6],[1:2:11]),1,[])  % R,L lead,synch
-H_R_Rlead_synch    = reshape(H(2,[7:9],[1:2:11]),1,[])  % R,R lead,synch
-H_R_mutual_synch   = reshape(H(2,[10:12],[1:2:11]),1,[])% R, mutual,synch
+H_L_uncouple_synch = reshape(H(1,[1:3],[1:2:11]),1,[])  ;% L,uncouple,synch
+H_L_Llead_synch    = reshape(H(1,[4:6],[1:2:11]),1,[])  ;% L,L lead,synch
+H_L_Rlead_synch    = reshape(H(1,[7:9],[1:2:11]),1,[])  ;% L,R lead,synch
+H_L_mutual_synch   = reshape(H(1,[10:12],[1:2:11]),1,[]);% L, mutual,synch
+H_R_uncouple_synch = reshape(H(2,[1:3],[1:2:11]),1,[])  ;% R,uncouple,synch
+H_R_Llead_synch    = reshape(H(2,[4:6],[1:2:11]),1,[])  ;% R,L lead,synch
+H_R_Rlead_synch    = reshape(H(2,[7:9],[1:2:11]),1,[])  ;% R,R lead,synch
+H_R_mutual_synch   = reshape(H(2,[10:12],[1:2:11]),1,[]);% R, mutual,synch
 H_LR_synch_mean = [mean(H_L_uncouple_synch) mean(H_R_uncouple_synch);...
     mean(H_L_Llead_synch) mean(H_R_Llead_synch);...
     mean(H_L_Rlead_synch) mean(H_R_Rlead_synch);...
     mean(H_L_mutual_synch) mean(H_R_mutual_synch)];
 
-H_L_uncouple_synco = reshape(H(1,[1:3],[2:2:12]),1,[])  % R,uncouple,synco
-H_L_Llead_synco    = reshape(H(1,[4:6],[2:2:12]),1,[])  % R,L lead,synco
-H_L_Rlead_synco    = reshape(H(1,[7:9],[2:2:12]),1,[])  % R,R lead,synco
-H_L_mutual_synco   = reshape(H(1,[10:12],[2:2:12]),1,[])% R, mutual,synco
-H_R_uncouple_synco = reshape(H(2,[1:3],[2:2:12]),1,[])  % R,uncouple,synco
-H_R_Llead_synco    = reshape(H(2,[4:6],[2:2:12]),1,[])  % R,L lead,synco
-H_R_Rlead_synco    = reshape(H(2,[7:9],[2:2:12]),1,[]) % R,R lead,synco
-H_R_mutual_synco   = reshape(H(2,[10:12],[2:2:12]),1,[])% R, mutual,synco
+H_L_uncouple_synco = reshape(H(1,[1:3],[2:2:12]),1,[])  ;% R,uncouple,synco
+H_L_Llead_synco    = reshape(H(1,[4:6],[2:2:12]),1,[])  ;% R,L lead,synco
+H_L_Rlead_synco    = reshape(H(1,[7:9],[2:2:12]),1,[])  ;% R,R lead,synco
+H_L_mutual_synco   = reshape(H(1,[10:12],[2:2:12]),1,[]);% R, mutual,synco
+H_R_uncouple_synco = reshape(H(2,[1:3],[2:2:12]),1,[])  ;% R,uncouple,synco
+H_R_Llead_synco    = reshape(H(2,[4:6],[2:2:12]),1,[])  ;% R,L lead,synco
+H_R_Rlead_synco    = reshape(H(2,[7:9],[2:2:12]),1,[])  ;% R,R lead,synco
+H_R_mutual_synco   = reshape(H(2,[10:12],[2:2:12]),1,[]);% R, mutual,synco
 H_LR_synco_mean = [mean(H_L_uncouple_synco) mean(H_R_uncouple_synco);...
     mean(H_L_Llead_synco) mean(H_R_Llead_synco);...
     mean(H_L_Rlead_synco) mean(H_R_Rlead_synco);...
@@ -1302,7 +1302,7 @@ sg=annotation('textbox',[0.05 0.01 0.5 0.07],'string',...
 sg.Rotation=90
 yline(0.5,'color', deepyellow)
 lg=legend({'Synch','Synco'},'location','north');lg.FontSize-17;
-% statistical test (ANOVA) 
+% statistical test (oneway-ANOVA) 
 [p,tbl,stats] = anova1([...
     [H_L_uncouple_synch H_R_uncouple_synch]' ...
     [H_L_Llead_synch H_R_Rlead_synch]' ... 
@@ -1313,6 +1313,13 @@ lg=legend({'Synch','Synco'},'location','north');lg.FontSize-17;
     [H_R_Llead_synco H_L_Rlead_synco]' ...
     [H_L_mutual_synco H_R_mutual_synco]'...
     ]); % one-way ANOVA (work)
+[p,tbl,stats] = anova2([...
+    [[H_L_uncouple_synch H_R_uncouple_synch]' [H_L_uncouple_synco H_R_uncouple_synco]'];...
+    [[H_L_Llead_synch H_R_Rlead_synch]' [H_L_Llead_synco H_R_Rlead_synco]'];... 
+    [[H_R_Llead_synch H_L_Rlead_synch]' [H_R_Llead_synco H_L_Rlead_synco]'];...
+    [[H_L_mutual_synch H_R_mutual_synch]' [H_L_mutual_synco H_R_mutual_synco]']...
+    ],36); % two-way ANOVA (work)
+
 % Bonferroni correction
 [results,means,~,gnames] = multcompare(stats,"CriticalValueType","bonferroni"); % multi-comparison
 tbl = array2table([results],"VariableNames", ...
@@ -7616,6 +7623,9 @@ for t=1:2
     end
 end
 [p,tbl,stats] = anova1(invertal_2t_4ss_anova,invertal_2t_4ss_group);
+[p,tbl,stats] = anova2(invertal_2t_4ss_anova,invertal_2t_4ss_group);
+
+
 % statistical test (Two sample t test)
 p={};
 for t=1:2

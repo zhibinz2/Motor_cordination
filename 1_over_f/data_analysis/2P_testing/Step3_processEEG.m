@@ -174,12 +174,12 @@ end
 sgtitle('plot on top are SegInL and SegInR')
 
 %% load channel info for topoplots
-cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info
+cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info
 load('chaninfo.mat');
 chaninfo;
 % topoplot
-open /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info.m
-run /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info.m
+open /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info.m
+run /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info.m
 topoplot(1:32,chaninfo,'nosedir','+X','style','map');
 topoplot(ones(1,32),channels,'nosedir','+X','style','map','electrodes','off');colormap('hot')
 figure;

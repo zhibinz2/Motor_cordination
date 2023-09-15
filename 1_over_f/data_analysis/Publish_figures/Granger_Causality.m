@@ -1,7 +1,7 @@
 clear
 %% addpath
-addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
-addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
+% addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+% addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
 
 % d estimate and removal
 % http://www.lucafaes.net/LMSE-MSE_VARFI.html
@@ -10,7 +10,7 @@ addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis
 addpath(genpath('/home/zhibinz2/Documents/GitHub/MVGC1'));
 cd /home/zhibinz2/Documents/GitHub/MVGC1
 run startup
-addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/VAR_Granger
+% addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/VAR_Granger
 
 
 %% Color Scheme
@@ -110,16 +110,16 @@ toc
 d1=H-0.5;
 
 %%
-
-condition_all=[];
-for s=1:numSes
-    clear conditions
-    runid=num2str(seeds(s,:));
-    load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat'],'conditions');
-    condition_all(s,:)=conditions; % 12 session x 12 trials
-end
-% reshape into a vector in time sequence
-condition_all=reshape(condition_all',[],1); % 144 x 1 
+% 
+% condition_all=[];
+% for s=1:numSes
+%     clear conditions
+%     runid=num2str(seeds(s,:));
+%     load(['/ssd/zhibin/1overf/' runid '_2P/Cleaned_data/clean_' runid '.mat'],'conditions');
+%     condition_all(s,:)=conditions; % 12 session x 12 trials
+% end
+% % reshape into a vector in time sequence
+% condition_all=reshape(condition_all',[],1); % 144 x 1 
 
 %%
 % d removal
@@ -156,83 +156,84 @@ toc
 %%
 % orgainized the synchronization trials into 4 conditions
 condi4Ind={[1:3],[4:6],[7:9],[10:12]};
-condi4names={'Uncouple','L-lead','R-lead','Mutual'};
+% condi4names={'Uncouple','L-lead','R-lead','Mutual'};
 syn2Ind={[1:2:11],[2:2:12]};syn2names={'Synch','Synco'};
-
-% MVGC
-% organize into time x 2 L/R matrix then apply MVGC and plot
-Fs=cell(2,4);
-for syn=1:2
-    for condi=1:4
-        test_data=int_dmean_drm(:,condi4Ind{condi},syn2Ind{syn});
-        % Method1a: concatenate into one big trial
-        Int12LR=[];
-        for b=1:size(test_data,2) % block
-            for s=1:size(test_data,3) % session
-                    Int12LR=[Int12LR; [test_data{1,b,s} test_data{2,b,s}]];
-            end
-        end
-%         % Method1b: randomized the concatenation
+% 
+% % MVGC
+% % organize into time x 2 L/R matrix then apply MVGC and plot
+% Fs=cell(2,4);
+% for syn=1:2
+%     for condi=1:4
+%         test_data=int_dmean_drm(:,condi4Ind{condi},syn2Ind{syn});
+%         % Method1a: concatenate into one big trial
 %         Int12LR=[];
-%         for b=randperm(size(test_data,2))
-%             for s=randperm(size(test_data,3))
+%         for b=1:size(test_data,2) % block
+%             for s=1:size(test_data,3) % session
 %                     Int12LR=[Int12LR; [test_data{1,b,s} test_data{2,b,s}]];
 %             end
 %         end
-%         if syn==1; subplot(2,4,condi);end
-%         if syn==2; subplot(2,4,4+condi);end
-        X=[];
-        X=permute(Int12LR,[2,1]);
-        % Parameters
-        ntrials   = size(X,3);     % number of trials
-        nobs      = size(X,2);  % number of observations per trial
-        regmode   = 'LWR';  % VAR model estimation regression mode ('OLS', 'LWR' or empty for default)
-        icregmode = 'LWR';  % information criteria regression mode ('OLS', 'LWR' or empty for default) 
-        morder    = 'AIC';  % model order to use ('actual', 'AIC', 'BIC' or supplied numerical value)
-        momax     = 10;     % maximum model order for model order estimation
-        % recomended acmaxlags minimum = 105
-        acmaxlags = 10;   % maximum autocovariance lags (empty for automatic calculation)
-        tstat     = '';     % statistical test for MVGC:  'F' for Granger's F-test (default) or 'chi2' for Geweke's chi2 test
-        alpha     = 0.05;   % significance level for significance test
-        mhtc      = 'FDR';  % multiple hypothesis test correction (see routine 'significance')
-        % for plotting only
-        fs        = 1.3;    % sample rate (Hz)
-        fres      = [];     % frequency resolution (empty for automatic calculation)
-        nvars = size(X,1); % number of variables
-        % model order estimation
-        [AIC,BIC,moAIC,moBIC] = tsdata_to_infocrit(X,momax,icregmode);
-        % Select model order.
-        if     strcmpi(morder,'actual')
-            morder = amo;
-            fprintf('\nusing actual model order = %d\n',morder);
-        elseif strcmpi(morder,'AIC')
-            morder = moAIC;
-            fprintf('\nusing AIC best model order = %d\n',morder);
-        elseif strcmpi(morder,'BIC')
-            morder = moBIC;
-            fprintf('\nusing BIC best model order = %d\n',morder);
-        else
-            fprintf('\nusing specified model order = %d\n',morder);
-        end
-        % VAR model estimation 
-        [A,SIG] = tsdata_to_var(X,morder,regmode);
-        % Check for failed regression
-        assert(~isbad(A),'VAR estimation failed');
-        % Autocovariance calculation
-        [G,info] = var_to_autocov(A,SIG,acmaxlags);
-        var_acinfo(info,true); % report results (and bail out on error)
-        % Granger causality calculation: time domain 
-        F = autocov_to_pwcgc(G);
-        % save F
-        % F(2,1): L->R; F(1,2): R->L;
-        Fs{syn,condi}=[F(2,1) F(1,2)];
-    end
-end
-
+% %         % Method1b: randomized the concatenation
+% %         Int12LR=[];
+% %         for b=randperm(size(test_data,2))
+% %             for s=randperm(size(test_data,3))
+% %                     Int12LR=[Int12LR; [test_data{1,b,s} test_data{2,b,s}]];
+% %             end
+% %         end
+% %         if syn==1; subplot(2,4,condi);end
+% %         if syn==2; subplot(2,4,4+condi);end
+%         X=[];
+%         X=permute(Int12LR,[2,1]);
+%         % Parameters
+%         ntrials   = size(X,3);     % number of trials
+%         nobs      = size(X,2);  % number of observations per trial
+%         regmode   = 'LWR';  % VAR model estimation regression mode ('OLS', 'LWR' or empty for default)
+%         icregmode = 'LWR';  % information criteria regression mode ('OLS', 'LWR' or empty for default) 
+%         morder    = 'AIC';  % model order to use ('actual', 'AIC', 'BIC' or supplied numerical value)
+%         momax     = 10;     % maximum model order for model order estimation
+%         % recomended acmaxlags minimum = 105
+%         acmaxlags = 10;   % maximum autocovariance lags (empty for automatic calculation)
+%         tstat     = '';     % statistical test for MVGC:  'F' for Granger's F-test (default) or 'chi2' for Geweke's chi2 test
+%         alpha     = 0.05;   % significance level for significance test
+%         mhtc      = 'FDR';  % multiple hypothesis test correction (see routine 'significance')
+%         % for plotting only
+%         fs        = 1.3;    % sample rate (Hz)
+%         fres      = [];     % frequency resolution (empty for automatic calculation)
+%         nvars = size(X,1); % number of variables
+%         % model order estimation
+%         [AIC,BIC,moAIC,moBIC] = tsdata_to_infocrit(X,momax,icregmode);
+%         % Select model order.
+%         if     strcmpi(morder,'actual')
+%             morder = amo;
+%             fprintf('\nusing actual model order = %d\n',morder);
+%         elseif strcmpi(morder,'AIC')
+%             morder = moAIC;
+%             fprintf('\nusing AIC best model order = %d\n',morder);
+%         elseif strcmpi(morder,'BIC')
+%             morder = moBIC;
+%             fprintf('\nusing BIC best model order = %d\n',morder);
+%         else
+%             fprintf('\nusing specified model order = %d\n',morder);
+%         end
+%         % VAR model estimation 
+%         [A,SIG] = tsdata_to_var(X,morder,regmode);
+%         % Check for failed regression
+%         assert(~isbad(A),'VAR estimation failed');
+%         % Autocovariance calculation
+%         [G,info] = var_to_autocov(A,SIG,acmaxlags);
+%         var_acinfo(info,true); % report results (and bail out on error)
+%         % Granger causality calculation: time domain 
+%         F = autocov_to_pwcgc(G);
+%         % save F
+%         % F(2,1): L->R; F(1,2): R->L;
+%         Fs{syn,condi}=[F(2,1) F(1,2)];
+%     end
+% end
+% 
+% Fs1=Fs;
 %%
 % organize into time x 2 L/R matrix then apply MVGC and collect p values (2 suplots separate synch/o)
 Fs=nan(2,4);Ps=nan(2,4); % 2 syn type x 4 conditions
-if true % calculation of GC and P values
+% if true % calculation of GC and P values
 for condi=1
     for t=1:2
     test_data=[];
@@ -291,8 +292,9 @@ for condi=4
     Ps(t,4)=pval(2,1);
     end
 end
-end
+% end
 
+% Fs2=Fs;
 %%
 
 if true % barplot 4groups x 2types
