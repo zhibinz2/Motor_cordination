@@ -51,30 +51,25 @@ ARFIMAcolors=[deepyellow;darkgreen;pink];
 %% PLOT-2 Try the 2 functions fit the slope to find d
 % Function 1
 cd /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA
-<<<<<<< HEAD
+% hnlb
 addpath(genpath('/home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA'));
-addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+% addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
 addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
-=======
-addpath(genpath('/home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA'));
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
-addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
 
 % XPS 17
 addpath(genpath('C:\Users\zhouz\GitHub\Motor_cordination\1_over_f\data_analysis/ARFIMA'));
-addpath C:\Users\zhouz\GitHub\Motor_cordination\1_over_f/data_analysis/2P_testing
+% addpath C:\Users\zhouz\GitHub\Motor_cordination\1_over_f/data_analysis/2P_testing
 addpath C:\Users\zhouz\GitHub\Motor_cordination\1_over_f/data_analysis/DFA
 
->>>>>>> ffc38334a8fbb643c76d8c2d62720c46ae129852
-%%% ARFIMA(0,d,0)
+%% ARFIMA(0,d,0)
 figure('units','normalized','outerposition',[0 0 1 0.5]);
 N=600;d=0.5;stdx=20;
 [Z] = ARFIMA_SIM(N,[],[],d,stdx);
 y=Z+750;
 subplot(1,4,1); plot(y,'b');
 subplot(1,4,2); autocorr(y,N-1);
-subplot(1,4,3); Fs=1.3; [freqs,fcoef] = oneoverf(y,Fs);xlabel('Log(f)');ylabel('Log(power)');
-subplot(1,4,4); [D,Alpha1]=DFA_main(y);
+subplot(1,4,3); Fs=1.3; [freqs,fcoef] = oneoverf(y,Fs);
+subplot(1,4,4); [~,Alpha1]=DFA_main(y);
 
 % Function 2
 addpath /home/zhibin/Documents/GitHub/Motor_cordination/1_over_f/ARFIMA/dgp_arfima
@@ -121,24 +116,25 @@ for i=1:length(ds)
         % ylim([-0.5 1]);
     subplot(length(ds),4,(i-1)*4+3); 
         Fs=1.3; [freqs,fcoef,beta,xx,yy,FitValues] = oneoverf(y,Fs);
-        plot(xx, yy,'bx');xlabel('Log10(f)');ylabel('Log10(power)');
-        hold on;
-        plot(xx',FitValues,'r--');
-%         plotAdded(mdl);
-        ax = gca;
-        ax.FontSize = 15; 
-        legend({'Data',['Fit (Beta=' num2str(beta) ')']},'Location','northeast');
-        title(['d = ' num2str(ds(i)) '   (beta = d*2)']);
+%         plot(xx, yy,'bx');
+%         xlabel('Log10(f)');ylabel('Log10(power)');
+%         hold on;
+%         plot(xx',FitValues,'r--');
+% %         plotAdded(mdl);
+%         ax = gca;
+%         ax.FontSize = 15; 
+%         legend({'Data',['Fit (Beta=' num2str(beta) ')']},'Location','northeast');
+        title(['d = ' num2str(ds(i)) '   (Beta = d x 2)']);
         % ylim([-2.5 1]);
     subplot(length(ds),4,(i-1)*4+4); 
         [D,Alpha1,n,F_n,FitValues]=DFA_main(y);
-        plot(log10(n),log10(F_n),'bx');
-        ax = gca;
-        ax.FontSize = 15; 
-        xlabel('Scale [log10(n)]'); ylabel('RMS [log10(F-n)]');
-        hold on;
-        plot(log10(n(1:end)),FitValues,'r--');
-        legend({'Data',['Fit (H=' num2str(Alpha1) ')']},'Location','southeast');
+%         plot(log10(n),log10(F_n),'bx');
+%         ax = gca;
+%         ax.FontSize = 15; 
+%         xlabel('Scale [log10(n)]'); ylabel('RMS [log10(F-n)]');
+%         hold on;
+%         plot(log10(n(1:end)),FitValues,'r--');
+% %         legend({'Data',['Fit (H=' num2str(Alpha1) ')']},'Location','southeast');
         title(['d = ' num2str(ds(i)) '   (H = d+0.5)']);
         % ylim([0 3]);
 end
@@ -311,28 +307,29 @@ suptitle(['Beta and H with different d repeating 100 times (ARFIMA ([],d,[]); le
 addpath C:\Users\zhouz\GitHub\Motor_cordination\1_over_f\data_analysis\MSE-VARFI
 Ns=[100 600 1000]; ds=[0.1:0.1:1]; repeat=10; stdx=20;
 figure;
-tic;
+clf
+tic
 for i=1:3
     [Betass,BetassErr,Hss,HssErr] = IterARFIMA(Ns(i),ds,repeat,stdx);
     subplot(1,2,1);
         hold on;
         errorbar(ds,mean(Betass,2),BetassErr,'.','color',ARFIMAcolors(i,:));
-        xlabel('d');ylabel('alpha');xlim([0 1.1]);ylim([0 2.5])
+        xlabel('d');ylabel('Beta');xlim([0 1.1]);ylim([0 2.5])
         title(['alpha with standard error']);
         hold off;
-        if i==3;
+        if i==3
             B=2.*ds; hold on; plot(ds,B,'color',purple);hold off;
-            legend({'N=100','N=600','N=1000','Alpha=2*d'},'Location','southeast');
+            legend({'N = 100','N = 600','N = 1000','Beta = 2 x d'},'Location','southeast');
         end
     subplot(1,2,2);
         hold on;
-        errorbar(ds,mean(Hss,2),HssErr,'.','color',ARFIMAcolors(i,:))
+        errorbar(ds,mean(Hss,2),HssErr,'.','color', ARFIMAcolors(i,:))
         xlabel('d');ylabel('H');xlim([0 1.1]);ylim([0.5 1.6])
         title(['H with standard error']);
         hold off;
-        if i==3;
+        if i==3
             H=ds+0.5; hold on; plot(ds,H,'color',purple);hold off;
-            legend({'N=100','N=600','N=1000','H=d+0.5'},'Location','southeast');
+            legend({'N = 100','N = 600','N = 1000','H = d + 0.5'},'Location','southeast');
         end
 end
 % suptitle(['alpha and H with different d repeating 100 times (ARFIMA([],d,[]); length of ' num2str(Ns) ')']);

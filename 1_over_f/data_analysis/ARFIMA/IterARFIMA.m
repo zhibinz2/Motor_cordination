@@ -14,11 +14,12 @@ for j=1:length(ds)
         Z=dgp_arfima(0,[],[],N,stdx,d,0); % Good H for all length
         y=Z+750;
         % PSA
-        Fs=1.3; [~,~,beta] = oneoverf(y,Fs);
+        Fs=1.3; 
+        [~,~,beta] = oneoverf_no_plot(y,Fs);
         % DFA
-        [~,H]=DFA_main(y);
+        [~,H]=DFA_main_no_plot(y);
         % append the values
-        Betas = [Betas beta];
+        Betas = [Betas -1*beta];
         Hs = [Hs H];  
         % estimate d using Luca's MSE_VARFI
         % (http://www.lucafaes.net/LMSE-MSE_VARFI.html)

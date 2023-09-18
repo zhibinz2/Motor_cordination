@@ -17,9 +17,11 @@ F_n=zeros(Nw,1); % initialize RMS values in the FDA time series
 n=n';
  
 %  plot(n,F_n);
-plot(log10(n),log10(F_n),'x');
+h=plot(log10(n),log10(F_n),'x');
 xlabel('Scale [log10(n)]') % win_lengths 
 ylabel('RMS [log10(F-n)]') % RMS values
+% the following line skip the name of the previous plot from the legend
+h.Annotation.LegendInformation.IconDisplayStyle = 'off';
 % title('DFA')
 
 % select scales on power scale with base of 2 [2 4 8 16 32 ...] for the fit
@@ -28,9 +30,8 @@ ylabel('RMS [log10(F-n)]') % RMS values
     
 % A=polyfit(log10(n(scaleInds)),log10(F_n(scaleInds)),1);
 A=polyfit(log10(n),log10(F_n),1);
-% A=polyfit(log10(n(1:10)),log10(F_n(1:10)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-% D=3-A(1); % ? D is the dimension of the time series % ?
+D=3-A(1); % ? D is the dimension of the time series % ?
 
 
 % plot the fit
@@ -41,7 +42,7 @@ hold on;
 plot(log10(n(1:end)),FitValues,'r--');
 % % plot(log10(n(1:10)),FitValues,'r--');
 % legend({'Data',['Fit (DFA=' num2str(Alpha1) ')']},'Location','southeast');
-legend({['Fit (H = ' num2str(Alpha1) ')']},'Location','southeast');
+legend({['H =' num2str(round(Alpha1,2))]},'Location','southeast');
 
 % plot the fit
 % FitValues=polyval(A,log10(n(11:end)));
