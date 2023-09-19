@@ -12,6 +12,17 @@ cyan = [0 1 1]; % fill([0 1 1 0],[0 0 1 1],cc)
 purple = [0.6 0.1 0.9];
 ARFIMAcolors=[deepyellow;darkgreen;pink];
 
+% hnlb
+addpath(genpath('/home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/ARFIMA'));
+% addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/2P_testing
+addpath /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/DFA
+
+% XPS 17
+addpath(genpath('C:\Users\zhouz\GitHub\Motor_cordination\1_over_f\data_analysis/ARFIMA'));
+% addpath C:\Users\zhouz\GitHub\Motor_cordination\1_over_f/data_analysis/2P_testing
+addpath C:\Users\zhouz\GitHub\Motor_cordination\1_over_f/data_analysis/DFA
+
+
 %% PLOT-3 Different d
 figure('units','normalized','outerposition',[0 0 1 1]);
 clf
@@ -41,13 +52,15 @@ for i=1:length(ds)
 %         title(['d = ' num2str(ds(i)) '   (Beta = d x 2)']);
         ax = gca;
         ax.FontSize = 13; 
-        ylim([-6 8]);
+        xlim([-3 0]);
+        ylim([-6 3]);
     subplot(length(ds),4,(i-1)*4+4); 
         [D,Alpha1,n,F_n,FitValues]=DFA_main(y);
 %         title(['d = ' num2str(ds(i)) '   (H = d+0.5)']);
         ax = gca;
         ax.FontSize = 13; 
-        ylim([0 3]);
+        xlim([0.5 3]);
+        ylim([0 3.3]);
 end
 set(gcf,'color','w'); % set background white for copying in ubuntu
 sgtitle(['Different d with std = ' num2str(stdx)]);

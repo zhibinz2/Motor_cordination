@@ -18,8 +18,8 @@ n=n';
  
 %  plot(n,F_n);
 h=plot(log10(n),log10(F_n),'x');
-xlabel('Scale [log10(n)]') % win_lengths 
-ylabel('RMS [log10(F-n)]') % RMS values
+xlabel(['Scale Log' '_{' int2str(10) '}' '(n)']) % win_lengths 
+ylabel(['RMS Log' '_{' int2str(10) '}' '[F(n)]']) % RMS values
 % the following line skip the name of the previous plot from the legend
 h.Annotation.LegendInformation.IconDisplayStyle = 'off';
 % title('DFA')

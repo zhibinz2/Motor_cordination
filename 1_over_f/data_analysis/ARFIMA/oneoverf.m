@@ -14,7 +14,8 @@ function [freqs,fcoef,beta,xx,yy,FitValues] = oneoverf(y,Fs);
     
     % xx=log10(freqs(2:end));yy=log10(p(2:length(freqs)))';
     xx=log10(freqs(2:end));yy=log10(p(1:length(p)))';
-    h=plot(xx, yy,'x');xlabel('Log10(f)');ylabel('Log10(power)');
+    h=plot(xx, yy,'x');xlabel(['Log' '_{' int2str(10) '}' '(f)']);
+    ylabel(['Log' '_{' int2str(10) '}' '(power)']);
     % the following line skip the name of the previous plot from the legend
     h.Annotation.LegendInformation.IconDisplayStyle = 'off';
     hold on;
