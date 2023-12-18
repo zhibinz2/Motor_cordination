@@ -27,7 +27,7 @@ n=3
 ses_dir=['/ssd/zhibin/1overf/' num2str(seeds(n,:)) '_2P/Segmented_data/'];
 cd(ses_dir)
 % load(['data_variables' num2str(seeds(n,:)) '.mat'], 'EMG');
-load('data_structure20220804.mat', 'data')
+load('data_structure20220804.mat', 'data') % CHECK IF NOT ENVELOP
 EMG_filtered_L=data(1).EMG;
 EMG_filtered_R=data(2).EMG;
 cd /ssd/zhibin/1overf/EMG
@@ -36,7 +36,7 @@ save(['EMG_' num2str(seeds(n,:)) '.mat'], 'EMG_filtered_L','EMG_filtered_R');
 n=5
 ses_dir=['/ssd/zhibin/1overf/' num2str(seeds(n,:)) '_2P/Segmented_data/'];
 cd(ses_dir)
-load(['data_variables' num2str(seeds(n,:)) '.mat'], 'EMG');
+% load(['data_variables' num2str(seeds(n,:)) '.mat'], 'EMG'); 
 load('data_structure20220810.mat') % Failed
 EMG_filtered_L=data(1).EMG;
 EMG_filtered_R=data(2).EMG;
@@ -46,7 +46,7 @@ save(['EMG_' num2str(seeds(n,:)) '.mat'], 'EMG_filtered_L','EMG_filtered_R');
 n=7
 ses_dir=['/ssd/zhibin/1overf/' num2str(seeds(n,:)) '_2P/Segmented_data/'];
 cd(ses_dir)
-load(['data_structure' num2str(seeds(n,:)) '.mat'], 'data');
+load(['data_structure' num2str(seeds(n,:)) '.mat'], 'data'); % CHECK IF NOT ENVELOP
 EMG_filtered_L=data(1).EMG;
 EMG_filtered_R=data(2).EMG;
 cd /ssd/zhibin/1overf/EMG
