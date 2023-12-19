@@ -74,7 +74,7 @@ ylim([-1000 1000]);title(['np = ' num2str(np)]); % xlim([1000 1100]);
 hold off;
 
 %% extract EMG variables
-filtered_EMGL;filtered_EMGR;
+filtered_EMGL;
 loL;loR; % Hilbert envelop
 
 

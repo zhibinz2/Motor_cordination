@@ -38,6 +38,7 @@ ses_dir=['/ssd/zhibin/1overf/' num2str(seeds(n,:)) '_2P/Segmented_data/'];
 cd(ses_dir)
 % load(['data_variables' num2str(seeds(n,:)) '.mat'], 'EMG'); 
 load('data_structure20220810.mat') % Failed
+load('data_variables20220810.mat')
 EMG_filtered_L=data(1).EMG;
 EMG_filtered_R=data(2).EMG;
 cd /ssd/zhibin/1overf/EMG
