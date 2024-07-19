@@ -1,0 +1,20 @@
+Hi Zhibin,
+
+I am attaching some of the code I wrote to obtain the symbol sequence and match it with the trial sequence.
+
+The dyad_dist.py calculates the distances and should be the first step here, next the clustering code does the clustering, embedding and generates the symbol sequence for each subjects, on the example.ipynb there is a minimal example to match the symbols extract the indices for each trial as well as the trial structure and it also calculates the joint symbol sequence and the recurrence quantification matrix. the other py files are functions used in these three examples. Hopefully I am not forgetting to send any other necessary file. Let me know if you have any questions.
+
+
+Ramesh Srinivasan
+10:55 AM (7 hours ago)
+to Italo, me
+
+Hi Italo zhibin 
+I'd like to investigate this approach using event locked data which zhibin already has.  It requires we rethink some of the parameters.  For example probably 1 sec is the longest interval and no overlap. 
+I'll start being at work regularly july 29. 
+One of the things it would let us do is investigate the complexity of the EEG data in terms of the symbol sequences 
+
+Ramesh Srinivasan
+Professor
+Cognitive Sciences
+Biomedical Engineering
