@@ -426,6 +426,7 @@ addpath /home/zhibinz2/Documents/GitHub/matlab-archive/hnlcode/common/gen_code/c
 cd 
 hnc = hotncold(100);
 hottermap=hotter(100);
+wnc=warmncool(100);
 
 % test colormap
 mycolormap=hottermap;
@@ -3412,6 +3413,7 @@ for c=1:32
 end
 freq5_LR_Xcorr_LR_corr=[delta_LR_Xcorr_LR_corr theta_LR_Xcorr_LR_corr alpha_LR_Xcorr_LR_corr ...
     beta_LR_Xcorr_LR_corr gamma_LR_Xcorr_LR_corr];
+
 % Plot the 5 freq (1 x 5 freq)
 for plot_1by5=1;
 canvas(0.3,0.2)
