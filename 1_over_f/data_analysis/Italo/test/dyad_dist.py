@@ -171,7 +171,7 @@ def sort_key(filename):
     trial_part = int(filename.split('_')[-1].split('.')[0])  # Extract the trial number
     return trial_part
 
-directory_path = '/data/cortical_source_data/'  # Replace this with the path to your directory
+directory_path = '/ssd/zhibin/1overf/Cleaned_sourcedata/cortical_source_data/'   # Replace this with the path to your directory
 folders = list_data_folders(directory_path,'20')
 
 #Butterworth filters.
@@ -193,7 +193,7 @@ for folder in folders:
     files_dic = {}
 #    for folder in folders:
 #    folder_dic = {}
-    directory_path = '/data/cortical_source_data/' + folder
+    directory_path = '/ssd/zhibin/1overf/Cleaned_sourcedata/cortical_source_data/' + folder
     files = list_files_in_directory(directory_path)
 
     for filename in files:
@@ -254,6 +254,6 @@ for folder in folders:
         print('distance matrices calculated.')
         subject_matrices[subject] = {'distances': dist_matrix, 'sizes':sizes}
     
-    filename_save = '/data/Italo/correlation_distances/dyad_' + folder + '_distances.pkl'
+    filename_save = '/ssd/zhibin/1overf/Cleaned_sourcedata/cortical_source_data/Italo/correlation_distances/dyad_' + folder + '_distances.pkl'
     print(filename_save)
     save_to_pickle(subject_matrices, filename_save)
