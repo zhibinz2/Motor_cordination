@@ -188,7 +188,7 @@ butt_filter2,butt_w,butt_h = makefilter.makefiltersos(2000,1.0/window_len,0.5/wi
 #            '20221003','2022100401',
 #            '2022100402','20221005']
 
-folders = ['2022100401','20220816']
+folders = ['20220816','2022100401',]
 
 for folder in folders:
     print(folder)
