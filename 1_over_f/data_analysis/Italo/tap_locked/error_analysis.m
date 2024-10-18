@@ -33,10 +33,15 @@ for ses=1:12
     ses12_error_reorg{ses,12}=ses12_errors{ses}.tr12
 end
 
+error_reorg=cell(12,1);
+for ses=1:12
+    error_reorg{ses}=[ses12_error_reorg{ses,:}];
+end
+
 start_stop_reorg=cell(12,1);
 joint_seq_reorg=cell(12,1);
 for ses=1:12
-    ind_reorg=find(strcmp(seeds_cell,ses12_seeds_cell_array{ses}));
+    ind_reorg=find(strcmp(ses12_seeds_cell_array,seeds_cell{ses}));
     start_stop_reorg{ses}=ses12_start_stop_cell_array{ind_reorg};
     joint_seq_reorg{ses}=ses12_joint_seq_cell_array{ind_reorg};
 end
@@ -48,6 +53,29 @@ for ses=1:12
     numUniqJtS(ses)=length(UniqJtS{ses});
 end
 
+meanError=cell(12,1);
+seError=cell(12,1);
+for ses=1:12
+    meanError{ses}=zeros(numUniqJtS(ses),1);
+    seError{ses}=zeros(numUniqJtS(ses),1);
+    for JtS=1:numUniqJtS(ses)
+        Inds_js=find(joint_seq_reorg{ses}==UniqJtS{ses}(JtS));
+        meanError{ses}(JtS)=mean(error_reorg{ses}(Inds_js));
+        seError{ses}(JtS)=std(error_reorg{ses}(Inds_js))/sqrt(length(Inds_js));
+    end
+end
 
-
+figure
+for ses=1:12
+    subplot(3,4,ses)
+    % X values (optional)
+    x = 1:length(meanError{ses});  % X-axis positions for each group
+    
+    % Plot mean with error bars (mean ± standard error)
+    errorbar(x, meanError{ses}, seError{ses}, 'o', 'MarkerSize', 6, 'MarkerEdgeColor', 'red', 'MarkerFaceColor', 'red');
+    xlabel('Joint Symbols');
+    ylabel('Mean Error');
+    title(['Mean with Standard Error: ses' num2str(ses)]);
+    grid on;
+end
 
