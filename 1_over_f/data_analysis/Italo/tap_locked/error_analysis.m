@@ -53,7 +53,7 @@ for ses=1:12
     numUniqJtS(ses)=length(UniqJtS{ses});
 end
 
-meanError=cell(12,1);
+meanError=cell(12,1); 
 seError=cell(12,1);
 for ses=1:12
     meanError{ses}=zeros(numUniqJtS(ses),1);
@@ -65,17 +65,32 @@ for ses=1:12
     end
 end
 
+% standard offset
+S_offset_synch=0;
+S_offset_synco=2000/1.3/2/2;
+
 figure
+clf
 for ses=1:12
     subplot(3,4,ses)
     % X values (optional)
     x = 1:length(meanError{ses});  % X-axis positions for each group
     
     % Plot mean with error bars (mean ± standard error)
-    errorbar(x, meanError{ses}, seError{ses}, 'o', 'MarkerSize', 6, 'MarkerEdgeColor', 'red', 'MarkerFaceColor', 'red');
+    errorbar(x, meanError{ses}./2, seError{ses}./2, 'o', 'MarkerSize', 6, 'MarkerEdgeColor', 'red', 'MarkerFaceColor', 'red');
     xlabel('Joint Symbols');
-    ylabel('Mean Error');
+    ylabel('Mean Error (ms)');
     title(['Mean with Standard Error: ses' num2str(ses)]);
     grid on;
+    ylim([-10 400])
+
+    if mod(ses, 2) == 0 % even
+        yline(S_offset_synco,'m-')
+    else
+        yline(S_offset_synch,'m-')
+    end
 end
 
+
+
+%% load the conditions
