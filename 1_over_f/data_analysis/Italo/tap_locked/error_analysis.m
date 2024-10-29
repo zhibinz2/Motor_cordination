@@ -120,17 +120,35 @@ for s=1:numSes
         condition_reorg{s}(start_stop_reorg{s}(tr,1):start_stop_reorg{s}(tr,2))=tr_condi;
     end
 end
-
 % replace condition 2 and 3 with 2, and 4 into 3.
 for s=1:numSes
     condition_reorg{s}(find(condition_reorg{s}==3))=2;
     condition_reorg{s}(find(condition_reorg{s}==4))=3;
 end
 %% In one session, examine relationship btw error and condi
-ses=8
-
-
-%% In one session, examine relationship btw error condi and symbol in 3d or 
+ses=3; % pick a session
+% compute mean and standard error for each condition
+err3m=nan(3,1);err3se=nan(3,1);
+for c=1:3
+    err3m(c)=mean(error_reorg{ses}(find(condition_reorg{ses}==c)));
+    err3se(c)=std(error_reorg{ses}(find(condition_reorg{ses}==c)))/sqrt(length(error_reorg{ses}(find(condition_reorg{ses}==c))));
+end
+figure;
+% X values (optional)
+x = 1:length(err3m);  % X-axis positions for each group
+% Plot mean with error bars (mean ± standard error)
+errorbar(x, err3m./2, err3se./2, 'o', 'MarkerSize', 6, 'MarkerEdgeColor', 'red', 'MarkerFaceColor', 'red');
+xlabel('Conditions');
+ylabel('Mean Error (ms)');
+title(['Mean with Standard Error: ses' num2str(ses)]);
+grid on;
+% ylim([-10 400])
+% if mod(ses, 2) == 0 % even
+%     yline(S_offset_synco,'m-')
+% else
+%     yline(S_offset_synch,'m-')
+% end
+%% In one session, examine relationship btw error condi and symbol in 3d 
 
 
 
