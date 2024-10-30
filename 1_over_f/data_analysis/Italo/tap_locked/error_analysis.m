@@ -91,8 +91,10 @@ for ses=1:12
 
     if mod(ses, 2) == 0 % even
         yline(S_offset_synco,'m-')
+        subtitle('synco')
     else
         yline(S_offset_synch,'m-')
+        subtitle('synch')
     end
 end
 
@@ -100,6 +102,7 @@ end
 
 %% load the conditions
 data_path = '/home/zhibinz2/Documents/GitHub/finger_tapping_behavioral_data/';
+data_path = 'C:\Users\zhouz\GitHub\finger_tapping_behavioral_data/'
 % load conditions
 condition_all=[];
 for s=1:numSes
@@ -125,30 +128,96 @@ for s=1:numSes
     condition_reorg{s}(find(condition_reorg{s}==3))=2;
     condition_reorg{s}(find(condition_reorg{s}==4))=3;
 end
-%% In one session, examine relationship btw error and condi
-ses=3; % pick a session
-% compute mean and standard error for each condition
-err3m=nan(3,1);err3se=nan(3,1);
-for c=1:3
-    err3m(c)=mean(error_reorg{ses}(find(condition_reorg{ses}==c)));
-    err3se(c)=std(error_reorg{ses}(find(condition_reorg{ses}==c)))/sqrt(length(error_reorg{ses}(find(condition_reorg{ses}==c))));
+%%  Examine relationship btw error and condi
+err3m12=cell(12,1);
+err3se12=cell(12,1);
+for ses=1:12; % pick a session
+    subplot(3,4,ses)
+    % compute mean and standard error for each condition
+    err3m=nan(3,1);err3se=nan(3,1);
+    for c=1:3
+        err3m(c)=mean(error_reorg{ses}(find(condition_reorg{ses}==c)));
+        err3se(c)=std(error_reorg{ses}(find(condition_reorg{ses}==c)))/sqrt(length(error_reorg{ses}(find(condition_reorg{ses}==c))));
+    end
+    err3m12{ses}=err3m;
+    err3se12{ses}=err3se;
 end
-figure;
-% X values (optional)
-x = 1:length(err3m);  % X-axis positions for each group
-% Plot mean with error bars (mean ± standard error)
-errorbar(x, err3m./2, err3se./2, 'o', 'MarkerSize', 6, 'MarkerEdgeColor', 'red', 'MarkerFaceColor', 'red');
-xlabel('Conditions');
-ylabel('Mean Error (ms)');
-title(['Mean with Standard Error: ses' num2str(ses)]);
-grid on;
-% ylim([-10 400])
-% if mod(ses, 2) == 0 % even
-%     yline(S_offset_synco,'m-')
-% else
-%     yline(S_offset_synch,'m-')
-% end
+
+figure
+clf
+for ses=1:12; % pick a session
+    subplot(3,4,ses)
+    % X values (optional)
+    x = 1:length(err3m);  % X-axis positions for each group
+    % Plot mean with error bars (mean ± standard error)
+    errorbar(x, err3m12{ses}./2, err3se12{ses}./2, 'o', 'MarkerSize', 6, 'MarkerEdgeColor', 'red', 'MarkerFaceColor', 'red');
+    xlabel('Conditions');
+    ylabel('Mean Error (ms)');
+    title(['Mean with Standard Error: ses' num2str(ses)]);
+    grid on;
+    % Set custom x-axis tick positions
+    xticks([1 2 3]);xlim([0.5 3.5])
+    % Set custom x-axis tick labels
+    xticklabels({'uncouple', 'unidir', 'bidir'});
+    % ylim([-10 400])
+    if mod(ses, 2) == 0 % even
+        % yline(S_offset_synco,'m-')
+        subtitle('synco')
+    else
+        % yline(S_offset_synch,'m-')
+        subtitle('synch')
+    end
+end
+
+
 %% In one session, examine relationship btw error condi and symbol in 3d 
 
 
+figure
+clf
+for ses=1:12
+    subplot(1,12,ses)
+    colors = repmat([nan nan nan], length(condition_reorg{ses}), 1);
+    idx = condition_reorg{ses} == 1;
+    colors(idx, :) = repmat([1 0 0], sum(idx), 1);
+    idx = condition_reorg{ses} == 2;
+    colors(idx, :) = repmat([0 1 0], sum(idx), 1);
+    idx = condition_reorg{ses} == 3;
+    colors(idx, :) = repmat([0 0 1], sum(idx), 1);
+    
+    scatter3(condition_reorg{ses},error_reorg{ses},joint_seq_reorg{ses}, 36, colors, 'filled')
+    
+    % Set custom x-axis tick positions
+    xticks([1 2 3]);xlim([0.5 3.5])
+    % Set custom x-axis tick labels
+    xticklabels({'uncouple', 'unidir', 'bidir'});
+    
+    ylabel('error'); zlabel('jt synmbols')
+    
+    % view([0 0 1]) % view error and condi
+    % view([0 1 0]) % view jt sym and condi
+    view([1 0 0]) % view error and jt sym
 
+
+    if mod(ses, 2) == 0 % even
+        % yline(S_offset_synco,'m-')
+        subtitle('synco')
+    else
+        % yline(S_offset_synch,'m-')
+        subtitle('synch')
+    end
+end
+
+% Axes handle for the legend (place it at the bottom)
+axes('Position', [0.4, 0.01, 0.3, 0.08], 'Visible', 'off');
+
+% Plot colored markers for the legend
+hold on;
+plot(0.30, 0.41, 'go', 'MarkerFaceColor', 'g');  
+plot(0.31, 0.41, 'ro', 'MarkerFaceColor', 'r');  
+plot(0.32, 0.41, 'bo', 'MarkerFaceColor', 'b');  
+
+% Add text labels for the legend
+text(0.301, 0.41, 'uncouple', 'Color', 'g', 'VerticalAlignment', 'middle');
+text(0.311, 0.41, 'unidir', 'Color', 'r', 'VerticalAlignment', 'middle');
+text(0.321, 0.41, 'bidir', 'Color', 'b', 'VerticalAlignment', 'middle');
