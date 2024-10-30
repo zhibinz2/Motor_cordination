@@ -221,3 +221,29 @@ plot(0.32, 0.41, 'bo', 'MarkerFaceColor', 'b');
 text(0.301, 0.41, 'uncouple', 'Color', 'g', 'VerticalAlignment', 'middle');
 text(0.311, 0.41, 'unidir', 'Color', 'r', 'VerticalAlignment', 'middle');
 text(0.321, 0.41, 'bidir', 'Color', 'b', 'VerticalAlignment', 'middle');
+
+%% 3d cluster
+% Generate synthetic 3D data
+rng(1); % For reproducibility
+data1 = mvnrnd([1 2 3], eye(3), 100);
+data2 = mvnrnd([5 5 5], eye(3), 100);
+data3 = mvnrnd([8 1 8], eye(3), 100);
+data = [data1; data2; data3];
+
+% Number of clusters
+k = 3;
+
+% Perform k-means clustering
+[idx, centroids] = kmeans(data, k);
+
+% Create a 3D scatter plot
+figure;
+scatter3(data(:,1), data(:,2), data(:,3), 36, idx, 'filled');
+hold on;
+scatter3(centroids(:,1), centroids(:,2), centroids(:,3), 100, 'kx');
+title('3D Cluster Visualization');
+xlabel('X');
+ylabel('Y');
+zlabel('Z');
+legend('Cluster 1', 'Cluster 2', 'Cluster 3', 'Centroids');
+grid on;
