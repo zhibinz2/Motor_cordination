@@ -222,9 +222,8 @@ text(0.311, 0.2, 'unidir', 'Color', 'r', 'VerticalAlignment', 'middle');
 text(0.321, 0.2, 'bidir', 'Color', 'b', 'VerticalAlignment', 'middle');
 
 set(gcf,'color','w'); % set backg
-
 %% 3d cluster (example code)
-ses=3
+% Generate synthetic 3D data
 data = [condition_reorg{ses} (error_reorg{ses}/2)' (joint_seq_reorg{ses})'];
 
 % Number of clusters
@@ -235,35 +234,30 @@ k = 3;
 
 % Create a 3D scatter plot
 figure;
-clf
 scatter3(data(:,1), data(:,2), data(:,3), 36, idx, 'o');
 hold on;
-scatter3(centroids(:,1), centroids(:,2), centroids(:,3), 100, 'ko','filled','LineWidth',3);
+scatter3(centroids(:,1), centroids(:,2), centroids(:,3), 100, 'kx');
 title('3D Cluster Visualization');
-% Set custom x-axis tick positions
-xticks([1 2 3]);xlim([0.5 3.5])
-% Set custom x-axis tick labels
-xticklabels({'uncouple', 'unidir', 'bidir'});  
-ylabel('error (ms)'); zlabel('joint synmbols')
-% view([0 0 1]) % view error and condi
-% view([0 1 0]) % view jt sym and condi
-view([1 0 0]) % view error and jt sym
-title({['3D Cluster Visualization'],['ses' num2str(ses)]});
-if mod(ses, 2) == 0 % even
-    % yline(S_offset_synco,'m-')
-    subtitle('synco')
-else
-    % yline(S_offset_synch,'m-')
-    subtitle('synch')
-end
-legend('', 'Cluster Centroids','Location','north');
+    % Set custom x-axis tick positions
+    xticks([1 2 3]);xlim([0.5 3.5])
+    % Set custom x-axis tick labels
+    xticklabels({'uncouple', 'unidir', 'bidir'});  
+    ylabel('error (ms)'); zlabel('joint synmbols')
+
+    % view([0 0 1]) % view error and condi
+    % view([0 1 0]) % view jt sym and condi
+    view([1 0 0]) % view error and jt sym
+
+    title(['ses' num2str(ses)]);
+    if mod(ses, 2) == 0 % even
+        % yline(S_offset_synco,'m-')
+        subtitle('synco')
+    else
+        % yline(S_offset_synch,'m-')
+        subtitle('synch')
+    end
+
+
+    
+legend('Cluster 1', 'Cluster 2', 'Cluster 3', 'Centroids');
 grid on;
-
-[caz,cel] = view
-view(caz,cel);
-
-set(gcf,'color','w'); % set backg
-
-% view([0 0 1]) % view error and condi
-% view([0 1 0]) % view jt sym and condi
-view([1 0 0]) % view error and jt sym
