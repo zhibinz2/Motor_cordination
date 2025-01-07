@@ -17,7 +17,7 @@ seeds_cell = arrayfun(@num2str, seeds, 'UniformOutput', false)
 
 ses12_errors{13} % sequence same as seeds confirmed
 
-% reorganize errors from each trials
+% reorganize offsets from each trials
 ses12_error_reorg=cell(12,12);
 for ses=1:12
     ses12_error_reorg{ses,1}=ses12_errors{ses}.tr1
@@ -34,7 +34,7 @@ for ses=1:12
     ses12_error_reorg{ses,12}=ses12_errors{ses}.tr12
 end
 
-% concatenate errors in 12 trials 
+% concatenate offsets in 12 trials  (in samples)
 error_reorg=cell(12,1);
 for ses=1:12
     error_reorg{ses}=[ses12_error_reorg{ses,:}];
@@ -70,9 +70,18 @@ for ses=1:12
     end
 end
 
-% standard offset
+% standard offset (in ms)
 S_offset_synch=0;
 S_offset_synco=2000/1.3/2/2;
+% convert to relative error offset to target (in ms)
+rErr=cell(12,1);
+for ses=1:12
+    if mod(ses, 2) == 0 % syncopation
+        rErr{ses}=S_offset_synco-error_reorg{ses}./2;
+    else
+        rErr{ses}=error_reorg{ses}./2;
+    end
+end
 
 figure
 clf
@@ -267,3 +276,36 @@ set(gcf,'color','w'); % set backg
 % view([0 0 1]) % view error and condi
 % view([0 1 0]) % view jt sym and condi
 view([1 0 0]) % view error and jt sym
+
+%% session_clusterings
+% load('session_clusterings.mat');
+UniqS=cell(12,2);
+for ses=1:12
+    varname=['ses' num2str(seeds(ses))];
+    loadtmpstruct=load('session_clusterings.mat',varname);
+    loadtmpfile=loadtmpstruct.(varname);
+    for subj=1:2
+        UniqS{ses,subj}=unique(loadtmpfile(subj,:));
+    end
+end
+% count num of JtS in ses 12 in matrix
+ses=12;
+mat_JtS=zeros(length(UniqS{ses,1}),length(UniqS{ses,2}));
+% assign relative offset error to JtS in matrix
+ses_er=rErr{ses};
+mat_sumer=zeros(length(UniqS{ses,1}),length(UniqS{ses,2}));
+for indxy=1:size(loadtmpfile,2)
+    mat_JtS(loadtmpfile(1,indxy)+1,loadtmpfile(2,indxy)+1)=mat_JtS(loadtmpfile(1,indxy)+1,loadtmpfile(2,indxy)+1)+1;
+    % assign offset to JtS in matrix
+    mat_sumer(loadtmpfile(1,indxy)+1,loadtmpfile(2,indxy)+1)=mat_sumer(loadtmpfile(1,indxy)+1,loadtmpfile(2,indxy)+1)+ses_er(indxy);
+end
+figure;clf
+subplot(311);imagesc(mat_JtS);colorbar;title('symbols');ylabel('subj A'); xlabel('subj B');
+subplot(312);imagesc(mat_sumer);colorbar;title('sum of offset');ylabel('subj A'); xlabel('subj B');
+subplot(313);imagesc(mat_sumer./mat_JtS);colorbar;title('average offset (ms)');ylabel('subj A'); xlabel('subj B');
+sgtitle(['ses' num2str(ses)])
+
+
+
+
+
