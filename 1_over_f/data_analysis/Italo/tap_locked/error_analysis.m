@@ -288,6 +288,7 @@ for ses=1:12
         UniqS{ses,subj}=unique(loadtmpfile(subj,:));
     end
 end
+
 % count num of JtS in ses 12 in matrix
 ses=12;
 mat_JtS=zeros(length(UniqS{ses,1}),length(UniqS{ses,2}));
@@ -305,6 +306,21 @@ subplot(312);imagesc(mat_sumer);colorbar;title('sum of offset');ylabel('subj A')
 subplot(313);imagesc(mat_sumer./mat_JtS);colorbar;title('average offset (ms)');ylabel('subj A'); xlabel('subj B');
 sgtitle(['ses' num2str(ses)])
 
+%  Examine relationship btw error and condi
+err3m12mat=cell(12,1);
+err3se12mat=cell(12,1);
+for ses=1:12; % pick a session
+    mat_JtS=zeros(length(UniqS{ses,1}),length(UniqS{ses,2}));
+    ses_er=rErr{ses};
+    err3m=nan(3,length(UniqS{ses,1}),length(UniqS{ses,2}));
+    err3se=nan(3,length(UniqS{ses,1}),length(UniqS{ses,2}));
+    for c=1:3
+        err3m(c)=mean(error_reorg{ses}(find(condition_reorg{ses}==c)));
+        err3se(c)=std(error_reorg{ses}(find(condition_reorg{ses}==c)))/sqrt(length(error_reorg{ses}(find(condition_reorg{ses}==c))));
+    end
+    err3m12{ses}=err3m;
+    err3se12{ses}=err3se;
+end
 
 
 

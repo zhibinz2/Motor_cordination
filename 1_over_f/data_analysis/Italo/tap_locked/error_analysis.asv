@@ -73,13 +73,13 @@ end
 % standard offset (in ms)
 S_offset_synch=0;
 S_offset_synco=2000/1.3/2/2;
-% convert to relative error offset to target;
+% convert to relative error offset to target (in ms)
 rErr=cell(12,1);
 for ses=1:12
     if mod(ses, 2) == 0 % syncopation
-        rErr{ses}=S_offset_synco-error_reorg{ses};
+        rErr{ses}=S_offset_synco-error_reorg{ses}./2;
     else
-        rErr{ses}=error_reorg{ses};
+        rErr{ses}=error_reorg{ses}./2;
     end
 end
 
@@ -288,11 +288,12 @@ for ses=1:12
         UniqS{ses,subj}=unique(loadtmpfile(subj,:));
     end
 end
+
 % count num of JtS in ses 12 in matrix
 ses=12;
 mat_JtS=zeros(length(UniqS{ses,1}),length(UniqS{ses,2}));
-% assign error to JtS in matrix
-ses_er=error_reorg{ses};
+% assign relative offset error to JtS in matrix
+ses_er=rErr{ses};
 mat_sumer=zeros(length(UniqS{ses,1}),length(UniqS{ses,2}));
 for indxy=1:size(loadtmpfile,2)
     mat_JtS(loadtmpfile(1,indxy)+1,loadtmpfile(2,indxy)+1)=mat_JtS(loadtmpfile(1,indxy)+1,loadtmpfile(2,indxy)+1)+1;
@@ -300,10 +301,26 @@ for indxy=1:size(loadtmpfile,2)
     mat_sumer(loadtmpfile(1,indxy)+1,loadtmpfile(2,indxy)+1)=mat_sumer(loadtmpfile(1,indxy)+1,loadtmpfile(2,indxy)+1)+ses_er(indxy);
 end
 figure;clf
-subplot(311);imagesc(mat_JtS);colorbar;title('symbols')
-subplot(312);imagesc(mat_sumer);colorbar;title('sum of offset')
-subplot(313);imagesc(mat_sumer./mat_JtS);colorbar;title('average offset (ms)')
+subplot(311);imagesc(mat_JtS);colorbar;title('symbols');ylabel('subj A'); xlabel('subj B');
+subplot(312);imagesc(mat_sumer);colorbar;title('sum of offset');ylabel('subj A'); xlabel('subj B');
+subplot(313);imagesc(mat_sumer./mat_JtS);colorbar;title('average offset (ms)');ylabel('subj A'); xlabel('subj B');
+sgtitle(['ses' num2str(ses)])
 
+%  Examine relationship btw error and condi
+err3m12mat=cell(12,1);
+err3se12mat=cell(12,1);
+for ses=1:12; % pick a session
+    mat_JtS=zeros(length(UniqS{ses,1}),length(UniqS{ses,2}));
+    ses_er=rErr{ses};
+    err3m=nan(3,length(UniqS{ses,1}),length(UniqS{ses,2}));
+    err3se=nan(3,length(UniqS{ses,1}),length(UniqS{ses,2}));
+    for c=1:3
+        err3m(c)=mean(error_reorg{ses}(find(condition_reorg{ses}==c)));
+        err3se(c)=std(error_reorg{ses}(find(condition_reorg{ses}==c)))/sqrt(length(error_reorg{ses}(find(condition_reorg{ses}==c))));
+    end
+    err3m12{ses}=err3m;
+    err3se12{ses}=err3se;
+end
 
 
 
