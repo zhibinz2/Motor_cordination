@@ -404,9 +404,3 @@ cd /ssd/zhibin/1overf/Cleaned_sourcedata/cortical_source_data/taplocked/corr_mat
 tic
 load('dyad_20220713_matstack.mat')
 toc
-subj1tapnum'
-subj2tapnum'
-subj1filenames_cell_array'
-subj2filenames_cell_array'
-size(subj1mat)
-size(subj2mat)
