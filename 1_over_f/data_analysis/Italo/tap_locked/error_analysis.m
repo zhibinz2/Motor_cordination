@@ -310,13 +310,15 @@ sgtitle(['ses' num2str(ses)])
 err3m12mat=cell(12,1);
 err3se12mat=cell(12,1);
 for ses=1:12; % pick a session
-    mat_JtS=zeros(length(UniqS{ses,1}),length(UniqS{ses,2}));
+    mat_JtS=zeros(3,length(UniqS{ses,1}),length(UniqS{ses,2}));
     ses_er=rErr{ses};
     err3m=nan(3,length(UniqS{ses,1}),length(UniqS{ses,2}));
     err3se=nan(3,length(UniqS{ses,1}),length(UniqS{ses,2}));
     for c=1:3
-        err3m(c)=mean(error_reorg{ses}(find(condition_reorg{ses}==c)));
-        err3se(c)=std(error_reorg{ses}(find(condition_reorg{ses}==c)))/sqrt(length(error_reorg{ses}(find(condition_reorg{ses}==c))));
+        indc=find(condition_reorg{ses}==c);
+        
+        err3m(c)=mean(error_reorg{ses}(indc);
+        err3se(c)=std(error_reorg{ses}(indc))/sqrt(length(error_reorg{ses}(indc)));
     end
     err3m12{ses}=err3m;
     err3se12{ses}=err3se;
