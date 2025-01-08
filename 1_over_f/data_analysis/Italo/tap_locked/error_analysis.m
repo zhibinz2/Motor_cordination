@@ -132,6 +132,7 @@ for s=1:numSes
         condition_reorg{s}(start_stop_reorg{s}(tr,1):start_stop_reorg{s}(tr,2))=tr_condi;
     end
 end
+
 % replace condition 2 and 3 with 2, and 4 into 3.
 for s=1:numSes
     condition_reorg{s}(find(condition_reorg{s}==3))=2;
@@ -307,21 +308,35 @@ subplot(313);imagesc(mat_sumer./mat_JtS);colorbar;title('average offset (ms)');y
 sgtitle(['ses' num2str(ses)])
 
 %  Examine relationship btw error and condi
-err3m12mat=cell(12,1);
-err3se12mat=cell(12,1);
+mat_JtS12ses=cell(12,1)
+mat_sumer12ses=cell(12,1);
 for ses=1:12; % pick a session
-    mat_JtS=zeros(3,length(UniqS{ses,1}),length(UniqS{ses,2}));
+    % mat_JtS4c=cell(12,1);
+    % mat_sumer4c=cell(12,1);
+    mat_JtS=zeros(4,length(UniqS{ses,1}),length(UniqS{ses,2}));
+    mat_sumer=zeros(4,length(UniqS{ses,1}),length(UniqS{ses,2}));
     ses_er=rErr{ses};
-    err3m=nan(3,length(UniqS{ses,1}),length(UniqS{ses,2}));
-    err3se=nan(3,length(UniqS{ses,1}),length(UniqS{ses,2}));
-    for c=1:3
+    % err3m=nan(3,length(UniqS{ses,1}),length(UniqS{ses,2}));
+    % err3se=nan(3,length(UniqS{ses,1}),length(UniqS{ses,2}));
+    varname=['ses' num2str(seeds(ses))];
+    loadtmpstruct=load('session_clusterings.mat',varname);
+    loadtmpfile=loadtmpstruct.(varname);
+    for c=1:4
         indc=find(condition_reorg{ses}==c);
-        
-        err3m(c)=mean(error_reorg{ses}(indc);
-        err3se(c)=std(error_reorg{ses}(indc))/sqrt(length(error_reorg{ses}(indc)));
+        for indxy=indc
+            mat_JtS(c,loadtmpfile(1,indxy)+1,loadtmpfile(2,indxy)+1)=...
+                mat_JtS(c,loadtmpfile(1,indxy)+1,loadtmpfile(2,indxy)+1)+1;
+            mat_sumer(c,loadtmpfile(1,indxy)+1,loadtmpfile(2,indxy)+1)=...
+                mat_sumer(c,loadtmpfile(1,indxy)+1,loadtmpfile(2,indxy)+1)++ses_er(indxy);
+
+            % err3m(c)=mean(error_reorg{ses}(indc);
+            % err3se(c)=std(error_reorg{ses}(indc))/sqrt(length(error_reorg{ses}(indc)));
+        end
     end
-    err3m12{ses}=err3m;
-    err3se12{ses}=err3se;
+    mat_JtS12ses{ses}=mat_JtS;
+    mat_sumer12ses{ses}=mat_sumer;
+    % err3m12{ses}=err3m;
+    % err3se12{ses}=err3se;
 end
 
 
