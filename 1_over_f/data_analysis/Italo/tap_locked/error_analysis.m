@@ -439,12 +439,14 @@ end
 subplot(3,3,[6,9]);  % left col
 barh(row_sum, 'FaceColor', grey);  % Horizontal bar plot for row sums;
 ylim([0.5 size(mat_temp,1)+0.5]);title(['Sum of Rows']);ylabel([]);yticks([]);
+set(gca, 'YDir', 'reverse');
 % set(gca, 'YAxisLocation', 'right', 'XAxisLocation', 'top');  % Move X-axis to the top
 set(gca, 'XAxisLocation', 'bottom', 'YAxisLocation', 'right');  % Place x-axis on top
 
 subplot(3,3,[1,2]);  % row bottom
 bar(col_sum, 'FaceColor', grey);  % Bar plot for column sums
-xlim([0.5 size(mat_temp,2)+0.5]);xticks([]);xlabel([]);title(['Sum of Columns']);
+xlim([0.5 size(mat_temp,2)+0.5]);xticks([]);xlabel([]);
+title(['Sum of Columns']);
 set(gca,'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
 
 set(gcf,'color','w'); % set backg
