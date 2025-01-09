@@ -410,3 +410,91 @@ subj1filenames_cell_array'
 subj2filenames_cell_array'
 size(subj1mat)
 size(subj2mat)
+
+%% imagesc with distribution of x y summation
+% Generate a random matrix for demonstration (replace with your matrix)
+matrix = rand(10, 10);  % 10x10 matrix of random values
+% Compute the sum of rows and columns
+col_sum = sum(matrix, 1);  % Sum along each column (X-axis)
+row_sum = sum(matrix, 2);  % Sum along each row (Y-axis)
+% Create a figure
+figure1 = figure;
+ax1 = axes('Parent', figure1);  % Create axes in the first figure
+subplot(3,3,[4,5,7,8]);
+imagesc(matrix);% colorbar;
+title('mat');xlabel('x');ylabel('y')
+% set(gca, 'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
+subplot(3,3,[6,9]);  % left col
+barh(row_sum, 'FaceColor', 'r');  % Horizontal bar plot for row sums
+title('Sum of Rows');
+xlabel('Sum');
+ylabel('Y-axis');
+ylim([0.5 10.5])
+% set(gca, 'YAxisLocation', 'right', 'XAxisLocation', 'top');  % Move X-axis to the top
+set(gca, 'XAxisLocation', 'top', 'YAxisLocation', 'right');  % Place x-axis on top
+ylim([0.5 10.5])
+subplot(3,3,[1,2]);  % row bottom
+bar(col_sum, 'FaceColor', 'b');  % Bar plot for column sums
+title('Sum of Columns');
+xlabel('X-axis');
+ylabel('Sum');
+xlim([0.5 10.5])
+set(gca, 'XAxisLocation', 'bottom', 'YAxisLocation', 'right');  % Place x-axis on top
+
+
+figure2 = figure;
+ax2 = axes('Parent', figure2);  % Create axes in the first figure
+subplot(3,3,[4,5,7,8]);
+imagesc(matrix);% colorbar;
+title('mat');xlabel('x');ylabel('y')
+% set(gca, 'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
+subplot(3,3,[6,9]);  % left col
+barh(row_sum, 'FaceColor', 'r');  % Horizontal bar plot for row sums
+title('Sum of Rows');
+xlabel('Sum');
+ylabel('Y-axis');
+ylim([0.5 10.5])
+% set(gca, 'YAxisLocation', 'right', 'XAxisLocation', 'top');  % Move X-axis to the top
+set(gca, 'XAxisLocation', 'top', 'YAxisLocation', 'right');  % Place x-axis on top
+ylim([0.5 10.5])
+subplot(3,3,[1,2]);  % row bottom
+bar(col_sum, 'FaceColor', 'b');  % Bar plot for column sums
+title('Sum of Columns');
+xlabel('X-axis');
+ylabel('Sum');
+xlim([0.5 10.5])
+set(gca, 'XAxisLocation', 'bottom', 'YAxisLocation', 'right');  % Place x-axis on top
+
+
+%%
+% Create the first figure and plot something in it
+figure1 = figure;
+ax1 = axes('Parent', figure1);  % Create axes in the first figure
+imagesc(ax1, rand(10, 10));  % Plot a random matrix in the first figure
+colorbar;
+title(ax1, 'First Figure');
+
+% Create the second figure and plot something in it
+figure2 = figure;
+ax2 = axes('Parent', figure2);  % Create axes in the second figure
+imagesc(ax2, rand(10, 10));  % Plot another random matrix in the second figure
+colorbar;
+title(ax2, 'Second Figure');
+
+% Create a new figure to concatenate the content
+figure3 = figure;
+
+% Copy axes from figure1 to figure3
+ax1_copy = copyobj(ax1, figure3);  
+set(ax1_copy, 'Position', [0.1, 0.1, 0.4, 0.8]);  % Set position on the left side of figure3
+
+% Copy axes from figure2 to figure3
+ax2_copy = copyobj(ax2, figure3);  
+set(ax2_copy, 'Position', [0.55, 0.1, 0.4, 0.8]);  % Set position on the right side of figure3
+
+% Adjust the size of figure3 to accommodate both figures
+set(figure3, 'Position', [100, 100, 1000, 500]);
+
+% Close the original figures (optional)
+close(figure1);
+close(figure2);
