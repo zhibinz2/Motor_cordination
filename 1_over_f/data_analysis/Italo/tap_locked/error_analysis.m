@@ -312,7 +312,7 @@ sgtitle(['ses' num2str(ses)])
 %  Examine relationship btw error and condi
 mat4_JtS12ses=cell(12,1);
 mat4_sumer12ses=cell(12,1);
-cell_er12sc4=cell(12,1);
+cell_er12s4c=cell(12,1);
 for ses=1:12; % pick a session
     % mat_JtS4c=cell(12,1);
     % mat_sumer4c=cell(12,1);
@@ -448,7 +448,7 @@ for pc=1:size(subj1mat)
     coh(pc,:,:)=normalizeCSD(squeeze(subj1mat(pc,:,:)));
 end
 toc % 20s 
-corr_series=coh(taps,i,j);
+corr_series=coh(taps,i,j); % lots of inf , 
 
 pc=150;
 imagesc(squeeze(coh(pc,:,:)));colorbar
@@ -456,26 +456,30 @@ imagesc(squeeze(coh(pc,:,:)));colorbar
 addpath(genpath('/home/zhibinz2/Documents/GitHub/Motor_coordination_code/util'))
 [~,H]=DFA_main(corr_series);
 
+
+
 %% imagesc with distribution of x y summation
 ses=1
 c=1
-mat_temp=squeeze(mat_JtS(c,:,:));
-row_sum = sum(mat_temp, 2);  % Sum along each row 
-col_sum = sum(mat_temp, 1);  % Sum along each column 
+
+
 % Create a figure
-<<<<<<< Updated upstream
 for ses =1:12
     mat_JtS=mat4_JtS12ses{ses};
+    
     for c=1:4
         mat_temp=squeeze(mat_JtS(c,:,:));
-        figure%('Position',[2789         390        1068         953]); % get(gcf, 'outerposition')
+        row_sum = sum(mat_temp, 2);  % Sum along each row 
+        col_sum = sum(mat_temp, 1);  % Sum along each column 
+        display([ condi4names{c} '  session ' num2str(ses)]);
+        figure('Position',[2789         390        1480         796]); % get(gcf, 'outerposition')
         clf
         subplot(3,6,[7,8,13,14]);
         imagesc(mat_temp);clim([0 50]);colormap(jet0)
         % colorbar('westoutside');
         % set(gca, 'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
         title({['Symbols'],['(' condi4names{c} ')'], ['session ' num2str(ses)]},'Rotation',0,'Position',[size(mat_temp,2)+3,-2,0]);
-        cb = colorbar('southoutside');cb.Position = [0.15, 0.025, 0.3, 0.01];
+        cb = colorbar('southoutside');cb.Position = [0.13, 0.025, 0.23, 0.01];
         
         if c==2
             xlabel('leader');ylabel('follower');
@@ -486,28 +490,31 @@ for ses =1:12
         end  
         
         subplot(3,6,[9,15]);  % left col
-        barh(row_sum, 'FaceColor', grey);  % Horizontal bar plot for row sums;
+        barh(1:size(mat_temp,1),row_sum, 'FaceColor', grey);  % Horizontal bar plot for row sums;
         ylim([0.5 size(mat_temp,1)+0.5]);title(['Sum of Rows']);ylabel([]);yticks([]);
         set(gca, 'YDir', 'reverse');
         % set(gca, 'YAxisLocation', 'right', 'XAxisLocation', 'top');  % Move X-axis to the top
         set(gca, 'XAxisLocation', 'bottom', 'YAxisLocation', 'right');  % Place x-axis on top
+        xlim([0 250])
         
         subplot(3,6,[1,2]);  % row bottom
-        bar(col_sum, 'FaceColor', grey);  % Bar plot for column sums
+        bar(1:size(mat_temp,2),col_sum, 'FaceColor', grey);  % Bar plot for column sums
         xlim([0.5 size(mat_temp,2)+0.5]);xticks([]);xlabel([]);
         title(['Sum of Columns']);
         set(gca,'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
+        ylim([0 250])
         
         set(gcf,'color','w'); % set backg
         
         subplot(3,6,[10,11,16,17]);
         mat_sumer=mat4_sumer12ses{ses};
         mater_temp=squeeze(mat_sumer(c,:,:))./mat_temp;
-        imagesc(mater_temp);clim([0 S_offset_synco]);colormap(jet0)
+        imagesc(mater_temp);
+        clim([0 S_offset_synco]);colormap(jet0)
         % colorbar('westoutside');
         % set(gca, 'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
-        title({['mean Error (ms)'],[(' condi4names{c} ')'], ['session ' num2str(ses)]},'Rotation',0,'Position',[size(mat_temp,2)+3,-2,0]);
-        cb = colorbar('southoutside');cb.Position = [0.55, 0.025, 0.3, 0.01];
+        title({['Mean Error (ms)'],['(' condi4names{c} ')'], ['session ' num2str(ses)]},'Rotation',0,'Position',[size(mat_temp,2)+3,-2,0]);
+        cb = colorbar('southoutside');cb.Position = [0.54, 0.025, 0.23, 0.01];
         
         if c==2
             xlabel('leader');ylabel('follower');
@@ -519,6 +526,7 @@ for ses =1:12
         
         cell_er4c=cell_er12s4c{ses};
         cell_er=cell_er4c{c};
+        clear row_means row_sems col_means col_sems
         for row=1:size(cell_er,1)
             row_means(row)=mean([cell_er{row,:}]);
             row_sems(row)=std([cell_er{row,:}])/sqrt(length([cell_er{row,:}]));
@@ -530,64 +538,31 @@ for ses =1:12
         
         subplot(3,6,[12,18]);  % left col
         bar(1:size(mat_temp,1),row_means, 'FaceColor', grey);  % Horizontal bar plot for row sums;
-        xlim([0.5 size(mat_temp,1)+0.5]); title(['Sum of Rows']); ylabel([]);yticks([]);
+        xlim([0.5 size(mat_temp,1)+0.5]); title(['Mean of Rows']); ylabel([]);xticks([]);
         hold on; 
         % set(gca, 'XDir', 'reverse');
         view(90, 90);
-        errorbar(1:size(mat_temp,1),row_means, row_sems, 'k', 'LineStyle', 'none', 'CapSize', 8);
+        errorbar(1:size(mat_temp,1),row_means, row_sems, 'k', 'LineStyle', 'none','CapSize', 0);
         hold off;
         % set(gca, 'YAxisLocation', 'right', 'XAxisLocation', 'top');  % Move X-axis to the top
-        set(gca, 'XAxisLocation', 'bottom', 'YAxisLocation', 'right');  % Place x-axis on top
+        % set(gca, 'XAxisLocation', 'left', 'YAxisLocation', 'origin');  % Place x-axis on top
+        ylim([0 300])
         
         subplot(3,6,[4,5]);  % row bottom
-        bar(col_means, 'FaceColor', grey);  % Bar plot for column sums
-        hold on; errorbar(col_means,col_sems, 'k', 'LineStyle', 'none', 'CapSize', 8);
+        bar(1:size(mat_temp,2),col_means, 'FaceColor', grey);  % Bar plot for column sums
+        hold on; errorbar(1:size(mat_temp,2),col_means, col_sems, 'k', 'LineStyle', 'none','CapSize', 0);
         hold off;
         xlim([0.5 size(mat_temp,2)+0.5]);
         xticks([]);xlabel([]);
-        title(['Sum of Columns']);
+        title(['Mean of Columns']);
         set(gca,'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
+        ylim([0 300])
         
         set(gcf,'color','w'); % set backg
         exportgraphics(gcf, 'multiple_figures.pdf', 'Append', true); % Append to PDF
         close all;
     end
 end
-
-=======
-figure('Position',[2789         390        1068         953]); % get(gcf, 'outerposition')
-clf
-subplot(3,3,[4,5,7,8]);
-imagesc(mat_temp);clim([0 50]);colormap(jet0)
-% colorbar('westoutside');
-% set(gca, 'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
-title({['Symbols (' condi4names{c} ')'], ['session ' num2str(ses)]},'Rotation',0,'Position',[size(mat_temp,2)+3,-2,0]);
-cb = colorbar('southoutside');cb.Position = [0.18, 0.025, 0.4, 0.015];
-
-if c==2
-    xlabel('leader');ylabel('follower');
-elseif c==3
-    ylabel('leader');xlabel('follower');
-else
-    xlabel('participant A'); ylabel('participant B');
-end  
-
-
-subplot(3,3,[6,9]);  % left col
-barh(row_sum, 'FaceColor', grey);  % Horizontal bar plot for row sums;
-ylim([0.5 size(mat_temp,1)+0.5]);title(['Sum of Rows']);ylabel([]);yticks([]);
-set(gca, 'YDir', 'reverse');
-% set(gca, 'YAxisLocation', 'right', 'XAxisLocation', 'top');  % Move X-axis to the top
-set(gca, 'XAxisLocation', 'bottom', 'YAxisLocation', 'right');  % Place x-axis on top
-
-subplot(3,3,[1,2]);  % row bottom
-bar(col_sum, 'FaceColor', grey);  % Bar plot for column sums
-xlim([0.5 size(mat_temp,2)+0.5]);xticks([]);xlabel([]);
-title(['Sum of Columns']);
-set(gca,'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
-
-set(gcf,'color','w'); % set backg
->>>>>>> Stashed changes
 
 %% give up
 figure;
