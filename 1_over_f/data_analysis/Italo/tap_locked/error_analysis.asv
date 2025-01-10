@@ -107,8 +107,6 @@ for ses=1:12
     end
 end
 
-
-
 %% load the conditions
 data_path = '/home/zhibinz2/Documents/GitHub/finger_tapping_behavioral_data/';
 data_path = 'C:\Users\zhouz\GitHub\finger_tapping_behavioral_data/'
@@ -314,11 +312,13 @@ sgtitle(['ses' num2str(ses)])
 %  Examine relationship btw error and condi
 mat4_JtS12ses=cell(12,1);
 mat4_sumer12ses=cell(12,1);
+cell_er12sc4=cell(12,1);
 for ses=1:12; % pick a session
     % mat_JtS4c=cell(12,1);
     % mat_sumer4c=cell(12,1);
     mat_JtS=zeros(4,length(UniqS{ses,1}),length(UniqS{ses,2}));
     mat_sumer=zeros(4,length(UniqS{ses,1}),length(UniqS{ses,2}));
+    cell_er4c=cell(4,1);
     ses_er=rErr{ses};
     % err3m=nan(3,length(UniqS{ses,1}),length(UniqS{ses,2}));
     % err3se=nan(3,length(UniqS{ses,1}),length(UniqS{ses,2}));
@@ -327,17 +327,22 @@ for ses=1:12; % pick a session
     loadtmpfile=loadtmpstruct.(varname);
     for c=1:4
         indc=find(condition_reorg{ses}==c);
+        cell_er=cell(length(UniqS{ses,1}),length(UniqS{ses,2}));
         for indxy=1:length(indc)
             mat_JtS(c,loadtmpfile(1,indc(indxy))+1,loadtmpfile(2,indc(indxy))+1)=...
                 mat_JtS(c,loadtmpfile(1,indc(indxy))+1,loadtmpfile(2,indc(indxy))+1)+1;
             mat_sumer(c,loadtmpfile(1,indc(indxy))+1,loadtmpfile(2,indc(indxy))+1)=...
-                mat_sumer(c,loadtmpfile(1,indc(indxy))+1,loadtmpfile(2,indc(indxy))+1)++ses_er(indc(indxy));
+                mat_sumer(c,loadtmpfile(1,indc(indxy))+1,loadtmpfile(2,indc(indxy))+1)+ses_er(indc(indxy));
+            cell_er{loadtmpfile(1,indc(indxy))+1,loadtmpfile(2,indc(indxy))+1}=...
+                [cell_er{loadtmpfile(1,indc(indxy))+1,loadtmpfile(2,indc(indxy))+1} ses_er(indc(indxy))];
             % err3m(c)=mean(error_reorg{ses}(indc);
             % err3se(c)=std(error_reorg{ses}(indc))/sqrt(length(error_reorg{ses}(indc)));
         end
+        cell_er4c{c}=cell_er;
     end
     mat4_JtS12ses{ses}=mat_JtS;
     mat4_sumer12ses{ses}=mat_sumer;
+    cell_er12s4c{ses}=cell_er4c;
     % err3m12{ses}=err3m;
     % err3se12{ses}=err3se;
 end
@@ -345,6 +350,19 @@ end
 ses=3; % ses=5;
 mat_JtS=mat4_JtS12ses{ses};
 mat_sumer=mat4_sumer12ses{ses};
+cell_er4c=cell_er12s4c{ses};
+c=1;
+cell_er=cell_er4c{c};
+for row=1:size(cell_er,2)
+    row_means=mean([cell_er{row,:}]);
+    row_sems=
+end
+for col=1:size(cell_er,1)
+    col_means=
+    col_sems=
+end
+
+
 
 figure;
 for c=1:4
@@ -411,7 +429,7 @@ subj2filenames_cell_array'
 size(subj1mat)
 size(subj2mat)
 
-%% try imagesc with distribution of x y summation
+%% imagesc with distribution of x y summation
 ses=1
 c=1
 mat_temp=squeeze(mat_JtS(c,:,:));
@@ -420,7 +438,7 @@ col_sum = sum(mat_temp, 1);  % Sum along each column
 % Create a figure
 figure('Position',[2789         390        1068         953]); % get(gcf, 'outerposition')
 clf
-subplot(3,3,[4,5,7,8]);
+subplot(3,6,[7,8,13,14]);
 imagesc(mat_temp);clim([0 50]);colormap(jet0)
 % colorbar('westoutside');
 % set(gca, 'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
@@ -435,19 +453,52 @@ else
     xlabel('participant A'); ylabel('participant B');
 end  
 
-
-subplot(3,3,[6,9]);  % left col
-barh(row_sum, 'FaceColor', 'k');  % Horizontal bar plot for row sums;
-ylim([0.5 size(mat_temp,1)+0.5]);xticks([]);xlabel(['Sum of Rows']);ylabel([]);yticks([]);
+subplot(3,6,[9,15]);  % left col
+barh(row_sum, 'FaceColor', grey);  % Horizontal bar plot for row sums;
+ylim([0.5 size(mat_temp,1)+0.5]);title(['Sum of Rows']);ylabel([]);yticks([]);
+set(gca, 'YDir', 'reverse');
 % set(gca, 'YAxisLocation', 'right', 'XAxisLocation', 'top');  % Move X-axis to the top
-% set(gca, 'XAxisLocation', 'top', 'YAxisLocation', 'right');  % Place x-axis on top
+set(gca, 'XAxisLocation', 'bottom', 'YAxisLocation', 'right');  % Place x-axis on top
 
-subplot(3,3,[1,2]);  % row bottom
-bar(col_sum, 'FaceColor', 'k');  % Bar plot for column sums
-xlim([0.5 size(mat_temp,2)+0.5]);yticks([]);xticks([]);xlabel([]);ylabel(['Sum of Columns'])
-set(gca, 'XAxisLocation', 'bottom', 'YAxisLocation', 'left');  % Place x-axis on top
+subplot(3,6,[1,2]);  % row bottom
+bar(col_sum, 'FaceColor', grey);  % Bar plot for column sums
+xlim([0.5 size(mat_temp,2)+0.5]);xticks([]);xlabel([]);
+title(['Sum of Columns']);
+set(gca,'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
 
 set(gcf,'color','w'); % set backg
+
+subplot(3,6,[10,11,16,17]);
+imagesc(mat_temp);clim([0 50]);colormap(jet0)
+% colorbar('westoutside');
+% set(gca, 'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
+title({['Symbols (' condi4names{c} ')'], ['session ' num2str(ses)]},'Rotation',0,'Position',[size(mat_temp,2)+3,-2,0]);
+cb = colorbar('southoutside');cb.Position = [0.18, 0.025, 0.4, 0.015];
+
+if c==2
+    xlabel('leader');ylabel('follower');
+elseif c==3
+    ylabel('leader');xlabel('follower');
+else
+    xlabel('participant A'); ylabel('participant B');
+end  
+
+subplot(3,6,[12,18]);  % left col
+barh(row_sum, 'FaceColor', grey);  % Horizontal bar plot for row sums;
+ylim([0.5 size(mat_temp,1)+0.5]);title(['Sum of Rows']);ylabel([]);yticks([]);
+set(gca, 'YDir', 'reverse');
+% set(gca, 'YAxisLocation', 'right', 'XAxisLocation', 'top');  % Move X-axis to the top
+set(gca, 'XAxisLocation', 'bottom', 'YAxisLocation', 'right');  % Place x-axis on top
+
+subplot(3,6,[4,5]);  % row bottom
+bar(col_sum, 'FaceColor', grey);  % Bar plot for column sums
+xlim([0.5 size(mat_temp,2)+0.5]);xticks([]);xlabel([]);
+title(['Sum of Columns']);
+set(gca,'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
+
+set(gcf,'color','w'); % set backg
+
+
 
 %% give up
 figure;
