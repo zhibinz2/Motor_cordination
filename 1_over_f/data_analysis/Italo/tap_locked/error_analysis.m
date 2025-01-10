@@ -422,13 +422,39 @@ cd /ssd/zhibin/1overf/Cleaned_sourcedata/cortical_source_data/taplocked/corr_mat
 % covert to mat files
 tic
 load('dyad_20220713_matstack.mat')
-toc
+toc % 1min
 subj1tapnum'
 subj2tapnum'
 subj1filenames_cell_array'
 subj2filenames_cell_array'
 size(subj1mat)
 size(subj2mat)
+
+% test H
+i=180;j=300;taps=1:917;
+corr_series=subj1mat(taps,i,j);
+
+% add this repo to your path (https://github.com/wodeyara/AdaptiveGraphicalLassoforParCoh)
+% addpath /home/zhibinz2/Documents/GitHub/AdaptiveGraphicalLassoforParCoh/Simulations/util
+addpath(genpath('/home/zhibinz2/Documents/GitHub/AdaptiveGraphicalLassoforParCoh'))
+mat=squeeze(subj1mat(1,:,:));
+% convert real value covariance to complex matrix (448x448) 
+% then compute coherence
+Pcoh=normalizeCSD(mat);
+
+tic
+coh=nan(size(subj1mat));
+for pc=1:size(subj1mat)
+    coh(pc,:,:)=normalizeCSD(squeeze(subj1mat(pc,:,:)));
+end
+toc % 20s 
+corr_series=coh(taps,i,j);
+
+pc=150;
+imagesc(squeeze(coh(pc,:,:)));colorbar
+
+addpath(genpath('/home/zhibinz2/Documents/GitHub/Motor_coordination_code/util'))
+[~,H]=DFA_main(corr_series);
 
 %% imagesc with distribution of x y summation
 ses=1
@@ -437,6 +463,7 @@ mat_temp=squeeze(mat_JtS(c,:,:));
 row_sum = sum(mat_temp, 2);  % Sum along each row 
 col_sum = sum(mat_temp, 1);  % Sum along each column 
 % Create a figure
+<<<<<<< Updated upstream
 for ses =1:12
     mat_JtS=mat4_JtS12ses{ses};
     for c=1:4
@@ -527,6 +554,40 @@ for ses =1:12
     end
 end
 
+=======
+figure('Position',[2789         390        1068         953]); % get(gcf, 'outerposition')
+clf
+subplot(3,3,[4,5,7,8]);
+imagesc(mat_temp);clim([0 50]);colormap(jet0)
+% colorbar('westoutside');
+% set(gca, 'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
+title({['Symbols (' condi4names{c} ')'], ['session ' num2str(ses)]},'Rotation',0,'Position',[size(mat_temp,2)+3,-2,0]);
+cb = colorbar('southoutside');cb.Position = [0.18, 0.025, 0.4, 0.015];
+
+if c==2
+    xlabel('leader');ylabel('follower');
+elseif c==3
+    ylabel('leader');xlabel('follower');
+else
+    xlabel('participant A'); ylabel('participant B');
+end  
+
+
+subplot(3,3,[6,9]);  % left col
+barh(row_sum, 'FaceColor', grey);  % Horizontal bar plot for row sums;
+ylim([0.5 size(mat_temp,1)+0.5]);title(['Sum of Rows']);ylabel([]);yticks([]);
+set(gca, 'YDir', 'reverse');
+% set(gca, 'YAxisLocation', 'right', 'XAxisLocation', 'top');  % Move X-axis to the top
+set(gca, 'XAxisLocation', 'bottom', 'YAxisLocation', 'right');  % Place x-axis on top
+
+subplot(3,3,[1,2]);  % row bottom
+bar(col_sum, 'FaceColor', grey);  % Bar plot for column sums
+xlim([0.5 size(mat_temp,2)+0.5]);xticks([]);xlabel([]);
+title(['Sum of Columns']);
+set(gca,'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
+
+set(gcf,'color','w'); % set backg
+>>>>>>> Stashed changes
 
 %% give up
 figure;
