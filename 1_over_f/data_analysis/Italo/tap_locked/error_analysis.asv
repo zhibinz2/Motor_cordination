@@ -564,6 +564,38 @@ for ses =1:12
     end
 end
 
+%% sort order
+% Example matrix
+A = [9 2 1; 
+     8 7 6; 
+     4 3 5];
+figure;
+subplot(121)
+imagesc(A);colorbar;colormap(jet)
+yticks([1:size(A,1)]);xticks([1:size(A,2)]);
+ytick
+
+% Step 1: Compute row and column sums
+rowSums = sum(A, 2);  % Sum of each row
+colSums = sum(A, 1);  % Sum of each column
+
+% Step 2: Sort rows and columns based on their sums
+[~, rowOrder] = sort(rowSums); % Indices for sorted rows
+[~, colOrder] = sort(colSums); % Indices for sorted columns
+
+% Step 3: Reorganize the matrix based on sorted sums
+sortedMatrix = A(rowOrder, colOrder);
+subplot(122)
+imagesc(sortedMatrix);colorbar;colormap(jet)
+
+% Display results
+disp('Original Matrix:');
+disp(A);
+disp('Reorganized Matrix:');
+disp(sortedMatrix);
+
+
+
 %% give up
 figure;
 clf
