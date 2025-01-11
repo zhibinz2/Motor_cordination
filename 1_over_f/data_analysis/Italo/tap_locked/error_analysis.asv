@@ -472,21 +472,94 @@ for ses =1:12
         row_sum = sum(mat_temp, 2);  % Sum along each row 
         col_sum = sum(mat_temp, 1);  % Sum along each column 
         display([ condi4names{c} '  session ' num2str(ses)]);
+
         figure('Position',[2789         390        1480         796]); % get(gcf, 'outerposition')
         clf
+
+        % sort and plot error first
+        subplot(3,6,[10,11,16,17]);
+
+        cell_er4c=cell_er12s4c{ses};
+        cell_er=cell_er4c{c};
+        clear row_means row_sems col_means col_sems
+        for row=1:size(cell_er,1)
+            row_means(row)=mean([cell_er{row,:}]);
+            row_sems(row)=std([cell_er{row,:}])/sqrt(length([cell_er{row,:}]));
+        end
+        for col=1:size(cell_er,2)
+            col_means(col)=mean([cell_er{:,col}]);
+            col_sems(col)=std([cell_er{:,col}])/sqrt(length([cell_er{:,col}]));
+        end
+
+        % Step 2: Sort rows and columns based on their sums
+        [~, rowOrder] = sort(row_means); % Indices for sorted rows
+        [~, colOrder] = sort(col_means); % Indices for sorted columns
+
+        mat_sumer=mat4_sumer12ses{ses};
+        mater_temp=squeeze(mat_sumer(c,:,:))./mat_temp;
+
+        % Reorganize the matrix based on sorted sums
+        sortedMatrix = mater_temp(rowOrder, colOrder);
+
+        imagesc(sortedMatrix);
+        yticks([1:size(sortedMatrix,1)]);xticks([1:size(sortedMatrix,2)]);
+        yticklabels(rowOrder-1);xticklabels(colOrder-1);
+
+        clim([0 S_offset_synco]);colormap(jet0)
+        % colorbar('westoutside');
+        % set(gca, 'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
+        title({['mean Error (ms)'],['(' condi4names{c} ')'], ['session ' num2str(ses)]},'Rotation',0,'Position',[size(mat_temp,2)+3,-2,0]);
+        cb = colorbar('southoutside');cb.Position = [0.54, 0.025, 0.23, 0.01];
+        
+        if c==2
+            xlabel('mean Error (leader)');ylabel(' mean Error (follower)');
+        elseif c==3
+            ylabel('mean Error (leader)');xlabel('mean Error (follower)');
+        else
+            xlabel('mean Error (participant A)'); ylabel('mean Error (participant B)');
+        end  
+
+        
+        subplot(3,6,[12,18]);  % left col
+        bar(rowOrder,row_means(rowOrder), 'FaceColor', grey);  % Horizontal bar plot for row sums;
+        xlim([0.5 size(mat_temp,1)+0.5]); title(['Mean of Rows']); ylabel([]);xticks([]);
+        hold on; 
+        % set(gca, 'XDir', 'reverse');
+        view(90, 90);
+        errorbar(rowOrder,row_means(rowOrder), row_sems(rowOrder), 'k', 'LineStyle', 'none','CapSize', 0);
+        hold off;
+        % set(gca, 'YAxisLocation', 'right', 'XAxisLocation', 'top');  % Move X-axis to the top
+        % set(gca, 'XAxisLocation', 'left', 'YAxisLocation', 'origin');  % Place x-axis on top
+        ylim([0 300])
+        
+        subplot(3,6,[4,5]);  % row bottom
+        bar(colOrder,col_means(colOrder), 'FaceColor', grey);  % Bar plot for column sums
+        hold on; errorbar(colOrder,col_means(colOrder), col_sems(colOrder), 'k', 'LineStyle', 'none','CapSize', 0);
+        hold off;
+        xlim([0.5 size(mat_temp,2)+0.5]);
+        xticks([]);xlabel([]);
+        title(['Mean of Columns']);
+        set(gca,'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
+        ylim([0 300])
+        
+        % same order for the symbols
         subplot(3,6,[7,8,13,14]);
-        imagesc(mat_temp);clim([0 50]);colormap(jet0)
+        % Reorganize the matrix based on sorted sums
+        sortedMatrix = mat_temp(rowOrder, colOrder);
+        imagesc(sortedMatrix);clim([0 50]);colormap(jet0)
+        yticks([1:size(sortedMatrix,1)]);xticks([1:size(sortedMatrix,2)]);
+        yticklabels(rowOrder-1);xticklabels(colOrder-1);
         % colorbar('westoutside');
         % set(gca, 'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
         title({['Symbols'],['(' condi4names{c} ')'], ['session ' num2str(ses)]},'Rotation',0,'Position',[size(mat_temp,2)+3,-2,0]);
         cb = colorbar('southoutside');cb.Position = [0.13, 0.025, 0.23, 0.01];
         
         if c==2
-            xlabel('leader');ylabel('follower');
+            xlabel('Symbols (leader)');ylabel('Symbols (follower)');
         elseif c==3
-            ylabel('leader');xlabel('follower');
+            ylabel('Symbols (leader)');xlabel('Symbols (follower)');
         else
-            xlabel('participant A'); ylabel('participant B');
+            xlabel('Symbols (participant A)'); ylabel('Symbols (participant B)');
         end  
         
         subplot(3,6,[9,15]);  % left col
@@ -503,68 +576,14 @@ for ses =1:12
         title(['Sum of Columns']);
         set(gca,'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
         ylim([0 250])
-        
-        set(gcf,'color','w'); % set backg
-        
-        subplot(3,6,[10,11,16,17]);
-        mat_sumer=mat4_sumer12ses{ses};
-        mater_temp=squeeze(mat_sumer(c,:,:))./mat_temp;
-        imagesc(mater_temp);
-        clim([0 S_offset_synco]);colormap(jet0)
-        % colorbar('westoutside');
-        % set(gca, 'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
-        title({['Mean Error (ms)'],['(' condi4names{c} ')'], ['session ' num2str(ses)]},'Rotation',0,'Position',[size(mat_temp,2)+3,-2,0]);
-        cb = colorbar('southoutside');cb.Position = [0.54, 0.025, 0.23, 0.01];
-        
-        if c==2
-            xlabel('leader');ylabel('follower');
-        elseif c==3
-            ylabel('leader');xlabel('follower');
-        else
-            xlabel('participant A'); ylabel('participant B');
-        end  
-        
-        cell_er4c=cell_er12s4c{ses};
-        cell_er=cell_er4c{c};
-        clear row_means row_sems col_means col_sems
-        for row=1:size(cell_er,1)
-            row_means(row)=mean([cell_er{row,:}]);
-            row_sems(row)=std([cell_er{row,:}])/sqrt(length([cell_er{row,:}]));
-        end
-        for col=1:size(cell_er,2)
-            col_means(col)=mean([cell_er{:,col}]);
-            col_sems(col)=std([cell_er{:,col}])/sqrt(length([cell_er{:,col}]));
-        end
-        
-        subplot(3,6,[12,18]);  % left col
-        bar(1:size(mat_temp,1),row_means, 'FaceColor', grey);  % Horizontal bar plot for row sums;
-        xlim([0.5 size(mat_temp,1)+0.5]); title(['Mean of Rows']); ylabel([]);xticks([]);
-        hold on; 
-        % set(gca, 'XDir', 'reverse');
-        view(90, 90);
-        errorbar(1:size(mat_temp,1),row_means, row_sems, 'k', 'LineStyle', 'none','CapSize', 0);
-        hold off;
-        % set(gca, 'YAxisLocation', 'right', 'XAxisLocation', 'top');  % Move X-axis to the top
-        % set(gca, 'XAxisLocation', 'left', 'YAxisLocation', 'origin');  % Place x-axis on top
-        ylim([0 300])
-        
-        subplot(3,6,[4,5]);  % row bottom
-        bar(1:size(mat_temp,2),col_means, 'FaceColor', grey);  % Bar plot for column sums
-        hold on; errorbar(1:size(mat_temp,2),col_means, col_sems, 'k', 'LineStyle', 'none','CapSize', 0);
-        hold off;
-        xlim([0.5 size(mat_temp,2)+0.5]);
-        xticks([]);xlabel([]);
-        title(['Mean of Columns']);
-        set(gca,'XAxisLocation', 'top', 'YAxisLocation', 'left');  % Place x-axis on top
-        ylim([0 300])
-        
+
         set(gcf,'color','w'); % set backg
         exportgraphics(gcf, 'multiple_figures.pdf', 'Append', true); % Append to PDF
         close all;
     end
 end
 
-%% sort order
+%% sort order example
 % Example matrix
 A = [9 2 1; 
      8 7 6; 
@@ -573,7 +592,7 @@ figure;
 subplot(121)
 imagesc(A);colorbar;colormap(jet)
 yticks([1:size(A,1)]);xticks([1:size(A,2)]);
-ytick
+yticklabels(yticks-1);xticklabels(xticks-1);
 
 % Step 1: Compute row and column sums
 rowSums = sum(A, 2);  % Sum of each row
@@ -587,6 +606,8 @@ colSums = sum(A, 1);  % Sum of each column
 sortedMatrix = A(rowOrder, colOrder);
 subplot(122)
 imagesc(sortedMatrix);colorbar;colormap(jet)
+yticks([1:size(A,1)]);xticks([1:size(A,2)]);
+yticklabels(rowOrder-1);xticklabels(colOrder-1);
 
 % Display results
 disp('Original Matrix:');
