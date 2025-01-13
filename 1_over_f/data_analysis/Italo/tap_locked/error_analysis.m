@@ -578,6 +578,7 @@ for ses =1:12
         ylim([0 250])
 
         set(gcf,'color','w'); % set backg
+        
         exportgraphics(gcf, 'multiple_figures.pdf', 'Append', true); % Append to PDF
         close all;
     end
