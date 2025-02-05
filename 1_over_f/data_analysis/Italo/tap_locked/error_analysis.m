@@ -663,3 +663,25 @@ for ses=1:12
     set(gcf,'color','w'); % set backg
     
 end
+
+%% load conditions and H
+open /home/zhibinz2/Documents/GitHub/Motor_coordination_code/Fig3_H_matching.m
+seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
+        2022100402;20221005];
+H_all;
+condition_all;
+
+% load average dwell time and motif length
+load('dict_result.mat');
+Average_Dwell_Time_unsorted=cell2mat(cell_data.Average_Dwell_Time);
+Average_Motif_Length_unsorted=cell2mat(cell_data.Average_Motif_Length);
+Condition_unsorted=cell_data.Condition;
+Session_unsorted=cell_data.Session;
+Session_Type_unsorted=cell_data.Session_Type;
+
+cell2mat(Average_Motif_Length_unsorted);
+
+idx=find(strcmp(Session_unsorted,num2str(seeds(3,:))));
+
+
+% distribution of symbols
