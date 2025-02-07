@@ -785,23 +785,14 @@ anova_dwell_synch={}
 figure
 subplot(221)
 bar(dwell_means(1,:));hold on;errorbar(dwell_means(1,:),dwell_sems(1,:), 'k', 'LineStyle', 'none', 'CapSize', 8);
-title('synch');ylabel('mean dwell time');xlabel('conditions');
+title('synch');ylabel('mean ')
 subplot(222)
 bar(dwell_means(2,:));hold on;errorbar(dwell_means(2,:),dwell_sems(2,:), 'k', 'LineStyle', 'none', 'CapSize', 8);
-title('synco');ylabel('mean dwell time');xlabel('conditions');
 subplot(223)
 bar(motif_means(1,:));hold on;errorbar(motif_means(1,:),motif_sems(1,:), 'k', 'LineStyle', 'none', 'CapSize', 8);
-title('synch');ylabel('mean motif length');xlabel('conditions');
 subplot(224)
 bar(motif_means(2,:));hold on;errorbar(motif_means(2,:),motif_sems(2,:), 'k', 'LineStyle', 'none', 'CapSize', 8);
-title('synco');ylabel('mean motif length');xlabel('conditions');
 
 % anova statistics and plot
-group1=dw_gp21'; group2=dw_gp22'; group3=dw_gp23';
-group1=mt_gp11'; group2=mt_gp12'; group3=mt_gp13';
 % Combine the data into a single vector
 data = [group1, group2, group3];
-% Create a grouping variable
-group = [ones(size(group1)), 2 * ones(size(group2)), 3 * ones(size(group3))];
-
-open /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/Italo/tap_locked/stat_test.m
