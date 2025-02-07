@@ -669,19 +669,55 @@ open /home/zhibinz2/Documents/GitHub/Motor_coordination_code/Fig3_H_matching.m
 seeds=[20220713;20220721;20220804;20220808;20220810;20220811;20220815;20220816;20221003;2022100401;
         2022100402;20221005];
 H_all;
+% compute H difference
+Hdiff=nan(12,12);
+for ses=1:12
+    for tr=1:12
+        Hdiff(ses,tr)=abs(H_all(1,ses,tr)-H_all(2,ses,tr));
+    end
+end
+
+
 condition_all;
+
 
 % load average dwell time and motif length
 load('dict_result.mat');
-Average_Dwell_Time_unsorted=cell2mat(cell_data.Average_Dwell_Time);
-Average_Motif_Length_unsorted=cell2mat(cell_data.Average_Motif_Length);
+Average_Dwell_Time_unsorted=nan(144,1);
+Average_Motif_Length_unsorted=nan(144,1);
+% Condition_unsorted=cell(144,1);
+% Session_unsorted=cell(144,1);
+% Session_Type_unsorted=cell(144,1);
+for i=1:144
+    Average_Dwell_Time_unsorted(i)=cell_data.Average_Dwell_Time{i};
+    Average_Motif_Length_unsorted(i)=cell_data.Average_Motif_Length{i};
+end
 Condition_unsorted=cell_data.Condition;
 Session_unsorted=cell_data.Session;
 Session_Type_unsorted=cell_data.Session_Type;
 
-cell2mat(Average_Motif_Length_unsorted);
 
-idx=find(strcmp(Session_unsorted,num2str(seeds(3,:))));
+% sort in time order
+Average_Dwell_Time=nan(12,12);
+Average_Motif_Length=nan(12,12);
+Conditions=cell(12,12);
+condition_id=nan(12,12);
+sessions_seeds=cell(12,12);
+sessions_type=cell(12,12);
+% sessions_id=nan(12,12);
+
+for ses=1:12
+    idx=find(strcmp(Session_unsorted,num2str(seeds(ses,:))));
+    Average_Dwell_Time(ses,:)=Average_Dwell_Time_unsorted(idx)';
+    Average_Motif_Length(ses,:)=Average_Motif_Length_unsorted(idx,:)';
+    condition_id(ses,:)=condition_all(12*(ses-1)+(1:12))';
+    for tr=1:12
+        Conditions{ses,tr}=Condition_unsorted{idx(tr)};
+        sessions_seeds{ses,tr}=Session_unsorted{idx(tr)};
+        sessions_type{ses,tr}=Session_Type_unsorted{idx(tr)};
+    end
+    % sessions_id(ses,:)=
+end
 
 
 % distribution of symbols
