@@ -704,7 +704,7 @@ Conditions=cell(12,12);
 condition_id=nan(12,12);
 sessions_seeds=cell(12,12);
 sessions_type=cell(12,12);
-% sessions_id=nan(12,12);
+sessions_id=nan(12,12);
 
 for ses=1:12
     idx=find(strcmp(Session_unsorted,num2str(seeds(ses,:))));
@@ -715,9 +715,16 @@ for ses=1:12
         Conditions{ses,tr}=Condition_unsorted{idx(tr)};
         sessions_seeds{ses,tr}=Session_unsorted{idx(tr)};
         sessions_type{ses,tr}=Session_Type_unsorted{idx(tr)};
+        if strcmp(Session_Type_unsorted{idx(tr)},'Syncopation')
+            sessions_id(ses,tr)=2;
+        else
+            sessions_id(ses,tr)=(ses,tr)=1;
+        end
     end
-    % sessions_id(ses,:)=
 end
 
+indx=intersect(find(condition_id==4),find(sessions_id==2))
 
-% distribution of symbols
+
+Leader-Follower,'Mutual'
+indx=intersect(find(strcmpi(Conditions,'Leader-Follower')),find(strcmpi(sessions_type,'Syncopation')))
