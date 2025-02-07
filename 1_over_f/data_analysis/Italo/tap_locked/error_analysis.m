@@ -718,12 +718,20 @@ for ses=1:12
         if strcmp(Session_Type_unsorted{idx(tr)},'Syncopation')
             sessions_id(ses,tr)=2;
         else
-            sessions_id(ses,tr)=(ses,tr)=1;
+            sessions_id(ses,tr)=1;
         end
     end
 end
 
 % find index test
-indx=intersect(find(condition_id==4),find(sessions_id==2))
+indx=intersect(find(condition_id==4),find(sessions_id==2));
 % 'Uncoupled','Leader-Follower','Mutual'
-indx=intersect(find(strcmpi(Conditions,'Mutual')),find(strcmpi(sessions_type,'Syncopation')))
+indx=intersect(find(strcmpi(Conditions,'Mutual')),find(strcmpi(sessions_type,'Syncopation')));
+
+% compute mean and sem of Average_Dwell_Time and Average_Motif_Length and Hdif 2x3
+
+
+col_means(col)=mean([cell_er{:,col}]);
+col_sems(col)=std([cell_er{:,col}])/sqrt(length([cell_er{:,col}]));
+
+bar(row_means);hold on;errorbar(row_means,row_sems, 'k', 'LineStyle', 'none', 'CapSize', 8);
