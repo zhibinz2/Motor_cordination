@@ -71,3 +71,46 @@ if h == 1
 else
     disp('There is no significant difference between the two groups (fail to reject null hypothesis).');
 end
+
+%% paired t test
+% Example data: Two groups of paired data
+group1 = [5.2, 6.1, 4.9, 5.5, 6.3, 5.8]; % Group 1 data
+group2 = [4.8, 5.9, 4.7, 5.3, 6.0, 5.4]; % Group 2 data
+
+% Perform paired t-test
+[~, p_value, ~, stats] = ttest(group1, group2);
+
+% Calculate means and standard errors
+mean_group1 = mean(group1);
+mean_group2 = mean(group2);
+std_error_group1 = std(group1) / sqrt(length(group1)); % Standard error for group 1
+std_error_group2 = std(group2) / sqrt(length(group2)); % Standard error for group 2
+
+% Plot bar plot with error bars
+figure;
+bar([1, 2], [mean_group1, mean_group2], 'FaceColor', [0.7 0.7 0.7]); % Plot bars
+hold on;
+errorbar([1, 2], [mean_group1, mean_group2], [std_error_group1, std_error_group2], 'k.', 'LineWidth', 1.5); % Add error bars
+
+% Add significance marker if p-value is significant
+if p_value < 0.05
+    % Find the maximum y-value for positioning the asterisk
+    max_y = max([mean_group1 + std_error_group1, mean_group2 + std_error_group2]);
+    text(1.5, max_y + 0.1, '*', 'HorizontalAlignment', 'center', 'FontSize', 20); % Add asterisk
+end
+
+% Customize plot
+xticks([1, 2]);
+xticklabels({'Group 1', 'Group 2'});
+ylabel('Mean Value');
+title('Comparison of Group Means with Standard Error');
+set(gca, 'FontSize', 12);
+grid on;
+
+% Display p-value and t-statistic in the command window
+fprintf('Paired t-test results:\n');
+fprintf('t-statistic = %.4f, p-value = %.4f\n', stats.tstat, p_value);
+
+%%  Non-Parametric Tests
+p_value = signrank(group1, group2); % Wilcoxon signed-rank test
+disp(['Wilcoxon signed-rank test p-value: ', num2str(p_value)]);

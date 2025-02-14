@@ -723,6 +723,19 @@ for ses=1:12
     end
 end
 
+sessions_type144=cell(144,1);
+Conditions144=cell(144,1);
+Average_Dwell_Time144=nan(144,1);
+Average_Motif_Length144=nan(144,1);
+for ses=1:12
+    for tr=1:12
+        sessions_type144{12*(ses-1)+tr}=sessions_type{ses,tr};
+        Conditions144{12*(ses-1)+tr}=Conditions{ses,tr};
+        Average_Dwell_Time144(12*(ses-1)+tr)=Average_Dwell_Time(ses,tr);
+        Average_Motif_Length144(12*(ses-1)+tr)=Average_Motif_Length(ses,tr);
+    end
+end
+
 % find index test
 indx=intersect(find(condition_id==4),find(sessions_id==2));
 % 'Uncoupled','Leader-Follower','Mutual'
@@ -785,16 +798,16 @@ anova_dwell_synch={}
 figure
 subplot(221)
 bar(dwell_means(1,:));hold on;errorbar(dwell_means(1,:),dwell_sems(1,:), 'k', 'LineStyle', 'none', 'CapSize', 8);
-title('synch');ylabel('mean dwell time');xlabel('conditions');
+title('synch');ylabel('mean dwell time');xlabel('conditions');xticklabels({'uncouple', 'unidir', 'bidir'});
 subplot(222)
 bar(dwell_means(2,:));hold on;errorbar(dwell_means(2,:),dwell_sems(2,:), 'k', 'LineStyle', 'none', 'CapSize', 8);
-title('synco');ylabel('mean dwell time');xlabel('conditions');
+title('synco');ylabel('mean dwell time');xlabel('conditions');xticklabels({'uncouple', 'unidir', 'bidir'});
 subplot(223)
 bar(motif_means(1,:));hold on;errorbar(motif_means(1,:),motif_sems(1,:), 'k', 'LineStyle', 'none', 'CapSize', 8);
-title('synch');ylabel('mean motif length');xlabel('conditions');
+title('synch');ylabel('mean motif length');xlabel('conditions');xticklabels({'uncouple', 'unidir', 'bidir'});
 subplot(224)
 bar(motif_means(2,:));hold on;errorbar(motif_means(2,:),motif_sems(2,:), 'k', 'LineStyle', 'none', 'CapSize', 8);
-title('synco');ylabel('mean motif length');xlabel('conditions');
+title('synco');ylabel('mean motif length');xlabel('conditions');xticklabels({'uncouple', 'unidir', 'bidir'});
 
 % anova statistics and plot
 group1=dw_gp21'; group2=dw_gp22'; group3=dw_gp23';
@@ -805,3 +818,62 @@ data = [group1, group2, group3];
 group = [ones(size(group1)), 2 * ones(size(group2)), 3 * ones(size(group3))];
 
 open /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/Italo/tap_locked/stat_test.m
+sgtitle('mean $\pm$ standard error', 'Interpreter', 'latex')
+
+%% paired t-test
+
+% compute mean and sem of Average_Dwell_Time and Average_Motif_Length and Hdif 2x3
+dwell_means=nan(2,3);dwell_sems=nan(2,3);
+motif_means=nan(2,3);motif_sems=nan(2,3);
+
+indx=intersect(find(strcmpi(Conditions144,'Uncoupled')),find(strcmpi(sessions_type144,'Synchronization')));
+dw_gp11=[Average_Dwell_Time144(indx)];
+dwell_means(1,1)=mean(dw_gp11);
+dwell_sems(1,1)=std(dw_gp11)/sqrt(length(dw_gp11));
+mt_gp11=[Average_Motif_Length144(indx)];
+motif_means(1,1)=mean(mt_gp11);
+motif_sems(1,1)=std(mt_gp11)/sqrt(length(mt_gp11));
+
+indx=intersect(find(strcmpi(Conditions144,'Leader-Follower')),find(strcmpi(sessions_type144,'Synchronization')));
+dw_gp12=[Average_Dwell_Time144(indx)];
+dwell_means(1,2)=mean(dw_gp12);
+dwell_sems(1,2)=std(dw_gp12)/sqrt(length(dw_gp12));
+mt_gp12=[Average_Motif_Length144(indx)];
+motif_means(1,2)=mean(mt_gp12);
+motif_sems(1,2)=std(mt_gp12)/sqrt(length(mt_gp12));
+
+indx=intersect(find(strcmpi(Conditions144,'Mutual')),find(strcmpi(sessions_type144,'Synchronization')));
+dw_gp13=[Average_Dwell_Time144(indx)];
+dwell_means(1,3)=mean(dw_gp13);
+dwell_sems(1,3)=std(dw_gp13)/sqrt(length(dw_gp13));
+mt_gp13=[Average_Motif_Length144(indx)];
+motif_means(1,3)=mean(mt_gp13);
+motif_sems(1,3)=std(mt_gp13)/sqrt(length(mt_gp13));
+
+indx=intersect(find(strcmpi(Conditions144,'Uncoupled')),find(strcmpi(sessions_type144,'Syncopation')));
+dw_gp21=[Average_Dwell_Time144(indx)];
+dwell_means(2,1)=mean(dw_gp21);
+dwell_sems(2,1)=std(dw_gp21)/sqrt(length(dw_gp21));
+mt_gp21=[Average_Motif_Length144(indx)];
+motif_means(2,1)=mean(mt_gp21);
+motif_sems(2,1)=std(mt_gp21)/sqrt(length(mt_gp21));
+
+indx=intersect(find(strcmpi(Conditions144,'Leader-Follower')),find(strcmpi(sessions_type144,'Syncopation')));
+dw_gp22=[Average_Dwell_Time144(indx)];
+dwell_means(2,2)=mean(dw_gp22);
+dwell_sems(2,2)=std(dw_gp22)/sqrt(length(dw_gp22));
+mt_gp22=[Average_Motif_Length144(indx)];
+motif_means(2,2)=mean(mt_gp22);
+motif_sems(2,2)=std(mt_gp22)/sqrt(length(mt_gp22));
+
+indx=intersect(find(strcmpi(Conditions144,'Mutual')),find(strcmpi(sessions_type144,'Syncopation')));
+dw_gp23=[Average_Dwell_Time144(indx)];
+dwell_means(2,3)=mean(dw_gp23);
+dwell_sems(2,3)=std(dw_gp23)/sqrt(length(dw_gp23));
+mt_gp23=[Average_Motif_Length144(indx)];
+motif_means(2,3)=mean(mt_gp23);
+motif_sems(2,3)=std(mt_gp23)/sqrt(length(mt_gp23));
+
+% paired t-test
+group1=dw_gp21'; group2=dw_gp23';
+group1=mt_gp11'; group2=mt_gp13';
