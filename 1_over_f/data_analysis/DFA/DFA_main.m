@@ -30,7 +30,7 @@ ylabel('RMS [log10(F-n)]') % RMS values
 A=polyfit(log10(n),log10(F_n),1);
 % A=polyfit(log10(n(1:10)),log10(F_n(1:10)),1);
 Alpha1=A(1); % the slope, the first order polynomial coefficient from polyfit (Hurst Componenet >1 ?)
-% D=3-A(1); % ? D is the dimension of the time series % ?
+D=3-A(1); % ? D is the dimension of the time series % ?
 
 
 % plot the fit
