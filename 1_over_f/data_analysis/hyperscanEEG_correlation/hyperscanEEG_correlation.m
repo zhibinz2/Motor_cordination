@@ -921,22 +921,24 @@ end
 %% Permutation with contrast to independent
 open /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/hyperscanEEG_correlation/permutation20250425.ipynb
 cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/hyperscanEEG_correlation/
-load('nx3permu.mat') %  3nx x 2syn x 3contrast condi x7freq x32chan
-load('nx3permu2.mat') %  3nx x 2syn x 3contrast condi x7freq x32chan
-nx3gain10   
-nx3gain01   
-nx3counter10
-nx3counter01
+load('nx3permu.mat') %  3nx x 2syn x 3contrast condi x7freq x32chan (permute chan by chan)
+load('nx3permu2.mat') %  3nx x 2syn x 3contrast condi x7freq x32chan (permute all chan) this is wrong, 
+load('nx3permu20250430.mat')% but code corrected on 4/30/2025, result similar to nx3permu.mat
+nx3gain10   ;
+nx3gain01   ;
+nx3counter10;
+nx3counter01;
 
 for syn=1:2
     figure('Position',[1327         772         884         510]); % get(gcf, 'outerposition') 
     % get(gcf, 'outerposition'); figure('Position',[ans]);  ;
     for nx=1:3
         for condi=2:4
-            tmp=squeeze(nx3gain10(nx,syn,condi-1,:,:));
-            ind_display=(tmp>97500);
-            tmp(ind_display)=1;
-            mat_display=tmp;
+            tmp10=squeeze(nx3counter10(nx,syn,condi-1,:,:));
+            ind_display10=(tmp10<97500);
+            dis_tmp10=squeeze(nx3gain10(nx,syn,condi-1,:,:));
+            dis_tmp10(ind_display10)=1;
+            mat_display=dis_tmp10;
             subplot(3,3,(nx-1)*3+condi-1);
             imagesc(mat_display);colorbar;colormap('jet');
             xlabel('chan');ylabel('freq');title([nx3names{nx} ' ' condi4names{condi}]);
@@ -951,3 +953,542 @@ for syn=1:2
     end
     sgtitle([syn2names{syn} ' permutation (> independent)'],'Color',syn2colors(syn,:))
 end
+
+% reverse direction
+for syn=1:2
+    figure('Position',[1327         772         884         510]); % get(gcf, 'outerposition') 
+    % get(gcf, 'outerposition'); figure('Position',[ans]);  ;
+    for nx=1:3
+        for condi=2:4
+            tmp01=squeeze(nx3counter01(nx,syn,condi-1,:,:));
+            ind_display01=(tmp01<97500);
+            dis_tmp01=squeeze(nx3gain01(nx,syn,condi-1,:,:));
+            dis_tmp01(ind_display01)=1;
+            mat_display=dis_tmp01;
+            subplot(3,3,(nx-1)*3+condi-1);
+            imagesc(mat_display);colorbar;colormap(flipud(jet));
+            xlabel('chan');ylabel('freq');title([nx3names{nx} ' ' condi4names{condi}]);
+            % clim([-1*max(abs(mat_display),[],"all") max(abs(mat_display),[],"all")])
+            if nx==1
+                clim([1-1 2])
+            elseif nx==2
+                clim([1-1 2])
+            else
+                clim([1-5 1+5])
+            end
+        end
+    end
+    sgtitle([syn2names{syn} ' permutation (< independent)'],'Color',syn2colors(syn,:))
+end
+
+% combine two direction
+% cd /home/zhibinz2/Documents/GitHub/Motor_cordination/1_over_f/data_analysis/channels_info.m
+AllchanNames;
+for syn=1:2
+    figure('Position',[1327         772         884         510]); % get(gcf, 'outerposition') 
+    % get(gcf, 'outerposition'); figure('Position',[ans]);  ;
+    for nx=1:3
+        for condi=2:4
+            tmp10=squeeze(nx3counter10(nx,syn,condi-1,:,:));
+            ind_display10=(tmp10<97500);
+            dis_tmp10=squeeze(nx3gain10(nx,syn,condi-1,:,:));
+            
+            tmp01=squeeze(nx3counter01(nx,syn,condi-1,:,:));
+            ind_display01=(tmp01<97500);
+            dis_tmp01=squeeze(nx3gain01(nx,syn,condi-1,:,:));
+            
+            testmat=~ind_display10+~ind_display01;
+            if ~any(testmat(:)==2)
+                % do nothing
+            else
+                display('something wrong')
+            end
+            dis_tmp10(ind_display10)=0;
+            dis_tmp01(ind_display01)=0;
+            mat_display=dis_tmp10-dis_tmp01;
+            subplot(3,3,(nx-1)*3+condi-1);
+            imagesc(mat_display);colorbar;colormap(jet);
+            xticks([1:32]);xticklabels(AllchanNames)
+            xlabel('chan');ylabel('freq');title([nx3names{nx} ' ' condi4names{condi}]);
+            % clim([-1*max(abs(mat_display),[],"all") max(abs(mat_display),[],"all")])
+            if nx==1
+                clim([-2 2])
+            elseif nx==2
+                clim([-2 2])
+            else
+                clim([-6 6])
+            end
+
+        end
+    end
+    sgtitle({[syn2names{syn} ' permutation two-tails p<0.05'], ...
+        ['(positive effect size: condition > independent; negative effect size: condition < independent)']},'Color',syn2colors(syn,:))
+end
+
+% combine two direction (deduct one from absolute ratio)
+for syn=1:2
+    figure('Position',[1327         772         884         510]); % get(gcf, 'outerposition') 
+    % get(gcf, 'outerposition'); figure('Position',[ans]);  ;
+    for nx=1:3
+        for condi=2:4
+            tmp10=squeeze(nx3counter10(nx,syn,condi-1,:,:));
+            ind_display10=(tmp10<97500);
+            dis_tmp10=squeeze(nx3gain10(nx,syn,condi-1,:,:));
+            
+            tmp01=squeeze(nx3counter01(nx,syn,condi-1,:,:));
+            ind_display01=(tmp01<97500);
+            dis_tmp01=squeeze(nx3gain01(nx,syn,condi-1,:,:));
+            
+            testmat=~ind_display10+~ind_display01;
+            if ~any(testmat(:)==2)
+                % do nothing
+            else
+                display('something wrong')
+            end
+            dis_tmp10=dis_tmp10-1;
+            dis_tmp01=dis_tmp01-1;
+            dis_tmp10(ind_display10)=0;
+            dis_tmp01(ind_display01)=0;
+            mat_display=dis_tmp10-dis_tmp01;
+            subplot(3,3,(nx-1)*3+condi-1);
+            imagesc(mat_display);colorbar;colormap(jet);
+            xticks([1:32]);xticklabels(AllchanNames)
+            xlabel('chan');ylabel('freq');title([nx3names{nx} ' ' condi4names{condi}]);
+            % clim([-1*max(abs(mat_display),[],"all") max(abs(mat_display),[],"all")])
+            if nx==1
+                clim([-1 1])
+            elseif nx==2
+                clim([-1 1])
+            else
+                clim([-5 5])
+            end
+
+        end
+    end
+    sgtitle({[syn2names{syn} ' permutation two-tails p<0.05'], ...
+        ['(positive effect size: condition > independent; negative effect size: condition < independent)']},'Color',syn2colors(syn,:))
+end
+
+% log2 display
+figure;
+x=-4:0.1:4;
+y=log2(x);
+plot(x,y);
+xline(-2,'m');xline(-1,'m');xline(-0.5,'m');xline(0,'m');xline(0.5,'m');xline(1,'m');xline(2,'m');
+xline(-0.25,'m');xline(0.25,'m')
+yline(-1,'m');yline(0,'m');yline(0.5,'m');yline(1,'m');yline(2,'m');
+yline(-2,'m')
+ylabel('log2(x)')
+figure;
+x=-2:0.1:2;
+y=2.^(x);
+plot(x,y);
+xline(-2,'m');xline(-1,'m');xline(0,'m');xline(1,'m');xline(2,'m');
+yline(0.5,'m');yline(1,'m');yline(2,'m');
+ylabel('2^x')
+
+% convert with log2
+allmat_display=nan(2,3,3,7,32); % 2 syn x 3 nx x 3 contrst condi x 7 freq x 32 chan
+nonsig_display=nan(2,3,3,7,32);
+for syn=1:2
+    figure('Position',[1327         772         884         510]); % get(gcf, 'outerposition') 
+    % get(gcf, 'outerposition'); figure('Position',[ans]);  ;
+    for nx=1:3
+        for condi=2:4
+            tmp10=squeeze(nx3counter10(nx,syn,condi-1,:,:));
+            ind_display10=(tmp10<97500);
+            dis_tmp10=squeeze(nx3gain10(nx,syn,condi-1,:,:));
+            
+            tmp01=squeeze(nx3counter01(nx,syn,condi-1,:,:));
+            ind_display01=(tmp01<97500);
+            % dis_tmp01=squeeze(nx3gain01(nx,syn,condi-1,:,:));
+            
+            test_ind=logical(ind_display10.*ind_display01);
+            % testmat=~ind_display10+~ind_display01;
+            % if ~any(testmat(:)==2)
+            %     % do nothing
+            % else
+            %     display('something wrong')
+            % end
+
+            dis_tmp10=log2(dis_tmp10);
+            % dis_tmp01=log2(dis_tmp01);
+
+            % dis_tmp10(ind_display10)=0;
+            % dis_tmp01(ind_display01)=0;
+            % dis_tmp10(ind_display01)=0;
+
+            % mat_display=dis_tmp10-dis_tmp01;
+
+            % dis_tmp10(test_ind)=0;
+            mat_display=dis_tmp10;
+            nonsig_display(syn,nx,condi-1,:,:)=test_ind;
+            allmat_display(syn,nx,condi-1,:,:)=mat_display;
+            subplot(3,3,(nx-1)*3+condi-1);
+            imagesc(mat_display);c=colorbar;colormap(jet);
+            xticks([1:32]);xticklabels(AllchanNames)
+            xlabel('chan');ylabel('freq');title([nx3names{nx} ' ' condi4names{condi}]);
+            % clim([-1*max(abs(mat_display),[],"all") max(abs(mat_display),[],"all")])
+            if nx==1
+                % clim([-0.7 0.7])
+                clim([-1 1])
+                set(c, 'Ticks', [-1 0 1]);
+            elseif nx==2
+                % clim([-0.45 0.45])
+                clim([-1 1])
+                set(c, 'Ticks', [-1 0 1]);
+            else
+                % clim([-3.5 3.5])
+                clim([-3 3])
+                set(c, 'Ticks', [-3 -2 -1 0 1 2 3]);
+            end
+
+        end
+    end
+    sgtitle({[syn2names{syn} ' showing condition/independent ratio (log2)']},'Color',syn2colors(syn,:))
+    % sgtitle({[syn2names{syn} ' showing condition/independent ratio (log2) non-significant channels set to zeros']},'Color',syn2colors(syn,:));
+    % sgtitle({[syn2names{syn} ' permutation two-tails p<0.05 (log2)'], ...
+    %     ['(positive effect size: condition > independent; negative effect size: condition < independent)']},'Color',syn2colors(syn,:))
+end
+
+% topoplots
+parfor ccc=[1:3]
+    figure('Position',[1084           1        1196        1413]);  
+    % get(gcf, 'outerposition');figure('Position',[ans]); 
+    
+    % Define subplot grid size
+    nRows = 6; % 2 syn × 3 contrast condi
+    nCols = 7; % 7 freqs
+
+    clf
+    for syn=1:2
+        for condi=1:3
+            for freq=1:7
+                subplot(6,7,(syn-1)*3*7+7*(condi-1)+freq)
+                array_display=squeeze(allmat_display(syn,ccc,condi,freq,:)); % 2 syn x 3 nx x 3 contrst condi x 7 freq x 32 chan
+                if sum(array_display)==0
+                    topoplot(array_display,chaninfo','nosedir','+X','maplimits',[-1 1]); %colorbar;
+                else
+                    topoplot(array_display,chaninfo','nosedir','+X'); %colorbar;
+                end
+                % clim([-1*max(abs(mat_display),[],"all") max(abs(mat_display),[],"all")])
+                if ccc==1
+                    % clim([-0.7 0.7])
+                    clim([-1 1])
+                    % set(c, 'Ticks', [-1 0 1]);
+                elseif ccc==2
+                    % clim([-0.45 0.45])
+                    clim([-1 1])
+                    % set(c, 'Ticks', [-1 0 1]);
+                else
+                    % clim([-3.5 3.5])
+                    clim([-3 3])
+                    % set(c, 'Ticks', [-4 -3 -2 -1 0 1 2 3 4]);
+                end
+                % title([condi4names{condi}]);
+                % subtitle([syn2names{syn} ' freq: ' band7labels{freq}],'Color',syn2colors(syn,:))
+            end
+        end
+    end
+    % sgtitle([nx3names{ccc}])
+    % display(num2str(ccc))
+
+    % Add row (left side) labels
+    for syn = 1:2
+        for condi = 1:3
+            row = (syn-1)*3 + condi;
+            % normalized position for text
+            y_pos = 1-0.06 - 0.85*(row - 0.5)/nRows;
+            annotation('textbox', [0.01, y_pos, 0.1, 0.03], ...
+                'String', {[syn2names{syn}], [condi4names{condi+1}]}, ...
+                'EdgeColor', 'none', ...
+                'HorizontalAlignment', 'left', ...
+                'FontWeight', 'bold', ...
+                'Color', syn2colors(syn,:));
+        end
+    end
+
+    % delete(findall(gcf, 'Type', 'annotation'))
+    
+    % Add column (top) labels for frequencies
+    for freq = 1:7
+        x_pos = 0.07+0.8*(freq - 0.5) / nCols;
+        annotation('textbox', [x_pos, 0.93, 0.1, 0.03], ...
+            'String', band7labels{freq}, ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center', ...
+            'FontWeight', 'bold');
+    end
+
+    % delete(findall(gcf, 'Type', 'annotation'))
+    annotation('textbox',[0.3, 0.97, 0.4, 0.03], ...
+        'String',{[nx3names{ccc}],'% change vs independent /100'}, ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center', ...
+        'FontWeight', 'bold', ...
+        'FontSize',12);
+
+    % Create an invisible axes to attach the colorbar
+    cb_ax = axes('Position', [0.2 0.05 0.6 0.02], 'Visible', 'off');
+    % Create colorbar on that axes
+    cbar = colorbar(cb_ax, 'Location', 'southoutside');
+    % Adjust colormap and limits (optional)
+    colormap(jet)
+    if ccc==1
+        % clim([-0.7 0.7])
+        clim([-1 1])
+        set(cbar, 'Ticks', [-1 -1/2 0 1/2 1]);
+        set(cbar, 'TickLabels', {'0.5', '0.7', '1', '1.4', '2'})
+
+    elseif ccc==2
+        % clim([-0.45 0.45])
+        clim([-1 1])
+        set(cbar, 'Ticks', [-1 -1/2 0 1/2 1]);
+        set(cbar, 'TickLabels', {'0.5', '0.7', '1', '1.4', '2'})
+    else
+        % clim([-3.5 3.5])
+        clim([-3 3])
+        set(cbar, 'Ticks', [-3 -2 -1 0 1 2 3]);
+        set(cbar, 'TickLabels', {'0.125', '0.25', '0.5', '1', '2','4','8'})
+    end
+    % caxis([-3 3])  % Match your topoplot clim
+
+end
+
+%% dot plots with non-significant circles
+% Extract coordinates
+theta = [chaninfo.theta]; % Polar angle in degrees
+radius = [chaninfo.radius]; % Radius (0-1)
+
+% Convert to Cartesian coordinates
+[x, y] = pol2cart(deg2rad(theta), radius);
+electrode_coords = [x', y'];
+
+% Extract original coordinates (example)
+% Perform transformation
+theta = -90; % degrees
+rotation_matrix = [cosd(theta) -sind(theta); 
+                 sind(theta)  cosd(theta)];
+rotated_coords = (rotation_matrix * electrode_coords')';
+final_coords = [rotated_coords(:,1), -rotated_coords(:,2)];
+
+% test plot
+figure;
+clf
+topoplot([], chaninfo', ...
+    'style', 'blank', ...          % No interpolation
+    'electrodes', 'off', ...       % Show electrodes
+    'emarker', {'.', 'k', 12, 1}, ...  % Black dots, size 12
+    'whitebk', 'on', ...          % White background
+    'plotrad', 0.5);              % Head radius
+hold on;
+% scatter(final_coords(:,1), final_coords(:,2), 100, 'filled');
+scatter(final_coords(:,1), final_coords(:,2), 100, [1:32], ...
+                    'filled', 'MarkerFaceAlpha',1, 'MarkerEdgeColor',[0.5 0.5 0.5 ],'MarkerEdgeAlpha',0.5);
+% text(final_coords(:,1), final_coords(:,2), AllchanNames);
+axis equal;  % title('Rotated 90° CCW + Flipped X');
+sizescale=0.58; xlim([-1*sizescale sizescale]); ylim([-1*sizescale sizescale]);
+colorbar
+
+% topoplots
+for ccc=[1 2 3] 
+    tic
+    figure('Position',[1084           1        1468        1477]);  
+    % get(gcf, 'outerposition');figure('Position',[ans]); 
+    
+    % Define subplot grid size
+    nRows = 6; % 2 syn × 3 contrast condi
+    nCols = 7; % 7 freqs
+
+    % clf
+    for syn=1:2
+        for condi=1:3
+            for freq=1:7
+                subplot(6,7,(syn-1)*3*7+7*(condi-1)+freq)
+                % if condi==1
+                %     subplot(4,7,(syn-1)*2*7+7*(condi-1)+freq)
+                % else
+                %     subplot(4,7,(syn-1)*2*7+7*(condi-2)+freq)
+                % end
+                array_display=squeeze(allmat_display(syn,ccc,condi,freq,:)); % 2 syn x 3 nx x 3 contrst condi x 7 freq x 32 chan
+                nonsig_ind=squeeze(nonsig_display(syn,ccc,condi,freq,:));
+               
+                % clf
+                topoplot([], chaninfo', ...
+                'style', 'blank', ...          % No interpolation
+                'electrodes', 'off', ...       % Show electrodes
+                'emarker', {'.', 'k', 12, 1}, ...  % Black dots, size 12
+                'whitebk', 'on', ...          % White background
+                'plotrad', 0.5);              % Head radius
+                hold on;
+                
+                if ccc==3
+                    minclim = -3; maxclim=3;
+                    array_display(array_display>3)=3; array_display(array_display<-3)=-3;
+                else
+                    minclim = -1; maxclim=1;
+                end
+                
+                values_norm = (array_display - minclim) / (maxclim - minclim);
+                cmap = jet(256);  % 256-level jet colormap
+                color_indices = round(values_norm * 255) + 1;  % Ensure indices in [1,256]
+                colors_32x3 = cmap(color_indices, :);
+
+                for n=1:32
+                    % set alpha for sig vs non sig roi
+                    if ismember(n,find(nonsig_ind))
+                        alpha_tmp=0;
+                    else
+                        alpha_tmp=1;
+                    end
+
+                    dotcolor=colors_32x3(n,:);
+                    edgecolor=dotcolor;
+
+                    scatter(final_coords(n,1), final_coords(n,2), 50, dotcolor, ...
+                        'filled', 'MarkerFaceAlpha',alpha_tmp, ...
+                        'MarkerEdgeColor',edgecolor,'MarkerEdgeAlpha',1,'LineWidth', 2.5);
+                    axis equal; sizescale=0.58; xlim([-1*sizescale sizescale]); ylim([-1*sizescale sizescale]);
+                end
+
+                % clim([-1*max(abs(mat_display),[],"all") max(abs(mat_display),[],"all")])
+                if ccc==1
+                    % clim([-0.7 0.7])
+                    clim([-1 1])
+                elseif ccc==2
+                    % clim([-0.45 0.45])
+                    clim([-1 1])
+                else
+                    % clim([-3.5 3.5])
+                    clim([-3 3])
+                end
+                % title([condi4names{condi}]);
+                % subtitle([syn2names{syn} ' freq: ' band7labels{freq}],'Color',syn2colors(syn,:))
+            end
+        end
+    end
+    % sgtitle([nx3names{ccc}])
+    % display(num2str(ccc))
+
+    % delete(findall(gcf, 'Type', 'annotation'))
+
+    % Add row (left side) labels
+    for syn = 1:2
+        for condi = 1:3
+            row = (syn-1)*3 + condi;
+            % normalized position for text
+            y_pos = 1-0.06 - 0.85*(row - 0.5)/nRows;
+            annotation('textbox', [0.01, y_pos, 0.1, 0.03], ...
+                'String', {[syn2names{syn}], [condi4names{condi+1}]}, ...
+                'EdgeColor', 'none', ...
+                'HorizontalAlignment', 'left', ...
+                'FontWeight', 'bold', ...
+                'Color', syn2colors(syn,:));
+        end
+    end
+    
+    % Add column (top) labels for frequencies
+    for freq = 1:7
+        x_pos = 0.07+0.8*(freq - 0.5) / nCols;
+        annotation('textbox', [x_pos, 0.93, 0.1, 0.03], ...
+            'String', band7labels{freq}, ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center', ...
+            'FontWeight', 'bold');
+    end
+
+    % delete(findall(gcf, 'Type', 'annotation'))
+    annotation('textbox',[0.3, 0.97, 0.4, 0.03], ...
+        'String',{[nx3names{ccc}],'%change vs independent /100'}, ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center', ...
+        'FontWeight', 'bold', ...
+        'FontSize',12);
+
+    % Create an invisible axes to attach the colorbar
+    cb_ax = axes('Position', [0.2 0.05 0.6 0.02], 'Visible', 'off');
+    % Create colorbar on that axes
+    cbar = colorbar(cb_ax, 'Location', 'southoutside');
+    % Adjust colormap and limits (optional)
+    colormap(jet)
+    if ccc==1
+        % clim([-0.7 0.7])
+        clim([-1 1])
+        set(cbar, 'Ticks', [-1 -1/2 0 1/2 1]);
+        set(cbar, 'TickLabels', {'0.5', '0.7', '1', '1.4', '2'})
+    elseif ccc==2
+        % clim([-0.45 0.45])
+        clim([-1 1])
+        set(cbar, 'Ticks', [-1 -1/2 0 1/2 1]);
+        set(cbar, 'TickLabels', {'0.5', '0.7', '1', '1.4', '2'})
+    else
+        % clim([-3.5 3.5])
+        clim([-3 3])
+        set(cbar, 'Ticks', [-3 -2 -1 0 1 2 3]);
+        set(cbar, 'TickLabels', {'0.125', '0.25', '0.5', '1', '2','4','8'})
+    end
+    % caxis([-3 3])  % Match your topoplot clim
+    toc
+    % 500 s (9 min); parfor 3 nx notworking; parfor 32 chan 1.5min no working
+end
+
+%% sum log2 of all channels for each frequency (only one condition significant, not good)
+load('nx3sumpermu.mat');
+nx3sumgain10   ; % 3nx x 2syn x 3 contrast condi x7freq
+nx3sumgain01   ;
+nx3sumcounter10;
+nx3sumcounter01;
+
+for syn=1:2
+    figure;% ('Position',[1327         772         884         510]); % get(gcf, 'outerposition') 
+    % get(gcf, 'outerposition'); figure('Position',[ans]);  ;
+    for nx=1:3
+        for condi=2:4
+            tmp10=squeeze(nx3sumcounter10(nx,syn,condi-1,:));
+            ind_display10=(tmp10<97500);
+            dis_tmp10=squeeze(nx3sumgain10(nx,syn,condi-1,:));
+            
+            tmp01=squeeze(nx3sumcounter01(nx,syn,condi-1,:,:));
+            ind_display01=(tmp01<97500);
+            % dis_tmp01=squeeze(nx3gain01(nx,syn,condi-1,:,:));
+            
+            test_ind=logical(ind_display10.*ind_display01);
+
+            dis_tmp10=log2(dis_tmp10);
+
+            dis_tmp10(test_ind)=0;
+            mat_display=dis_tmp10;
+     
+            subplot(3,3,(nx-1)*3+condi-1);
+            imagesc(mat_display);c=colorbar;colormap(jet);
+            xticks([])
+            xlabel('sum of all chan');ylabel('freq');title([nx3names{nx} ' ' condi4names{condi}]);
+            % clim([-1*max(abs(mat_display),[],"all") max(abs(mat_display),[],"all")])
+
+            % if nx==1
+            %     % clim([-0.7 0.7])
+            %     clim([-1 1])
+            %     set(c, 'Ticks', [-1 0 1]);
+            % elseif nx==2
+            %     % clim([-0.45 0.45])
+            %     clim([-1 1])
+            %     set(c, 'Ticks', [-1 0 1]);
+            % else
+            %     % clim([-3.5 3.5])
+            %     clim([-3 3])
+            %     set(c, 'Ticks', [-3 -2 -1 0 1 2 3]);
+            % end
+
+        end
+    end
+    sgtitle({[syn2names{syn} ' showing condition/independent ratio (log2)']},'Color',syn2colors(syn,:))
+    % sgtitle({[syn2names{syn} ' showing condition/independent ratio (log2) non-significant channels set to zeros']},'Color',syn2colors(syn,:));
+    % sgtitle({[syn2names{syn} ' permutation two-tails p<0.05 (log2)'], ...
+    %     ['(positive effect size: condition > independent; negative effect size: condition < independent)']},'Color',syn2colors(syn,:))
+end
+
+%% t-test (give up)
+cd /home/zhibinz2/Documents/GitHub/Motor_coordination_code
+% open /home/zhibinz2/Documents/GitHub/Motor_coordination_code/Fig7_networkx.ipynb
+load('cc3_syn.mat') % 3nx x 2 syn x 4 condi x36 tr x 7 freq x32 chan
+
